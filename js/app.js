@@ -365,7 +365,7 @@
         return '<tr id="risco-' + esc(r.ID) + '"><td class="cod">' + esc(r.ID) + '</td>' +
           (comVinculo ? '<td>' + linkVinculo(r.Vinculo_Nivel, r.Vinculo_Codigo) + '</td>' : '') +
           '<td>' + esc(r.Descricao_Risco) +
-          (r.Controles_Tratamento ? '<div class="pp-muted" style="font-size:var(--fs-xs)">Tratamento: ' + esc(r.Controles_Tratamento) + '</div>' : '') +
+          (r.Controles_Tratamento ? '<div class="pp-muted" style="font-size:var(--fs-sm)">Tratamento: ' + esc(r.Controles_Tratamento) + '</div>' : '') +
           '</td><td>' + r.Probabilidade_1a5 + '</td><td>' + r.Impacto_1a5 + '</td><td><strong>' + r._nivel +
           '</strong></td><td>' + tagNivel(r._classe) + '</td><td>' + esc(r.Resposta || '—') +
           '</td><td>' + esc(r.Status || '—') + '</td></tr>';
@@ -382,7 +382,7 @@
         return '<tr><td class="cod">' + esc(x.ID) + '</td>' +
           (comVinculo ? '<td>' + linkVinculo(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' : '') +
           '<td><strong>' + esc(x.Nome) + '</strong>' +
-          (x.Descricao_Formula ? '<div class="pp-muted" style="font-size:var(--fs-xs)">' + esc(x.Descricao_Formula) + '</div>' : '') +
+          (x.Descricao_Formula ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(x.Descricao_Formula) + '</div>' : '') +
           '</td><td>' + (x.Meta != null ? x.Meta + un : '—') + '</td><td>' + (x.Resultado_Atual != null ? x.Resultado_Atual + un : '—') +
           '</td><td class="' + cls + '">' + esc(x._sit) + '</td><td>' + esc(x.Periodicidade || '—') +
           '</td><td>' + fmtData(x.Ultima_Medicao) + '</td></tr>';
@@ -397,7 +397,7 @@
         (e.Processo ? ' · <a href="#/p/' + encodeURIComponent(e.Processo) + '">' + esc(e.Processo) + '</a>' : '') +
         '</div><h4>' + esc(e.Titulo || '(sem título)') + '</h4>' +
         (e.Descricao ? '<p style="font-size:var(--fs-sm)">' + esc(e.Descricao) + '</p>' : '') +
-        (e.Participantes ? '<p class="pp-muted" style="font-size:var(--fs-xs)"><i class="fas fa-users" aria-hidden="true"></i> ' + esc(e.Participantes) + '</p>' : '') +
+        (e.Participantes ? '<p class="pp-muted" style="font-size:var(--fs-sm)"><i class="fas fa-users" aria-hidden="true"></i> ' + esc(e.Participantes) + '</p>' : '') +
         ((e.Entradas_Insumos || e.Saidas_Entregaveis)
           ? '<div class="es-grid">' +
             '<div class="es-caixa"><b><i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i> Entradas / insumos</b>' + (listar(e.Entradas_Insumos).map(esc).join('; ') || '—') + '</div>' +
@@ -417,19 +417,36 @@
   var ROTAS_ABA = { inicio: '#/', catalogo: '#/catalogo', dashboard: '#/dashboard', repositorio: '#/repositorio',
     documentos: '#/documentos', riscos: '#/riscos', indicadores: '#/indicadores',
     diario: '#/diario', nugep: '#/nugep', glossario: '#/glossario', faq: '#/faq' };
+  var MAIS_ITENS = { diario: 'Diário', repositorio: 'Repositório', nugep: 'NUGEP',
+    glossario: 'Glossário', faq: 'FAQ' };
   function mostrarPainel(id) {
     $all('#mainTabContent > .tab-panel').forEach(function (p) {
       var ativo = p.id === 'panel-' + id;
       p.classList.toggle('active', ativo);
       p.hidden = !ativo;
     });
-    $all('.tab-nav [data-rota]').forEach(function (b) {
+    $all('.tab-nav > ul > .tab-item > [data-rota]').forEach(function (b) {
       var ativo = b.getAttribute('data-painel') === id ||
         (id === 'detalhe' && b.getAttribute('data-painel') === 'catalogo') ||
         (id === 'busca' && b.getAttribute('data-painel') === 'inicio');
       b.setAttribute('aria-selected', ativo ? 'true' : 'false');
-      b.closest('.tab-item').classList.toggle('active', ativo);
+      var li = b.closest('.tab-item'); if (li) li.classList.toggle('active', ativo);
     });
+    $all('#maisMenu [data-rota]').forEach(function (b) {
+      var ativo = b.getAttribute('data-painel') === id;
+      b.classList.toggle('ativo', ativo);
+      if (ativo) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    var maisBtn = $('#tab-mais');
+    if (maisBtn) {
+      var sub = MAIS_ITENS[id], temAtivo = !!sub;
+      maisBtn.setAttribute('aria-selected', temAtivo ? 'true' : 'false');
+      var maisLi = maisBtn.closest('.tab-item'); if (maisLi) maisLi.classList.toggle('active', temAtivo);
+      var lf = $('#maisLabelFull'), ls = $('#maisLabelShort');
+      if (lf) lf.textContent = temAtivo ? sub : 'Mais';
+      if (ls) ls.textContent = temAtivo ? sub : 'Mais';
+      maisBtn.setAttribute('aria-label', temAtivo ? ('Mais seções do painel — atual: ' + sub) : 'Mais seções do painel');
+    }
   }
   function rota() {
     var h = location.hash || '#/';
@@ -448,14 +465,27 @@
     else if ((m = h.match(/^#\/busca\?q=(.*)$/))) { renderBusca(decodeURIComponent(m[1])); mostrarPainel('busca'); }
     else if ((m = h.match(/^#\/(mp|p|sp|a|t)\/(.+)$/))) { renderDetalhe(m[1], decodeURIComponent(m[2])); mostrarPainel('detalhe'); }
     else { renderInicio(); mostrarPainel('inicio'); }
-    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { window.scrollTo(0, 0); }
-    var h1 = d.querySelector('#mainTabContent .tab-panel.active h1, #mainTabContent .tab-panel.active h2');
-    if (h1 && !h1.hasAttribute('tabindex')) h1.setAttribute('tabindex', '-1');
-    if (h1 && location.hash !== '#/') h1.focus({ preventScroll: true });
+    if (jaNavegou) {
+      try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { window.scrollTo(0, 0); }
+      var h1 = d.querySelector('#mainTabContent .tab-panel.active h1, #mainTabContent .tab-panel.active h2');
+      if (h1) {
+        if (!h1.hasAttribute('tabindex')) h1.setAttribute('tabindex', '-1');
+        h1.focus({ preventScroll: true });
+      }
+    }
+    jaNavegou = true;
   }
+  var jaNavegou = false;
   d.addEventListener('click', function (ev) {
     var b = ev.target.closest('.tab-nav [data-rota]');
-    if (b) location.hash = b.getAttribute('data-rota');
+    if (!b) return;
+    location.hash = b.getAttribute('data-rota');
+    var dd = b.closest('.dd-target');
+    if (dd) {
+      dd.hidden = true;
+      var trig = $('[data-target="' + dd.id + '"]');
+      if (trig) trig.setAttribute('aria-expanded', 'false');
+    }
   });
 
   /* ── alertas operacionais (sino) ──────────────────────────────────── */
@@ -592,17 +622,18 @@
       blocoCadeia('Macroprocessos Finalísticos — entrega de valor à sociedade', 'cat-finalistico', 'fa-hand-holding-heart', fin) + '</div>' +
       '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
-      '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
-      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-xs)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, subprocessos, atividades e tarefas.</p></section>';
+      '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' +
+      '<div class="cv-valores-trilho"><div class="cv-valores-lista">' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div></div></div>' +
+      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-sm)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, subprocessos, atividades e tarefas.</p></section>';
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
   var filtroCat = { macro: '', status: '', q: '' };
   function cardProcesso(p) {
     return '<a class="proc-card" href="#/p/' + encodeURIComponent(p.Codigo) + '">' +
-      '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-xs);color:var(--gray-60)">' + esc(p.Codigo) + '</span>' +
+      '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(p.Codigo) + '</span>' +
       '<div class="nome">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
-      '<div class="pp-muted" style="font-size:var(--fs-xs);margin-top:4px">' + esc(p.Area_Responsavel || '') +
+      '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' + esc(p.Area_Responsavel || '') +
       (p.Fase_Ciclo_BPM ? ' · ' + esc(p.Fase_Ciclo_BPM) : '') + '</div>' +
       '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
   }
@@ -679,7 +710,7 @@
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos vinculados</h3>' +
         (filhos.length ? filhos.map(function (p) {
           return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/p/' + encodeURIComponent(p.Codigo) + '">' +
-            '<div class="topo"><div><span style="font-family:var(--noto-mono,monospace);font-size:var(--fs-xs);color:var(--gray-60)">' + esc(p.Codigo) + '</span>' +
+            '<div class="topo"><div><span style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(p.Codigo) + '</span>' +
             '<div class="nome" style="font-size:var(--fs-sm)">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
             '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
         }).join('') : '<p class="pp-vazio">Nenhum processo cadastrado.</p>') + '</div></aside></div>';
@@ -722,8 +753,8 @@
         (subs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Entregas</th><th></th></tr></thead><tbody>' +
           subs.map(function (s) {
             return '<tr><td class="cod">' + esc(s.Codigo) + '</td><td><a href="#/sp/' + encodeURIComponent(s.Codigo) + '"><strong>' + esc(s.Nome) + '</strong></a>' +
-              (s.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-xs)">' + esc(s.Descricao) + '</div>' : '') + '</td>' +
-              '<td style="font-size:var(--fs-xs)">' + (listar(s.Entregas).map(esc).join('; ') || '—') + '</td>' +
+              (s.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(s.Descricao) + '</div>' : '') + '</td>' +
+              '<td style="font-size:var(--fs-sm)">' + (listar(s.Entregas).map(esc).join('; ') || '—') + '</td>' +
               '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(s.Codigo) + '">Abrir ficha</a></td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhum subprocesso cadastrado.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-timeline" aria-hidden="true"></i> Diário de mapeamento deste processo</h3>' + timelineHtml(regs) + '</div>' +
@@ -771,10 +802,10 @@
         (ativs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
           ativs.map(function (a, i) {
             return '<tr data-link><td>' + (i + 1) + '</td><td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
-              '<div class="cod">' + esc(a.Codigo) + '</div></td><td style="font-size:var(--fs-xs)">' + esc(a.Responsavel_Ator || '—') + '</td>' +
-              '<td style="font-size:var(--fs-xs)">' + (listar(a.Entradas).map(esc).join('; ') || '—') + '</td>' +
-              '<td style="font-size:var(--fs-xs)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
-              '<td style="font-size:var(--fs-xs);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
+              '<div class="cod">' + esc(a.Codigo) + '</div></td><td style="font-size:var(--fs-sm)">' + esc(a.Responsavel_Ator || '—') + '</td>' +
+              '<td style="font-size:var(--fs-sm)">' + (listar(a.Entradas).map(esc).join('; ') || '—') + '</td>' +
+              '<td style="font-size:var(--fs-sm)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
+              '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma atividade cadastrada.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         secVinculos('Subprocesso', cod) +
@@ -819,9 +850,9 @@
       (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
         tf3.map(function (t) {
           return '<tr data-link><td class="cod">' + esc(t.Codigo) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a>' +
-            (t.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-xs)">' + esc(t.Descricao) + '</div>' : '') + '</td>' +
-            '<td style="font-size:var(--fs-xs)">' + esc(t.Tipo_Tarefa || '—') + '</td>' +
-            '<td style="font-size:var(--fs-xs);white-space:nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>';
+            (t.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(t.Descricao) + '</div>' : '') + '</td>' +
+            '<td style="font-size:var(--fs-sm)">' + esc(t.Tipo_Tarefa || '—') + '</td>' +
+            '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>';
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       secVinculos('Atividade', cod) +
       '</div><aside>' +
@@ -897,7 +928,7 @@
       '<div class="pp-card"><div class="pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th><th>Documento</th><th>Vinculado a</th><th>Data</th><th>Situação</th></tr></thead><tbody>' +
       (lista.length ? lista.map(function (x) {
         var tit = x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '<span class="sr-only"> (abre em nova aba)</span></a>' : esc(x.Titulo);
-        return '<tr><td class="cod">' + esc(x.ID) + '</td><td><strong>' + tit + '</strong><div class="pp-muted" style="font-size:var(--fs-xs)">' +
+        return '<tr><td class="cod">' + esc(x.ID) + '</td><td><strong>' + tit + '</strong><div class="pp-muted" style="font-size:var(--fs-sm)">' +
           esc(x.Tipo_Documento || '') + (x.Versao ? ' · v' + esc(x.Versao) : '') + '</div></td>' +
           '<td>' + linkVinculo(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td><td>' + fmtData(x.Data) + '</td><td>' + esc(x.Situacao || '—') + '</td></tr>';
       }).join('') : '<tr><td colspan="5" class="pp-vazio">Nenhum documento corresponde aos filtros.</td></tr>') +
@@ -1126,7 +1157,7 @@
       (atrasados.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo de negócio</th><th>Responsável</th><th>Prazo</th><th>Avanço</th></tr></thead><tbody>' +
         atrasados.map(function (p) {
           return '<tr data-link><td class="cod">' + esc(p.Codigo) + '</td><td><a href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
-            '<td style="font-size:var(--fs-xs)">' + esc(p.Dono_Processo || '—') + '</td><td style="font-size:var(--fs-xs);white-space:nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
+            '<td style="font-size:var(--fs-sm)">' + esc(p.Dono_Processo || '—') + '</td><td style="font-size:var(--fs-sm);white-space:nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
             '<td style="min-width:120px">' + barraPct(p.Percentual) + '</td></tr>';
         }).join('') + '</tbody></table></div>' : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum processo com prazo vencido.</span></div></div>') + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos críticos abertos</h3>' +
@@ -1203,7 +1234,7 @@
       '<select id="repoCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option>' + cats.map(function (c) { return '<option' + (filtroRepo.cat === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select>' +
       '<select id="repoFase" aria-label="Filtrar por fase do ciclo"><option value="">Todas as fases do ciclo</option>' + fases.map(function (c) { return '<option' + (filtroRepo.fase === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select>' +
       '<input type="search" id="repoQ" placeholder="Buscar no repositório…" value="' + esc(filtroRepo.q) + '" aria-label="Buscar no repositório">' +
-      '<span class="pp-muted" style="font-size:var(--fs-xs)">' + lista.length + ' de ' + repo.length + ' itens</span></div>' +
+      '<span class="pp-muted" style="font-size:var(--fs-sm)">' + lista.length + ' de ' + repo.length + ' itens</span></div>' +
       (lista.length ? '<div class="repo-grid">' + lista.map(cardRepo).join('') + '</div>' : '<p class="pp-vazio">Nenhum item com esses filtros.</p>') + '</section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Metodologia em resumo</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-card"><h3><i class="fas fa-rotate" aria-hidden="true"></i> Ciclo de vida BPM (CBOK 4.0)</h3><ol class="ciclo">' +
@@ -1276,7 +1307,7 @@
       cats.map(function (c) { var n = todos.filter(function (t) { return t.Categoria === c; }).length; return '<option value="' + esc(c) + '"' + (filtroGloss.cat === c ? ' selected' : '') + '>' + esc(c) + ' (' + n + ')</option>'; }).join('') + '</select></div>' +
       '<div class="gloss-abc" role="group" aria-label="Filtrar por letra"><button type="button" class="' + (filtroGloss.letra ? '' : 'ativo') + '" data-letra="">Todos</button>' +
       abc.map(function (L) { return '<button type="button" data-letra="' + L + '" class="' + (filtroGloss.letra === L ? 'ativo' : '') + '"' + (letrasDisp[L] ? '' : ' disabled') + '>' + L + '</button>'; }).join('') + '</div>' +
-      '<p class="pp-muted" style="font-size:var(--fs-xs);margin:var(--sp2) 0">' + lista.length + ' resultado(s)</p>' +
+      '<p class="pp-muted" style="font-size:var(--fs-sm);margin:var(--sp2) 0">' + lista.length + ' resultado(s)</p>' +
       (lista.length ? Object.keys(porLetra).sort().map(function (L) {
         return '<h3 class="gloss-letra">' + L + '</h3><div class="gloss-grid">' + porLetra[L].map(function (t) {
           return '<article class="gloss-card"><div class="gloss-topo"><h4>' + esc(t.Termo) + '</h4><span class="gloss-cat">' + esc(t.Categoria || '') + '</span></div>' +

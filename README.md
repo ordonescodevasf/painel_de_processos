@@ -115,6 +115,17 @@ são convertidos automaticamente para exibição; se a prévia não carregar (li
 privado, bloqueio de rede), o painel mostra o botão de acesso mesmo assim. As
 URLs atuais (`placehold.co`) são apenas exemplos.
 
+## Navegação: 6 abas fixas + "Mais"
+
+A faixa de seções mostra sempre **Início, Catálogo, Dashboard, Documentos,
+Riscos e Indicadores** em uma única linha, sem quebrar e sem precisar arrastar
+a barra para o lado. As demais seções (Diário, Repositório, NUGEP, Glossário,
+FAQ) ficam num botão **"Mais"**, que abre uma lista (mesmo componente List/Item
+do menu de atalhos do cabeçalho) — quando uma dessas seções está aberta, o
+próprio botão "Mais" mostra o nome dela. Em telas menores que ~992px, as abas
+fixas viram só ícone (com texto acessível para leitor de tela), garantindo que
+sempre caibam numa linha só, em qualquer tamanho de tela.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
