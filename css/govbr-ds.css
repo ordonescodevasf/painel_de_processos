@@ -1,0 +1,2164 @@
+/* Extraído automaticamente do Painel de Transformação Digital (index original)
+   — gov.br DS v4 reimplementado. Não edite: ajustes vão em painel.css. */
+
+    /* ── Paleta de cores gov.br DS ──
+       Nova comparação feita diretamente contra o CSS computado da página
+       viva gov.br/codevasf (variáveis --blue-warm-vivid-*, --color-primary-*,
+       --rgb-primary-* etc.), não apenas contra uma especificação hipotética
+       de "v4.0.0-next". Essa evidência confirma que TODA a escala blueWarm
+       abaixo (90/80/70/60/50/40/30/20/10/5) é real e está em produção hoje,
+       incluindo o degrau 90 (#071d41 — usado em --background-dark e em
+       --color-primary-darken-02) e os degraus 30/5, que uma versão anterior
+       deste arquivo havia marcado por engano como "interpolação própria,
+       não-oficial". --blue-warm-vivid-90 foi restaurado ao seu valor real
+       (a versão anterior havia transformado "90" num alias de "80" com base
+       numa suposição equivocada de que a v4 teria removido esse degrau —
+       não há nenhuma evidência disso; o degrau 90 existe e está em uso hoje).
+       ÚNICA EXCEÇÃO MANTIDA DE PROPÓSITO (decisão explícita de antecipar a
+       v4.0 do DS, a pedido do responsável pelo painel): --blue-warm-vivid-70
+       usa #0040b4 em vez do valor real hoje em produção (#1351b4). Pelo
+       mesmo motivo, a tipografia padrão deste arquivo é Noto Sans (ver tag
+       <link> no <head>), embora a página real hoje use Rawline
+       (--font-family-base:Rawline,Raleway,sans-serif, confirmado no mesmo
+       CSS computado). Fora essas duas exceções deliberadas, os valores
+       abaixo seguem a paleta real confirmada. */
+    :root {
+      --blue-warm-vivid-90:#071d41; --blue-warm-vivid-80:#0c326f;
+      --blue-warm-vivid-70:#0040b4; /* EXCEÇÃO PROPOSITAL: real hoje é #1351b4 — ver comentário acima */
+      --blue-warm-vivid-60:#155bcb;
+      --blue-warm-vivid-50:#2670e8; --blue-warm-vivid-30:#81aefc;
+      --blue-warm-vivid-10:#d4e5ff; --blue-warm-vivid-5:#edf5ff;
+      --green-cool-vivid-70:#154c21; --green-cool-vivid-50:#168821;
+      --green-cool-vivid-5:#e3f5e1; --green-cool-vivid-10:#b7f5bd;
+      /* green-warm-vivid-50: confirmado pelo CSS computado real (#6a7d00),
+         coincide com o equivalente escuro de --cv-lime (#89bd2b) usado como
+         cor de TEXTO sobre branco (contraste AA, 4.62:1); cv-lime continua
+         para uso decorativo onde contraste de texto não é exigido. */
+      --green-warm-vivid-50:#6a7d00;
+      /* red-vivid-50/10 e yellow-vivid-20/5: tokens de Estado Erro/Alerta
+         usados pelo componente Message. Valores oficiais confirmados
+         contra a paleta gov.br DS (Referências > Tokens > Cores) e, agora,
+         também contra o CSS computado real da página. */
+      --red-vivid-50:#e52207; --red-vivid-10:#fde0db;
+      --yellow-vivid-20:#ffcd07; --yellow-vivid-5:#fff5c2;
+      --gray-80:#333; --gray-70:#555; --gray-40:#888;
+      --gray-20:#ccc; --gray-10:#e6e6e6; --gray-5:#f0f0f0; --gray-2:#f8f8f8;
+      --pure-0:#ffffff; --gold-vivid-20:#ffbe2e;
+      --background:var(--pure-0); --color:var(--gray-80);
+      --interactive:var(--blue-warm-vivid-70);
+      /* DS spacing — Escala Layout ($spacer:8px), conforme Fundamento Espaçamento gov.br DS.
+         Mapeamento: --sp-half=--spacing-scale-half(4px), --sp1=--spacing-scale-base(8px),
+         --sp2=-2x(16px), --sp3=-3x(24px), --sp4=-4x(32px), --sp5=-5x(40px),
+         --sp6=-6x(48px), --sp7=-7x(56px), --sp8=-8x(64px), --sp9=-9x(72px).
+         --sp2h/4h/5h/6h = --spacing-scale-Nxh da Escala de Ajuste (incrementos
+         de meio passo: (N+0,5)×8px), usados em densidades do Magic Button. */
+      --sp-half:4px; --sp1:8px; --sp2:16px; --sp3:24px;
+      --sp4:32px; --sp5:40px; --sp6:48px; --sp7:56px; --sp8:64px; --sp9:72px;
+      --sp2h:20px; --sp4h:36px; --sp5h:44px; --sp6h:52px;
+      /* DS typography — Noto Sans (substitui Rawline a partir da v4.0.0) */
+      --font:'Noto Sans',Arial,sans-serif;
+      --font-mono:'Noto Sans Mono','Courier New',monospace;
+      --fs-sm:12px; --fs-base:14px; --fs-md:16px;
+      --fs-lg:20px; --fs-xl:24px; --fs-xxl:32px;
+      /* DS focus ring — tokenizado nas mesmas variáveis usadas pelo mixin
+         `focus` do guia de Codificação Sass do gov.br DS (--focus-color,
+         --focus-offset, --focus-style, --focus-width), em vez de valores
+         soltos repetidos em cada seletor */
+      --focus-color:#da680b; --focus-offset:2px; --focus-style:dashed; --focus-width:4px;
+      --focus-offset-field:1px; --focus-style-field:solid; --focus-width-field:2px;
+      /* DS shadows — valores compilados de --br-elevation-shadow-style-level{1,4}
+         (govbr-ds/core v4.0.0-next.11, dist/core.css compilado).
+         Camadas DS: level1=cards/header (sombra suave), level4=modais/critico (sombra forte).
+         O documento especifica: blur padrão=--surface-blur-lg (6px offset), cor preta/opacidade baixa. */
+      --sh-level1:0 1px 1px rgba(0,0,0,.2),0 0 4px rgba(0,0,0,.2);
+      --sh-level4:0 12px 12px rgba(0,0,0,.2),0 0 16px rgba(0,0,0,.2);
+      /* --sh-level4-up: mesma intensidade de --sh-level4, com o sinal do
+         eixo Y invertido — necessário para elementos fixos na BASE da
+         tela (ex: cookiebar), onde a sombra deve indicar elevação para
+         CIMA do conteúdo abaixo, não para baixo. */
+      --sh-level4-up:0 -12px 12px rgba(0,0,0,.2),0 0 16px rgba(0,0,0,.2);
+      /* Aliases curtos para retrocompatibilidade */
+      --sh-sm:var(--sh-level1); --sh-md:var(--sh-level4);
+      /* --sh-card: sombra de nível 1 mais sutil que --sh-sm, usada
+         especificamente nos 23 cards de conteúdo permanente do painel
+         (.br-card). Mantém o valor visual já estabelecido em todas as
+         rodadas anteriores — tokenizado aqui para eliminar o valor
+         hardcoded que existia, sem alterar a aparência visual aprovada. */
+      --sh-card:0 1px 1px rgba(0,0,0,.08),0 0 4px rgba(0,0,0,.06);
+      --sh-card-hover:0 4px 4px rgba(0,0,0,.08),0 0 8px rgba(0,0,0,.08);
+      /* --divider-section: cor do divisor de título de seção (.sec-line),
+         conforme Componente Divider gov.br DS (documento especifica
+         --gray-20 para fundo claro). Mantém-se aqui o tom mais sutil já
+         estabelecido (--gray-10) — diferença consciente e pequena (linha
+         decorativa ao lado de um título já em destaque azul/uppercase,
+         não precisa de contraste forte), tokenizado para eliminar o
+         valor solto que existia antes. */
+      --divider-section:var(--gray-10);
+      /* DS z-index layers — fórmula: (nivel) × 1000
+         (govbr-ds/core utilities/_elevation.scss: $z-index = (index - 1) * 1000)
+         layer-0=conteúdo, layer-1=cards/header, layer-2=dropdowns,
+         layer-3=sticky nav/header, layer-4=modais/crítico */
+      --z-layer-0:0; --z-layer-1:1000; --z-layer-2:2000; --z-layer-3:3000; --z-layer-4:4000;
+      /* DS radii — equivalente a --surface-rounder-sm/md/lg (4/8/16px) */
+      --r-sm:4px; --r-md:8px; --r-lg:16px; --r-pill:999px;
+      /* --r-xl: extensão consciente da escala DS (que vai até 16px) para o
+         elemento de maior destaque visual do painel (.hero); usado uma única
+         vez, de forma consistente, conforme o princípio de "criar e seguir
+         padrões" do Fundamento Superfície */
+      --r-xl:24px;
+      /* DS border widths — equivalente a --surface-width-sm/md/lg (1/2/4px) */
+      --w-sm:1px; --w-md:2px; --w-lg:4px;
+      /* DS opacity — equivalente a --surface-opacity-xs/sm/md/lg/xl (0.16/0.30/0.45/0.65/0.85) */
+      --op-xs:.16; --op-sm:.30; --op-md:.45; --op-lg:.65; --op-xl:.85;
+      /* DS motion — equivalente a --duration-very-fast/fast (0.10s/0.30s) e
+         --animation-ease (cubic-bezier padrão), usados nas micro-transições
+         de hover/focus do painel (0.1–0.2s, dentro da faixa "muito rápido"
+         a "rápido" recomendada para feedback de interações frequentes) */
+      --dur-vfast:.1s; --dur-fast:.18s; --ease:cubic-bezier(.25,.1,.25,1);
+      /* Header DS tokens */
+      --hdr-logo-h:48px; --hdr-logo-h-mob:40px;
+      /* Codevasf brand (Manual MIV) */
+      --cv-blue:#005ca8; --cv-green:#007d4e;
+      --cv-cyan:#74c9ea; --cv-lime:#89bd2b; --cv-navy:#222b54;
+      /* Marca oficial gov.br (Manual da Marca v.3, 2025, p.5) —
+         usada apenas no selo/assinatura "gov.br", nunca para
+         repaginar a identidade visual da Codevasf */
+      --govbr-azul:#377EC1; --govbr-amarelo:#FBBA00; --govbr-verde:#52AE32;
+      /* Dashboard surface — padrão CLARO oficial gov.br DS
+         (referência: telas dashboard.xd / base.xd do pacote
+         govbr-ds-design-padroes-modelos v3.4.0): fundo cinza claro
+         (--gray-2), cards brancos com sombra leve, texto cinza-80. */
+      --d-bg:var(--gray-2); --d-card:var(--pure-0);
+      --d-bd:var(--gray-10); --d-bd-s:var(--blue-warm-vivid-30);
+      --d-tx:var(--gray-80); --d-mt:var(--gray-70);
+      /* Alias usado pontualmente na tabela de detalhamento (ctrlTable) */
+      --tx-m:var(--gray-70);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    /* Tamanho de fonte base responsivo — govbr-ds/core v4 (dist/core.css):
+       14px em telas estreitas, 16px a partir de 992px (--br-typography-
+       font-size-font-base-{secondary,primary}). Como --fs-base já é fixo
+       em 14px nas demais regras, este ajuste eleva a base apenas no
+       elemento raiz para textos que usam unidades relativas (em/rem),
+       sem alterar os tamanhos em px já fixados no restante do painel. */
+    html{scroll-behavior:smooth;font-size:14px;}
+    @media(min-width:992px){html{font-size:16px;}}
+    body{font-family:var(--font);font-size:var(--fs-base);line-height:1.5;
+      color:var(--d-tx);background:var(--d-bg);
+      min-height:100vh;
+      /* Rede de segurança replicando o body{} do site oficial gov.br/codevasf
+         (overflow-x:hidden + min-width:320px): nenhum grid/heatmap/dropdown do
+         painel deveria gerar scroll horizontal na página, mas se algum widget
+         futuro vazar a viewport, isso contém o vazamento em vez de deixar a
+         página inteira rolar de lado no celular. min-width garante um piso
+         de leiaute para o menor smartphone comum (iPhone SE / Android compacto). */
+      overflow-x:hidden;min-width:320px;}
+    body::before{display:none;}
+
+    /* ── SKIP LINK (br-skiplink DS) ── */
+    /* sr-only: visualmente oculto, mas lido por leitores de tela — usado
+       para avisar sobre links que abrem em nova aba (target="_blank"),
+       conforme boa prática de acessibilidade (evita desorientar usuários
+       de tecnologia assistiva quando o contexto de navegação muda sem
+       aviso). Técnica diferente do br-skiplink: aqui o conteúdo nunca
+       fica visível mesmo em foco, pois não é um destino de navegação. */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+    .br-skiplink a{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+    .br-skiplink a:focus{position:fixed;top:0;left:0;width:auto;min-height:var(--sp7);
+      padding:var(--sp1) var(--sp4);z-index:var(--z-layer-4);background:var(--pure-0);
+      color:var(--blue-warm-vivid-70);font:700 var(--fs-md)/1.2 var(--font);
+      box-shadow:var(--sh-md);
+      text-decoration:none;border-bottom-right-radius:var(--r-md);
+      display:inline-flex;align-items:center;gap:8px;}
+    .br-skiplink .br-tag{background:var(--blue-warm-vivid-70);color:var(--pure-0);
+      font-size:11px;font-weight:700;border-radius:var(--r-sm);padding:1px 7px;
+      border:none;display:inline-flex;align-items:center;}
+
+    /* ── FOCO DE TECLADO — anel oficial govbr-ds/core v4
+       (--br-state-focus-color-main:#da680b / border-style-main-high:
+       4px dashed). Aplicado via :focus-visible para não poluir cliques
+       de mouse, só navegação por teclado/leitor de tela. ── */
+    a:focus-visible,
+    button:focus-visible,
+    .br-button:focus-visible,
+    .tab-item:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible{
+      outline:var(--focus-width) var(--focus-style) var(--focus-color);
+      outline-offset:var(--focus-offset);
+    }
+    .br-input input:focus-visible{
+      outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:var(--focus-offset-field);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BARRA DE ACESSIBILIDADE — Manual de Diretrizes gov.br, p.17.
+       Os atalhos institucionais e o switch de Alto Contraste que
+       viviam aqui, numa faixa separada acima do header, foram
+       migrados para dentro do próprio .br-header (Área para Links
+       e Área para Funcionalidades, itens 6 e 7 da Anatomia), ao
+       lado da assinatura — posição correta segundo o componente
+       Header do gov.br DS e reflexo do cabeçalho oficial do site
+       da Codevasf. Ver regras .header-links / .br-switch dentro
+       do bloco "br-header" mais abaixo.
+    ══════════════════════════════════════════════════════════ */
+
+
+    /* ── Modo Alto Contraste (toggle via body.contraste-alto) ──
+       Otimiza a relação de contraste entre fundo e elementos
+       de primeiro plano (Manual de Diretrizes, p.17) */
+    body.contraste-alto{background:#000;}
+    body.contraste-alto::before{display:none;}
+    body.contraste-alto .br-header{background:#000;border-bottom-color:var(--gold-vivid-20);}
+    body.contraste-alto .header-bottom-wrap .header-title{color:#fff;}
+    body.contraste-alto .header-bottom-wrap .header-subtitle{color:#ffe9a8;}
+    /* A logo institucional é um JPEG com fundo branco embutido — sobre o
+       fundo preto do modo alto contraste isso vira "área com interferência"
+       (Manual da Marca v.3, p.8). Nessas condições o manual orienta usar a
+       versão monocromática da marca; aqui, a versão textual já disponível
+       como fallback. */
+    body.contraste-alto .logo-codevasf{display:none;}
+    body.contraste-alto .logo-fallback{
+      display:block!important;
+      background:none;-webkit-text-fill-color:#fff;color:#fff;}
+    /* Atalhos institucionais e switch de Alto Contraste agora vivem dentro
+       do .br-header (ver .header-links / .br-switch); o header já tem
+       fundo preto em modo Alto Contraste — aqui só corrigimos o texto
+       do switch, que por padrão usa --gray-80 (ilegível sobre preto). */
+    body.contraste-alto .br-header .header-links .br-item{color:#ffe9a8;}
+    body.contraste-alto .br-header .br-switch label{color:#ffe9a8;}
+    body.contraste-alto .br-tab{background:#000;border-bottom-color:var(--gold-vivid-20);}
+    body.contraste-alto .tab-item button{color:#fff;}
+    body.contraste-alto .tab-item button[aria-selected="true"]{color:var(--gold-vivid-20);border-bottom-color:var(--gold-vivid-20);}
+    body.contraste-alto .br-card{background:#000;border-color:var(--gold-vivid-20);}
+    body.contraste-alto .d-tx,
+    body.contraste-alto{color:#fff;}
+    body.contraste-alto .card-title{color:#fff;}
+    body.contraste-alto .card-sub,
+    body.contraste-alto .d-mt{color:#ffe9a8;}
+    body.contraste-alto .br-table th{color:var(--gold-vivid-20);border-bottom-color:var(--gold-vivid-20);}
+    body.contraste-alto .br-table td{color:#fff;border-bottom-color:rgba(255,190,46,.3);}
+    body.contraste-alto .br-footer{background:#000;color:#fff;}
+    body.contraste-alto .hero{background:#000;border:1px solid var(--gold-vivid-20);}
+    body.contraste-alto .br-tag.info{background:#000;color:#fff;border:1px solid var(--gold-vivid-20);}
+    body.contraste-alto .br-tag.success{background:#000;color:#fff;border:1px solid var(--gold-vivid-20);}
+    body.contraste-alto .fs-col{border-top-color:rgba(255,190,46,.3);}
+    body.contraste-alto .fs-col:last-child{border-bottom-color:rgba(255,190,46,.3);}
+    body.contraste-alto .fs-header{color:var(--gold-vivid-20);}
+    body.contraste-alto .fs-header i{color:var(--gold-vivid-20);}
+    body.contraste-alto .fs-items a{color:#ffe9a8;}
+    body.contraste-alto .fs-items a:hover,body.contraste-alto .fs-items a:focus{color:var(--gold-vivid-20);}
+    body.contraste-alto .footer-secondary{border-top-color:rgba(255,190,46,.3);}
+    body.contraste-alto .footer-social-title{color:var(--gold-vivid-20);}
+    body.contraste-alto .footer-social-icons .br-button.circle{background:#000;border:1px solid var(--gold-vivid-20);color:var(--gold-vivid-20);}
+    body.contraste-alto .footer-social-icons .br-button.circle:hover,body.contraste-alto .footer-social-icons .br-button.circle:focus-visible{background:var(--gold-vivid-20);color:#000;}
+    body.contraste-alto .footer-legal{border-top-color:rgba(255,190,46,.3);}
+    body.contraste-alto .footer-org .fo-top{color:var(--gold-vivid-20);}
+    body.contraste-alto .footer-org .fo-mid{color:#fff;}
+    body.contraste-alto .footer-org .fo-unit{color:#ffe9a8;}
+    body.contraste-alto .footer-contact a{color:#ffe9a8;}
+    body.contraste-alto .footer-contact a i{color:var(--gold-vivid-20);}
+    body.contraste-alto .footer-license{color:#ffe9a8;}
+    /* Em alto contraste a imagem oficial colorida perde legibilidade sobre
+       fundo preto — usa-se o fallback textual (mesma estratégia já aplicada
+       à logo Codevasf no cabeçalho, Manual da Marca v.3, p.8: marca com
+       interferência deve cair para a versão textual/monocromática). */
+    body.contraste-alto .footer-logo-img{display:none;}
+    body.contraste-alto .footer-logo-fallback{display:block!important;color:#fff;}
+    body.contraste-alto .gf-tag{border-color:var(--gold-vivid-20);color:var(--gold-vivid-20);}
+    body.contraste-alto .gf-tag i{color:var(--gold-vivid-20);}
+    body.contraste-alto .ptd-buscabox{background:#000;border-color:var(--gold-vivid-20);}
+    body.contraste-alto .ptd-txt,body.contraste-alto .ptd-lupa{color:var(--gold-vivid-20);}
+    body.contraste-alto .sec-lbl{color:var(--gold-vivid-20);}
+    body.contraste-alto .sec-line{background:var(--gold-vivid-20);opacity:var(--op-sm);}
+    body.contraste-alto .sec-pill{background:#000;border-color:var(--gold-vivid-20);color:var(--gold-vivid-20);}
+
+    /* ══════════════════════════════════════════════════════════
+       br-header — fiel a _header.scss do DS
+       .br-header > .container-lg > .header-top > .header-logo + .header-actions
+       Fundo: var(--background) = branco (#ffffff)
+       Borda inferior: azul Codevasf (#005ca8)
+       Logo: data URI do SVG embutida DIRETAMENTE no atributo src (sem JS)
+    ══════════════════════════════════════════════════════════ */
+    .br-header-topbar{background:var(--pure-0);border-bottom:1px solid var(--gray-10);}
+    .br-header-topbar .container-lg{max-width:100%;margin:0 auto;padding:4px 16px;
+      width:100%;display:flex;justify-content:flex-end;align-items:center;gap:2px;}
+    .br-header-topbar .br-button.circle{background:transparent;border-color:transparent;
+      border-radius:50%;color:var(--interactive);width:32px;height:32px;padding:0;
+      box-shadow:none;justify-content:center;}
+    .br-header-topbar .br-button.circle:hover{background:var(--blue-warm-vivid-5);}
+    .govbr-shortcuts-btn{white-space:nowrap;flex-shrink:0;}
+    .br-button.secondary.govbr-shortcuts-btn{background:var(--pure-0);
+      border:1px solid var(--interactive);color:var(--interactive);border-radius:100em;}
+    .br-button.secondary.govbr-shortcuts-btn:hover{background:var(--blue-warm-vivid-5);}
+    @media(max-width:991px){.govbr-shortcuts-btn .govbr-shortcuts-label{display:none;}}
+    body.contraste-alto .br-header-topbar{background:#000;border-bottom-color:var(--gold-vivid-20);}
+    /* Submenu colapsável "Institucional" dentro do dropdown de atalhos —
+       mesmo Utilitário JS Collapse usado em outros lugares do painel.
+       No popup (mobile/<1280px) fica indentado, empilhado normalmente;
+       a partir de 1280px (modo inline, replicando o site oficial) passa
+       a flutuar como dropdown de verdade, ancorado no próprio wrapper. */
+    /* Wrapper de posicionamento uniforme para TODO item do menu (Institucional,
+       Acessibilidade, Comunica BR, Participe) — antes só "Institucional" tinha
+       um elemento div próprio (por causa do submenu aninhado), enquanto os demais
+       eram <a> soltos direto dentro da lista. Essa assimetria estrutural é
+       exatamente o padrão evitado pelo site oficial da Codevasf, cujo CSS
+       (li.link-item{position:relative}) trata QUALQUER item do "Acesso
+       Rápido" de forma idêntica, tenha ele submenu ou não. Replicado aqui:
+       .quick-links-item vira o wrapper universal, com .quick-links-group
+       mantida como classe adicional só no item que também abre submenu. */
+    .quick-links-item{position:relative;}
+    .quick-links-sub{padding-left:var(--sp3);border-left:2px solid var(--gray-10);margin:0 var(--sp2);}
+    .dd-target button.br-item[data-toggle="collapse"]{display:flex;align-items:center;width:100%;}
+    .dd-target button.br-item[data-toggle="collapse"] i{transition:transform .15s ease;}
+    .dd-target button.br-item[aria-expanded="true"] i{transform:rotate(180deg);}
+    .br-header{
+      background:var(--background);
+      /* Nem este bloco nem o header-bottom-wrap ficam sticky (ver abaixo) —
+         ao rolar a página, o cabeçalho institucional inteiro (logo,
+         atalhos, Entrar, título, busca) sai de cena normalmente. Só a
+         faixa de abas (#navigation, mais abaixo) permanece fixa: é
+         proposital, pedido explícito para toda largura de tela, não só
+         mobile — ao rolar, o que deve continuar visível é apenas
+         "Análise do Levantamento" / "Acompanhamento de Projetos". */
+      padding-top:var(--sp2);
+    }
+    body.contraste-alto .br-header{background:#000;}
+    .br-header .container-lg{
+      max-width:100%;margin:0 auto;
+      padding:0 16px;width:100%;
+    }
+    /* ── header-bottom-wrap (Título + Busca, itens 3/4 da Anatomia): vive
+       como irmão da tag header (ver comentário no HTML) só por herança da
+       v135 (quando ainda era sticky no mobile) — hoje não é mais sticky em
+       nenhuma largura, mas manter como irmão continua inofensivo e evita
+       reestruturar o HTML de novo. Sem box-shadow: a versão anterior tinha
+       um box-shadow aqui que, por causa do blur (--sh-level1 tem uma
+       camada "0 0 4px", que espalha em TODAS as direções, inclusive pra
+       cima), criava uma linha fantasma bem na costura com o header-top —
+       um "divisor" que nunca existiu no desenho original, onde os dois
+       blocos eram uma coisa só sem sombra interna. Removido. ── */
+    .header-bottom-wrap{
+      background:var(--background);
+      border-bottom:var(--w-lg) solid var(--cv-blue);
+      padding:var(--sp2) 0;
+    }
+    body.contraste-alto .header-bottom-wrap{background:#000;border-bottom-color:var(--gold-vivid-20);}
+    .header-bottom-wrap .container-lg{
+      max-width:100%;margin:0 auto;
+      padding:0 16px;width:100%;
+    }
+    /* Escala oficial de container-lg (Fundamento Grid gov.br DS), agora
+       confirmada diretamente pelo CSS computado real da página oficial
+       (--grid-breakpoint-lg-max-width:1200px; --grid-breakpoint-xl-max-width:
+       1560px — e não 1240px, como uma versão anterior deste arquivo havia
+       calculado por suposição (1280-40); o valor real do breakpoint
+       desktop é 1200px, confirmado também por --grid-desktop-maxwidth).
+       Antes este painel usava 1440px fixo, um valor fora da escala oficial
+       e sem variação por breakpoint. */
+    @media(min-width:1280px){
+      .br-header-topbar .container-lg,.br-header .container-lg,.header-bottom-wrap .container-lg{max-width:1200px;}
+    }
+    @media(min-width:1600px){
+      .br-header-topbar .container-lg,.br-header .container-lg,.header-bottom-wrap .container-lg{max-width:1560px;}
+    }
+    .br-header .header-top{
+      display:flex;justify-content:space-between;align-items:center;gap:var(--sp2);
+    }
+    .br-header .header-logo{
+      display:flex;align-items:center;gap:var(--sp3);flex:1 1 auto;min-width:0;
+    }
+    /* ── Logo Codevasf: imagem real do gov.br + fallback texto.
+       Área de proteção (Manual da Marca v.3, p.6): distância mínima
+       equivalente à altura do "g" da marca — aqui aproximada via
+       padding lateral, evitando que o br-divider/texto vizinho
+       "espremam" a marca. ── */
+    .br-header .logo-codevasf-wrap{
+      display:flex;align-items:center;flex-shrink:0;min-width:140px;
+      padding-right:6px;
+    }
+    .br-header .logo-codevasf{
+      height:auto;width:auto;display:block;
+      max-height:var(--hdr-logo-h-mob);max-width:200px;
+      object-fit:contain;flex-shrink:0;
+    }
+    .br-header .logo-fallback{
+      display:none;font-family:var(--font);font-weight:900;
+      font-size:22px;letter-spacing:.5px;color:var(--cv-blue);
+      background:linear-gradient(90deg,var(--cv-blue) 0 70%,var(--cv-green) 70% 100%);
+      -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .br-header .br-divider{
+      border-left:1px solid var(--gray-20);height:36px;flex-shrink:0;
+    }
+    /* ── Assinatura (item 2 da Anatomia do Header, gov.br DS): descreve uma
+       categoria SUPERIOR ao título — fica ao lado da logo, oculta no mobile
+       (Grid de 4 colunas) conforme recomendação explícita do DS. Restaurada
+       a pedido — mesmo com o nome do MIDR já aparecendo (pequeno, pouco
+       legível em telas baixas) dentro da imagem da assinatura conjunta, o
+       texto HTML aqui garante legibilidade e mantém o link para o site do
+       MDR. Sempre em exatas 2 linhas (.sign-line é 2 <span> fixos, não
+       depende de quebra automática por largura). ── */
+    .br-header .header-sign{
+      display:none;color:var(--gray-70);font-size:var(--fs-sm);font-weight:500;
+      line-height:1.3;min-width:0;max-width:230px;text-decoration:none;
+    }
+    .br-header .header-sign .sign-line{
+      display:block;white-space:nowrap;
+      /* Rede de segurança extra (inspirada no .nome-orgao do site oficial,
+         que usa -webkit-line-clamp:2 + overflow:hidden): se o header ficar
+         apertado o bastante para a assinatura não caber nos 230px de
+         max-width, cada linha agora trunca com reticências em vez de
+         vazar/colidir com o conteúdo vizinho. */
+      overflow:hidden;text-overflow:ellipsis;max-width:100%;
+    }
+    .br-header .header-sign:hover,.br-header .header-sign:focus-visible{
+      text-decoration:underline;color:var(--cv-blue);
+    }
+    body.contraste-alto .br-header .header-sign{color:#ffe9a8;}
+    .br-header .header-actions{
+      display:flex;align-items:center;gap:var(--sp2);justify-content:flex-end;
+      flex-wrap:wrap;flex-shrink:0;
+    }
+    /* Separadores (Anatomia 13, Obrigatório): agrupam Área para Links,
+       Área para Funcionalidades e a Ação de busca dentro de header-actions. */
+    .br-header .header-actions .br-divider.vertical{
+      width:1px;height:20px;background:var(--gray-10);flex-shrink:0;
+    }
+    /* ── Área para Links (Anatomia item 6) — atalhos institucionais,
+       posicionados ao lado da assinatura (header-logo), dentro do
+       header-actions. Por padrão recolhidos na Lista Dropdown (item 11,
+       acionador ellipsis-v); a partir de 1280px, conforme o CSS oficial
+       do componente (Comportamento 1, Responsividade), o acionador some
+       e a lista passa a ser exibida em linha — replicando o cabeçalho
+       oficial do site da Codevasf (gov.br/codevasf). ── */
+    @media(min-width:1280px){
+      .br-header .header-actions .header-links [data-toggle="dropdown"]{display:none;}
+      .br-header .header-actions .header-links .br-list{
+        position:static;display:flex;flex-wrap:nowrap;align-items:center;gap:var(--sp3);
+        box-shadow:none;border:none;background:none;min-width:0;overflow:visible;
+      }
+      .br-header .header-actions .header-links .br-list .header,
+      .br-header .header-actions .header-links .br-list .br-divider{display:none;}
+      /* Cada item vira flex item DE VERDADE aqui, de forma explícita — em vez
+         de contar com a "blockificação" automática que o CSS aplicaria de
+         qualquer forma a um elemento div solto dentro de um container flex. Essa
+         explicitação é o que faltava para o item "Institucional" (a única
+         elemento div com marcação aninhada, por causa do submenu) se comportar
+         exatamente como os itens vizinhos, que são só <a> simples — ambos
+         agora passam pela mesma regra .quick-links-item, sem depender de
+         comportamento implícito do motor de renderização. flex-shrink:0
+         replica o white-space:nowrap do site oficial: estes rótulos nunca
+         devem quebrar linha nem encolher dentro do header. */
+      .br-header .header-actions .header-links .quick-links-item{
+        display:flex;align-items:center;flex-shrink:0;
+      }
+      .br-header .header-actions .header-links .br-item{
+        padding:0;background:none;color:var(--cv-blue);
+        font:600 var(--fs-sm)/1 var(--font);white-space:nowrap;
+      }
+      .br-header .header-actions .header-links .quick-links-sub{
+        position:absolute;top:calc(100% + 10px);left:0;min-width:200px;
+        background:var(--pure-0);box-shadow:var(--sh-md);border-radius:var(--r-sm);
+        padding:var(--sp1) 0;z-index:10;display:flex;flex-direction:column;
+        border-left:none;margin:0;
+      }
+      .br-header .header-actions .header-links .quick-links-sub[hidden]{display:none;}
+      .br-header .header-actions .header-links .quick-links-sub .br-item{
+        padding:8px var(--sp3);font:400 var(--fs-sm)/1.3 var(--font);color:var(--interactive);
+      }
+      .br-header .header-actions .header-links .quick-links-sub .br-item:hover{
+        background:var(--blue-warm-vivid-5);
+      }
+    }
+    /* ── Área para Funcionalidades (Anatomia item 7) — Alto Contraste,
+       reposicionado para dentro do header (antes vivia numa barra
+       separada acima do header). Sem o modificador "inverted": aqui o
+       fundo é claro (var(--background)), não a faixa escura de antes. ── */
+    .br-header .header-actions .br-switch{flex-shrink:0;}
+    /* ══════════════════════════════════════════════════════════
+       MOBILE/TABLET (≤991.98px) — header-top compacto, 1 linha só
+       ══════════════════════════════════════════════════════════
+       Antes desta v135, abaixo de 576px o header-actions virava
+       width:100% + flex-wrap, o que empurrava "Entrar com gov.br"
+       para uma 3ª linha inteira (esticado, ocupando a largura toda) —
+       exatamente o problema relatado pelo usuário comparando com o
+       site oficial: lá, do lado da logo (bem menor) já vêm os ⋮, os
+       Atalhos gov.br e o Entrar, todos pequenos, numa linha só. É
+       isso que este bloco replica: encolhe a logo agressivamente,
+       força header-actions em nowrap (sem quebrar linha) e reduz o
+       padding dos botões — removendo de vez o width:100%/flex-wrap
+       que causava a 3ª linha. */
+    @media(max-width:991.98px){
+      /* Logo bem menor — replicando o "do lado da logo, que fica MUITO
+         menor" pedido pelo usuário. min-width:0 permite encolher além
+         dos 140px fixos usados no desktop. */
+      .br-header .logo-codevasf-wrap{min-width:0;padding-right:4px;}
+      .br-header .logo-codevasf{max-height:22px;max-width:112px;}
+      .br-header .header-logo .br-divider{height:22px;}
+      /* header-top nunca mais quebra linha nesta faixa — tudo (logo + ⋮ +
+         Atalhos gov.br + Entrar) cabe numa única linha compacta. */
+      .br-header .header-top{flex-wrap:nowrap;}
+      .br-header .header-actions{flex-wrap:nowrap;justify-content:flex-end;gap:6px;}
+      .br-header .header-actions .br-divider.vertical{display:none;}
+      /* Atalhos gov.br: só o ícone aparece nesta faixa (rótulo já se
+         escondia via .govbr-shortcuts-label acima) — padding reduzido
+         para o pill ficar compacto, do tamanho de um botão circular. */
+      .br-header .header-functions .govbr-shortcuts-btn{padding:6px 10px;}
+      /* Entrar com gov.br: nunca esticar. Isso substitui o comportamento
+         antigo (width:100% herdado do header-actions) que fazia esse
+         botão ocupar a tela inteira numa linha própria. */
+      .br-header .br-sign-in{flex-shrink:0;padding:0 var(--sp2);font-size:var(--fs-sm);}
+      /* Os acionadores de dropdown (Atalhos institucionais, Atalhos gov.br)
+         ficam coladas à borda esquerda da tela. O .dd-target deles, porém,
+         segue herdando right:0 da regra base — pensada para o caso em que a
+         linha de ações fica à direita do header (≥576px). Abrir para a
+         esquerda nesse contexto empurra o menu inteiro para fora da
+         viewport (era exatamente o bug visto no celular: cabeçalho e menus
+         "desconfigurados", com texto cortado na borda esquerda). Abaixo,
+         invertemos a ancoragem só para os dropdowns dentro de
+         header-actions, que passam a abrir para a direita a partir do
+         próprio acionador, permanecendo dentro da tela. */
+      .br-header .header-actions .dd-target{left:0;right:auto;}
+    }
+    /* Campo de Busca (Anatomia 10) — Comportamento 3: ao acionar o ícone de
+       lupa, o input substitui temporariamente a área de ações, ocupando
+       toda a largura do cabeçalho; um botão circular "fechar" devolve o
+       header ao estado anterior. */
+    .header-bottom-wrap .header-search{
+      display:none;align-items:center;gap:var(--sp2);
+      padding:0 0 var(--sp2);
+    }
+    .header-bottom-wrap .header-search.active{display:flex;}
+    .header-bottom-wrap .header-search .br-input{flex:1;position:relative;display:flex;align-items:center;}
+    .header-bottom-wrap .header-search .br-input label{position:absolute;left:-9999px;}
+    .header-bottom-wrap .header-search .br-input input{
+      width:100%;height:40px;border:1px solid var(--gray-40);border-radius:var(--r-sm);
+      background:var(--pure-0);padding:0 44px 0 var(--sp2);font:400 13px var(--font);
+    }
+    .header-bottom-wrap .header-search .br-input input:focus{border-color:var(--interactive);background:var(--blue-warm-vivid-5);outline:none;}
+    .header-bottom-wrap .header-search .br-input .br-button{position:absolute;right:4px;top:50%;transform:translateY(-50%);}
+    @media(min-width:576px){
+      /* Breakpoint alinhado ao "Comportamento 3 (Busca)" do gov.br DS citado
+         acima (telas largas = input comum; telas estreitas = ícone), que usa
+         o mesmo corte de "tablet portrait" (576px) do restante do Fundamento
+         Grid do DS — antes este bloco usava 769px (copiado do breakpoint de
+         grade de KPIs/conteúdo do painel), o que deixava a busca em modo
+         "ícone" numa faixa (576–768px) onde ela já caberia inline. Se em
+         algum tablet específico isso apertar .header-actions, o flex-wrap já
+         definido nele absorve o excesso quebrando para uma 2ª linha, em vez
+         de vazar a viewport (e agora há overflow-x:hidden no body como
+         reforço). */
+      .header-bottom-wrap .header-search-trigger{display:none;}
+      .header-bottom-wrap .header-search{display:flex;padding:0;max-width:320px;margin-left:auto;}
+    }
+    /* ── Header-bottom / header-menu / header-title (itens 3 e 4 da Anatomia):
+       o Título é o ÚNICO elemento obrigatório do componente Header — por isso
+       fica em um bloco estruturalmente separado de logo/assinatura/ações,
+       reproduzindo .header-bottom > .header-menu > .header-info do DS. ── */
+    .header-bottom-wrap .header-bottom{
+      display:flex;justify-content:space-between;align-items:center;
+      gap:var(--sp2);
+    }
+    .header-bottom-wrap .header-menu{display:flex;align-items:flex-start;flex:1;min-width:0;}
+    .header-bottom-wrap .header-menu-trigger{margin-right:var(--sp2);margin-top:2px;flex-shrink:0;}
+    .header-bottom-wrap .header-info{min-width:0;}
+    .header-bottom-wrap .header-title{
+      color:var(--color);font-weight:700;
+      /* Sem text-transform:uppercase — o texto já é escrito com iniciais
+         maiúsculas e o resto minúsculo ("Companhia de Desenvolvimento dos
+         Vales..."), então a caixa alta forçada aqui era redundante e
+         deixava tudo em maiúsculas, contra o padrão pedido. */
+      font-size:var(--fs-base);line-height:1.25;letter-spacing:.2px;
+      /* Especificação Header > Título > Quantidade de Caracteres: até 2
+         linhas; acima disso, truncar com elipse. */
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .header-bottom-wrap .header-subtitle{
+      display:none;color:var(--gray-70);font-weight:500;
+      /* Especificação pede text-transform:lowercase, mas o subtítulo aqui
+         contém a sigla "(PTD)" — minúsculo ficaria "(ptd)", quebrando a
+         legibilidade da sigla institucional. Mantido em caixa normal. */
+      font-size:var(--fs-sm);line-height:1.3;margin-top:2px;
+    }
+
+    /* ── NOTA DE ESPAÇAMENTO: valores como 6px, 10px, 12px, 14px e 18px nos
+       componentes abaixo são micro-ajustes dentro do espírito da "Escala de
+       Ajuste" (4px–44px em incrementos de 4px) descrita no Fundamento
+       Espaçamento do gov.br DS. São usados exclusivamente em textos, ícones
+       e espaçamentos finos de componentes (gap de tags, padding de botões
+       pequenos, padding de células de tabela), onde o próprio documento
+       autoriza incrementos menores que a Escala Layout. ── */
+
+    /* ── br-tag ── */
+    .br-tag{display:inline-flex;align-items:center;gap:4px;
+      padding:4px 12px;border-radius:var(--r-sm);border:none;
+      font:500 var(--fs-sm)/1 var(--font);white-space:nowrap;}
+    .br-tag.info{background:var(--blue-warm-vivid-5);color:var(--blue-warm-vivid-70);}
+    .br-tag.success{background:var(--green-cool-vivid-5);color:var(--green-cool-vivid-70);}
+
+    /* ── br-button ── */
+    .br-button{display:inline-flex;align-items:center;gap:6px;
+      padding:8px 16px;border-radius:var(--r-pill); /* DS: --button-radius:100em (pílula) — alinhado ao .br-sign-in, que já usava 100em */
+      border:none;cursor:pointer;
+      font:700 var(--fs-base)/1 var(--font);
+      transition:background var(--dur-fast) var(--ease),transform var(--dur-vfast) var(--ease);white-space:nowrap;}
+    .br-button.primary{background:var(--interactive);color:var(--pure-0);}
+    .br-button.primary:hover{background:var(--blue-warm-vivid-60);}
+    .br-button.primary:active{transform:scale(.97);}
+    .br-button:disabled{background:var(--gray-40);cursor:not-allowed;opacity:var(--op-lg);}
+    /* variante circle + small, usada como acionador de dropdown (botão "⋮")
+       Padrão oficial gov.br: botão circular sem ênfase (nem primary nem
+       secondary) é transparente por padrão — só o ícone, sem nenhuma bola
+       visível — e ganha um círculo claro de destaque somente no hover/
+       foco. .circle.primary/.circle.secondary abaixo restauram o fundo
+       correto quando o botão TEM ênfase (sem eles, "circle primary"
+       ficava cinza em vez de azul, porque a regra base de .circle vinha
+       depois de .primary no CSS e ganhava por ter a mesma especificidade
+       — usar :not() aqui foi tentado e descartado: inflava a
+       especificidade a ponto de vencer até a regra .br-header mais
+       específica, deixando os ícones do header cinzas por engano). */
+    .br-button.circle{border-radius:50%;padding:0;width:36px;height:36px;
+      justify-content:center;background:transparent;color:var(--gray-70);border:none;}
+    .br-button.circle.large{width:56px;height:56px;font-size:20px;}
+    .br-button.circle:hover{background:var(--blue-warm-vivid-5);}
+    .br-button.circle.primary{background:var(--interactive);border:none;color:var(--pure-0);}
+    /* NOTA: os botões flutuantes reais (voltar ao topo / reportar erro) usam
+       as classes .BackToTop-module e .report-error-btn, definidas mais abaixo
+       junto da marcação — cada uma já com seu próprio ajuste de posição em
+       @media(max-width:575px) para não se sobreporem no celular. (Removido
+       aqui um bloco .fab-back-top/.fab-report-error que não correspondia a
+       nenhum elemento do HTML — CSS morto de uma nomenclatura anterior.) */
+    .br-button.circle.primary:hover{background:var(--blue-warm-vivid-60);}
+    .br-button.circle.secondary{background:var(--gray-2);color:var(--gray-80);border:var(--w-sm) solid var(--gray-20);}
+    .br-button.circle.secondary:hover{background:var(--gray-5);}
+    .br-button.circle.small{width:32px;height:32px;font-size:13px;}
+    .br-button.circle[aria-expanded="true"]{background:var(--blue-warm-vivid-5);color:var(--interactive);}
+    /* ── DROPDOWN (data-toggle="dropdown"), conforme Utilitário JS gov.br DS ── */
+    .dropdown-wrap{position:relative;display:inline-flex;}
+    /* z-index acima de #navigation (z:calc(--z-layer-3 - 1) = 2999): antes
+       usava --z-layer-2 (2000), mais baixo que a faixa de abas sticky —
+       qualquer dropdown (Institucional, Atalhos gov.br, Alertas
+       operacionais) que abrisse perto do título/abas no mobile renderizava
+       POR BAIXO deles, com o conteúdo cortado visualmente. */
+    .dd-target{position:absolute;top:calc(100% + 6px);right:0;z-index:calc(var(--z-layer-3) + 10);
+      min-width:220px;max-width:calc(100vw - 32px);background:var(--pure-0);border:var(--w-sm) solid var(--gray-10);
+      border-radius:var(--r-md);box-shadow:var(--sh-level4);overflow:hidden;}
+    .dd-target[hidden]{display:none;}
+    .dd-target .header{padding:10px 14px;}
+    .dd-target .br-divider{display:block;border:0;border-top:1px solid var(--gray-5);margin:0;}
+    .dd-target .title{font:700 11px/1 var(--font);text-transform:uppercase;letter-spacing:1px;color:var(--gray-70);}
+    .dd-target .br-item{display:flex;align-items:center;gap:10px;width:100%;
+      padding:var(--sp1) var(--sp2);border:none;background:none;cursor:pointer;text-align:left;
+      font:400 13px/1.3 var(--font);color:var(--gray-80);text-decoration:none;
+      position:relative;transition:background var(--dur-fast) var(--ease);}
+    .dd-target .br-item:hover,.dd-target .br-item:focus-visible{background:var(--gray-2);color:var(--interactive);}
+    /* Estado foco do Item (gov.br DS): outline com offset NEGATIVO
+       (--focus-offset: calc(--focus-width * -1) no CSS oficial) — essencial
+       aqui porque o dd-target usa overflow:hidden e um outline para fora
+       seria cortado nas bordas do menu. */
+    .dd-target .br-item:focus-visible{
+      outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:calc(var(--focus-width-field) * -1);
+    }
+    .dd-target .br-item i{width:14px;height:16px;text-align:center;color:var(--gray-40);flex-shrink:0;}
+    .dd-target .br-item.switch-item{cursor:default;}
+    .dd-target .br-item.switch-item:hover{background:none;}
+    .dd-target .br-item.switch-item .br-switch{width:100%;}
+    .dd-target .br-item.switch-item .br-switch label{font-size:13px;color:var(--gray-80);}
+
+    /* ── NOTIFICATION (br-notification) — central de alertas operacionais:
+       prazo vencido e risco alto, calculados a partir dos dados já
+       carregados do Controle_PTD. Este painel não tem conceito de
+       usuário logado, então a "Área do Usuário" da Anatomia foi adaptada
+       para um título neutro ("Alertas operacionais"), mantendo o Botão
+       Fechar no mesmo lugar documentado. Sombra Camada 2
+       (--surface-shadow-md → --sh-md). Largura 380px é uma adaptação —
+       o CSS oficial usa 50vw, pensado para uma central de notificações
+       de portal inteiro; nesta central, menor e objetiva, 50vw ficaria
+       desproporcional. ── */
+    .has-badge{position:relative;}
+    .notif-badge{position:absolute;top:0;right:0;min-width:15px;height:15px;
+      padding:0 3px;border-radius:50%;background:var(--red-vivid-50);color:var(--pure-0);
+      font:700 9px/15px var(--font);text-align:center;}
+    .br-notification{width:380px;max-width:90vw;max-height:480px;overflow:hidden;
+      display:flex;flex-direction:column;box-shadow:var(--sh-md);}
+    .br-notification .notification-header{display:flex;align-items:center;
+      justify-content:space-between;gap:var(--sp2);
+      padding:var(--sp2) var(--sp3);border-bottom:1px solid var(--gray-10);flex-shrink:0;}
+    .br-notification .notification-header .text-bold{font:700 13px/1.3 var(--font);color:var(--gray-80);}
+    @media(min-width:992px){
+      /* Botão Fechar é obrigatório só na grid de 4 colunas — em telas
+         maiores o fechamento natural é clicar fora, já tratado pelo
+         utilitário de dropdown reaproveitado aqui. */
+      .br-notification .notification-header .close{display:none;}
+    }
+    .br-notification .notification-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+    .br-notification .br-tab{flex:1;min-height:0;display:flex;flex-direction:column;}
+    .br-notification .tab-nav{flex-shrink:0;}
+    .br-notification .tab-nav ul{display:flex;list-style:none;margin:0;padding:0;
+      border-bottom:1px solid var(--gray-20);flex-shrink:0;}
+    .br-notification .tab-nav .tab-item{flex:1;}
+    .br-notification .tab-nav button{width:100%;display:flex;align-items:center;
+      justify-content:center;gap:6px;padding:var(--sp2);border:none;background:none;
+      cursor:pointer;font:600 12px/1 var(--font);color:var(--gray-70);
+      border-bottom:2px solid transparent;}
+    .br-notification .tab-nav .tab-item.active button{color:var(--interactive);border-bottom-color:var(--interactive);}
+    .br-notification .tab-count{background:var(--gray-10);color:var(--gray-70);
+      border-radius:var(--r-pill);padding:1px 6px;font-size:10px;}
+    .br-notification .tab-nav .tab-item.active .tab-count{background:var(--blue-warm-vivid-10);color:var(--blue-warm-vivid-70);}
+    .br-notification .tab-content{flex:1;min-height:0;overflow-y:auto;}
+    .br-notification .tab-panel[hidden]{display:none;}
+    .br-notification .br-list{background:none;}
+    /* Componente Item (Anatomia item 4) + Divider (item 5, obrigatório —
+       reaproveita o mesmo <span class="br-divider"> entre itens já
+       usado no dropdown "Mais ações"). */
+    .br-notification .br-item{display:flex;flex-direction:column;align-items:flex-start;
+      gap:3px;width:100%;padding:var(--sp2) var(--sp3);border:none;background:none;
+      cursor:pointer;text-align:left;color:var(--gray-80);}
+    .br-notification .br-item:hover,.br-notification .br-item:focus-visible{background:var(--gray-2);}
+    .br-notification .br-item .text-bold{font-weight:700;font-size:13px;}
+    .br-notification .br-item .text-medium{font-weight:500;font-size:11px;color:var(--gray-70);}
+    .br-notification .br-item .item-sub{font-size:11px;color:var(--gray-70);}
+    .br-notification .empty-state{padding:var(--sp4);text-align:center;color:var(--gray-70);font-size:12px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--sp1);}
+    .br-notification .empty-state i{font-size:22px;color:var(--green-cool-vivid-50);}
+    /* ── EMPTY STATE de tabela (Padrão: Empty States) — Título e Corpo
+       da Mensagem obrigatórios; Ação (Limpar busca/filtros) só aparece
+       quando a ausência de dados foi causada por uma busca/filtro do
+       usuário (Tipo 2: "Ausência de Dados por Ação do Usuário"), não
+       quando a planilha simplesmente ainda não tem respostas (Tipo 1:
+       "Ausência de Dados"). ── */
+    .tbl-empty{padding:var(--sp5) var(--sp3);text-align:center;}
+    .tbl-empty strong{display:block;font-size:14px;color:var(--gray-80);margin-bottom:6px;}
+    .tbl-empty p{margin:0 0 var(--sp2);color:var(--gray-70);font-size:13px;}
+    .tbl-empty .br-button{margin-top:4px;}
+    .br-tag.danger{background:var(--red-vivid-10);color:var(--red-vivid-50);}
+    .br-tag.small{padding:2px 8px;font-size:10px;}
+    /* ── SCRIM (br-scrim), Tipo Foco — "mudança de foco entre um elemento
+       e outro". Cor #000000, opacidade 40% exatos da spec (o token
+       --op-md, ~45%, usado antes, era uma aproximação). Unifica o que
+       antes eram duas classes não-oficiais (.br-scrim-util do modal de
+       detalhes e .cookie-scrim do aviso de cookies) numa só, conforme
+       Anatomia: "a classe br-scrim é obrigatória e seu uso deve estar
+       associado com um tipo de scrim" (aqui, foco). ── */
+    .br-scrim.foco{position:fixed;inset:0;z-index:var(--z-layer-4);
+      background:rgba(0,0,0,.4);
+      display:flex;align-items:center;justify-content:center;padding:var(--sp3);}
+    .br-scrim.foco[hidden]{display:none;}
+    /* .br-modal é a própria superfície (Anatomia item 1) — não um wrapper.
+       Tamanhos oficiais (Códigos > CSS): xsmall 220px, small 300px,
+       medium 500px (padrão), large 640px, auto. Sombra: o CSS oficial
+       shipado usa --surface-shadow-sm (mapeado aqui para --sh-sm); a
+       tabela de Especificações deste componente diz --shadow-xl — as
+       duas fontes oficiais divergem entre si. Segui o CSS real (sh-sm,
+       mais discreta) em vez da tabela, por ser o que de fato renderiza;
+       se preferir o efeito mais dramático da tabela, troque para --sh-md. */
+    .br-modal{--modal-size:var(--modal-medium);
+      --modal-xsmall:220px;--modal-small:300px;--modal-medium:500px;
+      --modal-large:640px;--modal-auto:auto;
+      width:100%;max-width:var(--modal-size);
+      background:var(--pure-0);box-shadow:var(--sh-sm);
+      display:flex;flex-direction:column;max-height:90vh;
+      border-radius:var(--r-lg);z-index:var(--z-layer-4);
+      animation:scrimIn var(--dur-fast) var(--ease);}
+    @keyframes scrimIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .br-modal.xsmall{--modal-size:var(--modal-xsmall);}
+    .br-modal.small{--modal-size:var(--modal-small);}
+    .br-modal.medium{--modal-size:var(--modal-medium);}
+    .br-modal.large{--modal-size:var(--modal-large);}
+    .br-modal.auto{--modal-size:var(--modal-auto);}
+    .br-modal-header{position:relative;flex-shrink:0;
+      padding:var(--sp2) var(--sp2) 0;}
+    /* .modal-title (não .br-modal-title — esse é o nome oficial da classe,
+       "Propriedades adicionais: class modal-title — título com limite de
+       2 linhas"). margin-right abre espaço para o botão fechar absoluto.
+       O CSS oficial usa só text-overflow:ellipsis sem -webkit-line-clamp,
+       o que não chega a truncar texto de múltiplas linhas com "…" nos
+       navegadores atuais — mantive a técnica oficial e adicionei
+       line-clamp por cima, para o "…" funcionar de fato. */
+    .br-modal .modal-title{margin:0 40px 0 0;font:700 var(--fs-md)/1.3 var(--font);
+      color:var(--gray-80);max-height:calc(var(--fs-md) * 1.3 * 3);overflow:hidden;
+      text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
+    .br-modal-header .close{position:absolute;right:var(--sp1);top:var(--sp1);}
+    .br-modal-body{flex:1;min-height:0;margin:var(--sp3) 0 var(--sp2);
+      padding:0 var(--sp2);overflow:auto;color:var(--gray-80);font-size:13px;line-height:1.6;}
+    .br-modal-body::-webkit-scrollbar{height:var(--sp1);width:var(--sp1);}
+    .br-modal-body::-webkit-scrollbar-track{background:var(--gray-10);}
+    .br-modal-body::-webkit-scrollbar-thumb{background:var(--gray-30);}
+    .br-modal-body:hover::-webkit-scrollbar-thumb{background:var(--gray-40);}
+    .a11y-statement h2{font:700 14px/1.3 var(--font);color:var(--gray-80);margin:var(--sp3) 0 var(--sp1);}
+    .a11y-statement h2:first-child{margin-top:0;}
+    .a11y-statement p{margin:0 0 var(--sp2);}
+    .a11y-statement ul{margin:0;padding-left:var(--sp3);}
+    .a11y-statement li{margin-bottom:6px;color:var(--gray-70);}
+    /* ── ONBOARDING (Padrão: Onboarding), Tipo Ênfase Textual — tour de
+       apresentação vinculado ao botão "Como usar este painel". Reusa o
+       Scrim Foco já implementado como Superfície Overlay (a spec pede
+       uma opacidade dedicada, --surface-opacity-md, sem valor exato
+       documentado; 40% do Foco fica razoavelmente próximo). ── */
+    .br-onboarding{background:var(--pure-0);border-radius:var(--r-lg);
+      box-shadow:var(--sh-md);width:100%;max-width:380px;
+      display:flex;flex-direction:column;overflow:hidden;}
+    .ob-carousel .carousel-stage{overflow:hidden;position:relative;}
+    .ob-page{display:none;padding:var(--sp5) var(--sp4) var(--sp3);text-align:center;}
+    .ob-page.active{display:block;}
+    .ob-illus{width:64px;height:64px;margin:0 auto var(--sp3);border-radius:50%;
+      background:linear-gradient(135deg,var(--blue-warm-vivid-5),var(--green-cool-vivid-5));
+      display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--blue-warm-vivid-70);}
+    .ob-title{margin:0 0 var(--sp2);font:700 18px/1.3 var(--font);color:var(--gray-80);}
+    .ob-text{margin:0 0 var(--sp3);font-size:13px;line-height:1.6;color:var(--gray-70);text-align:left;}
+    .ob-page .br-button{margin-top:var(--sp1);}
+    .ob-nav{display:flex;align-items:center;justify-content:center;gap:var(--sp3);
+      padding:0 var(--sp4) var(--sp3);}
+    .ob-step{font:700 12px/1 var(--font);color:var(--gray-70);min-width:72px;text-align:center;}
+    .ob-foot{display:flex;align-items:center;justify-content:center;gap:var(--sp2);
+      padding:var(--sp2) var(--sp4);border-top:1px solid var(--gray-10);
+      background:var(--gray-2);flex-wrap:wrap;}
+    .ob-foot .br-checkbox label{font-size:11px;}
+    .ob-skip{font:700 12px/1 var(--font);color:var(--gray-70);text-decoration:underline;
+      white-space:nowrap;cursor:pointer;}
+    .ob-skip:hover,.ob-skip:focus{color:var(--blue-warm-vivid-70);}
+    /* Por padrão, à direita (Especificações: "botões devem ser alinhados
+       por padrão à direita"); .justify-content-center é a exceção
+       documentada para quando só há uma ação proposta. */
+    .br-modal-footer{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+      justify-content:flex-end;padding:var(--sp2);flex-shrink:0;}
+    .br-modal-footer.justify-content-center{justify-content:center;}
+    /* Segunda exceção documentada ao alinhamento padrão à direita: no
+       modal de Configurações avançadas de cookies, "Rejeitar cookies" e
+       "Salvar" ficam em extremos opostos — mesmo arranjo do componente
+       oficial gov.br (ver referência anexada pelo usuário). */
+    .br-modal-footer.justify-content-between{justify-content:space-between;}
+    /* ── Configurações avançadas de cookies — categorias com toggle
+       bloqueado (cadeado), replicando visualmente "Cookies estritamente
+       necessários" do componente oficial. Ver justificativa de conteúdo
+       no comentário HTML do próprio modal (#cookieSettingsScrim). ── */
+    .cookie-settings-intro{color:var(--gray-70);font-size:var(--fs-sm);
+      line-height:1.6;margin:0 0 var(--sp3);}
+    .cookie-cat{padding:var(--sp3) 0;border-top:1px solid var(--gray-10);}
+    .cookie-cat:first-of-type{border-top:none;padding-top:0;}
+    .cookie-cat-hd{display:flex;align-items:center;justify-content:space-between;
+      gap:var(--sp2);margin-bottom:var(--sp1);}
+    .cookie-cat-title{font:700 var(--fs-base)/1.3 var(--font);color:var(--gray-80);}
+    .cookie-cat-state{display:flex;align-items:center;gap:var(--sp1);flex-shrink:0;}
+    .cookie-cat-label{font-size:11px;font-weight:700;color:var(--gray-70);
+      text-transform:uppercase;letter-spacing:.5px;}
+    .cookie-cat p{margin:0;font-size:var(--fs-sm);color:var(--gray-70);line-height:1.6;}
+    .cookie-cat code{background:var(--gray-5);border-radius:3px;padding:1px 5px;
+      font-size:12px;color:var(--gray-80);}
+    .br-switch.locked input + label{cursor:not-allowed;}
+    .br-switch.locked input + label::after{
+      /* Ícone gerado via CSS content (em vez de <i class="fas ...">) — único
+         lugar do arquivo que faz isso. "Font Awesome 6 Free" é a família
+         carregada de fato (ver <link> no <head>, confirmado contra o CSS
+         computado real da página oficial); "5 Free" fica como fallback
+         apenas por precaução. Se um dia a versão do Font Awesome mudar e o
+         glifo \f023 parar de aparecer, migrar este ::after para um
+         <i class="fas fa-lock"> real dentro do <label>, como o resto do
+         painel já faz. */
+      content:"\f023";font-family:"Font Awesome 6 Free","Font Awesome 5 Free";font-weight:900;
+      font-size:9px;color:var(--pure-0);display:inline-flex;
+      align-items:center;justify-content:center;}
+    /* ── BREADCRUMB (br-breadcrumb), conforme Componente gov.br DS ──
+       Adaptado ao contexto do modal de detalhes: aqui não há "páginas"
+       reais para navegar (não é uma trilha entre URLs), então o botão
+       Home e o item de aba são <span> não-interativos (aria-hidden no
+       Home, que é puramente decorativo/contextual) em vez de <a> — um
+       link que não leva a lugar nenhum seria confuso, não apenas
+       inadequado. O valor do componente aqui é comunicar a localização/
+       contexto atual (painel > aba > serviço), função que o próprio
+       documento reconhece como válida ("função semelhante a uma barra
+       de progresso" em fluxos sem hierarquia de páginas tradicional). */
+    .br-breadcrumb{display:flex;font-size:11px;font-weight:500;
+      margin-bottom:var(--sp3);}
+    .br-breadcrumb .crumb-list{display:flex;align-items:center;list-style:none;
+      margin:0;padding:0;overflow-x:auto;gap:2px;}
+    .br-breadcrumb .crumb{display:flex;align-items:center;gap:6px;white-space:nowrap;}
+    .br-breadcrumb .crumb .icon{color:var(--gray-20);font-size:10px;}
+    .br-breadcrumb .crumb.home .br-button{width:22px;height:22px;
+      background:var(--blue-warm-vivid-5);color:var(--blue-warm-vivid-70);
+      border:none;cursor:pointer;}
+    .br-breadcrumb .crumb.home .br-button:hover,
+    .br-breadcrumb .crumb.home .br-button:focus-visible{background:var(--blue-warm-vivid-10);}
+    .br-breadcrumb .crumb span,.br-breadcrumb .crumb .crumb-link{color:var(--blue-warm-vivid-70);
+      text-transform:uppercase;letter-spacing:.3px;}
+    .br-breadcrumb .crumb .crumb-link{background:none;border:none;padding:0;
+      font:inherit;cursor:pointer;}
+    .br-breadcrumb .crumb .crumb-link:hover,
+    .br-breadcrumb .crumb .crumb-link:focus-visible{text-decoration:underline;}
+    .br-breadcrumb .crumb[data-active="active"] span{color:var(--gray-80);font-weight:700;}
+    .br-button.secondary{background:var(--gray-2);color:var(--gray-80);border:var(--w-sm) solid var(--gray-20);}
+    .br-button.secondary:hover{background:var(--gray-5);}
+    /* Detalhes do serviço no modal: lista de campo/valor */
+    .detail-row{display:grid;grid-template-columns:160px 1fr;gap:var(--sp2);
+      padding:8px 0;border-bottom:1px solid var(--gray-5);}
+    .detail-row:last-child{border-bottom:none;}
+    /* ── COOKIEBAR (simplificado), conforme Componente gov.br DS ──
+       Faixa fixa na base da tela, sombra voltada para cima (--surface-
+       shadow-xl-up no documento oficial; aproximamos com --sh-level4
+       invertido), botão primário mais à direita (maior ênfase),
+       conforme especificação de alinhamento "Botão primário e
+       secundário: --spacing-horizontal-right". */
+    .br-cookiebar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-layer-4);
+      background:var(--pure-0);border-top:1px solid var(--gray-10);
+      box-shadow:var(--sh-level4-up);
+      display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp3);
+      padding:var(--sp3) var(--sp4);}
+    .br-cookiebar.d-none{display:none;}
+    .cn-text{flex:1 1 480px;font-size:13px;line-height:1.6;color:var(--gray-80);}
+    .cn-actions{display:flex;gap:10px;flex-shrink:0;margin-left:auto;}
+    .cn-details{flex-basis:100%;border-top:1px solid var(--gray-5);
+      padding-top:var(--sp2);margin-top:var(--sp-half);}
+    .cn-details[hidden]{display:none;}
+    .cn-details ul{margin:0;padding-left:var(--sp3);font-size:12px;color:var(--gray-70);line-height:1.7;}
+    @media(max-width:575px){
+      .br-cookiebar{flex-direction:column;align-items:stretch;}
+      .cn-actions{margin-left:0;flex-direction:column;}
+      .cn-actions .br-button{width:100%;justify-content:center;}
+    }
+    /* ── Voltar ao topo + Reportar erro: botões flutuantes fixos nos
+       cantos inferiores, replicando o padrão visual oficial (círculo
+       primary grande). z-layer-3 — abaixo dos scrims/modais (layer-4),
+       acima do conteúdo normal da página. ── */
+    .BackToTop-module{position:fixed;right:24px;bottom:24px;z-index:var(--z-layer-3);}
+    #btnBackToTop{box-shadow:var(--sh-md);}
+    #btnBackToTop[hidden]{display:none;}
+    .report-error-btn{position:fixed;left:24px;bottom:24px;z-index:var(--z-layer-3);
+      box-shadow:var(--sh-md);}
+    @media(max-width:575px){
+      /* Em telas pequenas os dois botões ficam empilhados na mesma borda,
+         para não disputar espaço com o conteúdo nem um com o outro. */
+      .report-error-btn{left:auto;right:24px;bottom:84px;}
+    }
+    .report-error-shot{margin-top:var(--sp3);padding:var(--sp2);background:var(--gray-2);
+      border-radius:var(--r-sm);text-align:center;}
+    .report-error-shot-status{font-size:13px;color:var(--gray-70);margin:0 0 var(--sp1);}
+    .report-error-shot img{max-width:100%;max-height:220px;border:1px solid var(--gray-10);
+      border-radius:var(--r-sm);display:block;margin:0 auto var(--sp2);}
+    .report-error-shot [hidden]{display:none;}
+    .detail-row dt{font-weight:700;color:var(--gray-70);font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
+    .detail-row dd{margin:0;color:var(--gray-80);}
+    .tbl-row-clickable{cursor:pointer;}
+    .tbl-row-clickable:hover{background:var(--blue-warm-vivid-5);}
+    .tbl-row-clickable:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);outline-offset:var(--focus-offset-field);}
+    /* ── TOOLTIP (data-tooltip-text), conforme Componente Tooltip do
+       gov.br DS. Na v3.7.0 (usada de base nesta revisão) o componente
+       estava marcado como Obsoleto/Depreciado, com Popper.js como
+       dependência externa. Verificação cruzada com os artefatos da
+       v4.0.0-next.30 (enviados para conferência): o Tooltip deixou de
+       ser depreciado — foi redesenhado mais simples (Anatomia agora é
+       só Superfície + Título opcional + Conteúdo; o tipo Popover saiu
+       do componente) — e a documentação da v4 não cita mais Popper.js
+       como dependência. Isso reforça, com uma fonte mais nova, a
+       decisão original deste painel de implementar em CSS+JS vanilla
+       em vez de carregar o vendor: nossos tooltips ficam em elementos
+       de posição previsível (cabeçalhos no topo da tela, rótulos de
+       KPI), sem necessidade de detecção de colisão com bordas da tela.
+       Webcomponents da v4 constam como "Em progresso" nos artefatos —
+       não há ainda um HTML/CSS oficial publicado para copiar, então
+       os ajustes abaixo seguem a orientação de comportamento da nova
+       diretriz (Saiba Mais > Comportamentos), não um padrão de código.
+       IMPORTANTE: o texto é renderizado como elemento real no DOM (não via
+       ::after/content:attr()), associado ao acionador via aria-describedby —
+       texto gerado puramente em CSS é tipicamente invisível para leitores de
+       tela, então essa escolha é necessária para a acessibilidade real do
+       componente, não apenas estética. ── */
+    [data-tooltip-text]{position:relative;cursor:help;}
+    .tt-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;--tt-dx:0px;
+      transform:translateX(calc(-50% + var(--tt-dx))) translateY(4px);
+      background:var(--blue-warm-vivid-90);color:var(--pure-0);
+      font:400 11px/1.4 var(--font);white-space:normal;width:max-content;max-width:256px;
+      padding:7px 10px;border-radius:var(--r-sm);box-shadow:var(--sh-level1);
+      z-index:var(--z-layer-2);opacity:0;visibility:hidden;
+      transition:opacity var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease);
+      pointer-events:none;text-transform:none;letter-spacing:normal;font-weight:400;}
+    .tt-bubble::after{content:'';position:absolute;top:100%;left:50%;
+      transform:translateX(calc(-50% - var(--tt-dx)));border:5px solid transparent;
+      border-top-color:var(--blue-warm-vivid-90);}
+    .tt-bubble.is-visible{opacity:1;visibility:visible;transform:translateX(calc(-50% + var(--tt-dx))) translateY(0);}
+    /* variante place="bottom": tooltip abre para baixo do elemento (usado em
+       cabeçalhos de tabela, onde não há espaço acima por estarem no topo) */
+    [data-tooltip-place="bottom"] .tt-bubble{bottom:auto;top:calc(100% + 8px);
+      transform:translateX(calc(-50% + var(--tt-dx))) translateY(-4px);}
+    [data-tooltip-place="bottom"] .tt-bubble::after{top:auto;bottom:100%;
+      border-top-color:transparent;border-bottom-color:var(--blue-warm-vivid-90);}
+    [data-tooltip-place="bottom"] .tt-bubble.is-visible{transform:translateX(calc(-50% + var(--tt-dx))) translateY(0);}
+    .br-table th button[data-tooltip-text]{text-decoration:underline dotted var(--gray-40);text-underline-offset:3px;cursor:pointer;}
+    .kpi-lbl[data-tooltip-text]{border-bottom:1px dotted var(--gray-40);display:inline-block;}
+    /* spin/pulse: duração própria de ciclo de loop contínuo (indicador
+       "ao vivo"), não mapeada à escala --duration-* do DS — essa escala é
+       pensada para transições de entrada/saída, não para o ritmo visual
+       de uma animação cíclica de estado. */
+
+    /* ── br-tab ── */
+    .br-tab{background:var(--pure-0);
+      border-bottom:1px solid var(--gray-10);
+      box-shadow:0 2px 4px rgba(0,0,0,.04);}
+    /* Sticky só na navegação principal da página (#navigation). A mesma
+       classe .br-tab é reaproveitada pelas abas internas do dropdown de
+       notificações (#notifTabs) — ali o sticky não faz sentido: o
+       dropdown tem sua própria rolagem interna pequena, e um top fixo
+       pensado para a página inteira empurra a aba "Prazo Vencido" para
+       fora da área visível do painel ao trocar para "Risco Alto". */
+    #navigation{position:sticky;top:0;z-index:calc(var(--z-layer-3) - 1);}
+    .tab-nav{overflow-x:auto;scrollbar-width:none;}
+    .tab-nav::-webkit-scrollbar{display:none;}
+    @media(max-width:767.98px){
+      /* Pista visual de rolagem horizontal: sem isso, uma aba parcialmente
+         cortada na borda da tela (ex.: "Acompanhamento de Projetos" em
+         celulares estreitos) parece um bug de layout, não um convite para
+         rolar. O gradiente de desvanecimento comunica "tem mais conteúdo
+         aqui" sem precisar de seta ou texto. Fica em .tab-bar-row (que NÃO
+         tem scroll próprio) e não em .tab-nav (que tem overflow-x:auto) —
+         se ficasse dentro do elemento que rola, o próprio gradiente rolaria
+         junto com o conteúdo em vez de ficar fixo na borda visível. Restrito
+         a telas estreitas, faixa em que .tab-bar-actions (sino de alertas
+         etc.) já quebra para a própria linha via flex-wrap, deixando o
+         tab-nav sozinho na linha — então o gradiente nunca cobre o sino. */
+      .tab-bar-row{position:relative;}
+      .tab-bar-row::after{
+        content:"";position:absolute;top:0;right:0;bottom:0;width:28px;
+        background:linear-gradient(to right,transparent,var(--pure-0));
+        pointer-events:none;z-index:1;
+      }
+      .tab-item button{padding:12px 10px;}
+    }
+    .tab-nav ul{display:flex;align-items:center;gap:2px;list-style:none;margin:0;padding:0;}
+    .tab-item{display:flex;}
+    .tab-item button{display:inline-flex;align-items:center;gap:7px;
+      padding:12px 14px;background:none;border:none;cursor:pointer;
+      font:600 12px/1 var(--font);color:var(--gray-70);
+      border-bottom:var(--w-lg) solid transparent;
+      transition:color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease);white-space:nowrap;margin-bottom:-1px;}
+    .tab-item button:hover{color:var(--cv-blue);}
+    .tab-item button[aria-selected="true"]{color:var(--cv-blue);border-bottom-color:var(--cv-blue);}
+    .tab-count{background:var(--interactive);color:var(--pure-0);
+      font-size:10px;font-weight:800;padding:2px 7px;border-radius:var(--r-pill);}
+    /* Rótulos curtos das abas principais (#navigation): em telas estreitas,
+       "Análise do Levantamento" e "Acompanhamento de Projetos" raramente
+       cabem inteiros sem exigir rolagem horizontal pouco perceptível pelo
+       usuário. Troca simples: mostra a versão reduzida ("Levantamento" /
+       "Projetos" — os mesmos termos já usados nos cartões do painel, ex.
+       "Levantamento de Serviços · PTD") no lugar do texto completo, sem
+       remover nenhuma aba nem mudar a navegação. Ícone + contador numérico
+       ao lado continuam dando contexto normalmente. */
+    .tab-label-short{display:none;}
+    @media(max-width:575.98px){
+      .tab-label-full{display:none;}
+      .tab-label-short{display:inline;}
+    }
+    /* ── Faixa utilitária do #navigation: TAG "Tempo real" + status de
+       sincronização, botão Atualizar, Alertas operacionais e Mais ações
+       — reposicionados aqui, na altura das abas "Análise do Levantamento"
+       / "Acompanhamento de Projetos", liberando o header-actions do
+       br-header para conter só os itens previstos pela Anatomia oficial
+       do Header (Área para Links, Área para Funcionalidades, Botão
+       Autenticar). Escopado a #navigation para não afetar o .tab-nav
+       reaproveitado dentro do dropdown de notificações (#notifTabs). ── */
+    .tab-bar-row{display:flex;align-items:center;gap:var(--sp2);flex-wrap:wrap;
+      max-width:1440px;margin:0 auto;padding:0 12px;}
+    #navigation .tab-nav{flex:1 1 240px;min-width:0;margin:0;padding:0;}
+    .tab-bar-actions{display:flex;align-items:center;gap:var(--sp2);flex-wrap:wrap;
+      flex-shrink:0;margin-left:auto;padding:7px 0;max-width:100%;}
+    /* Em telas estreitas o conjunto de utilitários raramente cabe ao lado
+       das abas; ao quebrar para a própria linha (flex-wrap do .tab-bar-row),
+       ele precisa respeitar a largura dessa linha — senão flex-shrink:0
+       mantém sua largura "natural" e o conteúdo vaza horizontalmente. */
+    @media(max-width:575.98px){
+      .tab-bar-actions{width:100%;justify-content:flex-start;}
+    }
+    /* Sino de Alertas operacionais: removido da versão mobile a pedido —
+       além de disputar espaço com as abas em telas estreitas, o painel
+       (com o dropdown corrigido para abrir por cima de tudo, ver .dd-target
+       acima) ainda ficava apertado demais para essa ação secundária no
+       celular. Continua disponível normalmente no desktop. Duas regras
+       redundantes de propósito: :has() cobre o wrapper inteiro (sem sobrar
+       um espaço vazio do dropdown-wrap) em navegadores que suportam;
+       display:none direto no botão garante que ele suma mesmo sem :has(). */
+    @media(max-width:991.98px){
+      .tab-bar-actions .dropdown-wrap:has(#btnNotifications){display:none;}
+      #btnNotifications{display:none;}
+    }
+
+
+    /* ── PANELS (tab-content > tab-panel, conforme Como Usar) ── */
+    .tab-content .tab-panel{display:none;position:relative;z-index:var(--z-layer-0);}
+    .tab-content .tab-panel.active{display:block;}
+    /* max-width:1440px: decisão consciente de projeto — o DS define .container-lg
+       com 1200px (desktop) e 1520px (TV), mas o Fundamento Grid autoriza adaptações
+       para sistemas que precisam aproveitar maior área útil; 1440px é o ponto médio
+       adequado para um dashboard de gestão (não um portal informativo) */
+    .page-cnt{max-width:1440px;margin:0 auto;padding:20px 16px 64px;}
+
+    /* ── SECTION HEADER ── */
+    .sec{display:flex;align-items:center;gap:var(--sp2);margin:var(--sp4) 0 var(--sp3);scroll-margin-top:140px;}
+    .sec-lbl{margin:0;font:700 11px/1 var(--font);letter-spacing:2px;text-transform:uppercase;color:var(--cv-blue);white-space:nowrap;}
+    .sec-line{flex:1;height:1px;background:var(--divider-section);}
+    .sec-pill{font-size:10px;color:var(--gray-70);background:var(--gray-2);
+      border:1px solid var(--gray-10);padding:3px 10px;border-radius:var(--r-pill);white-space:nowrap;}
+
+    /* ── ACCORDION (data-toggle="accordion"), conforme Utilitários JS gov.br DS ── */
+    .acc-trigger{display:inline-flex;align-items:center;gap:6px;background:none;border:none;
+      cursor:pointer;font:inherit;color:inherit;letter-spacing:inherit;
+      text-transform:inherit;
+      /* Área Mínima de Ação (Densidade): texto de 11px de altura por si
+         só fica bem abaixo dos 24px mínimos para mouse; padding+margem
+         negativa simétrica ampliam a área clicável sem deslocar o
+         alinhamento visual do rótulo de seção. */
+      padding:7px 0;margin:-7px 0;}
+    .acc-trigger i{font-size:9px;transition:transform var(--dur-fast) var(--ease);}
+    .acc-trigger[aria-expanded="false"] i{transform:rotate(180deg);}
+    .br-card.filters[aria-hidden="true"]{display:none;}
+    .cg-children[aria-hidden="true"]{display:none;}
+
+    /* ── br-card ── */
+    /* Sombras alinhadas a br.elevation.shadowStyle.level1 (padrão) e
+       level2 (hover) do govbr-ds/core v4 — leve elevação que aumenta
+       sutilmente ao passar o mouse. */
+    .br-card{background:var(--d-card);border:1px solid var(--d-bd);
+      border-radius:var(--r-lg);box-shadow:var(--sh-card);
+      transition:border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease);}
+    .br-card:hover{border-color:var(--d-bd-s);box-shadow:var(--sh-card-hover);}
+    .card-hd{padding:var(--sp3) var(--sp3) 0;}
+    .card-title{margin:0;font:700 15px/1.3 var(--font);color:var(--gray-80);}
+    .card-sub{font:400 var(--fs-sm)/1.5 var(--font);color:var(--gray-70);margin-top:var(--sp-half);}
+    .card-bd{padding:var(--sp2) var(--sp3) var(--sp3);}
+
+    /* ── PAGINATION (br-pagination), Tipo Contextual — integrada às
+       tabelas do Catálogo de serviços e do Controle_PTD. Só as Setas de
+       Navegação são obrigatórias neste tipo; usamos também os módulos
+       opcionais de Exibição, Informação e Atalho — agora com o
+       componente Select oficial completo (ver bloco SELECT abaixo). ── */
+    .br-pagination{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp2);
+      font-size:13px;color:var(--gray-80);}
+    .br-card .table-footer .br-pagination{padding:var(--sp2) var(--sp3) var(--sp3);
+      border-top:1px solid var(--gray-10);margin-top:0;}
+    .br-pagination .pagination-per-page,
+    .br-pagination .pagination-go-to-page{display:flex;align-items:center;gap:var(--sp1);}
+    .br-pagination .pagination-per-page label,
+    .br-pagination .pagination-go-to-page label{font-size:var(--fs-base);color:var(--gray-80);
+      margin:0;white-space:nowrap;}
+    .br-pagination .pagination-information{color:var(--gray-70);white-space:nowrap;}
+    .br-pagination .pagination-information .current,
+    .br-pagination .pagination-information .per-page,
+    .br-pagination .pagination-information .total{font-weight:700;color:var(--gray-80);}
+    .br-pagination .pagination-arrows{display:flex;align-items:center;gap:var(--sp1);margin-left:auto;}
+    .br-pagination .vertical-sep{display:none;border:0;border-left:1px solid var(--gray-10);
+      height:20px;width:0;align-self:center;}
+    @media(min-width:576px){.br-pagination .vertical-sep{display:block;}}
+
+    /* ── HERO ── */
+    .hero{background:linear-gradient(135deg,var(--blue-warm-vivid-5) 0%,var(--green-cool-vivid-5) 100%);
+      border:1px solid var(--gray-10);border-radius:var(--r-xl);
+      padding:var(--sp5) var(--sp6);margin-bottom:var(--sp4);
+      display:grid;grid-template-columns:1fr;gap:var(--sp5);align-items:center;
+      position:relative;overflow:hidden;}
+    .hero-title{font:900 clamp(22px,3vw,var(--fs-xxl))/1.15 var(--font);margin-bottom:var(--sp2);color:var(--gray-80);}
+    .hero-desc{color:var(--gray-70);font-size:13px;line-height:1.65;max-width:640px;}
+    .hero-stats{display:flex;gap:var(--sp4);flex-wrap:wrap;margin-top:var(--sp3);}
+    .hero-doc-links{display:flex;gap:var(--sp2);flex-wrap:wrap;margin-top:var(--sp3);}
+    .hero-doc-links .br-button{font-size:12.5px;}
+    .hero-doc-links .br-button i{color:#d54309;margin-right:6px;}
+    .stat-val{font:900 38px/1 var(--font);color:var(--cv-blue);}
+    .stat-lbl{font:700 10px/1 var(--font);color:var(--gray-70);margin-top:5px;text-transform:uppercase;letter-spacing:1px;}
+    .hero-badge{display:none;flex-shrink:0;}
+    .hero-badge img{display:block;width:180px;height:180px;}
+
+    /* ── KPI ── */
+    .kpi-grid{display:grid;grid-template-columns:1fr;gap:var(--sp2);}
+    .card.kpi{position:relative;}
+    .kpi-c{padding:var(--sp3);position:relative;}
+    .kpi-c::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--cv-blue));
+      border-radius:var(--r-lg) var(--r-lg) 0 0;}
+    .kpi-ghost{position:absolute;right:12px;top:8px;font-size:var(--fs-xxl);font-weight:900;color:rgba(0,0,0,.04);pointer-events:none;user-select:none;}
+    /* opacity:.12 é intencionalmente mais sutil que --surface-opacity-xs (.16) —
+       a ilustração de fundo do KPI deve permanecer quase imperceptível como textura */
+    .kpi-il{position:absolute;right:8px;bottom:6px;height:44px;width:auto;opacity:.12;pointer-events:none;}
+    .kpi-lbl{font:700 10px/1 var(--font);letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-70);}
+    /* --kc-text: cor do valor numérico — por padrão igual ao traço (--kc),
+       mas pode ser sobrescrita quando --kc tem contraste insuficiente para texto
+       (ex: cv-lime #89bd2b tem apenas 2.24:1, abaixo do WCAG AA 4.5:1) */
+    .kpi-val{font:900 30px/1 var(--font);color:var(--kc-text,var(--kc,var(--cv-blue)));margin:8px 0 4px;}
+    .kpi-sub{font-size:11px;color:var(--gray-70);line-height:1.4;padding-right:52px;}
+    /* ── Cards .kpi-c (Visão Consolidada, aba Acompanhamento de Projetos):
+       ícone real ao lado do texto, em vez da marca-d'água de fundo acima —
+       deixa o card mais baixo/compacto. Escopado a .kpi-c só: os cards
+       .card.kpi da aba Levantamento (Indicadores-Chave) reaproveitam as
+       mesmas classes internas (.kpi-ghost/.kpi-lbl/.kpi-val/.kpi-sub) e
+       continuam com o visual antigo, intocado. Barra superior com raio
+       menor (--r-sm em vez de --r-lg): num traço de 3px de altura, um
+       raio de 16px (pensado para os 16px de raio do card inteiro) sobra
+       muito — o arco não "fecha" dentro da altura do traço e deixa um
+       pequeno vão entre a barra e a borda do card no canto. */
+    .kpi-c{display:flex;align-items:flex-start;gap:var(--sp3);}
+    .kpi-c::before{height:4px;border-radius:var(--r-sm) var(--r-sm) 0 0;}
+    .kpi-c .kpi-icon{flex-shrink:0;width:40px;height:40px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;font-size:17px;
+      margin-top:2px;background:color-mix(in srgb, var(--kc,var(--cv-blue)) 14%, white);
+      color:var(--kc-text,var(--kc,var(--cv-blue)));}
+    .kpi-c .kpi-body{flex:1;min-width:0;padding-top:2px;}
+    .kpi-c .kpi-val{margin:6px 0 4px;}
+    .kpi-c .kpi-sub{padding-right:0;}
+
+    /* ── GRIDS ── */
+    .g2{display:grid;grid-template-columns:1fr;gap:var(--sp2);}
+    .g3{display:grid;grid-template-columns:1fr;gap:var(--sp2);}
+    .g2e{display:grid;grid-template-columns:1fr;gap:var(--sp2);}
+    .g4{display:grid;grid-template-columns:1fr;gap:var(--sp2);}
+
+    /* ── CHARTS ── */
+    .ch{position:relative;overflow:hidden;}
+    .h160{height:160px;}.h180{height:180px;}.h200{height:200px;}.h220{height:220px;}
+    .h260{height:260px;}.h280{height:280px;}.h300{height:300px;}.h320{height:320px;}
+
+    /* ── MATURITY ── */
+    .mat-row{display:grid;grid-template-columns:18px 10px 1fr 40px;gap:8px;align-items:center;margin-bottom:12px;}
+    .mat-n{font:800 11px/1 var(--font);color:var(--gray-70);text-align:right;}
+    .mat-dot{width:10px;height:10px;border-radius:50%;}
+    .mat-bg{height:9px;background:var(--gray-5);border-radius:var(--r-pill);overflow:hidden;}
+    .mat-fill{height:100%;border-radius:var(--r-pill);}
+    .mat-cnt{font:700 12px/1 var(--font);color:var(--gray-70);text-align:right;}
+    .mat-desc{grid-column:1/-1;font-size:10px;color:var(--gray-70);padding-left:34px;margin-top:-10px;margin-bottom:12px;line-height:1.4;}
+
+    /* ── MATURITY × AREA HEATMAP ── */
+    .mat-heat-grid{display:grid;grid-template-columns:72px repeat(5,1fr) 56px;gap:3px;}
+    .mat-heat-row{display:contents;}
+    .mat-heat-cell{display:flex;align-items:center;justify-content:center;
+      min-height:38px;padding:4px;border-radius:var(--r-sm);
+      font:700 12px/1 var(--font);color:var(--gray-80);}
+    .mat-heat-head .mat-heat-cell{min-height:24px;font:700 10px/1 var(--font);
+      text-transform:uppercase;letter-spacing:.4px;color:var(--gray-70);cursor:help;}
+    .mat-heat-corner,.mat-heat-rowhead{justify-content:flex-start;padding-left:8px;}
+    .mat-heat-rowhead{font:700 12px/1 var(--font);color:var(--gray-80);background:var(--gray-2);}
+    .mat-heat-total{font:700 12px/1 var(--font);color:var(--gray-70);background:var(--gray-2);}
+    .mat-heat-val{cursor:default;transition:transform var(--dur-fast) var(--ease);}
+    .mat-heat-val:hover{transform:scale(1.06);}
+    @media(max-width:575.98px){
+      .mat-heat-grid{grid-template-columns:52px repeat(5,1fr) 40px;gap:2px;}
+      .mat-heat-cell{min-height:30px;font-size:10px;padding:2px;}
+      .mat-heat-corner,.mat-heat-rowhead{padding-left:4px;}
+    }
+
+    /* ── CROSS-TAB HEATMAPS (genérico) — Área × Etapa, Área × Risco ──
+       Mesmo padrão visual do heatmap de maturidade acima, mas sem
+       grid-template-columns fixo no CSS: a contagem de colunas varia
+       por cruzamento (5 etapas, 4 níveis de risco), então é definida
+       inline via JS em cada chamada de renderCrossHeatmap(). */
+    .xheat-grid{display:grid;gap:3px;min-width:0;}
+    .xheat-row{display:contents;}
+    .xheat-cell{display:flex;align-items:center;justify-content:center;
+      min-height:38px;min-width:0;padding:4px;border-radius:var(--r-sm);
+      font:700 12px/1 var(--font);color:var(--gray-80);text-align:center;
+      overflow:hidden;word-break:break-word;}
+    .xheat-head .xheat-cell{min-height:24px;font:700 9px/1.15 var(--font);
+      text-transform:uppercase;letter-spacing:.3px;color:var(--gray-70);
+      white-space:normal;hyphens:auto;}
+    .xheat-corner,.xheat-rowhead{justify-content:flex-start;padding-left:8px;
+      white-space:nowrap;word-break:normal;}
+    .xheat-rowhead{font:700 12px/1 var(--font);color:var(--gray-80);background:var(--gray-2);}
+    .xheat-total{font:700 12px/1 var(--font);color:var(--gray-70);background:var(--gray-2);}
+    .xheat-val{cursor:default;transition:transform var(--dur-fast) var(--ease);}
+    .xheat-val:hover{transform:scale(1.06);}
+    .xheat-empty{grid-column:1/-1;padding:var(--sp3);text-align:center;
+      color:var(--gray-70);font-size:12px;}
+    @media(max-width:575.98px){
+      .xheat-cell{min-height:30px;font-size:10px;padding:2px;}
+      .xheat-head .xheat-cell{font-size:8px;}
+      .xheat-corner,.xheat-rowhead{padding-left:4px;}
+    }
+
+    /* ── PIPELINE ── */
+    .pipe-row{display:grid;grid-template-columns:144px 1fr 42px;gap:12px;align-items:center;margin-bottom:12px;}
+    .pipe-lbl{font:400 12px/1 var(--font);color:var(--gray-80);}
+    .pipe-bg{height:8px;background:var(--gray-5);border-radius:var(--r-pill);overflow:hidden;}
+    .pipe-fill{height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--cv-blue),var(--blue-warm-vivid-50));}
+    .pipe-v{font:700 12px/1 var(--font);color:var(--gray-70);text-align:right;}
+
+    /* ── HEATMAP ── */
+    .heatmap{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .hm{background:var(--gray-2);border:1px solid var(--d-bd);border-radius:var(--r-md);
+      padding:16px;text-align:center;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease);cursor:default;}
+    .hm:hover{background:var(--blue-warm-vivid-5);border-color:var(--d-bd-s);}
+    .hm-ico{font-size:22px;margin-bottom:var(--sp1);}
+    .hm-cnt{font:900 26px/1 var(--font);color:var(--cv-blue);}
+    .hm-lbl{font-size:11px;color:var(--gray-70);margin-top:var(--sp-half);line-height:1.3;}
+
+    /* ── WORD CLOUD ── */
+    #wordCloud{display:flex;flex-wrap:wrap;gap:12px;padding:16px 0;
+      align-items:center;justify-content:center;min-height:180px;}
+    .wc{cursor:default;border-radius:var(--r-sm);padding:4px 9px;font-weight:700;
+      transition:transform var(--dur-fast) var(--ease),opacity var(--dur-fast) var(--ease);display:inline-block;}
+    .wc:hover{transform:scale(1.15);opacity:var(--op-xl);}
+
+    /* ── INSIGHT ── */
+    .insight{display:flex;gap:12px;align-items:flex-start;
+      background:var(--blue-warm-vivid-5);border-left:var(--w-lg) solid var(--cv-blue);
+      border-radius:0 var(--r-md) var(--r-md) 0;padding:var(--sp2) var(--sp3);}
+    .ins-ico{font-size:18px;flex-shrink:0;margin-top:1px;}
+    .ins-txt{font-size:13px;color:var(--gray-80);line-height:1.6;}
+    .ins-txt strong{color:var(--cv-blue);}
+    .insights-col{display:flex;flex-direction:column;gap:12px;}
+    /* ── CAROUSEL (br-carousel), conforme Componente gov.br DS.
+       Estilo genérico do componente, usado pelo carrossel de depoimentos
+       (testimonial-section). Adaptação consciente: o padrão oficial usa
+       --carousel-min-height:400px (pensado para mídia/imagens); aqui a
+       altura é flexível ao conteúdo de texto. ── */
+    .br-carousel{display:flex;flex-wrap:wrap;align-items:center;position:relative;gap:4px;}
+    .br-carousel .carousel-button{flex-shrink:0;display:flex;align-items:center;}
+    .br-carousel .carousel-btn-prev:disabled,.br-carousel .carousel-btn-next:disabled{
+      opacity:var(--op-lg);cursor:not-allowed;}
+    .br-carousel .carousel-stage{flex:1;overflow:hidden;position:relative;min-height:64px;}
+    .br-carousel .carousel-page{display:none;}
+    .br-carousel .carousel-page[active]{display:block;
+      animation:carouselIn var(--dur-fast) var(--ease);}
+    @keyframes carouselIn{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
+    .carousel-step{display:flex;justify-content:center;gap:6px;margin-top:var(--sp2);
+      flex-basis:100%;order:3;}
+    .carousel-step .step-dot{box-sizing:content-box;width:8px;height:8px;border-radius:50%;border:none;
+      background-color:var(--gray-20);background-clip:content-box;cursor:pointer;
+      /* Área Mínima de Ação (Densidade): o ponto visual de 8px é uma
+         escolha estética válida, mas como superfície de clique fica
+         bem abaixo do mínimo de 24px. padding+margem negativa ampliam
+         a área clicável sem aumentar o ponto visualmente (background-
+         clip mantém a cor restrita à caixa de conteúdo original); valor
+         moderado (5px) para não sobrepor demais os pontos vizinhos,
+         que ficam a 6px de distância entre si. box-sizing:content-box é
+         obrigatório aqui — com o reset global (*{box-sizing:border-box}),
+         width:8px já incluiria o padding, deixando a content-box
+         negativa (8-5-5=-2px) e o fundo, recortado por background-clip,
+         desaparecia (visto isso só não quebrava no ponto ativo porque o
+         shorthand "background" abaixo resetava background-clip de volta
+         para border-box como efeito colateral). */
+      padding:5px;margin:-5px;
+      transition:background-color var(--dur-fast) var(--ease);}
+    .carousel-step .step-dot[aria-selected="true"]{background-color:var(--cv-blue);}
+
+    /* ── BADGES ── */
+    .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;
+      border-radius:var(--r-pill);font:700 11px/1 var(--font);border:1px solid transparent;}
+    .bg-green{background:var(--green-cool-vivid-5);color:var(--green-cool-vivid-70);border-color:var(--green-cool-vivid-10);}
+    .bg-blue{background:var(--blue-warm-vivid-5);color:var(--blue-warm-vivid-70);border-color:var(--blue-warm-vivid-10);}
+    .bg-lime{background:#f3f9e8;color:#4d6b15;border-color:#dcedc2;}
+    .bg-gray{background:var(--gray-5);color:var(--gray-70);border-color:var(--gray-10);}
+    .bg-orange{background:#fdeee7;color:#9a3412;border-color:#f8d3c2;}
+
+    /* ── TABLE ── */
+    /* Truncamento de texto (Padrão: Content Overflow > Informações
+       Complementares > Truncamento): aplicar text-overflow:ellipsis
+       direto no <td> é inconsistente entre navegadores por causa do
+       algoritmo de layout de tabela; um <span> interno com
+       display:inline-block é a forma confiável. O atributo title
+       nativo mostra o texto completo ao passar o mouse — equivalente
+       ao tooltip que a spec recomenda, sem o custo de instanciar um
+       balão por célula numa tabela com muitas linhas. */
+    .truncate{display:inline-block;overflow:hidden;text-overflow:ellipsis;
+      white-space:nowrap;vertical-align:bottom;max-width:100%;}
+    .tbl-wrap,.responsive{overflow-x:auto;}
+    .br-table table{width:100%;border-collapse:collapse;font:400 12px/1.4 var(--font);min-width:900px;}
+    .br-table caption{opacity:0;position:absolute;z-index:-1;}
+    .br-table th{padding:12px;text-align:left;border-bottom:2px solid var(--gray-10);
+      font:700 10px/1 var(--font);text-transform:uppercase;letter-spacing:1.5px;color:var(--blue-warm-vivid-70);white-space:nowrap;
+      background:var(--gray-5);}
+    .br-table td{padding:12px;border-bottom:1px solid var(--gray-5);vertical-align:middle;color:var(--gray-80);}
+    /* Visualização de Dados: "Número: Direita... ID's... devem ser
+       alinhados à esquerda" — Avanço (%) é a única coluna de número
+       simples nas tabelas do painel; ID fica de fora da regra por
+       exceção explícita, e Maturidade é um indicador visual composto
+       (ponto + número + rótulo), não um número puro comparável. */
+    .br-table th.col-num,.br-table td.col-num{text-align:right;}
+    .br-table tr:hover td{background:var(--blue-warm-vivid-5);}
+    .mat-ind{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+    .dot-sm{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
+
+    /* ── FILTERS ── */
+    .filters{padding:var(--sp3);display:grid;grid-template-columns:1fr;gap:var(--sp2);}
+    .filters label{display:block;font:700 11px/1 var(--font);color:var(--gray-70);margin-bottom:6px;letter-spacing:.5px;}
+    /* Fieldset/Legend (Padrão: Formulário > Layout e Estrutura > 2):
+       agrupa os campos com características comuns (Área/Status/Risco)
+       de forma semanticamente robusta, nativa do HTML — sem depender
+       de role/aria-labelledby. "Dentro do Design System, o Fieldset é
+       usado somente como elemento semântico... não tendo nenhum tipo
+       de estilização visual (delimitação de borda)" — por isso o reset
+       total abaixo; o legend assume visualmente o exato lugar do label
+       que substitui. */
+    fieldset.br-field{border:0;margin:0;padding:0;min-width:0;}
+    .filters legend{display:block;font:700 11px/1 var(--font);color:var(--gray-70);
+      margin-bottom:6px;padding:0;letter-spacing:.5px;}
+    /* ── br-input — fiel à Anatomia do componente Input do DS: a classe
+       é o CONTAINER (item obrigatório "class: br-input — Container do
+       componente"), não a tag <input> em si. O estilo visual do campo
+       é aplicado ao elemento interno (.br-input input), exatamente
+       como no input.css oficial (".br-input input{...}"). ── */
+    .br-input input{width:100%;background:var(--pure-0);color:var(--gray-80);
+      border:1px solid var(--gray-40);border-radius:var(--r-sm);
+      padding:10px 14px;font:400 13px/1.4 var(--font);outline:none;
+      transition:border-color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
+    .br-input input::placeholder{color:var(--gray-40);}
+    .br-input input:focus{border-color:var(--interactive);background:var(--blue-warm-vivid-5);}
+    /* Ícone Ilustrativo (item 3 da Anatomia): posicionado à esquerda, dentro
+       do campo, antes do texto digitado — apenas representativo, sem interação. */
+    .br-input .input-group{position:relative;}
+    .br-input .input-icon{position:absolute;top:0;left:0;height:100%;
+      display:flex;align-items:center;margin-left:var(--sp2);color:var(--gray-40);
+      pointer-events:none;}
+    .br-input .input-icon + input{padding-left:var(--sp5);}
+    /* Texto Auxiliar (item 7 da Anatomia): ajuda complementar ao label/placeholder. */
+    .br-input .input-helper{margin:var(--sp1) 0 0;font-size:11px;line-height:1.4;color:var(--gray-70);}
+    /* br-textarea — mesma anatomia do br-input (container + label + campo),
+       reaproveitando os mesmos tokens visuais (borda, raio, foco). */
+    .br-textarea{margin-bottom:var(--sp3);}
+    .br-textarea label{display:block;font:700 12px/1.4 var(--font);color:var(--gray-70);margin-bottom:6px;}
+    .br-textarea textarea{width:100%;background:var(--pure-0);color:var(--gray-80);
+      border:1px solid var(--gray-40);border-radius:var(--r-sm);
+      padding:10px 14px;font:400 13px/1.5 var(--font);outline:none;resize:vertical;
+      transition:border-color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
+    .br-textarea textarea::placeholder{color:var(--gray-40);}
+    .br-textarea textarea:focus{border-color:var(--interactive);background:var(--blue-warm-vivid-5);}
+    .report-error-status{font-size:12.5px;color:var(--gray-70);min-height:1.4em;margin:0;}
+    .report-error-status.is-error{color:var(--danger);}
+    .report-error-status.is-ok{color:var(--success);}
+
+    /* ── CHECKGROUP (data-parent/data-child), conforme Utilitários JS gov.br DS ── */
+    .br-checkbox{display:flex;align-items:center;gap:8px;}
+    .br-checkbox input[type="checkbox"]{
+      width:18px;height:18px;flex-shrink:0;accent-color:var(--interactive);cursor:pointer;margin:0;
+    }
+    .br-checkbox label{font:400 13px/1.4 var(--font);color:var(--gray-80);cursor:pointer;margin:0;}
+    .checkgroup-wrap{border:1px solid var(--gray-20);border-radius:var(--r-sm);
+      background:var(--pure-0);padding:10px 14px;max-height:160px;overflow-y:auto;}
+    .cg-parent{padding-bottom:8px;border-bottom:1px solid var(--gray-10);margin-bottom:8px;
+      display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .cg-parent label{font-weight:700;flex:1;}
+    /* trigger de collapse para a lista de áreas filhas (cg-children), conforme
+       Utilitário JS "Collapse" gov.br DS: data-toggle="collapse" + data-target;
+       reaproveita o estilo visual de .acc-trigger (mesmo padrão de ícone
+       rotativo já usado no Accordion da seção Filtros) */
+    .cg-collapse-trigger{flex-shrink:0;color:var(--gray-70);min-width:24px;justify-content:center;}
+    .cg-collapse-trigger i{font-size:11px;}
+    .cg-children{display:flex;flex-direction:column;gap:6px;padding-left:var(--sp2);}
+    .cg-children .br-checkbox label{font-size:12px;}
+    /* Checkbox de rótulo oculto (usado na seleção de linhas de tabela):
+       o <input> já tem aria-label próprio definido onde é usado, então
+       o <label> associado não precisa do texto para acessibilidade —
+       em vez de colapsá-lo a 1x1px (que reduziria também a área de
+       clique para bem abaixo do mínimo de 24px exigido para interação
+       por mouse), ele vira uma área de clique ampliada e só o TEXTO é
+       escondido visualmente (text-indent), não a caixa do elemento. */
+    .br-checkbox.hidden-label{position:relative;}
+    .br-checkbox.hidden-label label{position:absolute;top:50%;left:0;
+      transform:translateY(-50%);width:24px;height:24px;margin:0;
+      cursor:pointer;overflow:hidden;text-indent:-9999px;white-space:nowrap;}
+
+    /* ── TABLE: Barra de Título, Barra de Busca e Barra Contextual
+       (Anatomia itens 1 e 2) — título + busca interna + seleção de
+       linhas com exportação CSV. ── */
+    .br-table .table-header{position:relative;}
+    .br-table .top-bar{display:flex;align-items:center;gap:var(--sp2);
+      padding:var(--sp1) var(--sp2) var(--sp1) var(--sp3);}
+    .br-table .search-bar{display:none;align-items:center;gap:var(--sp1);
+      position:absolute;inset:0;background:var(--pure-0);
+      padding-left:var(--sp3);padding-right:var(--sp2);z-index:2;}
+    .br-table .search-bar.show{display:flex;}
+    .br-table .search-bar .br-input{flex:1;margin:0;}
+    .br-table .search-bar .br-input label{display:none;}
+    .br-table .search-bar .br-input input{margin:0;}
+    .br-table .selected-bar{display:none;align-items:center;gap:var(--sp2);
+      position:absolute;inset:0;background:var(--blue-warm-vivid-70);
+      color:var(--pure-0);padding:var(--sp1) var(--sp2) var(--sp1) var(--sp3);z-index:3;
+      border-radius:var(--r-lg) var(--r-lg) 0 0;}
+    .br-table .selected-bar.show{display:flex;}
+    .br-table .selected-bar .info{display:flex;align-items:center;gap:6px;
+      flex-grow:1;font-size:13px;white-space:nowrap;}
+    .br-table .selected-bar .count{font-weight:800;}
+    .br-table .selected-bar .br-button{background:rgba(255,255,255,.14);
+      border-color:rgba(255,255,255,.4);color:var(--pure-0);}
+    .br-table .selected-bar .br-button:hover{background:rgba(255,255,255,.24);}
+    .br-table .column-checkbox{width:36px;}
+    .br-table tr.is-selected td{background:var(--blue-warm-vivid-5);}
+    /* Cabeçalho ordenável: botão ocupando a célula inteira, ícone de
+       estado (sort/sort-up/sort-down conforme Acessibilidade: "utilize
+       o ícone sort... sort-up ou sort-down se a coluna já estiver
+       ordenada"). Só um parâmetro de ordenação por vez. */
+    .br-table th .th-sort{display:inline-flex;align-items:center;gap:6px;
+      background:none;border:none;cursor:pointer;
+      font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;
+      /* Área Mínima de Ação (Densidade): o texto+ícone por si só mede
+         ~10px de altura, bem abaixo dos 24px mínimos para interação por
+         mouse. padding+margem negativa simétrica ampliam a área clicável
+         absorvendo parte do padding do <th> (que já é 12px), sem mudar
+         o espaçamento visual percebido entre as colunas. */
+      padding:8px 4px;margin:-8px -4px;}
+    .br-table th .th-sort i{font-size:10px;color:var(--gray-40);}
+    .br-table th[aria-sort="ascending"],
+    .br-table th[aria-sort="descending"]{color:var(--blue-warm-vivid-80);
+      background:rgba(38,112,232,.06);}
+    .br-table th[aria-sort="ascending"] .th-sort i,
+    .br-table th[aria-sort="descending"] .th-sort i{color:var(--blue-warm-vivid-80);}
+
+    /* ── RADIO (br-radio) — caixa de opção 24px com bullet preenchido
+       (16px), via pseudo-elementos ::before/::after, fiel à técnica do
+       CSS oficial (diferente do accent-color simplificado do Checkbox).
+       Cores exatas da tabela de Especificações: caixa background
+       --pure-0/border --gray-20; "Ícone de suporte visual interativo"
+       (o bullet) --blue-warm-vivid-50. ── */
+    .br-radio{display:block;--radio-size:24px;--radio-bullet-size:16px;
+      --radio-bullet-position:calc((var(--radio-size) - var(--radio-bullet-size)) * 0.5);}
+    .br-radio + .br-radio{margin-top:var(--sp1);}
+    .br-radio input{opacity:0;position:absolute;}
+    .br-radio input + label{cursor:pointer;display:inline-block;margin:0;
+      min-height:var(--radio-size);min-width:var(--radio-size);
+      padding-left:calc(var(--sp1) + var(--radio-size));position:relative;
+      font:500 13px/1.4 var(--font);color:var(--gray-80);}
+    .br-radio input + label::before{background:var(--pure-0);border:1px solid var(--gray-20);
+      border-radius:50%;content:"";height:var(--radio-size);left:0;
+      position:absolute;top:-1px;width:var(--radio-size);
+      transition:border-color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
+    .br-radio input:checked + label::after{background:var(--blue-warm-vivid-50);
+      border:7px solid var(--blue-warm-vivid-50);border-radius:50%;content:"";
+      height:var(--radio-bullet-size);left:var(--radio-bullet-position);position:absolute;
+      top:calc(var(--radio-bullet-position) - 1px);width:var(--radio-bullet-size);}
+    .br-radio input:hover:not(:disabled) + label::before{background:var(--gray-2);}
+    .br-radio input:focus-visible + label::before{
+      border-color:var(--focus-color)!important;
+      box-shadow:0 0 0 var(--focus-width-field) var(--focus-color);outline:none;}
+    .br-radio.valid input + label::before{border-color:var(--green-cool-vivid-50);}
+    .br-radio.invalid input + label::before{border-color:var(--red-vivid-50);}
+    .br-radio.disabled input + label,
+    .br-radio input:disabled + label{cursor:not-allowed;opacity:var(--op-lg);}
+    .radio-list{padding:var(--sp1) 0;}
+
+    /* ── SIGN-IN (br-sign-in), Tipo Externo — "projetado para as demais
+       soluções que utilizam o acesso único gov.br para se autenticarem"
+       (é exatamente o caso aqui: o painel não tem sessão/login próprio,
+       isso é só um atalho de saída para a conta gov.br do usuário, sem
+       relação com nenhum recurso do painel). Tipo Externo não usa ícone
+       — a "Imagem" (item 3 da Anatomia) fica à direita do rótulo; sem
+       logo, o nome institucional substitui, em peso de fonte black. ── */
+    .br-sign-in{--signin-small:32px;--signin-medium:40px;--signin-large:48px;
+      --signin-size:var(--signin-medium);
+      display:inline-flex;align-items:center;justify-content:center;
+      height:var(--signin-size);border-radius:100em;
+      padding:0 var(--sp3);background:var(--gray-2);color:var(--blue-warm-vivid-70);
+      font:600 var(--fs-base)/1 var(--font);white-space:nowrap;
+      text-decoration:none;cursor:pointer;border:none;
+      transition:background var(--dur-fast) var(--ease);}
+    .br-sign-in.small{--signin-size:var(--signin-small);}
+    .br-sign-in.large{--signin-size:var(--signin-large);}
+    .br-sign-in img{max-height:20px;margin-left:var(--sp1);}
+    .br-sign-in .text-black{font-weight:900;}
+    .br-sign-in.primary{background:var(--blue-warm-vivid-70);color:var(--gray-2);}
+    .br-sign-in.primary .text-black{color:var(--gray-2);}
+    .br-sign-in.primary:hover{background:var(--blue-warm-vivid-80);}
+    .br-sign-in.secondary{background:var(--gray-2);color:var(--blue-warm-vivid-70);}
+    .br-sign-in.secondary .text-black{color:var(--blue-warm-vivid-70);}
+    .br-sign-in.secondary:hover{background:var(--gray-5);}
+    .br-sign-in:focus-visible{
+      outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:var(--focus-offset-field);}
+
+    /* ── STEP (br-step), Tipo Complexo, Indicador numérico, orientação
+       horizontal — jornada de um serviço pelas 4 etapas do fluxo do PTD
+       (Aguardando área → Triagem UNP → Em TI → Concluído), no modal de
+       Detalhes. Estados: concluída (ícone de check sobrepondo o número,
+       conforme "Estado Concluído... finalidade exclusiva de representar
+       etapas concluídas"), ativa (círculo preenchido) e não alcançada
+       (Estado Desabilitado — Progressão Linear: "etapas não visitadas
+       deverão permanecer desabilitadas"). Diferença deliberada do
+       componente oficial: aqui TODAS as etapas ficam com o atributo
+       disabled, mesmo a concluída/ativa — esta instância é puramente
+       informativa (mostra onde o serviço está), sem nenhuma ação real
+       de navegação ao clicar, então nenhuma etapa deveria parecer
+       clicável/focável como se fizesse algo. ── */
+    .detail-step-wrap{margin-bottom:var(--sp4);padding-bottom:var(--sp3);
+      border-bottom:1px solid var(--gray-10);}
+    .br-step{--step-size:32px;display:flex;padding:var(--sp1) 0;}
+    .br-step .step-progress{display:flex;flex-grow:1;}
+    .br-step .step-progress-btn{align-items:center;background:transparent;border:0;
+      display:flex;flex-grow:1;flex-direction:column;justify-content:flex-start;
+      min-height:calc(var(--step-size) + 28px);padding:0;position:relative;cursor:default;}
+    .br-step .step-progress-btn::before{
+      align-items:center;background-color:var(--pure-0);
+      border:1px solid var(--blue-warm-vivid-70);border-radius:50%;
+      color:var(--blue-warm-vivid-70);content:attr(step-num);display:inline-flex;
+      font-size:13px;font-weight:500;height:var(--step-size);
+      justify-content:center;margin:auto;position:relative;width:var(--step-size);z-index:2;}
+    .br-step .step-progress-btn::after{
+      background-color:var(--blue-warm-vivid-70);content:"";display:block;
+      height:1px;left:0;position:absolute;right:0;top:calc(var(--step-size) * 0.5);z-index:1;}
+    .br-step .step-progress-btn:first-child::after{left:50%;}
+    .br-step .step-progress-btn:last-child::after{right:50%;}
+    .br-step .step-info{margin-top:var(--sp1);color:var(--blue-warm-vivid-70);
+      font-size:11px;font-weight:500;text-align:center;}
+    .br-step .step-icon{align-items:center;color:var(--pure-0);display:inline-flex;
+      height:var(--step-size);justify-content:center;position:absolute;top:0;
+      width:var(--step-size);z-index:4;font-size:13px;}
+    .br-step .step-progress-btn:disabled::before{border-color:var(--gray-20);color:var(--gray-40);}
+    .br-step .step-progress-btn:disabled .step-info{color:var(--gray-40);}
+    .br-step .step-progress-btn:disabled::after{background-color:var(--gray-20);}
+    /* Concluída/ativa têm prioridade sobre a cor "apagada" genérica de
+       disabled — só não são clicáveis, mas continuam parecendo
+       concluída/ativa visualmente. */
+    .br-step .step-progress-btn:disabled.is-done::before{background:var(--blue-warm-vivid-70);
+      border-color:var(--blue-warm-vivid-70);color:var(--pure-0);content:'';}
+    .br-step .step-progress-btn:disabled.is-done .step-info{color:var(--green-cool-vivid-50);}
+    .br-step .step-progress-btn:disabled.is-done::after{background-color:var(--blue-warm-vivid-70);}
+    .br-step .step-progress-btn:disabled[active]::before{background:var(--blue-warm-vivid-70);
+      border-color:var(--blue-warm-vivid-70);color:var(--pure-0);}
+    .br-step .step-progress-btn:disabled[active] .step-info{color:var(--blue-warm-vivid-80);font-weight:700;}
+    .br-step .step-progress-btn:disabled[active]::after{background-color:var(--blue-warm-vivid-70);}
+
+    /* ── SWITCH (br-switch) — substitui o antigo botão "Alto contraste"
+       (toggle button com aria-pressed gerenciado à mão) pelo componente
+       real: <input type="checkbox" role="switch">, cujo estado
+       checked/unchecked já é exposto nativamente como aria-checked —
+       é a própria recomendação de acessibilidade do componente ("se o
+       switch for <input type=checkbox>, recomenda-se usar o atributo
+       checked em vez de aria-checked"). Densidade Alta (compacta, cabe
+       na barra de ferramentas de acessibilidade), .right (rótulo à
+       direita da chave) e .icon (reforço visual check/x na chave).
+       --blue-warm-vivid-40 (cor "on" da chave) não estava definido no
+       painel; aproximei por interpolação entre -30 e -50 já existentes
+       — vale confirmar o hex oficial exato depois. ── */
+    .br-switch{--switch-h:24px;--switch-w:40px;--switch-toggle:16px;
+      --on:#538ff2;--off:var(--gray-20);
+      display:inline-flex;min-height:var(--switch-h);}
+    .br-switch input{opacity:0;position:absolute;}
+    .br-switch input + label{align-items:center;color:var(--gray-80);cursor:pointer;
+      display:inline-flex;font:400 13px/1.3 var(--font);margin:0;position:relative;}
+    .br-switch input + label::before{background:var(--pure-0);border:1px solid var(--gray-40);
+      border-radius:100em;content:"";height:var(--switch-h);position:absolute;width:var(--switch-w);}
+    .br-switch input + label::after{background-color:var(--off);border-radius:50%;content:"";
+      height:var(--switch-toggle);position:absolute;
+      transition:all .2s ease-in-out;width:var(--switch-toggle);}
+    .br-switch input:checked + label::after{background-color:var(--on);}
+    .br-switch.right input + label{padding-left:calc(var(--sp2) + var(--switch-w));}
+    .br-switch.right input + label::before{left:0;}
+    .br-switch.right input + label::after{left:4px;}
+    .br-switch.right input:checked + label::after{left:calc(var(--switch-w) - var(--switch-toggle) - 4px);}
+    .br-switch.icon input + label::after{align-items:center;color:var(--pure-0);
+      content:"\f00d";display:inline-flex;font-family:"Font Awesome 6 Free","Font Awesome 5 Free";
+      font-size:9px;font-weight:900;justify-content:center;}
+    .br-switch.icon input:checked + label::after{content:"\f00c";}
+    .br-switch input:focus-visible + label::before{
+      border-color:var(--focus-color)!important;
+      box-shadow:0 0 0 var(--focus-width-field) var(--focus-color);outline:none;}
+    /* Variante escura: usada na barra de acessibilidade (fundo
+       --blue-warm-vivid-90) — mesma cor de texto já usada pelo botão
+       VLibras vizinho, para consistência visual. */
+    .br-switch.inverted input + label{color:#cfe0fb;}
+
+    /* ── SELECT (br-select) — combobox completo: Componente Input
+       (obrigatório) + Componente Button (obrigatório, toggle com ícone
+       caret) + Componente List (obrigatório, itens com radio para
+       seleção única). Ícone Search (opcional) omitido aqui — a spec
+       permite retirá-lo "em situações onde as informações textuais são
+       muito reduzidas" (listas de 4 a ~10 números, neste caso).
+       Dentro do item do Select, o radio fica sem o círculo visível
+       (content:none no ::before/::after, conforme CSS oficial) — é a
+       linha inteira do item que assume o destaque de selecionado. ── */
+    .br-select{position:relative;display:inline-block;min-width:64px;max-width:400px;}
+    .br-select .br-input{margin-bottom:0;position:relative;display:flex;align-items:center;gap:6px;}
+    .br-select .br-input input{padding-right:36px;cursor:pointer;height:32px;
+      padding-top:5px;padding-bottom:5px;}
+    .br-select .br-input .br-button{position:absolute;right:2px;top:2px;
+      width:28px;height:28px;padding:0;border:0;background:none;color:var(--gray-70);
+      display:flex;align-items:center;justify-content:center;cursor:pointer;
+      border-radius:50%;}
+    .br-select .br-input .br-button:hover{background:var(--gray-5);}
+    .br-select .br-list{position:absolute;top:calc(100% + 2px);left:0;right:0;
+      background:var(--pure-0);box-shadow:var(--sh-md);border-radius:var(--r-sm);
+      max-height:404px;overflow:auto;z-index:var(--z-layer-2);display:none;
+      padding:4px 0;min-width:5em;}
+    .br-select .br-list[expanded]{display:block;}
+    .br-select .br-item{display:block;padding:0;}
+    .br-select .br-item:not(:last-child){border-bottom:1px solid var(--gray-10);}
+    .br-select .br-item.d-none{display:none;}
+    .br-select .br-item .br-radio{margin:0;}
+    .br-select .br-item .br-radio input + label{display:block;padding:9px 14px;
+      margin:0;min-height:0;cursor:pointer;font-weight:400;color:var(--gray-80);}
+    .br-select .br-item .br-radio input + label::before,
+    .br-select .br-item .br-radio input + label::after{content:none;}
+    .br-select .br-item:hover .br-radio input + label{background:var(--gray-2);}
+    .br-select .br-item.selected .br-radio input + label{
+      background:var(--blue-warm-vivid-5);color:var(--interactive);font-weight:700;}
+    .br-select .br-item:focus{outline:none;}
+    .br-select .br-item:focus-visible{
+      outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:calc(var(--focus-width-field) * -1);}
+    /* estado indeterminado: o navegador já desenha um traço no checkbox nativo
+       quando .indeterminate é setado via JS; aqui só reforçamos visualmente
+       com a cor interativa, já coberta por accent-color acima */
+
+
+    /* ── ALERTS ── */
+    /* ── MESSAGE (br-message), Tipo Padrão — Anatomia: Superfície
+       (obrigatória) + Ícone (opcional) + Título/Mensagem (Mensagem é
+       obrigatória) + Botão Fechar (opcional, omitido aqui porque o
+       conteúdo é importante o bastante para preferir mantê-lo sempre
+       visível, conforme Melhores Práticas do componente).
+       Cores: a tabela de Especificações usa o tom semântico SÓ no ícone
+       e no botão de ação — o texto (título/mensagem) fica em --gray-80
+       neutro em todos os estados, não na cor de estado. ── */
+    .br-message{padding:var(--sp3) var(--sp1) var(--sp3) var(--sp2);
+      border-radius:var(--r-md);font-size:13px;margin-bottom:20px;
+      display:flex;align-items:flex-start;gap:var(--sp2);
+      line-height:1.6;word-break:break-word;color:var(--gray-80);}
+    .br-message .icon{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .br-message .content{flex:1;min-width:0;}
+    .br-message .message-title{font-weight:700;}
+    .br-message .message-body{font-weight:400;}
+    .br-message.info{background:var(--blue-warm-vivid-10);}
+    .br-message.info .icon{color:var(--blue-warm-vivid-60);}
+    .br-message.danger{background:var(--red-vivid-10);display:none;}
+    .br-message.danger .icon{color:var(--red-vivid-50);}
+    .br-message.warning{background:var(--yellow-vivid-5);display:none;}
+    .br-message.warning .icon{color:var(--gray-80);}
+    /* Estrutura de erro em 3 níveis (Template de Erro gov.br DS, adaptado a
+       um alerta inline compacto em vez de página inteira): título principal
+       objetivo, texto secundário com tom construtivo, texto de apoio com a
+       causa técnica, e um botão de ação (retry) — em vez de só uma linha de
+       texto técnico sem ação disponível. */
+    .err-support{font-size:11px;color:var(--gray-70);margin-bottom:10px;margin-top:6px;word-break:break-word;}
+    .err-retry{display:inline-flex;align-items:center;gap:6px;background:var(--red-vivid-50);
+      color:var(--pure-0);border:none;border-radius:var(--r-sm);padding:7px 14px;
+      font:700 12px/1 var(--font);cursor:pointer;
+      transition:background var(--dur-fast) var(--ease);}
+    .err-retry:hover{background:#8a1a0a;}
+    /* ── AVATAR (br-avatar), conforme Componente gov.br DS ──
+       Tamanhos oficiais: small=40px, medium=100px, large=160px. Adiciona-se
+       aqui uma variante .xs (24px) não prevista no documento, necessária
+       para uso compacto dentro de célula de tabela (Acompanhamento de
+       Projetos) sem desproporção visual com o texto de 11px da linha. */
+    .br-avatar{--avatar-size:40px;--avatar-text-size:var(--fs-sm);
+      align-items:center;background-color:transparent;border:0;
+      display:inline-flex;font-weight:700;justify-content:center;
+      line-height:var(--avatar-size);vertical-align:middle;}
+    .br-avatar .content{align-items:center;border-radius:50%;display:inline-flex;
+      font-size:var(--avatar-text-size);height:var(--avatar-size);
+      justify-content:center;overflow:hidden;text-align:center;
+      text-transform:uppercase;vertical-align:inherit;width:var(--avatar-size);
+      flex-shrink:0;}
+    .br-avatar .content img{height:var(--avatar-size);width:var(--avatar-size);
+      vertical-align:inherit;object-fit:cover;}
+    .br-avatar.xs{--avatar-size:22px;--avatar-text-size:10px;}
+    /* ── LOADING (gov.br DS) — variante Indeterminado, fiel ao loading.css
+       oficial (anel via ::before, spinAround 1.3s linear, endpoint 359deg
+       — não 360deg, para não "saltar" visualmente a cada loop).
+       Implementamos só o Indeterminado (Pequeno 24px / Médio 44px), que é
+       o único caso usado hoje no painel (status de carregamento + botão
+       Atualizar). O Determinado (data-progress, com máscara/fill por
+       percentual) não está implementado por não haver, hoje, nenhum
+       carregamento com percentual conhecido no painel. ── */
+    .br-loading{--loading-size:24px;--loading-color:var(--interactive);
+      position:relative;display:inline-block;flex-shrink:0;
+      width:var(--loading-size);height:var(--loading-size);
+      z-index:var(--z-layer-4);}
+    .br-loading::before{content:'';display:block;position:absolute;
+      top:calc(50% - var(--loading-size) * 0.5);left:calc(50% - var(--loading-size) * 0.5);
+      width:var(--loading-size);height:var(--loading-size);
+      border:2px solid var(--loading-color);border-right-color:transparent;
+      border-radius:50%;animation:spinAround 1.3s linear infinite;}
+    .br-loading.medium{--loading-size:44px;}
+    .br-loading.medium::before{border-width:4px;}
+    .br-message.info .br-loading{align-self:center;margin-top:0;}
+    @keyframes spinAround{from{transform:rotate(0deg);}to{transform:rotate(359deg);}}
+
+    /* ── MAGIC BUTTON (gov.br DS) — único CTA do app: convite para
+       cadastrar/responder o Levantamento de Serviços do PTD. Densidade
+       média (padrão): superfície de apoio --sp8 (64px), superfície
+       interna --sp5h (44px) — conforme tabelas "Densidade [Superfície]"
+       e "Densidade [Superfície de apoio]" das Especificações.
+       Posicionamento: estático no fluxo da página, embaixo no centro,
+       antes do rodapé — uma das posições documentadas em Comportamentos >
+       Posicionamento ("não se trata de uma regra" exigir flutuação). ── */
+    /* ── EQUIPE RESPONSÁVEL ("Quem é Quem") ── */
+    .team-section{padding-top:0;}
+    .team-intro{color:var(--gray-70);font-size:13px;max-width:640px;margin:0 0 var(--sp3);}
+    .team-grid{display:grid;grid-template-columns:1fr;gap:var(--sp3);margin-bottom:var(--sp3);}
+    .team-card{display:flex;gap:var(--sp3);align-items:center;padding:var(--sp3);}
+    .team-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;flex-shrink:0;
+      border:2px solid var(--gray-5);}
+    .team-info{min-width:0;}
+    .team-name{font:700 14px/1.3 var(--font);color:var(--gray-80);}
+    .team-role{font-size:12px;color:var(--gray-70);margin-top:2px;line-height:1.4;}
+    .team-unit{color:var(--gray-50);font-size:11px;}
+    .team-email{display:inline-flex;align-items:center;gap:6px;font-size:12px;
+      color:var(--cv-blue);text-decoration:none;margin-top:5px;}
+    .team-email:hover,.team-email:focus{text-decoration:underline;}
+    .team-email i{color:var(--cv-blue);}
+    .team-units{display:grid;grid-template-columns:1fr;gap:var(--sp3);}
+    .team-unit-card{padding:var(--sp3);display:flex;flex-direction:column;gap:6px;}
+    .tu-name{font:700 12.5px/1.3 var(--font);color:var(--gray-80);margin-bottom:2px;}
+    .team-unit-card a,.team-unit-card span{display:inline-flex;align-items:flex-start;gap:8px;
+      font-size:12px;color:var(--gray-70);text-decoration:none;}
+    .team-unit-card a{color:var(--cv-blue);}
+    .team-unit-card a:hover,.team-unit-card a:focus{text-decoration:underline;}
+    .team-unit-card i{width:14px;text-align:center;flex-shrink:0;margin-top:1px;color:var(--gray-50);}
+    .team-unit-card a i{color:var(--cv-blue);}
+    .tu-address{line-height:1.5;}
+    @media(min-width:769px){
+      .team-grid{grid-template-columns:1fr 1fr;}
+      .team-units{grid-template-columns:1fr 1fr;}
+    }
+    .citizen-intro{color:var(--gray-70);font-size:13px;max-width:640px;margin:0 0 var(--sp3);}
+    .citizen-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp3);
+      margin:0 0 var(--sp4);padding:0;list-style:none;}
+    @media(min-width:769px){
+      .citizen-grid{grid-template-columns:repeat(4,1fr);}
+    }
+    .citizen-cta{text-align:center;}
+    /* ── Card (gov.br DS): superfície branca com sombra (--shadow-sm) na
+       frente, verso em --gray-2 — Especificações > Cor do componente
+       Card. Comportamento "Alternando" (flip): clique no botão de info
+       gira o card em 3D revelando a descrição no verso. ── */
+    .flip-card{position:relative;min-height:150px;perspective:1000px;}
+    .flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;border-radius:var(--r-md);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:var(--sp2);padding:var(--sp3);text-align:center;
+      transition:transform .5s var(--ease);}
+    .flip-front{text-decoration:none;color:var(--gray-80);background:var(--pure-0);
+      box-shadow:var(--sh-sm);transform:rotateY(0deg);}
+    .flip-front:hover,.flip-front:focus-visible{background:var(--blue-warm-vivid-5);}
+    .flip-front i{font-size:28px;color:var(--cv-blue);}
+    .flip-front .flip-card-title{font:600 14px/1.3 var(--font);}
+    .flip-back{transform:rotateY(180deg);background:var(--gray-2);}
+    .flip-back .flip-card-title{font:700 14px/1.3 var(--font);color:var(--cv-blue);}
+    .flip-back .flip-card-subtitle{font-size:12px;color:var(--gray-70);line-height:1.4;}
+    .flip-card.flipped .flip-front{transform:rotateY(180deg);}
+    .flip-card.flipped .flip-back{transform:rotateY(360deg);}
+    .flip-toggle{position:absolute;top:8px;right:8px;width:26px;height:26px;
+      border-radius:50%;border:0;background:rgba(255,255,255,.85);cursor:pointer;
+      z-index:2;display:flex;align-items:center;justify-content:center;
+      box-shadow:var(--sh-sm);}
+    .flip-toggle i{font-size:11px;color:var(--gray-70);}
+    .flip-toggle i.fa-times{display:none;}
+    .flip-card.flipped .flip-toggle i.fa-info{display:none;}
+    .flip-card.flipped .flip-toggle i.fa-times{display:inline-block;}
+
+    /* ── CARROSSEL DE DEPOIMENTOS (Componente Carousel) ── */
+    .testimonial-section{padding-top:0;}
+    .testimonial-section .br-carousel{--carousel-min-height:160px;}
+    .testimonial-empty{flex-direction:column;text-align:center;padding:0 var(--sp6);color:var(--gray-50);}
+    .testimonial-empty p{margin:0;font-size:13px;color:var(--gray-70);max-width:480px;}
+    .testimonial-hint{font-size:11.5px!important;color:var(--gray-50)!important;margin-top:6px!important;}
+    .testimonial-card{flex-direction:column;text-align:center;padding:0 var(--sp6);}
+    .testimonial-card i.fa-quote-left{font-size:20px;color:var(--gray-20);margin-bottom:var(--sp2);}
+    .testimonial-text{font-size:14px;color:var(--gray-80);line-height:1.6;font-style:italic;max-width:560px;margin:0;}
+    .testimonial-author{font-size:12px;color:var(--gray-70);font-weight:600;margin-top:var(--sp2);}
+
+    .magic-button-area{display:flex;justify-content:center;padding:var(--sp6) var(--sp2);}
+    .br-magic-button{--magic-size:var(--sp5h);--magic-support-size:var(--sp8);
+      align-items:center;background-color:var(--gray-5);border-radius:100em;
+      box-shadow:var(--sh-sm);display:inline-flex;
+      height:var(--magic-support-size);
+      padding:calc((var(--magic-support-size) - var(--magic-size)) * 0.5);
+      justify-content:center;width:100%;}
+    .br-magic-button .br-button{
+      --button-size:var(--magic-size);height:var(--magic-size);
+      border-radius:100em;background:var(--green-cool-vivid-50);color:var(--pure-0);
+      font-size:var(--fs-lg);font-weight:600;
+      padding:0 var(--sp4);white-space:nowrap;text-decoration:none;
+      display:inline-flex;align-items:center;justify-content:center;gap:var(--sp1);
+      width:100%;}
+    .br-magic-button .br-button:hover{background:var(--green-cool-vivid-70);}
+    .br-magic-button .br-button:active{transform:scale(.98);}
+    /* Em 576px deixa de ser "grid de 4 colunas" — a exigência de largura
+       total (Comportamentos > Responsividade) só vale para mobile; a
+       partir daqui a pílula assume largura natural, do tamanho do texto. */
+    @media(min-width:576px){
+      .br-magic-button{width:auto;}
+      .br-magic-button .br-button{width:auto;}
+    }
+
+    /* ── MENU (gov.br DS) — índice de seções da aba ativa, no padrão
+       "Menu Principal" flutuante (Comportamentos > Localização):
+       acionador em ícone no Header, painel desliza da esquerda para a
+       direita (Anatomia item 11), com superfície scrim que só existe
+       enquanto o menu está ativo — nunca renderizada por padrão, por
+       isso aninhada dentro de .menu-container (que é display:none até
+       receber .active), em vez de ficar como elemento solto sempre no
+       DOM com z-index negativo (causava o fundo acinzentado permanente
+       na versão anterior). Câmada 3 de elevação (flutuante = sombra
+       correspondente, conforme Comportamentos > Localização). ── */
+    .br-menu{--menu-zindex:var(--z-layer-3);}
+    .br-menu .menu-container{display:none;}
+    .br-menu.active .menu-container{display:flex;position:fixed;inset:0;
+      z-index:var(--menu-zindex);}
+    .br-menu .menu-panel{position:relative;z-index:1;background:var(--pure-0);
+      width:320px;max-width:85vw;height:100%;display:flex;flex-direction:column;
+      box-shadow:var(--sh-md);}
+    .br-menu .menu-scrim{position:absolute;inset:0;z-index:0;
+      background:rgba(0,0,0,var(--op-md));}
+    .br-group-header__wrapper{flex:1;min-width:0;}
+    .br-group-header__title{font-weight:700;font-size:var(--fs-base);color:var(--gray-80);text-align:left;}
+    .br-menu .menu-body{flex:1;overflow:auto;padding:var(--sp1) 0;}
+    .br-menu .menu-body ul{list-style:none;margin:0;padding:0;}
+    /* Ícone representativo (Anatomia item 8): reforça a semântica do
+       texto — mesma família de ícones (Font Awesome) em todos os itens. */
+    .br-menu .menu-item{display:flex;align-items:center;gap:var(--sp2);width:100%;
+      padding:var(--sp2) var(--sp3);color:var(--interactive);text-decoration:none;
+      font-size:var(--fs-base);background:transparent;border:0;text-align:left;}
+    .br-menu .menu-item .icon{display:flex;align-items:center;justify-content:center;
+      width:18px;flex-shrink:0;color:var(--interactive);}
+    .br-menu .menu-item:hover,.br-menu .menu-item:focus-visible{background:var(--gray-2);}
+    .br-menu .menu-switch-item{padding:var(--sp1) var(--sp3) var(--sp2);}
+    .br-menu .menu-switch-item .br-switch label{font-size:13px;color:var(--gray-80);}
+    /* Divider (Anatomia item 10): só no 1º nível, classe aplicada direto
+       no menu-item — "Uso do Divider" do DS ("incluir manualmente a
+       classe divider ao menu-item que esteja no primeiro nível"). */
+    .br-menu .menu-item.divider{border-bottom:1px solid var(--gray-10);}
+    /* #sectionMenuList ficou dentro do Componente Group (br-group__body)
+       depois da reestruturação do menu — mas o .menu-item já tem seu
+       próprio padding/divider (acima), então a regra genérica
+       ".br-group__body li" duplicava padding e borda aqui. Neutralizada
+       só para esta lista. */
+    #sectionMenuList li{padding:0;border-bottom:0;}
+    @media(max-width:575.98px){
+      /* "Em dispositivos smartphones o menu principal assumirá a
+         largura completa da tela" (Comportamentos > Responsividade). */
+      .br-menu .menu-panel{width:100%;max-width:100%;}
+    }
+    /* ── Menu Footer (Anatomia item 11 do Menu Principal gov.br DS):
+       selo gov.br, links institucionais (Galeria de Aplicativos,
+       Participe), redes sociais e licença Creative Commons — mesmo
+       conteúdo do rodapé padrão dos sítios gov.br. ── */
+    .br-menu .menu-footer{flex-shrink:0;border-top:1px solid var(--gray-10);
+      padding:var(--sp2) var(--sp3);background:var(--gray-2);}
+    /* ── GROUP (br-group), conforme Componente gov.br DS — usado aqui no
+       rodapé do Menu Principal: clicar na logo gov.br expande/recolhe uma
+       lista de links institucionais do próprio gov.br (Serviços, Notícias
+       etc.), o mesmo padrão visto nos sítios oficiais. Reaproveita o
+       Utilitário JS Collapse (data-toggle="collapse") já usado em
+       Filtros/checkgroups — sem reimplementar a lógica de abrir/fechar.
+       Itens .sub levam ao 1º nível da navegação oficial (Serviços,
+       Temas em Destaque etc.); o 2º/3º nível em cascata do site gov.br
+       (ex.: Serviços > Buscar serviços por > Categorias) não foi
+       replicado aqui — o botão-seta de cada .sub abre a MESMA página de
+       1º nível do link principal, em vez de um submenu aninhado, já que
+       esse aninhamento profundo não tem uso real dentro deste painel. ── */
+    .menu-footer-gov{margin-bottom:var(--sp1);}
+    .menu-footer-govbr-img{height:18px;}
+    .menu-footer-govbr-fallback{display:none;font:700 14px/1 var(--font);color:var(--blue-warm-vivid-70);}
+    .br-group{display:contents;}
+    .br-group-header{display:flex;align-items:center;gap:var(--sp2);
+      width:100%;padding:var(--sp1) var(--sp3) var(--sp2);background:var(--pure-0);border:0;border-bottom:1px solid var(--gray-10);cursor:pointer;
+      position:sticky;top:0;z-index:2;}
+    .br-group-header__logo{display:flex;align-items:center;height:18px;flex:1;min-width:0;}
+    .br-group-header__logo svg{height:18px;width:auto;}
+    .br-group-header .br-button.circle{flex-shrink:0;pointer-events:none;}
+    .br-group-header i{transition:transform var(--dur-fast) var(--ease);}
+    .br-group-header[aria-expanded="false"] i{transform:rotate(180deg);}
+    .br-group__body{padding-top:var(--sp1);margin-bottom:var(--sp1);}
+    .br-group__body [hidden]{display:none;}
+    .br-group__body ul{list-style:none;margin:0;padding:0;}
+    .br-group__body li{display:flex;align-items:center;gap:8px;
+      padding:7px var(--sp3);border-bottom:1px solid var(--gray-10);}
+    .br-group__body li[hidden]{display:none;}
+    .br-group__body li:last-child{border-bottom:0;}
+    .br-group__body .link{flex:1;min-width:0;color:var(--interactive);
+      text-decoration:none;font-size:13px;}
+    .br-group__body .link:hover,.br-group__body .link:focus-visible{text-decoration:underline;}
+    .br-group__body li.sub .br-divider.vertical{width:1px;height:16px;background:var(--gray-10);flex-shrink:0;}
+    .br-group__body .arrow{flex-shrink:0;color:var(--gray-70);}
+    .br-group__body li.sub > .off{margin:0 calc(-1 * var(--sp3));width:100%;flex:1 1 100%;}
+    .br-group__body li.back{background:var(--gray-5);}
+    .br-group__body li.parentitem{background:var(--gray-2);}
+    .br-group__body .back .backButton{display:flex;align-items:center;gap:8px;width:100%;
+      background:none;border:0;padding:0;color:var(--interactive);font:700 13px/1.3 var(--font);
+      cursor:pointer;text-align:left;}
+    .br-group__body .back .backButton:hover,.br-group__body .back .backButton:focus-visible{text-decoration:underline;}
+    .br-group__body .arrow-back{display:inline-flex;color:var(--gray-70);flex-shrink:0;}
+    .br-group__body .parentitem .link{font-weight:700;}
+    .br-group__body li.back,.br-group__body li.parentitem{background:var(--gray-2);}
+    .menu-footer .menu-links{display:flex;flex-direction:column;gap:4px;margin-bottom:var(--sp2);}
+    .menu-footer .menu-links a{display:inline-flex;align-items:center;gap:6px;
+      color:var(--interactive);text-decoration:none;font-size:13px;}
+    .menu-footer .menu-links a:hover,.menu-footer .menu-links a:focus-visible{text-decoration:underline;}
+    .menu-footer .menu-links a i{font-size:11px;}
+    .menu-footer .br-divider{display:block;width:100%;height:1px;margin:var(--sp2) 0;background:var(--gray-10);}
+    .menu-footer-social-title{margin:0 0 var(--sp1);font:700 13px/1 var(--font);color:var(--gray-80);text-align:center;}
+    .menu-footer-social nav{display:flex;justify-content:center;gap:var(--sp2);flex-wrap:wrap;}
+    .menu-footer-social nav a{color:var(--gray-70);font-size:16px;width:24px;height:24px;
+      display:inline-flex;align-items:center;justify-content:center;}
+    .menu-footer-social nav a:hover,.menu-footer-social nav a:focus-visible{color:var(--interactive);}
+    .menu-footer-license{margin:var(--sp2) 0 0;font-size:11px;line-height:1.5;color:var(--gray-70);text-align:center;}
+
+    /* ── FOOTER ── espelho do portal (Manual p.26): links institucionais
+       + identificação do processo, em todas as páginas/abas ── */
+    /* ══════════════════════════════════════════════════════════
+       FOOTER — Fundo Escuro (Especificações > Cores > Footer Fundo
+       Escuro): Container Footer / Container Componente Lista /
+       Container Informações Legais = Blue Warm Vivid 90 (#071d41).
+       Usa a variável --blue-warm-vivid-90 normalmente (ver :root) — essa
+       variável já foi restaurada ao valor oficial real #071d41, confirmado
+       contra o CSS computado da página viva; não há mais necessidade de um
+       hex fixo aqui só por causa de uma sobrescrita pontual da variável.
+       Texto Componente Lista = --blue-warm-20 (#c5d4eb); demais
+       textos = --pure-0.
+    ══════════════════════════════════════════════════════════ */
+    .br-footer{max-width:100%;margin:var(--sp6) 0 0;padding:var(--sp4) var(--sp4) var(--sp5);
+      background:#0040b4;
+      display:flex;flex-direction:column;gap:var(--sp4);font-size:11px;color:#c5d4eb;}
+    .br-footer .footer-top,.br-footer .footer-secondary,.br-footer .footer-legal{
+      max-width:1440px;margin:0 auto;width:100%;}
+
+    /* ── Área de Logo (Anatomia 1) + Mapa do Site (Anatomia 2-5) ──
+       Comportamento "list expandir" (Padrão List): em telas estreitas
+       cada categoria abre/fecha individualmente e só uma fica aberta
+       por vez; a partir do tablet (769px) as 3 ficam sempre expandidas
+       e o cabeçalho da categoria deixa de ser clicável (Comportamento
+       1. Responsividade do componente Footer). ── */
+    .footer-top{display:flex;flex-direction:column;gap:var(--sp4);}
+    .footer-logo-img{height:32px;width:auto;object-fit:contain;}
+    .footer-logo-fallback{display:none;font:800 18px/1 var(--font);color:var(--pure-0);}
+    .footer-sitemap{display:flex;flex-direction:column;flex-wrap:wrap;gap:0;}
+    .fs-col{border-top:1px solid rgba(255,255,255,.15);}
+    .fs-col:last-child{border-bottom:1px solid rgba(255,255,255,.15);}
+    .fs-header{display:flex;align-items:center;justify-content:space-between;width:100%;
+      background:none;border:0;cursor:pointer;padding:12px 0;text-align:left;color:var(--pure-0);}
+    .fs-header .fs-cat{font:600 11.66px/1.3 var(--font);text-transform:uppercase;letter-spacing:.4px;color:var(--pure-0);}
+    .fs-header i{color:#c5d4eb;font-size:13px;}
+    .fs-items{display:flex;flex-direction:column;gap:11px;padding:0 0 var(--sp3);}
+    .fs-items[hidden]{display:none;}
+    .fs-items a{color:#c5d4eb;text-decoration:none;font-size:13px;
+      transition:color var(--dur-fast) var(--ease);}
+    .fs-items a:hover,.fs-items a:focus{color:var(--pure-0);}
+    @media(min-width:769px){
+      .footer-top{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:var(--sp5);}
+      .footer-sitemap{flex-direction:row;gap:var(--sp5);flex:1;justify-content:flex-end;}
+      .fs-col{border:0;min-width:160px;}
+      .fs-col:last-child{border:0;}
+      .fs-header{cursor:default;padding:0 0 var(--sp2);pointer-events:none;}
+      .fs-header i{display:none;}
+      .fs-items{display:flex!important;padding:0;}
+    }
+
+    /* ── Área de Informações Secundárias (Anatomia 6-8): Redes Sociais
+       (Componente Button, circular) + Logo Assinatura. Especificação:
+       Título Redes Sociais em negrito (--font-size-scale-up-01 /
+       --font-weight-bold), cor --pure-0 no fundo escuro. ── */
+    .footer-secondary{display:flex;flex-direction:column;gap:var(--sp3);
+      padding-top:var(--sp3);border-top:1px solid rgba(255,255,255,.15);}
+    .footer-social-title{font:700 16.8px/1.3 var(--font);text-transform:uppercase;
+      letter-spacing:.3px;color:var(--pure-0);margin:0 0 var(--sp2);}
+    .footer-social-icons{display:flex;gap:8px;flex-wrap:wrap;}
+    .footer-social-icons .br-button.circle{background:rgba(255,255,255,.12);color:var(--pure-0);
+      width:32px;height:32px;font-size:14px;}
+    .footer-social-icons .br-button.circle:hover,.footer-social-icons .br-button.circle:focus-visible{
+      background:var(--pure-0);color:var(--blue-warm-vivid-90);}
+    .footer-assigns{display:flex;align-items:center;gap:var(--sp3);flex-wrap:wrap;}
+    .footer-assign-img{height:40px;width:auto;object-fit:contain;}
+    @media(min-width:769px){
+      .footer-secondary{flex-direction:row;justify-content:space-between;align-items:center;}
+    }
+
+    /* ── Área de Informação Legal (Anatomia 9-11): centralizada,
+       conforme especificação ("Texto Informações Legais: alinhamento
+       centralizado"). Concentra identificação institucional, contato
+       da unidade responsável e licença de uso, em --pure-0. ── */
+    .footer-legal{display:flex;flex-direction:column;align-items:center;gap:10px;
+      text-align:center;padding-top:var(--sp3);border-top:1px solid rgba(255,255,255,.15);}
+    .footer-org{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#c5d4eb;}
+    .footer-org .fo-top{font:700 10px/1.3 var(--font);text-transform:uppercase;letter-spacing:.4px;color:var(--pure-0);}
+    .footer-org .fo-mid{font-size:11px;color:var(--pure-0);}
+    .footer-org .fo-unit{font-size:11px;color:#c5d4eb;}
+    .footer-contact{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;align-items:center;}
+    .footer-contact a{color:#c5d4eb;text-decoration:none;font-size:11px;
+      display:inline-flex;align-items:center;gap:6px;transition:color var(--dur-fast) var(--ease);}
+    .footer-contact a:hover,.footer-contact a:focus{color:var(--pure-0);}
+    .footer-contact a i{color:#c5d4eb;width:12px;text-align:center;}
+    .footer-license{font:500 11.66px/1.5 var(--font);color:var(--pure-0);margin:4px 0 0;}
+    .gf-tag{display:inline-flex;align-items:center;gap:6px;
+      font:700 10px/1 var(--font);letter-spacing:.4px;color:var(--pure-0);
+      border:1px solid rgba(255,255,255,.3);border-radius:var(--r-pill);padding:5px 11px;}
+    .gf-tag i{color:var(--pure-0);}
+
+    /* ── Caixa de busca da identidade "Transformação Digital"
+       (Guia de Transformação Digital, 3.1/3.4, p.11-12, 14, 21-27):
+       selo gov.br dentro de uma pílula com lupa — usada aqui como
+       selo de cabeçalho do hero, reforçando "É digital. É gov.br." ── */
+    .ptd-buscabox{display:inline-flex;align-items:center;gap:10px;
+      background:var(--pure-0);border:1px solid var(--gray-20);
+      border-radius:var(--r-pill);padding:7px 9px 7px 16px;}
+    .ptd-buscabox span.ptd-txt{font:600 11px/1 var(--font);color:var(--gray-80);
+      letter-spacing:.2px;white-space:nowrap;}
+    .ptd-buscabox .ptd-lupa{width:24px;height:24px;border-radius:50%;
+      background:var(--blue-warm-vivid-5);display:flex;align-items:center;
+      justify-content:center;color:var(--cv-blue);font-size:11px;flex-shrink:0;}
+
+    /* ── RESPONSIVE — abordagem Mobile First (min-width), conforme
+       recomendado no guia "Boas práticas de CSS" do gov.br DS: a base
+       de cada seletor acima já é o layout mobile; aqui só acrescentamos
+       regras progressivas para telas maiores. ── */
+    /* 576px = breakpoint DS "Smartphone Landscape / Tablet Portrait" (576-991px) */
+    @media(min-width:576px){
+      .kpi-grid{grid-template-columns:1fr 1fr;}
+      .tab-bar-row{padding:0 var(--sp4);}
+      .tab-item{padding:var(--sp2) var(--sp3);font:600 var(--fs-base)/1 var(--font);}
+    }
+    /* 769px: mantido abaixo do breakpoint DS "Tablet Landscape" (992px) por decisão
+       consciente — o painel é um sistema (não portal informativo) e a antecipação
+       do layout de duas colunas a partir de 769px melhora a usabilidade em tablets
+       sem causar distorção, dado que o conteúdo tabular se beneficia do espaço extra */
+    @media(min-width:769px){
+      /* gutter de 24px (var(--sp3)) a partir de tablet, conforme DS:
+         grid de 8-col e 12-col usam gutter=24px (Fundamento Grid gov.br DS) */
+      .kpi-grid{grid-template-columns:repeat(3,1fr);gap:var(--sp3);}
+      .g2{gap:var(--sp3);} .g3,.g2e,.g4{grid-template-columns:1fr 1fr;gap:var(--sp3);}
+      .filters{grid-template-columns:1fr 1fr;gap:var(--sp3);}
+      .heatmap{grid-template-columns:repeat(4,1fr);}
+      .hero{grid-template-columns:1fr auto;}
+      .hero-main{min-width:0;}
+      .hero-badge{display:block;}
+      .hero-desc{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:none;}
+      .page-cnt{padding:var(--sp4) var(--sp4) var(--sp8);}
+      .br-header .container-lg{padding:0 var(--sp4);}
+      .header-bottom-wrap .header-title{font-size:var(--fs-md);}
+      .header-bottom-wrap .header-subtitle{display:block;}
+    }
+    /* 992px = breakpoint DS "Tablet Landscape" — só a partir daqui a logo
+       volta ao tamanho médio e a assinatura textual do MIDR aparece ao
+       lado dela. Abaixo disso (mobile e tablet portrait/landscape), o
+       header fica no modo compacto: logo pequena, sem texto de assinatura,
+       replicando o cabeçalho do site oficial da Codevasf no celular. */
+    @media(min-width:992px){
+      .br-header .logo-codevasf{max-height:38px;max-width:210px;}
+      .br-header .header-sign{display:block;}
+    }
+    @media(min-width:1201px){
+      .kpi-grid{grid-template-columns:repeat(5,minmax(0,1fr));}
+      .g2{grid-template-columns:1.2fr .8fr;}
+      .g3{grid-template-columns:repeat(3,1fr);}
+      .g2e{grid-template-columns:1fr 1fr;}
+      .g4{grid-template-columns:repeat(4,1fr);}
+      #ctrlKpiGrid{grid-template-columns:repeat(5,1fr);}
+      .filters{grid-template-columns:repeat(3,1fr);}
+      .filters .br-field:nth-child(1){grid-column:span 2;}
+    }
+    /* Respeita a preferência de sistema do usuário por movimento reduzido
+       (Fundamento Movimento gov.br DS — Acessibilidade: "disponibilize o
+       controle do usuário sobre o uso das animações", motivado por
+       distúrbios vestibulares). Reduz a praticamente zero a duração de
+       transições e animações decorativas, sem remover o feedback de
+       progresso em si (o spinner de carregamento continua indicando estado,
+       só sem o movimento contínuo de rotação/pulso). */
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:.001ms!important;
+        animation-iteration-count:1!important;
+        transition-duration:.001ms!important;
+        scroll-behavior:auto!important;
+      }
+    }
+  
+.br-sign-in.primary .text-black{color:var(--gray-2);}.br-header .br-button.circle,.br-header .br-button.icon-only{background:transparent;border-color:transparent;border-radius:50%;color:var(--interactive);width:32px;height:32px;padding:0;box-shadow:none;justify-content:center}.br-header .br-button.circle:hover,.br-header .br-button.icon-only:hover{background:var(--blue-warm-vivid-5)}.br-header .header-functions{display:inline-flex;align-items:center;gap:var(--sp1)}.br-header .header-functions .dd-target{min-width:280px}.br-header .header-functions .br-item.status-item{cursor:default;color:var(--gray-70)}.br-header .header-functions .br-item.status-item:hover{background:none;color:var(--gray-70)}
+.find-highlight{background:var(--yellow-vivid-20);color:var(--gray-80);padding:0 2px;border-radius:2px}.find-highlight.current{outline:2px solid var(--focus-color);outline-offset:1px}
+.kpi-c{overflow:visible!important}.kpi-c::before{pointer-events:none;z-index:0}.kpi-c>*{position:relative;z-index:1}.kpi-lbl{position:relative}.kpi-lbl .tt-bubble{z-index:9999!important;white-space:normal;max-width:360px;}
+.testimonial-section{padding:var(--sp7) var(--sp2) var(--sp8)}.testimonial-section .br-carousel{--carousel-min-height:480px;display:flex;align-items:center;justify-content:center;min-height:var(--carousel-min-height);height:auto;width:100%;max-width:1440px;margin:0 auto;position:relative;gap:var(--sp3);padding-bottom:76px}.testimonial-section .br-carousel .carousel-button{align-items:center;display:flex;flex:0 0 auto;height:calc(100% - 90px);z-index:1}.testimonial-section .br-carousel .carousel-btn-prev,.testimonial-section .br-carousel .carousel-btn-next{margin:var(--sp2);padding:0;min-width:44px;width:44px;height:44px}.testimonial-section .br-carousel .carousel-stage{background:var(--pure-0);border:1px solid var(--gray-10);border-radius:var(--r-lg);box-shadow:var(--sh-sm);display:block;flex:1 1 auto;height:390px;min-height:390px;overflow:hidden;position:relative;width:auto;max-width:1180px}.testimonial-section .br-carousel .carousel-page{align-items:center;display:flex;height:100%;justify-content:center;left:100%;opacity:0;overflow:hidden;position:absolute;top:0;transition:all .35s ease-in-out;visibility:hidden;width:100%}.testimonial-section .br-carousel .carousel-page[active]{left:0!important;opacity:1;visibility:visible}.testimonial-section .br-carousel .carousel-content{align-items:center;display:flex;flex-direction:column;flex-wrap:nowrap;height:100%;justify-content:center;width:100%}.testimonial-section .carousel-step{bottom:18px;display:flex;justify-content:center;gap:10px;height:40px;left:0;position:absolute;width:100%}.testimonial-section .carousel-step[hidden]{display:none}.testimonial-card,.testimonial-empty{padding:var(--sp5) var(--sp7)}.testimonial-text{font-size:16px;line-height:1.72;max-width:980px;max-height:245px;overflow:auto;overflow-wrap:anywhere;text-align:center}.testimonial-author{display:block;max-width:980px;width:100%;margin-top:var(--sp3);overflow-wrap:anywhere;white-space:normal;text-align:center}
+.br-footer{background:var(--blue-warm-vivid-90)!important;color:var(--pure-0)}.br-footer a,.br-footer .fs-header,.br-footer .fs-cat,.br-footer .footer-social-title,.br-footer .footer-license,.br-footer .footer-org span{color:var(--pure-0)!important}.footer-social-icons .br-button,.footer-social-icons .social-icon{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;width:auto!important;height:auto!important;min-width:0!important;padding:4px 6px!important;color:var(--pure-0)!important}.footer-social-icons .br-button i{font-size:20px}
+

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Painel de Gestão de Processos · Codevasf · gov.br</title>
+  <meta name="description" content="Painel de gestão de processos da Codevasf: cadeia de valor, mapeamento (BPMN/Bizagi), documentos, riscos, indicadores e diário de mapeamento — CBOK 4.0 e PMBOK.">
+  <meta name="keywords" content="gestão de processos, BPM, cadeia de valor, mapeamento de processos, codevasf, gov.br, CBOK, PMBOK, bizagi">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="author" content="Codevasf — Ministério da Integração e do Desenvolvimento Regional">
+  <link rel="icon" href="https://gov.br/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://gov.br/++theme++padrao_govbr/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="https://gov.br/++theme++padrao_govbr/favicons/favicon-48x48.png">
+  <link rel="apple-touch-icon" href="https://gov.br/++theme++padrao_govbr/favicons/apple-touch-icon.png">
+  <meta name="theme-color" content="#0040b4">
+  <meta property="og:title" content="Painel de Gestão de Processos · Codevasf">
+  <meta property="og:description" content="Cadeia de valor, mapeamento de processos, documentos, riscos, indicadores e diário de mapeamento da Codevasf.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Mono:wght@100..900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/govbr-ds.css">
+  <link rel="stylesheet" href="css/painel.css">
+  <script>
+    /* ── Configuração do painel ──────────────────────────────────────
+       Para alimentar via Google Sheets (recomendado, igual ao painel
+       do PTD): importe data/painel-processos-dados.xlsx no Google
+       Sheets, compartilhe como "qualquer pessoa com o link pode ver"
+       e cole o ID da planilha abaixo (o trecho entre /d/ e /edit). */
+    window.PAINEL_CONFIG = {
+      googleSheetId: '',
+      arquivoXlsx: 'data/painel-processos-dados.xlsx'
+    };
+  </script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="js/dados.js"></script>
+  <script defer src="js/govbr-ui.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+
+<nav class="br-skiplink" aria-label="Acesso rápido" role="menubar">
+  <a class="br-item" href="#main" role="menuitem" accesskey="1">Ir para o conteúdo <span aria-hidden="true">(1/4)</span> <span aria-hidden="true" class="br-tag">1</span></a>
+  <a class="br-item" href="#navigation" role="menuitem" accesskey="2">Ir para a navegação <span aria-hidden="true">(2/4)</span> <span aria-hidden="true" class="br-tag">2</span></a>
+  <a class="br-item" id="skipToSearch" href="#headerSearchInput" role="menuitem" accesskey="3">Ir para a busca <span aria-hidden="true">(3/4)</span> <span aria-hidden="true" class="br-tag">3</span></a>
+  <a class="br-item" href="#footer" role="menuitem" accesskey="4">Ir para o rodapé <span aria-hidden="true">(4/4)</span> <span aria-hidden="true" class="br-tag">4</span></a>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     br-header — fundo branco, logo Codevasf real
+     Estratégia: <img> direto na URL JPEG oficial do gov.br
+     (endpoint @@images, não o PDF) + fallback de texto via onerror
+     Estrutura fiel à Anatomia do Header (gov.br DS v3.7.0):
+     header-top (logo + assinatura + Área para Links + Área para
+     Funcionalidades + Botão Autenticar) e header-bottom
+     (header-menu > header-info > header-title obrigatório + header-subtitle).
+     Os atalhos institucionais (Anatomia item 6, Área para Links) que
+     antes ficavam numa barra separada acima do header agora vivem aqui,
+     ao lado da assinatura — a posição correta segundo a Anatomia do
+     componente, replicando o cabeçalho oficial do site da Codevasf
+     (gov.br/codevasf): Logo+Assinatura | Links | Funcionalidades |
+     Botão Autenticar. "Tempo real", status de sincronização, Atualizar,
+     Alertas operacionais e Mais ações desceram para a faixa de
+     navegação (#navigation), na altura de "Análise do Levantamento" /
+     "Acompanhamento de Projetos".
+══════════════════════════════════════════════ -->
+<div class="br-header-topbar">
+  <div class="container-lg">
+    <button class="br-button circle small" type="button" id="btnCookieSettings" aria-label="Configurações avançadas de cookies"><i class="fas fa-cookie-bite" aria-hidden="true"></i></button>
+    <button class="br-button circle small" type="button" id="btnContrastIcon" aria-label="Ativar contraste" aria-pressed="false"><i class="fas fa-adjust" aria-hidden="true"></i></button>
+  </div>
+</div>
+<header class="br-header" role="banner">
+  <div class="container-lg">
+    <div class="header-top">
+      <div class="header-logo">
+        <div class="logo-codevasf-wrap">
+          <!-- A "assinatura conjunta" oficial (Codevasf + Ministério da
+               Integração e do Desenvolvimento Regional + Governo Federal)
+               foi retirada do ar pelo gov.br — por isso o hotlink quebrou
+               em qualquer dispositivo (não era um problema de hash de
+               imagem, era o asset mesmo que não existe mais publicado).
+               A pedido do responsável pelo painel, a imagem oficial foi
+               embutida diretamente aqui como data URI em base64: não há
+               mais NENHUMA dependência de rede para este logo — não pode
+               mais "cair", porque o arquivo agora é parte do próprio HTML.
+               O texto "Ministério da Integração e do Desenvolvimento
+               Regional (MIDR)" ao lado (.header-sign, mais abaixo) foi
+               restaurado a pedido, mesmo a imagem já trazendo esse nome —
+               ele aparece pequeno demais dentro da imagem para ser lido
+               com conforto, então o texto HTML garante legibilidade e
+               mantém o link para o site do MDR. -->
+          <img class="logo-codevasf" id="logoCodevasf"
+            src="data:image/png;base64,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"
+            alt="Codevasf — assinatura conjunta com o Ministério da Integração e do Desenvolvimento Regional e o Governo Federal (Governo do Brasil, do lado do povo brasileiro)"
+            onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block';">
+          <div class="logo-fallback" id="logoFallback">CODEVASF</div>
+        </div>
+        <div class="br-divider" aria-hidden="true"></div>
+        <a class="header-sign" href="https://www.gov.br/mdr/pt-br" target="_blank" rel="noopener"><span class="sign-line">Ministério da Integração e do</span><span class="sign-line">Desenvolvimento Regional (MIDR)</span><span class="sr-only"> (abre em nova aba)</span></a>
+      </div>
+      <div class="header-actions">
+        <div class="dropdown-wrap header-links"><button class="br-button circle small" type="button" id="btnQuickLinks" data-toggle="dropdown" data-target="quickLinksMenu" aria-label="Abrir atalhos institucionais" aria-controls="quickLinksMenu" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button><div class="br-list dd-target" id="quickLinksMenu" role="group" aria-label="Atalhos institucionais" hidden><div class="header"><div class="title">Atalhos institucionais</div></div><span class="br-divider" aria-hidden="true"></span><div class="quick-links-item quick-links-group"><button type="button" class="br-item" data-toggle="collapse" data-target="institucionalSub" aria-controls="institucionalSub" aria-expanded="false">Institucional<i class="fas fa-chevron-down" aria-hidden="true" style="margin-left:auto"></i></button><div id="institucionalSub" class="quick-links-sub" hidden><a class="br-item" href="https://www.gov.br/pt-br/orgaos-do-governo" target="_blank" rel="noopener">Órgãos do Governo<span class="sr-only"> (abre em nova aba)</span></a><a class="br-item" href="https://www.gov.br/acessoainformacao/pt-br" target="_blank" rel="noopener">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></a><a class="br-item" href="http://www4.planalto.gov.br/legislacao" target="_blank" rel="noopener">Legislação<span class="sr-only"> (abre em nova aba)</span></a></div></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/governodigital/pt-br/acessibilidade-digital" target="_blank" rel="noopener">Acessibilidade<span class="sr-only"> (abre em nova aba)</span></a></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/secom/pt-br/acesso-a-informacao/comunicabr" target="_blank" rel="noopener">Comunica BR<span class="sr-only"> (abre em nova aba)</span></a></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/pt-br/participacao-social" target="_blank" rel="noopener">Participe<span class="sr-only"> (abre em nova aba)</span></a></div></div></div>
+        <span class="br-divider vertical" aria-hidden="true"></span>
+        <div class="header-functions">
+          <div class="dropdown-wrap"><button class="br-button secondary small govbr-shortcuts-btn" type="button" id="btnHeaderFunctions" data-toggle="dropdown" data-target="headerFunctionsMenu" aria-label="Atalhos gov.br" aria-controls="headerFunctionsMenu" aria-expanded="false"><i class="fas fa-th" aria-hidden="true"></i> <span class="govbr-shortcuts-label">Atalhos gov.br</span></button><div class="br-list dd-target" id="headerFunctionsMenu" role="group" aria-label="Funcionalidades do painel" hidden><div class="header"><div class="title">Funcionalidades do painel</div></div><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="data/painel-processos-dados.xlsx" download><i class="fas fa-file-excel" aria-hidden="true"></i> Planilha de dados (modelo)</a><a class="br-item" href="#/metodologia"><i class="fas fa-book" aria-hidden="true"></i> Metodologia (CBOK · PMBOK)</a><button type="button" class="br-item" id="btnRefresh" onclick="refreshAll()"><i class="fas fa-sync-alt" aria-hidden="true"></i> Atualizar</button><div class="br-item status-item" aria-live="polite"><i class="fas fa-broadcast-tower" aria-hidden="true"></i> Tempo real · <span id="syncChip">Aguardando…</span></div><button type="button" class="br-item" id="actExportCsv"><i class="fas fa-file-csv" aria-hidden="true"></i> Exportar CSV</button><button type="button" class="br-item" id="actCopyLink"><i class="fas fa-link" aria-hidden="true"></i> Copiar link do painel</button><a class="br-item" id="actOpenSheet" href="#" target="_blank" rel="noopener"><i class="fas fa-table" aria-hidden="true"></i> Abrir planilha de origem<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="#" id="menuHelpTrigger" data-modal-open="modalAjuda"><i class="fas fa-question-circle" aria-hidden="true"></i> Como usar este painel</a><a class="br-item" href="#" id="menuA11yStatementTrigger" data-modal-open="modalA11y"><i class="fas fa-universal-access" aria-hidden="true"></i> Declaração de Acessibilidade</a><div class="br-item switch-item"><div class="br-switch right small icon" role="presentation"><input id="obAutoToggle" type="checkbox" name="obAutoToggle" role="switch"><label for="obAutoToggle">Abrir tutorial automaticamente</label></div></div></div></div>
+        </div>
+        <span class="br-divider vertical" aria-hidden="true"></span><a class="br-sign-in primary small" id="govbrSignIn" href="https://sso.acesso.gov.br/" target="_blank" rel="noopener">Entrar com&nbsp;<span class="text-black">gov.br</span><span class="sr-only"> (abre em nova aba)</span></a>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- ── header-bottom-wrap: a partir da v135, o bloco Título+Busca (itens 3/4
+     da Anatomia) vive FORA do elemento header, como irmão dele (igual a
+     #navigation logo abaixo) — não como filho. Isso é proposital, não só
+     estético: position:sticky só mantém um elemento grudado enquanto a
+     rolagem estiver dentro da caixa do elemento PAI. Se este bloco ficasse
+     dentro do header (que é curto — só header-top + este bloco), ele
+     "descolaria" quase que instantaneamente, porque a caixa do header
+     terminaria ali mesmo. Como irmão direto do body da página, ele tem uma
+     caixa-mãe alta o bastante (o restante da página) para continuar
+     grudado durante toda a rolagem, exatamente como #navigation já faz.
+     Tem seu PRÓPRIO .container-lg interno, mantendo o mesmo padding
+     lateral do cabeçalho, sem precisar de hack de margem negativa. No
+     desktop isso é invisível (CSS mantém os dois blocos visualmente
+     colados, como sempre foram). No mobile (≤991.98px), este wrapper vira
+     o ÚNICO elemento sticky do cabeçalho — replicando o site oficial da
+     Codevasf, onde ao rolar a tela só o título+lupa permanecem fixos, e a
+     logo/atalhos/Entrar (header-top, dentro do elemento header) rolam para
+     fora normalmente, em vez do cabeçalho inteiro ocupar ~50% da tela
+     sempre. Ver CSS em @media(max-width:991.98px) mais abaixo. ── -->
+<div class="header-bottom-wrap">
+  <div class="container-lg">
+    <div class="header-bottom">
+      <div class="header-menu">
+        <div class="header-menu-trigger">
+          <button class="br-button small circle" type="button" id="sectionMenuTrigger" aria-label="Abrir índice de seções" data-toggle="menu" data-target="#sectionMenu" aria-expanded="false" aria-controls="sectionMenu">
+            <i class="fas fa-bars" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="header-info">
+          <div class="header-title">Companhia de Desenvolvimento dos Vales do São Francisco e do Parnaíba (Codevasf)</div>
+          <div class="header-subtitle">Painel de Gestão de Processos — cadeia de valor, mapeamento e repositório de processos.</div>
+        </div>
+      </div>
+      <!-- Ação de busca (🔍): movida para cá (item 3 da Anatomia do Header,
+           ao lado do Título) a partir da v135 — antes vivia lá em cima, no
+           header-actions, junto de Institucional/Atalhos/Entrar. No mobile
+           isso empurrava o header pra 3 linhas cheias. Replicando o site
+           oficial da Codevasf: no celular, a lupa fica ao lado do título,
+           não junto dos atalhos institucionais. -->
+      <div class="header-search-trigger"><button class="br-button circle small" type="button" id="headerSearchTrigger" aria-label="Abrir busca" data-toggle="search" data-target="#headerSearch"><i class="fas fa-search" aria-hidden="true"></i></button></div>
+      <!-- Campo de Busca (Anatomia 10): pesquisa por nome de serviço, levando
+           à aba e ao registro correspondente. Comportamento 3 (Busca): em
+           telas largas funciona como input comum; em telas estreitas, é
+           acionada pelo ícone de lupa e ocupa toda a largura do cabeçalho,
+           com botão circular para fechar. -->
+      <div class="header-search" id="headerSearch">
+        <div class="br-input has-icon">
+          <label for="headerSearchInput">Pesquisar processos, documentos e registros</label>
+          <input id="headerSearchInput" type="text" placeholder="Pesquisar no painel…">
+          <button class="br-button circle small" type="button" id="headerSearchSubmit" aria-label="Pesquisar"><i class="fas fa-search" aria-hidden="true"></i></button>
+        </div>
+        <button class="br-button circle search-close" type="button" id="headerSearchClose" aria-label="Fechar busca" data-dismiss="search"><i class="fas fa-times" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- br-tab — faixa de navegação principal do Painel de Gestão de Processos
+     (mesma anatomia da faixa do painel do PTD; os Alertas operacionais
+     agora listam prazos de mapeamento vencidos e riscos Alto/Extremo). -->
+<div class="br-tab" id="navigation">
+  <div class="tab-bar-row">
+    <nav class="tab-nav" aria-label="Seções do painel">
+      <ul role="tablist"><li class="tab-item active"><button type="button" id="tab-inicio" role="tab" aria-selected="true" aria-controls="panel-inicio" data-rota="#/" data-painel="inicio"><span class="name"><i class="fas fa-house" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Início · Cadeia de Valor</span><span class="tab-label-short">Início</span></span></span></button></li><li class="tab-item"><button type="button" id="tab-catalogo" role="tab" aria-selected="false" aria-controls="panel-catalogo" data-rota="#/catalogo" data-painel="catalogo"><span class="name"><i class="fas fa-layer-group" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Catálogo de Processos</span><span class="tab-label-short">Processos</span></span> <span class="tab-count" id="cntCatalogo">—</span></span></button></li><li class="tab-item"><button type="button" id="tab-documentos" role="tab" aria-selected="false" aria-controls="panel-documentos" data-rota="#/documentos" data-painel="documentos"><span class="name"><i class="fas fa-folder-open" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Documentos</span><span class="tab-label-short">Docs</span></span> <span class="tab-count" id="cntDocumentos">—</span></span></button></li><li class="tab-item"><button type="button" id="tab-riscos" role="tab" aria-selected="false" aria-controls="panel-riscos" data-rota="#/riscos" data-painel="riscos"><span class="name"><i class="fas fa-shield-halved" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Radar de Riscos</span><span class="tab-label-short">Riscos</span></span> <span class="tab-count" id="cntRiscos">—</span></span></button></li><li class="tab-item"><button type="button" id="tab-indicadores" role="tab" aria-selected="false" aria-controls="panel-indicadores" data-rota="#/indicadores" data-painel="indicadores"><span class="name"><i class="fas fa-chart-line" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Indicadores</span><span class="tab-label-short">Indic.</span></span> <span class="tab-count" id="cntIndicadores">—</span></span></button></li><li class="tab-item"><button type="button" id="tab-diario" role="tab" aria-selected="false" aria-controls="panel-diario" data-rota="#/diario" data-painel="diario"><span class="name"><i class="fas fa-timeline" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Diário de Mapeamento</span><span class="tab-label-short">Diário</span></span> <span class="tab-count" id="cntDiario">—</span></span></button></li><li class="tab-item"><button type="button" id="tab-metodologia" role="tab" aria-selected="false" aria-controls="panel-metodologia" data-rota="#/metodologia" data-painel="metodologia"><span class="name"><i class="fas fa-book" aria-hidden="true"></i> <span class="tab-label"><span class="tab-label-full">Metodologia</span><span class="tab-label-short">Método</span></span></span></button></li></ul>
+    </nav>
+    <div class="tab-bar-actions"><div class="dropdown-wrap"><button class="br-button circle small has-badge" type="button" id="btnNotifications" data-toggle="dropdown" data-target="notifPanel" aria-label="Alertas operacionais" aria-controls="notifPanel" aria-expanded="false"><i class="fas fa-bell" aria-hidden="true"></i><span class="notif-badge" id="notifBadge" hidden>0</span></button><div class="br-notification dd-target" id="notifPanel" aria-label="Alertas operacionais" hidden><div class="notification-header"><span class="text-bold">Alertas operacionais</span><div class="close"><button class="br-button circle small" type="button" id="notifCloseBtn" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div></div><div class="notification-body"><div class="br-tab" id="notifTabs"><nav class="tab-nav"><ul role="tablist" aria-label="Categorias de alerta"><li class="tab-item active"><button type="button" id="notifTabOverdue" role="tab" aria-selected="true" aria-controls="notifPanelOverdue" onclick="showNotifTab('overdue',this)"><span class="name"><i class="fas fa-calendar-times" aria-hidden="true"></i> Prazo Vencido <span class="tab-count" id="notifOverdueCount">0</span></span></button></li><li class="tab-item"><button type="button" id="notifTabRisk" role="tab" aria-selected="false" aria-controls="notifPanelRisk" onclick="showNotifTab('risk',this)"><span class="name"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Risco Alto <span class="tab-count" id="notifRiskCount">0</span></span></button></li></ul></nav><div class="tab-content"><div class="tab-panel active" id="notifPanelOverdue" role="tabpanel"><div class="br-list" id="notifOverdueList"></div></div><div class="tab-panel" id="notifPanelRisk" role="tabpanel" hidden><div class="br-list" id="notifRiskList"></div></div></div></div></div></div></div></div>
+  </div>
+</div>
+
+<main id="main" role="main">
+  <div id="mainTabContent" class="tab-content">
+    <section class="tab-panel active pp-cnt" id="panel-inicio" role="tabpanel" aria-labelledby="tab-inicio"><div id="viewInicio"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-catalogo" role="tabpanel" aria-labelledby="tab-catalogo" hidden><div id="viewCatalogo"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-detalhe" role="tabpanel" aria-label="Ficha do item selecionado" hidden><div id="viewDetalhe"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-documentos" role="tabpanel" aria-labelledby="tab-documentos" hidden><div id="viewDocumentos"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-riscos" role="tabpanel" aria-labelledby="tab-riscos" hidden><div id="viewRiscos"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-indicadores" role="tabpanel" aria-labelledby="tab-indicadores" hidden><div id="viewIndicadores"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-diario" role="tabpanel" aria-labelledby="tab-diario" hidden><div id="viewDiario"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-metodologia" role="tabpanel" aria-labelledby="tab-metodologia" hidden><div id="viewMetodologia"></div></section>
+    <section class="tab-panel pp-cnt" id="panel-busca" role="tabpanel" aria-label="Resultados da busca" hidden><div id="viewBusca"></div></section>
+  </div>
+</main>
+
+<div class="br-menu" id="sectionMenu">
+  <div class="menu-container">
+    <div class="menu-panel">
+      <nav class="menu-body" aria-label="Seções da aba ativa" id="sectionMenuBody">
+        <div class="br-group" id="sectionMenuGroup">
+          <button type="button" class="br-group-header" data-toggle="collapse" data-target="sectionMenuGroupBody" aria-controls="sectionMenuGroupBody" aria-expanded="true">
+            <div class="br-group-header__wrapper"><div class="br-group-header__title" id="sectionMenuTitle">Ir para seção</div></div>
+            <span class="br-button circle small" aria-hidden="true"><i class="fas fa-chevron-up" aria-hidden="true"></i></span>
+          </button>
+          <div class="br-group__body" id="sectionMenuGroupBody">
+            <ul id="sectionMenuList"></ul>
+          </div>
+        </div>
+        <div class="br-group" id="govbrLinksGroup">
+          <button type="button" class="br-group-header" data-toggle="collapse" data-target="govbrLinksBody" aria-controls="govbrLinksBody" aria-expanded="false">
+            <span class="br-group-header__logo" aria-hidden="true">
+              <svg role="img" viewBox="0 0 578.496 208.313" xmlns="http://www.w3.org/2000/svg"><title>gov.br</title><g transform="translate(-14.33 -14.24)"><path d="M76.305,128.937c13.788,0,24.765-11.626,24.765-28.841,0-12.491-7.334-26.479-24.765-26.479-14.405,0-21.955,12.707-21.955,27.992C54.35,119.04,64.679,128.937,76.305,128.937ZM138.512,145.5c0,46.057-22.372,60.91-67.58,60.91a130.633,130.633,0,0,1-42.83-7.1l1.93-30.571C41.89,174.561,51.787,178,67.921,178c22.388,0,34.446-10.545,34.446-32.5v-6.037h-.432c-9.264,13.124-22.171,19.161-37.673,19.161-30.787,0-49.932-23.237-49.932-56.386,0-33.381,15.7-58.331,50.581-58.331,16.567,0,29.907,9.048,38.09,22.82h.448V46.5h35.079v99Z" transform="translate(0 16.14)" fill="#2864ae"></path><path d="M210.252,157.389H253.36L293.889,45.93H256.232L233.35,125.321h-.417L210.252,45.93H169.63Z" transform="translate(84.479 17.239)" fill="#46ad44"></path><path d="M184.973,102.612c0-16.675-7.272-31.435-25.028-31.435-17.74,0-25.012,14.76-25.012,31.435,0,16.459,7.272,31.219,25.012,31.219C177.7,133.831,184.973,119.071,184.973,102.612Zm-89.813,0c0-36.994,28.008-58.362,64.785-58.362s64.785,21.384,64.785,58.362c0,36.777-28.008,58.162-64.785,58.162C123.183,160.774,95.16,139.39,95.16,102.612Z" transform="translate(43.969 16.325)" fill="#fabd10"></path><path d="M265.806,114.361A18.273,18.273,0,1,1,247.525,96.08,18.262,18.262,0,0,1,265.806,114.361Z" transform="translate(116.916 44.519)" fill="#2864ae"></path><path d="M317.217,90.173c-14.112,0-23.53,12.4-23.53,29.073,0,16.258,10.7,28.455,23.53,28.455,14.544,0,23.314-12.2,23.314-29.953C340.531,103,332.193,90.173,317.217,90.173ZM255.2,14.24H293.9V77.558h.432c9.851-12.414,22.882-16.891,38.291-16.891,30.8,0,47.678,29.289,47.678,56.247,0,32.933-17.74,60.323-50.9,60.323-17.756,0-33.365-10.051-38.275-22.465h-.432v19.9H255.18V14.24Z" transform="translate(131.016 0)" fill="#2864ae"></path><path d="M415.791,77.665c-4.277-1.281-8.554-1.281-13.047-1.281-17.972,0-28.008,13.047-28.008,34.863v47.06H336.23V46.863h35.079V67.4h.432C378.38,53.27,388,44.3,404.674,44.3a80.869,80.869,0,0,1,13.047,1.282Z" transform="translate(175.105 16.352)" fill="#fabd10"></path></g></svg>
+            </span>
+            <span class="br-button circle small" aria-hidden="true"><i class="fas fa-chevron-up" aria-hidden="true"></i></span>
+            <span class="sr-only">Abrir links do gov.br</span>
+          </button>
+          <div class="br-group__body" id="govbrLinksBody" hidden aria-hidden="true">
+            <ul><li class="sub"><a class="link" href="https://www.gov.br/pt-br/servicos" target="_blank" rel="noopener">Serviços<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Serviços</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/servicos" target="_blank" rel="noopener">Serviços<span class="sr-only"> (abre em nova aba)</span></a></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/servicos/buscar-servicos-por" target="_blank" rel="noopener">Buscar serviços por<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Buscar serviços por</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/servicos/buscar-servicos-por" target="_blank" rel="noopener">Buscar serviços por<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/categorias" target="_blank" rel="noopener">Categorias<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos/listar_orgaos" target="_blank" rel="noopener">Órgãos<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos-estaduais" target="_blank" rel="noopener">Estados<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/servicos/servicos-por-publico-alvo" target="_blank" rel="noopener">Serviços por público alvo<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Serviços por público alvo</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/servicos/servicos-por-publico-alvo" target="_blank" rel="noopener">Serviços por público alvo<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos/listar_servicos_segmento?segmento=publico_alvo_cidadaos" target="_blank" rel="noopener">Cidadãos<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos/listar_servicos_segmento?segmento=publico_alvo_empresas" target="_blank" rel="noopener">Empresas<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos/listar_servicos_segmento?segmento=publico_alvo_orgaos" target="_blank" rel="noopener">Órgãos e Entidades Públicas<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos/listar_servicos_segmento?segmento=publico_alvo_outros" target="_blank" rel="noopener">Demais segmentos (ONGs, organizações sociais, etc)<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/servicos/listar_servicos_segmento?segmento=publico_alvo_servidor" target="_blank" rel="noopener">Servidor Público<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li></ul></div></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/temas-em-destaque" target="_blank" rel="noopener">Temas em Destaque<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Temas em Destaque</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/temas-em-destaque" target="_blank" rel="noopener">Temas em Destaque<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/transparencia-fiscal-orcamento-nacional" target="_blank" rel="noopener">Orçamento Nacional<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/redes-civis-de-unidades-de-atendimento-do-governo-federal" target="_blank" rel="noopener">Redes de Atendimento do Governo Federal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/protecao-de-dados-pessoais" target="_blank" rel="noopener">Proteção de Dados Pessoais<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/servicos-para-imigrantes" target="_blank" rel="noopener">Serviços para Imigrantes<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/politica-e-orcamento-educacional" target="_blank" rel="noopener">Política e Orçamento Educacionais<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/educacao-profissional-e-tecnologica-1" target="_blank" rel="noopener">Educação Profissional e Tecnológica<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/habilidades-online-para-jovens-e-adultos" target="_blank" rel="noopener">Educação Profissional para Jovens e Adultos<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/trabalho-emprego" target="_blank" rel="noopener">Trabalho e Emprego<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/acesso-a-educacao-para-pessoas-com-deficiencia" target="_blank" rel="noopener">Serviços para Pessoas com Deficiência<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/politica-e-legislacao-contra-a-discriminacao-racial" target="_blank" rel="noopener">Combate à Discriminação Racial<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/politica-e-orcamento-de-protecao-social" target="_blank" rel="noopener">Política de Proteção Social<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/politica-para-mulheres" target="_blank" rel="noopener">Política para Mulheres<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/saude-reprodutiva-da-mulher" target="_blank" rel="noopener">Saúde Reprodutiva da Mulher<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/desenvolvimento-cuidados-e-educacao-pre-escolar" target="_blank" rel="noopener">Cuidados na Primeira Infância<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/habitacao-popular" target="_blank" rel="noopener">Habitação Popular<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/temas/controle-da-poluicao-e-outras-medidas-de-precaucao" target="_blank" rel="noopener">Controle de Poluição e Resíduos Sólidos<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/noticias" target="_blank" rel="noopener">Notícias<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Notícias</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/noticias" target="_blank" rel="noopener">Notícias<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/servicos-para-o-cidadao" target="_blank" rel="noopener">Serviços para o cidadão<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/saude-e-vigilancia-sanitaria" target="_blank" rel="noopener">Saúde<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/agricultura-e-pecuaria" target="_blank" rel="noopener">Agricultura e Pecuária<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/assistencia-social" target="_blank" rel="noopener">Cidadania e Assistência Social<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/ciencia-e-tecnologia" target="_blank" rel="noopener">Ciência e Tecnologia<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/comunicacao" target="_blank" rel="noopener">Comunicação<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/cultura-artes-historia-e-esportes" target="_blank" rel="noopener">Cultura e Esporte<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/financas-impostos-e-gestao-publica" target="_blank" rel="noopener">Economia e Gestão Pública<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/educacao-e-pesquisa" target="_blank" rel="noopener">Educação e Pesquisa<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/energia-minerais-e-combustiveis" target="_blank" rel="noopener">Energia<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/forcas-armadas" target="_blank" rel="noopener">Forças Armadas e Defesa Civil<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/transito-e-transportes" target="_blank" rel="noopener">Infraestrutura<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/justica-e-seguranca" target="_blank" rel="noopener">Justiça e Segurança<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/meio-ambiente-e-clima" target="_blank" rel="noopener">Meio Ambiente<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/trabalho-e-previdencia" target="_blank" rel="noopener">Trabalho e Previdência<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/noticias/viagens-e-turismo" target="_blank" rel="noopener">Turismo<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/apps/@@galeria-de-aplicativos" target="_blank" rel="noopener">Galeria de Aplicativos<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/codevasf/planalto" target="_blank" rel="noopener">Acompanhe o Planalto<span class="sr-only"> (abre em nova aba)</span></a></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/navegacao" target="_blank" rel="noopener">Navegação<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Navegação</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/navegacao" target="_blank" rel="noopener">Navegação<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/governodigital/pt-br/acessibilidade-digital" target="_blank" rel="noopener">Acessibilidade<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/sitemap" target="_blank" rel="noopener">Mapa do Site<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/codevasf/pt-br/termos-de-uso" target="_blank" rel="noopener">Termo de Uso e Aviso de Privacidade<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li><li class="leaf"><a class="link" href="https://www.gov.br/governodigital/pt-br/acessibilidade-e-usuario/atendimento-gov.br/duvidas-na-plataforma-de-automacao/cidadao/consultar-as-minhas-solicitacoes" target="_blank" rel="noopener">Consultar minhas solicitações<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/orgaos-do-governo" target="_blank" rel="noopener">Órgãos do Governo<span class="sr-only"> (abre em nova aba)</span></a></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/por-dentro-do-govbr" target="_blank" rel="noopener">Por dentro do Gov.br<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Por dentro do Gov.br</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/por-dentro-do-govbr" target="_blank" rel="noopener">Por dentro do Gov.br<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/por-dentro-do-govbr/perguntas-frequentes" target="_blank" rel="noopener">Dúvidas Frequentes em relação ao Portal gov.br<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="http://faq-login-unico.servicos.gov.br/en/latest/" target="_blank" rel="noopener">Dúvidas Frequentes da conta gov.br<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/por-dentro-do-govbr/ajuda-para-navegar-o-portal" target="_blank" rel="noopener">Ajuda para Navegar o Portal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/por-dentro-do-govbr/conheca-os-elementos-do-portal" target="_blank" rel="noopener">Conheça os elementos do Portal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/participamaisbrasil/sobre" target="_blank" rel="noopener">Política de e-participação<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/codevasf/pt-br/termos-de-uso" target="_blank" rel="noopener">Termos de Uso<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/governodigital/pt-br" target="_blank" rel="noopener">Governo Digital<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/guia-de-edicao-de-servicos-do-gov.br/bem-vindo-editor" target="_blank" rel="noopener">Guia de Edição de Serviços do Portal Gov.br<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li><li class="leaf"><a class="link" href="https://www.gov.br/pt-br/canais-do-executivo-federal" target="_blank" rel="noopener">Canais do Executivo Federal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="sub"><a class="link" href="https://www.gov.br/pt-br/dados-do-governo-federal" target="_blank" rel="noopener">Dados do Governo Federal<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider vertical" aria-hidden="true"></span><button type="button" class="br-button circle small arrow" aria-expanded="false" aria-haspopup="true"><i class="fas fa-chevron-right" aria-hidden="true"></i><span class="sr-only">Abrir Dados do Governo Federal</span></button><div class="off" aria-hidden="true" hidden><ul><li class="back"><button type="button" class="backButton"><span class="arrow-back"><i class="fas fa-chevron-left" aria-hidden="true"></i></span>Voltar</button></li><li class="parentitem"><a class="link" href="https://www.gov.br/pt-br/dados-do-governo-federal" target="_blank" rel="noopener">Dados do Governo Federal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/codevasf/governodigital/pt-br/dados-abertos" target="_blank" rel="noopener">Dados Abertos<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/gestao/pt-br/acesso-a-informacao/servidores/servidores-publicos/painel-estatistico-de-pessoal" target="_blank" rel="noopener">Painel Estatístico de Pessoal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="http://paineldecompras.economia.gov.br" target="_blank" rel="noopener">Painel de Compras do Governo Federal<span class="sr-only"> (abre em nova aba)</span></a></li><li class="leaf"><a class="link" href="https://www.gov.br/acessoainformacao/pt-br" target="_blank" rel="noopener">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></a></li></ul></div></li><li class="leaf"><a class="link" href="https://www.gov.br/empresas-e-negocios/pt-br" target="_blank" rel="noopener">Empresas e Negócios<span class="sr-only"> (abre em nova aba)</span></a></li></ul>
+          </div>
+        </div>
+      </nav>
+      <div class="menu-footer">
+        <div class="menu-links">
+          <a href="https://www.gov.br/pt-br/apps/@@galeria-de-aplicativos" target="_blank" rel="noopener"><span>Galeria de aplicativos</span><i class="fas fa-external-link-square-alt" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>
+          <a href="https://www.gov.br/pt-br/participacao-social" target="_blank" rel="noopener"><span>Participe</span><i class="fas fa-external-link-square-alt" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>
+        </div>
+        <span class="br-divider" aria-hidden="true"></span>
+        <div class="menu-footer-social">
+          <p class="menu-footer-social-title">Redes sociais</p>
+          <nav aria-label="Redes sociais da Codevasf">
+            <a href="https://www.instagram.com/codevasf" target="_blank" rel="noopener" aria-label="Instagram da Codevasf (abre em nova aba)"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://whatsapp.com/channel/0029Vb0eR9YKGGGG0K2BtZ16" target="_blank" rel="noopener" aria-label="Canal da Codevasf no WhatsApp (abre em nova aba)"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+            <a href="https://www.facebook.com/Codevasf" target="_blank" rel="noopener" aria-label="Facebook da Codevasf (abre em nova aba)"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+            <a href="https://x.com/codevasf" target="_blank" rel="noopener" aria-label="X (Twitter) da Codevasf (abre em nova aba)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://br.linkedin.com/company/codevasf" target="_blank" rel="noopener" aria-label="LinkedIn da Codevasf (abre em nova aba)"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+            <a href="https://www.youtube.com/CodevasfOficial" target="_blank" rel="noopener" aria-label="YouTube da Codevasf (abre em nova aba)"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            <a href="https://www.flickr.com/photos/codevasf-fotos/" target="_blank" rel="noopener" aria-label="Flickr da Codevasf (abre em nova aba)"><i class="fab fa-flickr" aria-hidden="true"></i></a>
+          </nav>
+        </div>
+        <span class="br-divider" aria-hidden="true"></span>
+        <p class="menu-footer-license">Todo o conteúdo deste site está publicado sob a licença <strong>Creative Commons Atribuição-SemDerivações 3.0</strong>.</p>
+      </div>
+    </div>
+    <div class="menu-scrim" data-dismiss="menu" tabindex="-1"></div>
+  </div>
+</div>
+
+
+<!-- MAGIC BUTTON — único CTA do painel: canal direto com a UNP para
+     sugerir melhorias de processos (substitui o CTA do PTD). -->
+<div class="magic-button-area">
+  <div class="br-magic-button">
+    <a class="br-button" id="magicButtonProcessos" href="mailto:ae.gpe.unp@codevasf.gov.br?subject=Sugest%C3%A3o%20de%20melhoria%20de%20processo">
+      Sugerir melhoria de processo
+    </a>
+  </div>
+</div>
+
+<div class="page-cnt team-section">
+  <div class="sec" id="sec-team"><h2 class="sec-lbl">Quem é Quem — Equipe Responsável</h2><div class="sec-line" aria-hidden="true"></div></div>
+  <p class="team-intro">Conheça a equipe responsável pela gestão de processos (mapeamento, repositório e melhoria) e por este painel na Codevasf.</p>
+
+  <div class="team-grid">
+    <div class="br-card team-card">
+      <img class="team-photo" src="data:image/jpeg;base64,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" alt="Foto de Antonio Ordones Neto">
+      <div class="team-info">
+        <div class="team-name">Antonio Ordones Neto</div>
+        <div class="team-role">Analista em Desenvolvimento Regional — Gestão de Processos<br><span class="team-unit">AE/GPE/UNP</span></div>
+        <a class="team-email" href="mailto:antonio.ordones@codevasf.gov.br"><i class="fas fa-envelope" aria-hidden="true"></i> antonio.ordones@codevasf.gov.br</a>
+        <a class="team-email" href="tel:+556120284344"><i class="fas fa-phone" aria-hidden="true"></i> +55 (61) 2028-4344</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-units">
+    <div class="br-card team-unit-card">
+      <div class="tu-name">Ouvidoria (Consad/OUV)</div>
+      <a href="mailto:ouvidoria@codevasf.gov.br"><i class="fas fa-envelope" aria-hidden="true"></i> ouvidoria@codevasf.gov.br</a>
+      <a href="tel:+556120284610"><i class="fas fa-phone" aria-hidden="true"></i> +55 (61) 2028-4610</a>
+      <span><i class="fas fa-door-open" aria-hidden="true"></i> Sala 109</span>
+      <span class="tu-address"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> SGAN 601, Conjunto I, Edifício Deputado Manoel Novaes, Asa Norte, Brasília/DF, CEP 70.830-019</span>
+    </div>
+    <div class="br-card team-unit-card">
+      <div class="tu-name">Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)</div>
+      <a href="mailto:ae.gpe.unp@codevasf.gov.br"><i class="fas fa-envelope" aria-hidden="true"></i> ae.gpe.unp@codevasf.gov.br</a>
+      <a href="tel:+556120284441"><i class="fas fa-phone" aria-hidden="true"></i> +55 (61) 2028-4441</a>
+      <span><i class="fas fa-door-open" aria-hidden="true"></i> Sala 213</span>
+      <span class="tu-address"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> SGAN 601, Conjunto I, Edifício Deputado Manoel Novaes, Asa Norte, Brasília/DF, CEP 70.830-019</span>
+    </div>
+  </div>
+
+  <!-- ── Atendimento ao Cidadão — réplica dos canais oficiais do Fala.BR
+       (Plataforma Integrada de Ouvidoria e Acesso à Informação), no
+       mesmo padrão usado no site institucional da Codevasf. ── -->
+  <div class="sec" id="sec-citizen"><h2 class="sec-lbl">Atendimento ao Cidadão</h2><div class="sec-line" aria-hidden="true"></div></div>
+  <p class="citizen-intro">Escolha abaixo a manifestação que deseja registrar. Ao clicar numa das opções, você será redirecionado para o Fala.BR — Plataforma Integrada de Ouvidoria e Acesso à Informação.</p>
+  <ul class="citizen-grid">
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/web/login?tipo=1&amp;redirect=/manifestacao/criar?tipo=1" target="_blank" rel="noopener"><i class="fas fa-bullhorn" aria-hidden="true"></i><span class="flip-card-title">Denúncia<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Denúncia</span><span class="flip-card-subtitle">Para comunicar a ocorrência de alguma irregularidade relacionada ao serviço</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/web/manifestacao/criar?tipo=2" target="_blank" rel="noopener"><i class="fas fa-thumbs-down" aria-hidden="true"></i><span class="flip-card-title">Reclamação<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Reclamação</span><span class="flip-card-subtitle">Se você foi mal atendido e está insatisfeito com o atendimento e/ou serviço prestado</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/web/login?tipo=3&amp;redirect=/manifestacao/criar?tipo=3" target="_blank" rel="noopener"><i class="fas fa-thumbs-up" aria-hidden="true"></i><span class="flip-card-title">Elogio<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Elogio</span><span class="flip-card-subtitle">Se você ficou satisfeito com o serviço prestado</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/web/login?tipo=4&amp;redirect=/manifestacao/criar?tipo=4" target="_blank" rel="noopener"><i class="fas fa-lightbulb" aria-hidden="true"></i><span class="flip-card-title">Sugestão<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Sugestão</span><span class="flip-card-subtitle">Se você tiver uma ideia ou proposta de melhoria para este serviço</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/web/login?tipo=5&amp;redirect=/manifestacao/criar?tipo=5" target="_blank" rel="noopener"><i class="fas fa-comments" aria-hidden="true"></i><span class="flip-card-title">Solicitação<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Solicitação</span><span class="flip-card-subtitle">Para solicitar uma informação, documento ou providência relacionada a um serviço público</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/web/manifestacao/criar?tipo=9" target="_blank" rel="noopener"><i class="fas fa-rotate" aria-hidden="true"></i><span class="flip-card-title">Simplifique<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Simplifique</span><span class="flip-card-subtitle">Para sugerir a simplificação de um serviço público ou a desburocratização de um processo</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+    <li class="citizen-card flip-card">
+      <a class="flip-front" href="https://falabr.cgu.gov.br/Login/Identificacao/Identificacao.aspx?idFormulario=3&amp;tipo=8&amp;ReturnUrl=%2Fpublico%2FManifestacao%2FRegistrarManifestacao.aspx%3FidFormulario%3D3%26tipo%3D8%26origem%3Didp%26modo%3D" target="_blank" rel="noopener"><i class="fas fa-circle-info" aria-hidden="true"></i><span class="flip-card-title">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></span></a>
+      <div class="flip-back"><span class="flip-card-title">Acesso à Informação</span><span class="flip-card-subtitle">Para solicitar acesso a informações públicas, com base na Lei de Acesso à Informação (LAI)</span></div>
+      <button type="button" class="flip-toggle" aria-label="Vire o card"><i class="fas fa-info" aria-hidden="true"></i><i class="fas fa-times" aria-hidden="true"></i></button>
+    </li>
+  </ul>
+
+  <div class="citizen-cta">
+    <a class="br-button secondary auto-sm govbr-shortcuts-btn" href="https://www.gov.br/codevasf/pt-br/acesso-a-informacao/participacao-social/ouvidoria" target="_blank" rel="noopener">Acesse a página da Ouvidoria da Codevasf<span class="sr-only"> (abre em nova aba)</span></a>
+  </div>
+</div>
+
+
+<footer class="br-footer" id="footer">
+    <div class="footer-top">
+      <div class="footer-logo">
+        <img class="footer-logo-img" id="footerLogoGovbr"
+          src="https://www.gov.br/governodigital/pt-br/estrategias-e-governanca-digital/EGD2020/imagens/logo-white.png/view"
+          alt="gov.br"
+          onerror="this.style.display='none';document.getElementById('footerLogoFallback').style.display='block';">
+        <div class="footer-logo-fallback" id="footerLogoFallback">gov.br</div>
+      </div>
+      <!-- Mapa do Site (Anatomia 2-5): List horizontal por categorias, com
+           "comportamento list expandir" (Padrão: só uma categoria aberta por
+           vez) em telas estreitas; em telas largas as 3 categorias ficam
+           sempre expandidas, conforme Comportamento > Responsividade. -->
+      <nav class="footer-sitemap" id="footerSitemap" aria-label="Mapa do site">
+        <div class="fs-col">
+          <button type="button" class="fs-header" aria-expanded="true" data-fs-toggle>
+            <span class="fs-cat">Sobre o Painel</span>
+            <i class="fas fa-angle-up" aria-hidden="true"></i>
+          </button>
+          <div class="fs-items">
+            <a href="#" id="footerHelpTrigger" data-modal-open="modalAjuda">Como usar este painel</a>
+            <a href="#" id="a11yStatementTrigger" data-modal-open="modalA11y">Declaração de Acessibilidade</a>
+          </div>
+        </div>
+        <div class="fs-col">
+          <button type="button" class="fs-header" aria-expanded="false" data-fs-toggle>
+            <span class="fs-cat">Atendimento</span>
+            <i class="fas fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <div class="fs-items" hidden>
+            <a href="https://www.gov.br/codevasf/pt-br/acesso-a-informacao" target="_blank" rel="noopener">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></a>
+            <a href="https://falabr.cgu.gov.br/" target="_blank" rel="noopener">Atendimento ao Cidadão (Fala.BR)<span class="sr-only"> (abre em nova aba)</span></a>
+            <a href="mailto:ouvidoria@codevasf.gov.br">Ouvidoria da Codevasf</a>
+          </div>
+        </div>
+        <div class="fs-col">
+          <button type="button" class="fs-header" aria-expanded="false" data-fs-toggle>
+            <span class="fs-cat">Conteúdo</span>
+            <i class="fas fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <div class="fs-items" hidden>
+            <a href="https://www.gov.br/codevasf/pt-br/centrais-de-conteudo" target="_blank" rel="noopener">Centrais de Conteúdo<span class="sr-only"> (abre em nova aba)</span></a>
+            <a href="https://www.gov.br/codevasf/pt-br" target="_blank" rel="noopener">Portal Codevasf<span class="sr-only"> (abre em nova aba)</span></a>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <!-- Área de Informações Secundárias (Anatomia 6-8): Redes Sociais (botões
+         circulares, Componente Button) + Logo Assinatura -->
+    <div class="footer-secondary">
+      <div class="footer-social">
+        <p class="footer-social-title">Redes Sociais</p>
+        <div class="footer-social-icons">
+          <a class="br-button social-icon" href="https://www.instagram.com/codevasf" target="_blank" rel="noopener" aria-label="Instagram da Codevasf (abre em nova aba)"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a class="br-button social-icon" href="https://whatsapp.com/channel/0029Vb0eR9YKGGGG0K2BtZ16" target="_blank" rel="noopener" aria-label="Canal da Codevasf no WhatsApp (abre em nova aba)"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+          <a class="br-button social-icon" href="https://www.facebook.com/Codevasf" target="_blank" rel="noopener" aria-label="Facebook da Codevasf (abre em nova aba)"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+          <a class="br-button social-icon" href="https://x.com/codevasf" target="_blank" rel="noopener" aria-label="X (Twitter) da Codevasf (abre em nova aba)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+          <a class="br-button social-icon" href="https://br.linkedin.com/company/codevasf" target="_blank" rel="noopener" aria-label="LinkedIn da Codevasf (abre em nova aba)"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a class="br-button social-icon" href="https://www.youtube.com/CodevasfOficial" target="_blank" rel="noopener" aria-label="YouTube da Codevasf (abre em nova aba)"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+          <a class="br-button social-icon" href="https://www.flickr.com/photos/codevasf-fotos/" target="_blank" rel="noopener" aria-label="Flickr da Codevasf (abre em nova aba)"><i class="fab fa-flickr" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer-assigns">
+        <a href="https://www.gov.br/acessoainformacao/pt-br" target="_blank" rel="noopener" aria-label="Acesso à Informação (abre em nova aba)">
+          <img class="footer-assign-img" id="footerAcessoInfoImg"
+            src="https://www.gov.br/codevasf/logo-acesso-info.png"
+            alt="Acesso à Informação"
+            onerror="this.parentElement.style.display='none';">
+        </a>
+        <!-- Selo "Governo Federal": antes era hotlinkado de domínio de terceiro
+             não-governamental (ctmmead.medicina.ufmg.br) — removido por
+             fragilidade/proveniência de marca. Asset oficial real confirmado
+             (variante branca "_04_bco", adequada para o fundo escuro deste
+             rodapé): página de origem .../download-logos/govbr_logo2025_-04_bco.png/view
+             no portal da Secretaria Nacional de Políticas Penais (SENAPPEN);
+             usamos o arquivo binário direto (sem o sufixo /view, que é só o
+             wrapper de página do Plone), no mesmo padrão de URL do logo de
+             Acesso à Informação acima. Fallback textual mantido para o caso
+             de falha de rede, sem dependência de nenhum domínio externo. -->
+        <img class="footer-assign-img" id="footerGovfedImg"
+          src="https://www.gov.br/senappen/pt-br/centrais-de-conteudo/download-logos/govbr_logo2025_-04_bco.png"
+          alt="Governo Federal"
+          onerror="this.style.display='none';document.getElementById('footerGovfedFallback').style.display='inline-flex';">
+        <span class="gf-tag" id="footerGovfedFallback" style="display:none;"><i class="fas fa-flag" aria-hidden="true"></i> Governo Federal</span>
+      </div>
+    </div>
+    <span class="br-divider" aria-hidden="true"></span>
+    <!-- Área de Informação Legal (Anatomia 9-11): centralizada -->
+    <div class="footer-legal"><div class="footer-org"><span class="fo-unit">Unidade de Gestão Normativa e de Processos — AE/GPE/UNP</span></div><p class="footer-license">Todo o conteúdo deste site está publicado sob a licença Creative Commons Atribuição-SemDerivações 3.0</p></div>
+  </footer>
+
+<!-- ─── Modais do painel (ajuda, acessibilidade, cookies) ─── -->
+<div class="br-scrim foco" id="modalAjuda" hidden>
+  <div class="br-modal medium" role="dialog" aria-modal="true" aria-labelledby="modalAjudaTitulo">
+    <div class="br-modal-header"><h1 class="modal-title" id="modalAjudaTitulo">Como usar este painel</h1>
+      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
+    <div class="br-modal-body">
+      <p><strong>Navegação hierárquica:</strong> na aba Início, clique em um macroprocesso da Cadeia de Valor para abrir a ficha; de lá, avance para processos, subprocessos e atividades. A trilha (breadcrumb) no topo de cada ficha mostra o caminho completo e permite voltar a qualquer nível.</p>
+      <p><strong>Fichas:</strong> cada nível traz objetivo, responsáveis, SIPOC, diagrama BPMN (Bizagi), documentos, riscos (P×I), indicadores e — nos processos — os marcos M1–M9 e o diário de mapeamento.</p>
+      <p><strong>Busca:</strong> use a lupa do cabeçalho para pesquisar por código, nome, documento ou registro.</p>
+      <p><strong>Alertas:</strong> o sino da faixa de navegação lista prazos de mapeamento vencidos e riscos Alto/Extremo em aberto.</p>
+      <p><strong>Dados:</strong> tudo vem da planilha (Google Sheets ou <code>data/painel-processos-dados.xlsx</code>). Edite a planilha e o painel reflete — detalhes na aba Metodologia.</p>
+    </div>
+  </div>
+</div>
+<div class="br-scrim foco" id="modalA11y" hidden>
+  <div class="br-modal medium" role="dialog" aria-modal="true" aria-labelledby="modalA11yTitulo">
+    <div class="br-modal-header"><h1 class="modal-title" id="modalA11yTitulo">Declaração de Acessibilidade</h1>
+      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
+    <div class="br-modal-body">
+      <p>Este painel segue o Design System do governo federal (gov.br DS v4) e as diretrizes do eMAG/WCAG: navegação por teclado com anel de foco visível, atalhos de acesso rápido (teclas 1–4), modo de alto contraste, textos alternativos nas imagens, VLibras e estrutura semântica com marcos ARIA.</p>
+      <p>Encontrou uma barreira de acessibilidade? Escreva para <a href="mailto:ae.gpe.unp@codevasf.gov.br">ae.gpe.unp@codevasf.gov.br</a>.</p>
+    </div>
+  </div>
+</div>
+<div class="br-scrim foco" id="modalCookies" hidden>
+  <div class="br-modal small" role="dialog" aria-modal="true" aria-labelledby="modalCookiesTitulo">
+    <div class="br-modal-header"><h1 class="modal-title" id="modalCookiesTitulo">Cookies e privacidade</h1>
+      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
+    <div class="br-modal-body">
+      <p>Este painel não utiliza cookies de rastreamento. Apenas preferências locais (como o modo de alto contraste) são guardadas no seu navegador, e você pode limpá-las a qualquer momento nas configurações do próprio navegador.</p>
+    </div>
+  </div>
+</div>
+
+<!-- VLibras Widget — embed estático oficial (Manual de Instruções VLibras
+     Widget 6.0.0 > Integrando a uma Página Web): o botão de acesso deve
+     estar sempre presente no DOM desde o carregamento da página para o
+     widget inicializar corretamente — criá-lo dinamicamente ao clicar
+     não funcionou de forma confiável. -->
+<div vw class="enabled">
+  <div vw-access-button class="active"></div>
+  <div vw-plugin-wrapper>
+    <div class="vw-plugin-top-wrapper"></div>
+  </div>
+</div>
+<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+<script>
+  if (window.VLibras) { new window.VLibras.Widget('https://vlibras.gov.br/app'); }
+</script>
+</body>
+</html>
