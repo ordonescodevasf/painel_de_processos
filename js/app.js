@@ -288,7 +288,7 @@
   var NIVEL_PREFIXO = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp',
     'Atividade': 'a', 'Tarefa': 't' };
   var NIVEL_ROTULO = { 'Macroprocesso': 'Macroprocesso', 'Processo': 'Processo de negócio',
-    'Subprocesso': 'Processo de trabalho', 'Atividade': 'Atividade', 'Tarefa': 'Tarefa' };
+    'Subprocesso': 'Subprocesso', 'Atividade': 'Atividade', 'Tarefa': 'Tarefa' };
   function nivelRotulo(n) { return NIVEL_ROTULO[n] || n; }
   function rotaDe(nivel, codigo) {
     var pre = NIVEL_PREFIXO[nivel];
@@ -414,7 +414,7 @@
   }
 
   /* ── roteador + abas ──────────────────────────────────────────────── */
-  var ROTAS_ABA = { inicio: '#/', catalogo: '#/catalogo', repositorio: '#/repositorio',
+  var ROTAS_ABA = { inicio: '#/', catalogo: '#/catalogo', dashboard: '#/dashboard', repositorio: '#/repositorio',
     documentos: '#/documentos', riscos: '#/riscos', indicadores: '#/indicadores',
     diario: '#/diario', nugep: '#/nugep', glossario: '#/glossario', faq: '#/faq' };
   function mostrarPainel(id) {
@@ -440,6 +440,7 @@
     else if (h === '#/riscos') { renderRiscos(); mostrarPainel('riscos'); }
     else if (h === '#/indicadores') { renderIndicadores(); mostrarPainel('indicadores'); }
     else if (h === '#/diario') { renderDiario(); mostrarPainel('diario'); }
+    else if (h === '#/dashboard') { renderDashboard(); mostrarPainel('dashboard'); }
     else if (h === '#/repositorio' || h === '#/metodologia') { renderRepositorio(); mostrarPainel('repositorio'); }
     else if (h === '#/nugep') { renderNugep(); mostrarPainel('nugep'); }
     else if (h === '#/glossario') { renderGlossario(); mostrarPainel('glossario'); }
@@ -447,8 +448,10 @@
     else if ((m = h.match(/^#\/busca\?q=(.*)$/))) { renderBusca(decodeURIComponent(m[1])); mostrarPainel('busca'); }
     else if ((m = h.match(/^#\/(mp|p|sp|a|t)\/(.+)$/))) { renderDetalhe(m[1], decodeURIComponent(m[2])); mostrarPainel('detalhe'); }
     else { renderInicio(); mostrarPainel('inicio'); }
-    var alvo = $('#navigation');
-    if (alvo && window.scrollY > alvo.offsetTop) alvo.scrollIntoView();
+    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { window.scrollTo(0, 0); }
+    var h1 = d.querySelector('#mainTabContent .tab-panel.active h1, #mainTabContent .tab-panel.active h2');
+    if (h1 && !h1.hasAttribute('tabindex')) h1.setAttribute('tabindex', '-1');
+    if (h1 && location.hash !== '#/') h1.focus({ preventScroll: true });
   }
   d.addEventListener('click', function (ev) {
     var b = ev.target.closest('.tab-nav [data-rota]');
@@ -574,9 +577,9 @@
       '<h1>Cadeia de valor e mapeamento de processos da Codevasf</h1>' +
       '<p>Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), ' +
       'documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
-      '<div class="acoes"><a class="br-button inverted" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i>&nbsp;Repositório de materiais</a></div></section>' +
+      '</section>' +
       '<div class="kpi-grid">' +
-      '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + procs.length + ' proc. de negócio · ' + DADOS.subs.length + ' proc. de trabalho · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + procs.length + ' processos · ' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
       '<div class="kpi ok"><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
       '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento da carteira</span></div>' +
       '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '"><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
@@ -590,7 +593,7 @@
       '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
       '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
-      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-xs)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, processos de trabalho, atividades e tarefas.</p></section>';
+      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-xs)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, subprocessos, atividades e tarefas.</p></section>';
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
@@ -665,7 +668,7 @@
         campo('Unidade responsável', m.Unidade_Responsavel && esc(m.Unidade_Responsavel)) +
         campo('Dono do processo (process owner)', m.Dono_Processo && esc(m.Dono_Processo)) +
         campo('Entregas (produtos/serviços)', chips(m.Entregas), true) +
-        campo('Clientes / beneficiários', chips(m.Clientes_Beneficiarios)) +
+        campo('Beneficiários', chips(m.Clientes_Beneficiarios)) +
         campo('Partes interessadas', chips(m.Partes_Interessadas)) +
         campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop')) +
         campo('Normativos aplicáveis', chips(m.Normativos_Aplicaveis, 'fa-scale-balanced'), true) +
@@ -710,13 +713,13 @@
         '<div class="col"><h4>Entradas</h4><ul>' + (listar(p.Entradas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col centro"><h4>Processo</h4><div style="font-weight:600">' + esc(p.Nome) + '</div></div>' +
         '<div class="col"><h4>Saídas</h4><ul>' + (listar(p.Saidas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
-        '<div class="col"><h4>Clientes</h4><ul>' + (listar(p.Clientes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
+        '<div class="col"><h4>Beneficiários</h4><ul>' + (listar(p.Beneficiarios || p.Clientes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '</div></div>' +
         '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M9)</h3>' + marcosHtml(p) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         secVinculos('Processo', cod) +
-        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos de trabalho (subprocessos)</h3>' +
-        (subs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo de trabalho</th><th>Entregas</th><th></th></tr></thead><tbody>' +
+        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos</h3>' +
+        (subs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Entregas</th><th></th></tr></thead><tbody>' +
           subs.map(function (s) {
             return '<tr><td class="cod">' + esc(s.Codigo) + '</td><td><a href="#/sp/' + encodeURIComponent(s.Codigo) + '"><strong>' + esc(s.Nome) + '</strong></a>' +
               (s.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-xs)">' + esc(s.Descricao) + '</div>' : '') + '</td>' +
@@ -744,7 +747,7 @@
     }
     if (tipo === 'sp') {
       var s = IDX.sp[cod];
-      if (!s) { el.innerHTML = naoEncontrado('Processo de trabalho', cod); return; }
+      if (!s) { el.innerHTML = naoEncontrado('Subprocesso', cod); return; }
       var pp = IDX.p[s.Processo]; var mpp = pp && IDX.mp[pp.Macroprocesso];
       var ativs = IDX.ativsPorSub[cod] || [];
       el.innerHTML =
@@ -753,7 +756,7 @@
           .concat(pp ? [{ rotulo: pp.Codigo, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
           .concat([{ rotulo: s.Codigo + ' — ' + s.Nome }])) +
         '<section class="ficha-hero" style="background:var(--cv-blue)">' +
-        '<span class="eyebrow">Processo de trabalho (subprocesso)' + (pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
+        '<span class="eyebrow">Subprocesso' + (pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
         '<h2>' + esc(s.Codigo) + ' — ' + esc(s.Nome) + '</h2>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
         (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') + '</div></section>' +
@@ -811,6 +814,7 @@
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket')) +
       campo('Sistemas', chips(a.Sistemas, 'fa-desktop')) +
       campo('Base normativa', a.Base_Normativa ? chips(a.Base_Normativa, 'fa-scale-balanced') : null) + '</dl></div>' +
+      '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(a.Imagem_Bizagi, a.Nome) + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Tarefas (menor unidade de trabalho — CBOK 4.0)</h3>' +
       (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
         tf3.map(function (t) {
@@ -821,7 +825,7 @@
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       secVinculos('Atividade', cod) +
       '</div><aside>' +
-      (sp2 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de trabalho (pai)</h3>' +
+      (sp2 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
         '<a class="proc-card" href="#/sp/' + encodeURIComponent(sp2.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(sp2.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(sp2.Nome) + '</div></div></div></a></div>' : '') +
       '</aside></div>';
     $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
@@ -857,6 +861,7 @@
       campo('Responsável', t.Responsavel && esc(t.Responsavel)) +
       campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null) +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
+      '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(t.Imagem_Bizagi, t.Nome) + '</div>' +
       secVinculos('Tarefa', cod) +
       '</div><aside>' +
       (a3 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Atividade (pai)</h3>' +
@@ -959,6 +964,186 @@
   }
 
   /* ── TELA: metodologia ────────────────────────────────────────────── */
+  /* ── GRÁFICOS (SVG puro, sem dependências; cores do DS gov.br) ────── */
+  var PAL = ['#222b54', '#005ca8', '#007d4e', '#155bcb', '#74c9ea', '#89bd2b', '#8a6d00', '#c5170b'];
+  function svgWrap(titulo, conteudo, vb, altura) {
+    return '<figure class="graf"><figcaption>' + esc(titulo) + '</figcaption>' +
+      '<svg viewBox="' + vb + '" role="img" aria-label="' + esc(titulo) + '" ' +
+      (altura ? 'style="height:' + altura + 'px"' : '') + '>' + conteudo + '</svg></figure>';
+  }
+  function grafDonut(titulo, dados) {           // [{rotulo, valor, cor}]
+    var total = dados.reduce(function (a, b) { return a + b.valor; }, 0);
+    if (!total) return svgWrap(titulo, '<text x="150" y="90" text-anchor="middle" font-size="12" fill="#5c5c5c">Sem dados</text>', '0 0 300 180');
+    var ang = -Math.PI / 2, R = 62, r = 38, cx = 90, cy = 90, arcos = '';
+    dados.forEach(function (d) {
+      if (!d.valor) return;
+      var a2 = ang + (d.valor / total) * Math.PI * 2, big = (a2 - ang) > Math.PI ? 1 : 0;
+      var x1 = cx + R * Math.cos(ang), y1 = cy + R * Math.sin(ang), x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+      var x3 = cx + r * Math.cos(a2), y3 = cy + r * Math.sin(a2), x4 = cx + r * Math.cos(ang), y4 = cy + r * Math.sin(ang);
+      arcos += '<path d="M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + 'A' + R + ' ' + R + ' 0 ' + big + ' 1 ' + x2.toFixed(1) + ' ' + y2.toFixed(1) +
+        'L' + x3.toFixed(1) + ' ' + y3.toFixed(1) + 'A' + r + ' ' + r + ' 0 ' + big + ' 0 ' + x4.toFixed(1) + ' ' + y4.toFixed(1) + 'Z" fill="' + d.cor + '">' +
+        '<title>' + esc(d.rotulo) + ': ' + d.valor + ' (' + Math.round(d.valor / total * 100) + '%)</title></path>';
+      ang = a2;
+    });
+    var leg = dados.map(function (d, i) {
+      return '<g transform="translate(180,' + (34 + i * 22) + ')"><rect width="11" height="11" rx="2" fill="' + d.cor + '"></rect>' +
+        '<text x="17" y="10" font-size="11" fill="#333">' + esc(d.rotulo) + ' (' + d.valor + ')</text></g>';
+    }).join('');
+    return svgWrap(titulo, arcos + '<text x="' + cx + '" y="' + (cy + 5) + '" text-anchor="middle" font-size="20" font-weight="700" fill="#222b54">' + total + '</text>' + leg, '0 0 380 180');
+  }
+  function grafBarras(titulo, dados, sufixo, meta) {   // [{rotulo, valor, cor}]
+    if (!dados.length) return svgWrap(titulo, '', '0 0 480 120');
+    var max = Math.max.apply(null, dados.map(function (d) { return d.valor; }).concat(meta ? [meta] : [1])) || 1;
+    var lw = 132, bw = 320, h = 26, alt = dados.length * h + 24;
+    var barras = dados.map(function (d, i) {
+      var y = i * h + 8, w = Math.max(2, d.valor / max * bw);
+      return '<text x="0" y="' + (y + 13) + '" font-size="11" fill="#333">' + esc(String(d.rotulo).slice(0, 22)) + '</text>' +
+        '<rect x="' + lw + '" y="' + y + '" width="' + bw + '" height="15" rx="3" fill="#f0f0f0"></rect>' +
+        '<rect x="' + lw + '" y="' + y + '" width="' + w.toFixed(1) + '" height="15" rx="3" fill="' + (d.cor || '#005ca8') + '">' +
+        '<title>' + esc(d.rotulo) + ': ' + d.valor + (sufixo || '') + '</title></rect>' +
+        '<text x="' + (lw + bw + 6) + '" y="' + (y + 12) + '" font-size="11" font-weight="700" fill="#222b54">' + d.valor + (sufixo || '') + '</text>';
+    }).join('');
+    var linhaMeta = meta ? '<line x1="' + (lw + meta / max * bw) + '" y1="2" x2="' + (lw + meta / max * bw) + '" y2="' + (alt - 16) +
+      '" stroke="#c5170b" stroke-width="1.5" stroke-dasharray="4 3"><title>Meta: ' + meta + (sufixo || '') + '</title></line>' : '';
+    return svgWrap(titulo, barras + linhaMeta, '0 0 500 ' + alt);
+  }
+  function grafFunil(titulo, etapas) {          // [{rotulo, valor}]
+    var max = etapas[0] ? etapas[0].valor : 1, h = 30, alt = etapas.length * h + 12;
+    var corpo = etapas.map(function (e, i) {
+      var w = Math.max(6, (e.valor / (max || 1)) * 300), y = i * h + 4;
+      return '<rect x="' + (150 - w / 2 + 150) + '" y="' + y + '" width="' + w.toFixed(1) + '" height="22" rx="3" fill="' + PAL[i % PAL.length] + '" opacity="0.9">' +
+        '<title>' + esc(e.rotulo) + ': ' + e.valor + '</title></rect>' +
+        '<text x="0" y="' + (y + 16) + '" font-size="11" fill="#333">' + esc(e.rotulo) + '</text>' +
+        '<text x="' + (300 + 150 + w / 2 + 8) + '" y="' + (y + 16) + '" font-size="11" font-weight="700" fill="#222b54">' + e.valor + '</text>';
+    }).join('');
+    return svgWrap(titulo, corpo, '0 0 640 ' + alt);
+  }
+  function grafLinha(titulo, pontos) {          // [{rotulo, valor}]
+    if (pontos.length < 2) return svgWrap(titulo, '<text x="200" y="70" text-anchor="middle" font-size="12" fill="#5c5c5c">Dados insuficientes</text>', '0 0 400 140');
+    var w = 420, h = 120, pad = 30;
+    var max = Math.max.apply(null, pontos.map(function (p) { return p.valor; })) || 1;
+    var pts = pontos.map(function (p, i) {
+      return [pad + i * ((w - pad * 2) / (pontos.length - 1)), h - 20 - (p.valor / max) * (h - 45)];
+    });
+    var linha = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+    var area = linha + ' L' + pts[pts.length - 1][0].toFixed(1) + ' ' + (h - 20) + ' L' + pts[0][0].toFixed(1) + ' ' + (h - 20) + ' Z';
+    var marcas = pts.map(function (p, i) {
+      return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="#005ca8"><title>' + esc(pontos[i].rotulo) + ': ' + pontos[i].valor + '</title></circle>' +
+        '<text x="' + p[0].toFixed(1) + '" y="' + (h - 6) + '" font-size="9" fill="#5c5c5c" text-anchor="middle">' + esc(pontos[i].rotulo) + '</text>';
+    }).join('');
+    return svgWrap(titulo, '<path d="' + area + '" fill="#005ca8" opacity="0.12"></path>' +
+      '<path d="' + linha + '" fill="none" stroke="#005ca8" stroke-width="2.5"></path>' + marcas, '0 0 ' + w + ' ' + h);
+  }
+  function grafHeat(titulo, dados) {            // matriz risco compacta [{p,i,qtd}]
+    var cel = 30, sz = 5 * cel, corpo = '';
+    for (var i = 5; i >= 1; i--) {
+      for (var pb = 1; pb <= 5; pb++) {
+        var n = pb * i, cls = n >= 20 ? '#ffb1b1' : n >= 12 ? '#ffc2a1' : n >= 5 ? '#ffe396' : '#cdeccb';
+        var achou = dados.filter(function (d) { return d.p === pb && d.i === i; })[0];
+        var x = 26 + (pb - 1) * cel, y = (5 - i) * cel;
+        corpo += '<rect x="' + x + '" y="' + y + '" width="' + (cel - 3) + '" height="' + (cel - 3) + '" rx="3" fill="' + cls + '"></rect>';
+        if (achou) corpo += '<text x="' + (x + cel / 2 - 1.5) + '" y="' + (y + cel / 2 + 2) + '" font-size="12" font-weight="700" fill="#222b54" text-anchor="middle">' + achou.qtd + '<title>Prob. ' + pb + ' × Impacto ' + i + ': ' + achou.qtd + ' risco(s)</title></text>';
+      }
+      corpo += '<text x="18" y="' + ((5 - i) * cel + cel / 2) + '" font-size="10" fill="#5c5c5c" text-anchor="end">' + i + '</text>';
+    }
+    for (var k = 1; k <= 5; k++) corpo += '<text x="' + (26 + (k - 1) * cel + cel / 2 - 1.5) + '" y="' + (sz + 10) + '" font-size="10" fill="#5c5c5c" text-anchor="middle">' + k + '</text>';
+    corpo += '<text x="88" y="' + (sz + 24) + '" font-size="10" fill="#5c5c5c">Probabilidade →</text>';
+    return svgWrap(titulo, corpo, '0 0 200 ' + (sz + 30));
+  }
+
+  /* ── TELA: dashboard gerencial ────────────────────────────────────── */
+  function renderDashboard() {
+    var el = $('#viewDashboard');
+    var procs = DADOS.procs, hoje = hojeISO();
+    var porStatus = {};
+    procs.forEach(function (p) { porStatus[p.Status_Mapeamento || 'Não iniciado'] = (porStatus[p.Status_Mapeamento || 'Não iniciado'] || 0) + 1; });
+    var concl = porStatus['Concluído'] || 0, andam = porStatus['Em andamento'] || 0;
+    var cobertura = procs.length ? Math.round(concl / procs.length * 100) : 0;
+    var media = procs.length ? Math.round(procs.reduce(function (s, p) { return s + p.Percentual; }, 0) / procs.length) : 0;
+    var atrasados = procs.filter(function (p) { return p.Prazo_Previsto && p.Prazo_Previsto < hoje && p._status !== 'concluido'; });
+    var riscosAb = DADOS.riscos.filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
+    var criticos = riscosAb.filter(function (r) { return r._classe === 'Alto' || r._classe === 'Extremo'; });
+    var indsMed = DADOS.inds.filter(function (x) { return x._sit && x._sit !== 'Sem medição'; });
+    var indsOk = indsMed.filter(function (x) { return x._sit === 'Meta atingida'; });
+    var pctInds = indsMed.length ? Math.round(indsOk.length / indsMed.length * 100) : 0;
+    // marcos agregados (funil)
+    var funil = MARCOS_ROTULOS.map(function (rot, i) {
+      return { rotulo: 'M' + (i + 1) + ' · ' + rot, valor: procs.filter(function (p) { return simNao(p[MARCOS_CAMPOS[i]]); }).length };
+    });
+    // evolução por mês (conclusões acumuladas)
+    var meses = {};
+    procs.filter(function (p) { return p.Data_Conclusao; }).forEach(function (p) {
+      var k = String(p.Data_Conclusao).slice(0, 7); meses[k] = (meses[k] || 0) + 1;
+    });
+    var acc = 0, linha = Object.keys(meses).sort().map(function (k) {
+      acc += meses[k]; return { rotulo: k.slice(5) + '/' + k.slice(2, 4), valor: acc };
+    });
+    // heat de riscos
+    var heat = {}; riscosAb.forEach(function (r) { var k = r.Probabilidade_1a5 + '|' + r.Impacto_1a5; heat[k] = (heat[k] || 0) + 1; });
+    var heatArr = Object.keys(heat).map(function (k) { return { p: +k.split('|')[0], i: +k.split('|')[1], qtd: heat[k] }; });
+
+    var CAT_COR = { gerencial: '#222b54', finalistico: '#005ca8', suporte: '#007d4e' };
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Dashboard gerencial</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp3)">Visão executiva da carteira de mapeamento — atualizada automaticamente a cada carga da planilha. Última leitura: <strong>' + esc(FONTE) + '</strong>.</p>' +
+      '<div class="kpi-grid" style="margin-top:0">' +
+      '<div class="kpi"><span class="num">' + cobertura + '%</span><span class="lbl">Cobertura da carteira</span><span class="sub">' + concl + ' de ' + procs.length + ' processos publicados</span></div>' +
+      '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
+      '<div class="kpi ' + (atrasados.length ? 'warn' : 'ok') + '"><span class="num">' + atrasados.length + '</span><span class="lbl">Prazos vencidos</span><span class="sub">sem conclusão registrada</span></div>' +
+      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '"><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
+      '<div class="kpi ' + (pctInds >= 70 ? 'ok' : 'warn') + '"><span class="num">' + pctInds + '%</span><span class="lbl">Indicadores na meta</span><span class="sub">' + indsOk.length + ' de ' + indsMed.length + ' medidos</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas mapeadas</span><span class="sub">' + DADOS.ativs.length + ' atividades · ' + DADOS.subs.length + ' subprocessos</span></div>' +
+      '</div>' +
+      '<div class="graf-grid">' +
+      grafDonut('Situação do mapeamento', [
+        { rotulo: 'Concluído', valor: concl, cor: '#137436' },
+        { rotulo: 'Em andamento', valor: andam, cor: '#8a6d00' },
+        { rotulo: 'Não iniciado', valor: porStatus['Não iniciado'] || 0, cor: '#9e9e9e' },
+        { rotulo: 'Suspenso', valor: porStatus['Suspenso'] || 0, cor: '#c5170b' }]) +
+      grafDonut('Processos por tipo (CBOK)', ['gerencial', 'finalistico', 'suporte'].map(function (c) {
+        return { rotulo: c === 'finalistico' ? 'Finalístico' : c === 'gerencial' ? 'Gerencial' : 'Suporte',
+          valor: procs.filter(function (p) { var m = IDX.mp[p.Macroprocesso]; return m && m._cat === c; }).length, cor: CAT_COR[c] };
+      })) +
+      grafBarras('Avanço por macroprocesso (%)', DADOS.macros.map(function (m) {
+        var ps = IDX.procsPorMacro[m.Codigo] || [];
+        return { rotulo: m.Codigo + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8',
+          valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
+      }), '%', 100) +
+      grafFunil('Marcos concluídos na carteira (M1 → M9)', funil) +
+      grafLinha('Processos publicados (acumulado)', linha) +
+      grafHeat('Riscos abertos por probabilidade × impacto', heatArr) +
+      grafBarras('Riscos abertos por categoria', (function () {
+        var c = {}; riscosAb.forEach(function (r) { c[r.Categoria || '—'] = (c[r.Categoria || '—'] || 0) + 1; });
+        return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (k, i) { return { rotulo: k, valor: c[k], cor: PAL[i % PAL.length] }; });
+      })()) +
+      grafBarras('Documentos por situação', (function () {
+        var c = {}; DADOS.docs.forEach(function (x) { c[x.Situacao || '—'] = (c[x.Situacao || '—'] || 0) + 1; });
+        return Object.keys(c).map(function (k, i) { return { rotulo: k, valor: c[k], cor: PAL[i % PAL.length] }; });
+      })()) +
+      '</div>' +
+      '<section class="pp-sec"><div class="pp-sec-h"><h2>Pontos de atenção</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-card"><h3><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Processos com prazo vencido</h3>' +
+      (atrasados.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo de negócio</th><th>Responsável</th><th>Prazo</th><th>Avanço</th></tr></thead><tbody>' +
+        atrasados.map(function (p) {
+          return '<tr data-link><td class="cod">' + esc(p.Codigo) + '</td><td><a href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
+            '<td style="font-size:var(--fs-xs)">' + esc(p.Dono_Processo || '—') + '</td><td style="font-size:var(--fs-xs);white-space:nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
+            '<td style="min-width:120px">' + barraPct(p.Percentual) + '</td></tr>';
+        }).join('') + '</tbody></table></div>' : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum processo com prazo vencido.</span></div></div>') + '</div>' +
+      '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos críticos abertos</h3>' +
+      (criticos.length ? tabelaRiscosHtml(criticos, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum risco crítico em aberto.</span></div></div>') + '</div>' +
+      '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores fora da meta</h3>' +
+      (function () {
+        var fora = DADOS.inds.filter(function (x) { return x._sit === 'Abaixo da meta' || x._sit === 'Acima da meta'; });
+        return fora.length ? tabelaIndsHtml(fora, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Todos os indicadores medidos estão na meta.</span></div></div>';
+      })() + '</div></section>';
+    $all('#viewDashboard tr[data-link]').forEach(function (tr) {
+      tr.addEventListener('click', function (ev) {
+        if (ev.target.closest('a')) return;
+        var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
+      });
+    });
+  }
+
   /* ── TELA: repositório (jornada + materiais + metodologia) ────────── */
   var filtroRepo = { cat: '', fase: '', q: '' };
   var FASES_JORNADA = ['Descobrir', 'Definir', 'Desenvolver', 'Entregar', 'Evoluir'];
@@ -1161,7 +1346,7 @@
       (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pelo <a href="#/catalogo">catálogo</a>.</p>') +
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m.Codigo, m.Nome, esc(m.Categoria)); }) +
       grupo('Processos de negócio', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
-      grupo('Processos de trabalho (subprocessos)', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
+      grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
       grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), a.Codigo, a.Nome, esc(a.Responsavel_Ator || '')); }) +
       grupo('Tarefas', r.t, function (t) { return linha('#/t/' + encodeURIComponent(t.Codigo), t.Codigo, t.Nome, esc(t.Tipo_Tarefa || '')); }) +
       grupo('Documentos', r.doc, function (x) {
@@ -1198,6 +1383,7 @@
     if (window.PPUI) PPUI.setMenuSections([
       { rotulo: 'Início · Cadeia de Valor', href: '#/', icone: 'fa-house' },
       { rotulo: 'Catálogo de processos', href: '#/catalogo', icone: 'fa-layer-group' },
+      { rotulo: 'Dashboard gerencial', href: '#/dashboard', icone: 'fa-chart-pie' },
       { rotulo: 'Repositório de materiais', href: '#/repositorio', icone: 'fa-toolbox' },
       { rotulo: 'Documentos', href: '#/documentos', icone: 'fa-folder-open' },
       { rotulo: 'Radar de riscos', href: '#/riscos', icone: 'fa-shield-halved' },

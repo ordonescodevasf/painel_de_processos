@@ -29,11 +29,9 @@ painel-processos/
 │   └── dados.js                   ← dados embutidos (GERADO — fallback offline)
 ├── data/
 │   └── painel-processos-dados.xlsx← A PLANILHA (fonte dos dados)
-├── img/diagramas/*.svg            ← diagramas BPMN (troque pelos do Bizagi)
 └── scripts/
     ├── gerar_planilha.py          ← gera a planilha de exemplo (dados fictícios)
     ├── planilha_para_js.py        ← planilha → js/dados.js (fallback)
-    ├── gerar_diagramas.py         ← gera os SVGs ilustrativos
     └── montar_index.py            ← remonta o index a partir do painel do PTD
 ```
 
@@ -104,16 +102,18 @@ python -m http.server 8080     # abra http://localhost:8080
 ```
 Abrir o `index.html` direto (file://) também funciona, pelos dados embutidos.
 
-## Diagramas do Bizagi (recomendado: por link)
+## Diagramas do Bizagi (somente por link)
 
-Exporte o diagrama do Bizagi como imagem e **publique-a on-line** (Google Drive
-público, intranet acessível, repositório de imagens etc.); depois cole a **URL na
-coluna `Imagem_Bizagi`** da planilha. O painel exibe a imagem e, ao clicar nela
-(ou no botão "Abrir diagrama no link publicado"), a pessoa é levada ao link
-original em nova aba. Links de compartilhamento do Google Drive são convertidos
-automaticamente para exibição; se a pré-visualização não carregar (link privado,
-bloqueio de intranet), o painel mostra o botão de acesso mesmo assim.
-Alternativa: salvar o arquivo em `img/diagramas/` e usar o caminho relativo.
+O repositório **não tem pasta de imagens**: exporte o diagrama do Bizagi e
+**publique a imagem on-line** (Google Drive público, intranet acessível,
+repositório institucional de imagens etc.), depois cole a **URL na coluna
+`Imagem_Bizagi`** — presente em *todos* os níveis: Macroprocessos, Processos,
+Subprocessos, Atividades e Tarefas (preencha onde for pertinente). O painel
+exibe a imagem e, ao clicar nela ou no botão "Abrir diagrama no link publicado",
+leva ao endereço original em nova aba. Links de compartilhamento do Google Drive
+são convertidos automaticamente para exibição; se a prévia não carregar (link
+privado, bloqueio de rede), o painel mostra o botão de acesso mesmo assim. As
+URLs atuais (`placehold.co`) são apenas exemplos.
 
 ## Ajustes que você provavelmente vai querer fazer
 

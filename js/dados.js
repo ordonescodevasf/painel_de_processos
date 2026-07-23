@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-23 20:12",
+ "_gerado_em": "2026-07-23 21:14",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -18,7 +18,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Ministério supervisor; Órgãos de controle; Sociedade",
    "Sistemas": "e-Codevasf; SEI; Painéis de BI",
    "Normativos_Aplicaveis": "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
-   "Imagem_Bizagi": "img/diagramas/mp-01.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-01",
    "Observacoes": null
   },
   {
@@ -35,7 +35,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Auditoria interna; CGU; TCU",
    "Sistemas": "SEI; Sistema de gestão de riscos",
    "Normativos_Aplicaveis": "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
-   "Imagem_Bizagi": "img/diagramas/mp-02.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-02",
    "Observacoes": null
   },
   {
@@ -52,7 +52,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Parlamentares; Entes federados; Entidades parceiras",
    "Sistemas": "TransfereGov; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Portarias de transferências voluntárias",
-   "Imagem_Bizagi": "img/diagramas/mp-03.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-03",
    "Observacoes": null
   },
   {
@@ -69,7 +69,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "ANA; Agências estaduais; Associações de usuários",
    "Sistemas": "SIG-Irrigação (fictício); SEI",
    "Normativos_Aplicaveis": "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
-   "Imagem_Bizagi": "img/diagramas/mp-04.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-04",
    "Observacoes": null
   },
   {
@@ -86,7 +86,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Comitês de bacia; MMA; Órgãos ambientais",
    "Sistemas": "SEI; GeoPortal (fictício)",
    "Normativos_Aplicaveis": "Legislação ambiental aplicável",
-   "Imagem_Bizagi": "img/diagramas/mp-05.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-05",
    "Observacoes": null
   },
   {
@@ -103,7 +103,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Fornecedores; Assessoria Jurídica; Órgãos de controle; PNCP",
    "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
-   "Imagem_Bizagi": "img/diagramas/mp-06.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-06",
    "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento."
   },
   {
@@ -120,7 +120,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Sindicatos; SEST; Ministério supervisor",
    "Sistemas": "SIGEP (fictício); SEI",
    "Normativos_Aplicaveis": "CLT; Normas internas de pessoal",
-   "Imagem_Bizagi": "img/diagramas/mp-07.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-07",
    "Observacoes": null
   },
   {
@@ -137,7 +137,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "SGD/MGI; Fornecedores de TI",
    "Sistemas": "e-Codevasf; Service Desk",
    "Normativos_Aplicaveis": "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
-   "Imagem_Bizagi": "img/diagramas/mp-08.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-08",
    "Observacoes": null
   }
  ],
@@ -162,11 +162,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "Áreas demandantes; Painel de Preços; Fornecedores (cotações)",
    "Entradas": "DFD; Plano de Contratações Anual; Requisitos da área",
    "Saidas": "ETP aprovado; TR aprovado; Pesquisa de preços validada",
-   "Clientes": "AA/GLC (Seleção do Fornecedor); Assessoria Jurídica",
+   "Beneficiarios": "AA/GLC (Seleção do Fornecedor); Assessoria Jurídica",
    "Sistemas": "SEI; Compras.gov.br; Painel de Preços",
    "Normativos_Relacionados": "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Processo_SEI": "59500.000123/2026-11",
-   "Imagem_Bizagi": "img/diagramas/p-06-01.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
    "M1_Formulario_Enviado": "Sim",
    "M2_Formulario_Retornado": "Sim",
    "M3_Reuniao_Contextualizacao": "Sim",
@@ -200,11 +200,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "P-06.01 (artefatos); Compras.gov.br",
    "Entradas": "Edital minutado; Parecer jurídico; ETP/TR",
    "Saidas": "Resultado homologado; Contrato/ata para assinatura",
-   "Clientes": "Unidades demandantes; Fornecedores",
+   "Beneficiarios": "Unidades demandantes; Fornecedores",
    "Sistemas": "Compras.gov.br; PNCP; SEI",
    "Normativos_Relacionados": "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
    "Processo_SEI": "59500.000456/2026-22",
-   "Imagem_Bizagi": "img/diagramas/p-06-02.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
    "M1_Formulario_Enviado": "Sim",
    "M2_Formulario_Retornado": "Sim",
    "M3_Reuniao_Contextualizacao": "Sim",
@@ -238,11 +238,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "P-06.02 (contrato); Fornecedores contratados",
    "Entradas": "Contrato assinado; Cronograma; Garantias",
    "Saidas": "Objeto recebido; Pagamentos efetuados; Termo de encerramento",
-   "Clientes": "Unidades demandantes; Fornecedores",
+   "Beneficiarios": "Unidades demandantes; Fornecedores",
    "Sistemas": "SEI; Compras.gov.br",
    "Normativos_Relacionados": "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
    "Processo_SEI": "59500.000789/2026-33",
-   "Imagem_Bizagi": "img/diagramas/p-06-03.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-03",
    "M1_Formulario_Enviado": "Sim",
    "M2_Formulario_Retornado": "Sim",
    "M3_Reuniao_Contextualizacao": "Sim",
@@ -276,11 +276,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "ANA (outorgas); Distritos de irrigação",
    "Entradas": "Outorga de uso; Demanda de irrigação; Plano de cultivo",
    "Saidas": "Água distribuída; Infraestrutura mantida; Relatórios de O&M",
-   "Clientes": "Irrigantes; Distritos",
+   "Beneficiarios": "Irrigantes; Distritos",
    "Sistemas": "SIG-Irrigação (fictício); SEI",
    "Normativos_Relacionados": "Lei nº 12.787/2013",
    "Processo_SEI": "59500.000901/2026-44",
-   "Imagem_Bizagi": "img/diagramas/p-04-01.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
    "M1_Formulario_Enviado": "Sim",
    "M2_Formulario_Retornado": "Sim",
    "M3_Reuniao_Contextualizacao": "Sim",
@@ -314,11 +314,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "Municípios; Comitês de bacia",
    "Entradas": "Diagnóstico hidroambiental; Termos de cooperação",
    "Saidas": "Nascentes recuperadas; Relatórios de monitoramento",
-   "Clientes": "Comunidades; Órgãos ambientais",
+   "Beneficiarios": "Comunidades; Órgãos ambientais",
    "Sistemas": "SEI; GeoPortal (fictício)",
    "Normativos_Relacionados": "Legislação ambiental aplicável",
    "Processo_SEI": null,
-   "Imagem_Bizagi": "img/diagramas/p-05-01.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-05-01",
    "M1_Formulario_Enviado": "Não",
    "M2_Formulario_Retornado": "Não",
    "M3_Reuniao_Contextualizacao": "Não",
@@ -352,11 +352,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "Diretoria; Unidades",
    "Entradas": "Diretrizes de governo; Diagnóstico institucional",
    "Saidas": "Plano Estratégico; Painel de indicadores; RAG",
-   "Clientes": "Diretoria Executiva; Conselhos",
+   "Beneficiarios": "Diretoria Executiva; Conselhos",
    "Sistemas": "e-Codevasf; Painéis de BI",
    "Normativos_Relacionados": "Lei nº 13.303/2016",
    "Processo_SEI": "59500.000015/2025-77",
-   "Imagem_Bizagi": "img/diagramas/p-01-01.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-01-01",
    "M1_Formulario_Enviado": "Sim",
    "M2_Formulario_Retornado": "Sim",
    "M3_Reuniao_Contextualizacao": "Sim",
@@ -390,11 +390,11 @@ window.PAINEL_DADOS = {
    "Fornecedores": "Banca do concurso; Candidatos",
    "Entradas": "Resultado homologado; Documentação do candidato",
    "Saidas": "Empregado admitido e integrado",
-   "Clientes": "Novos empregados; Unidades de lotação",
+   "Beneficiarios": "Novos empregados; Unidades de lotação",
    "Sistemas": "SIGEP (fictício); SEI",
    "Normativos_Relacionados": "CLT; Normas internas de pessoal",
    "Processo_SEI": null,
-   "Imagem_Bizagi": "img/diagramas/p-07-01.svg",
+   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-07-01",
    "M1_Formulario_Enviado": "Não",
    "M2_Formulario_Retornado": "Não",
    "M3_Reuniao_Contextualizacao": "Não",
@@ -421,7 +421,7 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "ETP aprovado no SEI",
    "Sistemas": "SEI; Compras.gov.br",
-   "Imagem_Bizagi": "img/diagramas/sp-06-01-01.svg"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-01"
   },
   {
    "Codigo": "SP-06.01.02",
@@ -434,7 +434,7 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "TR aprovado e validado juridicamente",
    "Sistemas": "SEI",
-   "Imagem_Bizagi": "img/diagramas/sp-06-01-02.svg"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-02"
   },
   {
    "Codigo": "SP-06.01.03",
@@ -447,7 +447,7 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "Relatório de pesquisa de preços; Mapa comparativo",
    "Sistemas": "Painel de Preços; PNCP; SEI",
-   "Imagem_Bizagi": "img/diagramas/sp-06-01-03.svg"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03"
   },
   {
    "Codigo": "SP-06.02.01",
@@ -460,7 +460,7 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
-   "Imagem_Bizagi": "img/diagramas/sp-06-02-01.svg"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-02-01"
   },
   {
    "Codigo": "SP-04.01.01",
@@ -473,7 +473,7 @@ window.PAINEL_DADOS = {
    "Dono": "Marcos Vinícius",
    "Entregas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": "img/diagramas/sp-04-01-01.svg"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-04-01-01"
   }
  ],
  "Atividades": [
@@ -488,7 +488,8 @@ window.PAINEL_DADOS = {
    "Saidas": "DFD assinado no SEI",
    "Sistemas": "SEI",
    "Prazo_Padrao": "5 dias úteis",
-   "Base_Normativa": "NI-027/2024 (fictícia)"
+   "Base_Normativa": "NI-027/2024 (fictícia)",
+   "Imagem_Bizagi": "https://placehold.co/960x420/155bcb/ffffff?text=Diagrama+BPMN+A-06.01.01.01"
   },
   {
    "Codigo": "A-06.01.01.02",
@@ -501,7 +502,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Levantamento de soluções documentado",
    "Sistemas": "PNCP; Compras.gov.br",
    "Prazo_Padrao": "10 dias úteis",
-   "Base_Normativa": "Lei nº 14.133/2021, art. 18"
+   "Base_Normativa": "Lei nº 14.133/2021, art. 18",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.01.01.03",
@@ -514,7 +516,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Memória de cálculo de quantitativos",
    "Sistemas": "SEI",
    "Prazo_Padrao": "5 dias úteis",
-   "Base_Normativa": null
+   "Base_Normativa": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.01.01.04",
@@ -527,7 +530,8 @@ window.PAINEL_DADOS = {
    "Saidas": "ETP aprovado",
    "Sistemas": "SEI; Compras.gov.br",
    "Prazo_Padrao": "7 dias úteis",
-   "Base_Normativa": "Lei nº 14.133/2021, art. 18"
+   "Base_Normativa": "Lei nº 14.133/2021, art. 18",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.01.02.01",
@@ -540,7 +544,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Minuta de TR",
    "Sistemas": "SEI",
    "Prazo_Padrao": "10 dias úteis",
-   "Base_Normativa": "Lei nº 14.133/2021, art. 6º, XXIII"
+   "Base_Normativa": "Lei nº 14.133/2021, art. 6º, XXIII",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.01.02.02",
@@ -553,7 +558,8 @@ window.PAINEL_DADOS = {
    "Saidas": "TR validado; Parecer jurídico",
    "Sistemas": "SEI",
    "Prazo_Padrao": "15 dias úteis",
-   "Base_Normativa": "Lei nº 14.133/2021, art. 53"
+   "Base_Normativa": "Lei nº 14.133/2021, art. 53",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.01.03.01",
@@ -566,7 +572,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Relatório de pesquisa de preços",
    "Sistemas": "Painel de Preços; PNCP",
    "Prazo_Padrao": "10 dias úteis",
-   "Base_Normativa": "IN SEGES nº 65/2021"
+   "Base_Normativa": "IN SEGES nº 65/2021",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.01.03.02",
@@ -579,7 +586,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Valor estimado consolidado",
    "Sistemas": "SEI",
    "Prazo_Padrao": "3 dias úteis",
-   "Base_Normativa": "IN SEGES nº 65/2021, art. 6º"
+   "Base_Normativa": "IN SEGES nº 65/2021, art. 6º",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.02.01.01",
@@ -592,7 +600,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Edital publicado (PNCP)",
    "Sistemas": "Compras.gov.br; PNCP",
    "Prazo_Padrao": "2 dias úteis",
-   "Base_Normativa": "Lei nº 14.133/2021, art. 54"
+   "Base_Normativa": "Lei nº 14.133/2021, art. 54",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-06.02.01.02",
@@ -605,7 +614,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Ata da sessão; Resultado do julgamento",
    "Sistemas": "Compras.gov.br",
    "Prazo_Padrao": "Conforme edital",
-   "Base_Normativa": "Lei nº 14.133/2021"
+   "Base_Normativa": "Lei nº 14.133/2021",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-04.01.01.01",
@@ -618,7 +628,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Programação semanal aprovada",
    "Sistemas": "SIG-Irrigação (fictício)",
    "Prazo_Padrao": "Semanal",
-   "Base_Normativa": null
+   "Base_Normativa": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "A-04.01.01.02",
@@ -631,7 +642,8 @@ window.PAINEL_DADOS = {
    "Saidas": "Volumes registrados; Ocorrências",
    "Sistemas": "SIG-Irrigação (fictício)",
    "Prazo_Padrao": "Diário",
-   "Base_Normativa": null
+   "Base_Normativa": null,
+   "Imagem_Bizagi": null
   }
  ],
  "Tarefas": [
@@ -645,7 +657,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Área demandante",
    "Sistema": "SEI",
    "Duracao_Estimada": "0,5 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.01.01.01.02",
@@ -657,7 +670,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Área demandante",
    "Sistema": "SEI",
    "Duracao_Estimada": "0,5 dia",
-   "Observacoes": "Modelo DOC-006/DOC-012."
+   "Observacoes": "Modelo DOC-006/DOC-012.",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.01.01.01.03",
@@ -669,7 +683,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Área demandante",
    "Sistema": "SEI",
    "Duracao_Estimada": "1 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.01.03.01.01",
@@ -681,7 +696,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Equipe de planejamento",
    "Sistema": "Painel de Preços",
    "Duracao_Estimada": "0,5 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.01.03.01.02",
@@ -693,7 +709,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Equipe de planejamento",
    "Sistema": "PNCP",
    "Duracao_Estimada": "0,5 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.01.03.01.03",
@@ -705,7 +722,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Equipe de planejamento",
    "Sistema": "SEI",
    "Duracao_Estimada": "3 dias",
-   "Observacoes": "Mínimo de 3 fontes (IN 65/2021)."
+   "Observacoes": "Mínimo de 3 fontes (IN 65/2021).",
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.01.03.01.04",
@@ -717,7 +735,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Equipe de planejamento",
    "Sistema": "Planilha padrão",
    "Duracao_Estimada": "0,5 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.02.01.01.01",
@@ -729,7 +748,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Agente de contratação",
    "Sistema": "Compras.gov.br",
    "Duracao_Estimada": "0,5 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-06.02.01.01.02",
@@ -741,7 +761,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Compras.gov.br",
    "Sistema": "PNCP",
    "Duracao_Estimada": "Imediato",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "T-04.01.01.01.01",
@@ -753,7 +774,8 @@ window.PAINEL_DADOS = {
    "Responsavel": "Equipe de operação",
    "Sistema": "SIG-Irrigação (fictício)",
    "Duracao_Estimada": "1 dia",
-   "Observacoes": null
+   "Observacoes": null,
+   "Imagem_Bizagi": null
   }
  ],
  "Documentos": [
@@ -778,7 +800,7 @@ window.PAINEL_DADOS = {
    "Versao": "1.0",
    "Data": "2026-03-02",
    "Situacao": "Vigente",
-   "Link": "img/diagramas/p-06-01.svg",
+   "Link": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
    "Observacoes": "Exportado do Bizagi Modeler."
   },
   {
@@ -886,7 +908,7 @@ window.PAINEL_DADOS = {
    "Versao": "0.3",
    "Data": "2026-07-08",
    "Situacao": "Em elaboração",
-   "Link": "img/diagramas/p-04-01.svg",
+   "Link": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
    "Observacoes": "Modelagem em curso."
   },
   {
@@ -1254,7 +1276,7 @@ window.PAINEL_DADOS = {
    "Participantes": "Equipe GLC; UNP",
    "Entradas_Insumos": "Insumos das entrevistas; Notação BPMN 2.0",
    "Saidas_Entregaveis": "Diagrama BPMN AS-IS v0.1",
-   "Evidencias": "Diagrama AS-IS v0.1|img/diagramas/p-06-01.svg",
+   "Evidencias": "Diagrama AS-IS v0.1|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
    "Memoria": "Identificados 3 retrabalhos e 2 handoffs desnecessários (princípios de desenho do CBOK)."
   },
   {
@@ -1268,7 +1290,7 @@ window.PAINEL_DADOS = {
    "Participantes": "Ricardo Nogueira; Equipe GLC; UNP",
    "Entradas_Insumos": "Diagrama AS-IS v0.1",
    "Saidas_Entregaveis": "Diagrama AS-IS v1.0 validado",
-   "Evidencias": "Diagrama AS-IS v1.0|img/diagramas/p-06-01.svg;Ata de validação|https://exemplo.codevasf.gov.br/sei/ata-validacao-asis",
+   "Evidencias": "Diagrama AS-IS v1.0|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01;Ata de validação|https://exemplo.codevasf.gov.br/sei/ata-validacao-asis",
    "Memoria": null
   },
   {
@@ -1366,7 +1388,7 @@ window.PAINEL_DADOS = {
    "Participantes": "Agentes de contratação; UNP",
    "Entradas_Insumos": "Insumos da contextualização",
    "Saidas_Entregaveis": "Diagrama AS-IS parcial v0.2",
-   "Evidencias": "Diagrama parcial|img/diagramas/p-06-02.svg",
+   "Evidencias": "Diagrama parcial|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
    "Memoria": "Fluxo de recursos administrativos ainda pendente de detalhamento com a área."
   },
   {
@@ -2407,9 +2429,9 @@ window.PAINEL_DADOS = {
   {
    "Termo": "Processo de Trabalho",
    "Categoria": "Metodologia Codevasf",
-   "Definicao": "Nível da hierarquia entre o processo de negócio e as atividades: recorte executável do processo, sob responsabilidade de uma unidade — também tratado como subprocesso. Na planilha deste painel, corresponde à aba Subprocessos.",
-   "Fonte": "Metodologia Codevasf / CBOK 4.0",
-   "Termos_Relacionados": "Processo de Negócio; Subprocesso; Atividade"
+   "Definicao": "Expressão usual na administração pública brasileira para o conjunto de atividades executadas por uma unidade. Não é um nível da hierarquia do CBOK 4.0, que adota processo de negócio → subprocesso → atividade → tarefa — nomenclatura seguida por este painel.",
+   "Fonte": "Adm. Pública / CBOK 4.0",
+   "Termos_Relacionados": "Processo de Negócio; Subprocesso; Atividade; Tarefa"
   },
   {
    "Termo": "Processo Ponta a Ponta",
@@ -2512,7 +2534,7 @@ window.PAINEL_DADOS = {
   {
    "Termo": "SIPOC",
    "Categoria": "SIPOC e Modelagem",
-   "Definicao": "Ferramenta visual que descreve um processo em alto nível por meio de cinco elementos: Suppliers (Fornecedores), Inputs (Entradas), Process (Processo), Outputs (Saídas) e Customers (Clientes).",
+   "Definicao": "Ferramenta visual que descreve um processo em alto nível por meio de cinco elementos: Fornecedores (Suppliers), Entradas (Inputs), Processo, Saídas (Outputs) e Beneficiários (Customers).",
    "Fonte": "Six Sigma / CBOK",
    "Termos_Relacionados": "Fornecedor (Supplier); Entrada (Input); Saída (Output)"
   },
@@ -2644,7 +2666,7 @@ window.PAINEL_DADOS = {
    "Ordem": 5,
    "Categoria": "Modelagem e SIPOC",
    "Pergunta": "O que é SIPOC e como ler a ficha de um processo?",
-   "Resposta": "SIPOC é a visão de alto nível do processo em cinco colunas: Fornecedores, Entradas, Processo, Saídas e Clientes. Na ficha de cada processo deste painel, o SIPOC aparece logo após os dados gerais, seguido dos marcos M1–M9, indicadores, riscos, documentos e do diário de mapeamento."
+   "Resposta": "SIPOC é a visão de alto nível do processo em cinco colunas: Fornecedores, Entradas, Processo, Saídas e Beneficiários. Na ficha de cada processo deste painel, o SIPOC aparece logo após os dados gerais, seguido dos marcos M1–M9, indicadores, riscos, documentos e do diário de mapeamento."
   },
   {
    "Ordem": 6,
