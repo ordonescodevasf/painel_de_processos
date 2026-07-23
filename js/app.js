@@ -167,7 +167,13 @@
       docs: pega('Documentos'),
       riscos: pega('Riscos'),
       inds: pega('Indicadores'),
-      diario: pega('Diario_Mapeamento')
+      diario: pega('Diario_Mapeamento'),
+      jornada: pega('Jornada'),
+      repo: pega('Repositorio'),
+      nugep: pega('NUGEP'),
+      glossario: pega('Glossario'),
+      faq: pega('FAQ'),
+      parametros: pega('Parametros')
     };
     dd.macros.forEach(function (m) { m._cat = slug(m.Categoria); });
     dd.procs.forEach(function (p) {
@@ -190,6 +196,13 @@
     });
     dd.diario.forEach(function (e) { e.Data = isoData(e.Data); });
     dd.diario.sort(function (a, b) { return String(b.Data || '').localeCompare(String(a.Data || '')); });
+    dd.jornada.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.repo.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.faq.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.glossario.sort(function (a, b) { return String(a.Termo || '').localeCompare(String(b.Termo || ''), 'pt-BR'); });
+    dd.params = {};
+    dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
     var idx = { mp: {}, p: {}, sp: {}, a: {}, procsPorMacro: {}, subsPorProc: {}, ativsPorSub: {},
       vinc: { docs: {}, riscos: {}, inds: {} }, diarioPorProc: {} };
@@ -300,13 +313,22 @@
         '</span><i class="fas ' + (feito ? 'fa-check-circle' : 'fa-circle') + '" aria-hidden="true"></i></li>';
     }).join('') + '</ul>';
   }
-  function diagramaHtml(caminho, titulo) {
-    if (!caminho) return '<p class="pp-vazio">Diagrama BPMN ainda não publicado para este item.</p>';
-    return '<figure class="diagrama-frame"><img src="' + esc(caminho) + '" alt="Diagrama BPMN (Bizagi) — ' +
-      esc(titulo) + '" loading="lazy"></figure>' +
-      '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + esc(caminho) +
-      '" target="_blank" rel="noopener"><i class="fas fa-up-right-and-down-left-from-center" aria-hidden="true"></i>&nbsp;Ampliar diagrama<span class="sr-only"> (abre em nova aba)</span></a></div>';
+  function urlDrive(u) {                     // link de compartilhamento → imagem exibível
+    var m = String(u || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
+    return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000' : null;
   }
+  function diagramaHtml(caminho, titulo) {
+    if (!caminho) return '<p class="pp-vazio">Diagrama BPMN ainda não publicado para este item. Informe a URL da imagem exportada do Bizagi (ou um caminho do repositório) na coluna Imagem_Bizagi da planilha.</p>';
+    var href = esc(caminho);
+    var src = esc(urlDrive(caminho) || caminho);
+    return '<figure class="diagrama-frame"><a href="' + href + '" target="_blank" rel="noopener" title="Abrir o diagrama no link original (nova aba)">' +
+      '<img src="' + src + '" alt="Diagrama BPMN (Bizagi) — ' + esc(titulo) + '" loading="lazy" ' +
+      'onerror="this.closest(&quot;figure&quot;).classList.add(&quot;sem-imagem&quot;)"></a>' +
+      '<figcaption class="diagrama-fallback"><i class="fas fa-diagram-project" aria-hidden="true"></i> A pré-visualização não pôde ser carregada aqui — abra o diagrama pelo botão abaixo.</figcaption></figure>' +
+      '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
+      '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir diagrama no link publicado<span class="sr-only"> (abre em nova aba)</span></a></div>';
+  }
+
   function listaDocsHtml(docs) {
     if (!docs.length) return '<p class="pp-vazio">Nenhum documento vinculado.</p>';
     var icones = { 'Diagrama BPMN': 'fa-diagram-project', 'Ata de reunião': 'fa-file-signature',
@@ -380,8 +402,9 @@
   }
 
   /* ── roteador + abas ──────────────────────────────────────────────── */
-  var ROTAS_ABA = { inicio: '#/', catalogo: '#/catalogo', documentos: '#/documentos',
-    riscos: '#/riscos', indicadores: '#/indicadores', diario: '#/diario', metodologia: '#/metodologia' };
+  var ROTAS_ABA = { inicio: '#/', catalogo: '#/catalogo', repositorio: '#/repositorio',
+    documentos: '#/documentos', riscos: '#/riscos', indicadores: '#/indicadores',
+    diario: '#/diario', nugep: '#/nugep', glossario: '#/glossario', faq: '#/faq' };
   function mostrarPainel(id) {
     $all('#mainTabContent > .tab-panel').forEach(function (p) {
       var ativo = p.id === 'panel-' + id;
@@ -405,7 +428,10 @@
     else if (h === '#/riscos') { renderRiscos(); mostrarPainel('riscos'); }
     else if (h === '#/indicadores') { renderIndicadores(); mostrarPainel('indicadores'); }
     else if (h === '#/diario') { renderDiario(); mostrarPainel('diario'); }
-    else if (h === '#/metodologia') { renderMetodologia(); mostrarPainel('metodologia'); }
+    else if (h === '#/repositorio' || h === '#/metodologia') { renderRepositorio(); mostrarPainel('repositorio'); }
+    else if (h === '#/nugep') { renderNugep(); mostrarPainel('nugep'); }
+    else if (h === '#/glossario') { renderGlossario(); mostrarPainel('glossario'); }
+    else if (h === '#/faq') { renderFaq(); mostrarPainel('faq'); }
     else if ((m = h.match(/^#\/busca\?q=(.*)$/))) { renderBusca(decodeURIComponent(m[1])); mostrarPainel('busca'); }
     else if ((m = h.match(/^#\/(mp|p|sp|a)\/(.+)$/))) { renderDetalhe(m[1], decodeURIComponent(m[2])); mostrarPainel('detalhe'); }
     else { renderInicio(); mostrarPainel('inicio'); }
@@ -499,11 +525,23 @@
     valores: ['Foco na sociedade', 'Excelência', 'Transparência', 'Valorização dos Colaboradores',
       'Sustentabilidade', 'Ética', 'Comprometimento', 'Estímulo à Diversidade', 'Inovação']
   };
-  function blocoCadeia(titulo, cor, itens) {
-    return '<div class="cv-bloco"><div class="cv-titulo" style="background:' + cor + '">' + titulo + '</div><ul>' +
+  var MP_ICONES = { 'MP-01': 'fa-bullseye', 'MP-02': 'fa-shield-halved', 'MP-03': 'fa-seedling',
+    'MP-04': 'fa-droplet', 'MP-05': 'fa-water', 'MP-06': 'fa-file-contract',
+    'MP-07': 'fa-users', 'MP-08': 'fa-laptop-code' };
+  function statsMacro(cod) {
+    var ps = IDX.procsPorMacro[cod] || [];
+    if (!ps.length) return 'sem processos cadastrados';
+    var media = Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length);
+    return ps.length + (ps.length === 1 ? ' processo' : ' processos') + ' · ' + media + '% mapeado';
+  }
+  function blocoCadeia(titulo, classe, icone, itens) {
+    return '<div class="cv-bloco ' + classe + '"><div class="cv-titulo"><i class="fas ' + icone +
+      '" aria-hidden="true"></i><span>' + titulo + '</span><span class="cv-qtd">' + itens.length + '</span></div><ul>' +
       itens.map(function (m) {
-        return '<li><a href="#/mp/' + encodeURIComponent(m.Codigo) + '"><span class="cod">' + esc(m.Codigo) +
-          '</span><div class="nome">' + esc(m.Nome) + '</div></a></li>';
+        return '<li><a href="#/mp/' + encodeURIComponent(m.Codigo) + '">' +
+          '<span class="cv-ico"><i class="fas ' + (MP_ICONES[m.Codigo] || 'fa-diagram-project') + '" aria-hidden="true"></i></span>' +
+          '<span class="cv-tx"><span class="cod">' + esc(m.Codigo) + '</span><span class="nome">' + esc(m.Nome) +
+          '</span><span class="cv-meta">' + statsMacro(m.Codigo) + '</span></span></a></li>';
       }).join('') + '</ul></div>';
   }
   function renderInicio() {
@@ -526,7 +564,7 @@
       'documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
       '<div class="acoes"><a class="br-button inverted" href="#/catalogo"><i class="fas fa-layer-group" aria-hidden="true"></i>&nbsp;Catálogo de processos</a>' +
       '<a class="br-button outline-inv" href="#/diario"><i class="fas fa-timeline" aria-hidden="true"></i>&nbsp;Diário de mapeamento</a>' +
-      '<a class="br-button outline-inv" href="#/metodologia"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Metodologia</a></div></section>' +
+      '<a class="br-button outline-inv" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i>&nbsp;Repositório de materiais</a></div></section>' +
       '<div class="kpi-grid">' +
       '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + procs.length + ' processos · ' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades</span></div>' +
       '<div class="kpi ok"><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
@@ -536,12 +574,12 @@
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="cadeia">' +
-      '<aside class="cv-aside cv-missao"><h3>Missão</h3><p>' + esc(INSTITUCIONAL.missao) + '</p><h3>Visão</h3><p>' + esc(INSTITUCIONAL.visao) + '</p></aside>' +
-      '<div class="cv-centro">' + blocoCadeia('Macroprocessos Gerenciais', 'var(--pp-gerencial)', ger) +
-      blocoCadeia('Macroprocessos Finalísticos', 'var(--pp-finalistico)', fin) + '</div>' +
-      '<aside class="cv-aside cv-proposito"><h3>Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
-      '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'var(--pp-suporte)', sup) + '</div>' +
-      '<div class="cv-valores"><strong>Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span>· ' + esc(v) + '</span>'; }).join('') + '</div>' +
+      '<aside class="cv-aside cv-missao"><h3><i class="fas fa-flag" aria-hidden="true"></i> Missão</h3><p>' + esc(INSTITUCIONAL.missao) + '</p><h3><i class="fas fa-eye" aria-hidden="true"></i> Visão</h3><p>' + esc(INSTITUCIONAL.visao) + '</p></aside>' +
+      '<div class="cv-centro">' + blocoCadeia('Macroprocessos Gerenciais', 'cat-gerencial', 'fa-compass', ger) +
+      blocoCadeia('Macroprocessos Finalísticos — entrega de valor à sociedade', 'cat-finalistico', 'fa-hand-holding-heart', fin) + '</div>' +
+      '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
+      '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
+      '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
       '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-xs)">Clique em um macroprocesso para abrir a ficha e navegar até processos, subprocessos e atividades. Classificação conforme o BPM CBOK 4.0 (processos gerenciais, primários/finalísticos e de suporte).</p></section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Últimos registros do mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-card">' + timelineHtml(DADOS.diario.slice(0, 3)) +
@@ -867,41 +905,174 @@
   }
 
   /* ── TELA: metodologia ────────────────────────────────────────────── */
-  function renderMetodologia() {
-    $('#viewMetodologia').innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Metodologia</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-rotate" aria-hidden="true"></i> Ciclo de vida BPM (BPM CBOK 4.0)</h3>' +
-      '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Cada processo da carteira percorre as cinco fases do ciclo de vida BPM. A fase atual de cada processo aparece na respectiva ficha.</p>' +
-      '<ol class="ciclo">' +
+  /* ── TELA: repositório (jornada + materiais + metodologia) ────────── */
+  var filtroRepo = { cat: '', fase: '', q: '' };
+  var FASES_JORNADA = ['Descobrir', 'Definir', 'Desenvolver', 'Entregar', 'Evoluir'];
+  function cardRepo(it) {
+    var interno = !/^https?:/i.test(String(it.Link || ''));
+    var icone = { 'Documento oficial': 'fa-scale-balanced', 'Template': 'fa-file-lines',
+      'Instrumento': 'fa-toolbox', 'Ferramenta': 'fa-screwdriver-wrench', 'Referência': 'fa-book' }[it.Categoria] || 'fa-file';
+    return '<article class="repo-card"><div class="repo-topo">' +
+      '<span class="repo-ico"><i class="fas ' + icone + '" aria-hidden="true"></i></span>' +
+      '<div><span class="repo-cat">' + esc(it.Categoria || '') + (it.Fase_Ciclo ? ' · ' + esc(it.Fase_Ciclo) : '') + '</span>' +
+      (it.Codigo ? '<span class="cod">' + esc(it.Codigo) + '</span>' : '') + '</div></div>' +
+      '<h4>' + esc(it.Titulo) + '</h4><p>' + esc(it.Descricao || '') + '</p>' +
+      '<div class="repo-rodape"><span class="repo-fonte">Fonte: ' + esc(it.Fonte || '—') + '</span>' +
+      (it.Link ? '<a class="br-button secondary small" href="' + esc(it.Link) + '"' +
+        (interno ? ' download' : ' target="_blank" rel="noopener"') + '>' +
+        (interno ? '<i class="fas fa-download" aria-hidden="true"></i>&nbsp;Baixar' :
+          '<i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Acessar<span class="sr-only"> (abre em nova aba)</span>') + '</a>' : '') +
+      '</div></article>';
+  }
+  function renderRepositorio() {
+    var el = $('#viewRepositorio');
+    var repo = DADOS.repo;
+    var cats = []; repo.forEach(function (i) { if (i.Categoria && cats.indexOf(i.Categoria) < 0) cats.push(i.Categoria); });
+    var fases = []; repo.forEach(function (i) { if (i.Fase_Ciclo && fases.indexOf(i.Fase_Ciclo) < 0) fases.push(i.Fase_Ciclo); });
+    var ql = filtroRepo.q.toLowerCase();
+    var lista = repo.filter(function (i) {
+      return (!filtroRepo.cat || i.Categoria === filtroRepo.cat) &&
+        (!filtroRepo.fase || i.Fase_Ciclo === filtroRepo.fase) &&
+        (!ql || String((i.Titulo || '') + ' ' + (i.Descricao || '') + ' ' + (i.Codigo || '')).toLowerCase().indexOf(ql) >= 0);
+    });
+    var met = DADOS.params.Link_Metodologia, guia = DADOS.params.Link_Guia;
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Repositório de materiais e ferramentas</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp3)">Tudo que apoia a gestão de processos na Codevasf: a jornada de mapeamento, a metodologia e o guia oficiais, os instrumentos por fase do ciclo BPM, os modelos e as ferramentas. O conteúdo desta aba vem das abas <strong>Jornada</strong> e <strong>Repositorio</strong> da planilha.</p>' +
+      (met || guia ?
+        '<div class="repo-oficial">' +
+        (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/SEI</span></div><i class="fas fa-up-right-from-square seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
+        (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/SEI</span></div><i class="fas fa-up-right-from-square seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
+        '</div>' : '') +
+      '<section class="pp-sec"><div class="pp-sec-h"><h2>Jornada de mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp2)">A jornada não começa no diagrama — começa na escuta. Das fases preliminares ao TO-BE e à melhoria contínua, com foco em quem executa, decide e se beneficia (design centrado no humano · Double Diamond · CBOK 4.0).</p>' +
+      '<div class="jornada-fases" aria-hidden="true">' + FASES_JORNADA.map(function (f) { return '<span class="jf jf-' + slug(f) + '">' + f + '</span>'; }).join('<i class="fas fa-chevron-right"></i>') + '</div>' +
+      '<ol class="jornada">' + DADOS.jornada.map(function (e) {
+        return '<li class="jornada-etapa fase-' + slug(e.Fase || '') + '">' +
+          '<div class="je-topo"><span class="je-num">' + esc(e.Ordem) + '</span><div><span class="je-fase">' + esc(e.Fase || '') + '</span><h4>' + esc(e.Nome) + '</h4></div><span class="je-dur"><i class="far fa-clock" aria-hidden="true"></i> ' + esc(e.Duracao || '') + '</span></div>' +
+          '<p class="je-obj">' + esc(e.Objetivo || '') + '</p>' +
+          '<div class="je-grid">' +
+          '<div class="je-caixa"><b><i class="fas fa-list-check" aria-hidden="true"></i> Atividades-chave</b><ul>' + listar(e.Atividades_Chave).map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>' +
+          '<div class="je-caixa"><b><i class="fas fa-people-group" aria-hidden="true"></i> Quem faz</b><p>' + esc(listar(e.Quem_Faz).join(' · ')) + '</p>' +
+          '<b style="margin-top:8px"><i class="fas fa-box-open" aria-hidden="true"></i> Entregáveis</b><p>' + esc(listar(e.Entregaveis).join(' · ')) + '</p></div>' +
+          '</div>' +
+          (e.Sentimento_Usuario ? '<p class="je-sente"><i class="far fa-heart" aria-hidden="true"></i> ' + esc(e.Sentimento_Usuario) + '</p>' : '') +
+          '</li>';
+      }).join('') + '</ol></section>' +
+      '<section class="pp-sec"><div class="pp-sec-h"><h2>Instrumentos, modelos e ferramentas</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-filtros">' +
+      '<select id="repoCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option>' + cats.map(function (c) { return '<option' + (filtroRepo.cat === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select>' +
+      '<select id="repoFase" aria-label="Filtrar por fase do ciclo"><option value="">Todas as fases do ciclo</option>' + fases.map(function (c) { return '<option' + (filtroRepo.fase === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select>' +
+      '<input type="search" id="repoQ" placeholder="Buscar no repositório…" value="' + esc(filtroRepo.q) + '" aria-label="Buscar no repositório">' +
+      '<span class="pp-muted" style="font-size:var(--fs-xs)">' + lista.length + ' de ' + repo.length + ' itens</span></div>' +
+      (lista.length ? '<div class="repo-grid">' + lista.map(cardRepo).join('') + '</div>' : '<p class="pp-vazio">Nenhum item com esses filtros.</p>') + '</section>' +
+      '<section class="pp-sec"><div class="pp-sec-h"><h2>Metodologia em resumo</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-card"><h3><i class="fas fa-rotate" aria-hidden="true"></i> Ciclo de vida BPM (CBOK 4.0)</h3><ol class="ciclo">' +
       '<li><h4>Alinhamento à estratégia e metas</h4><p>Priorização da carteira e vínculo do processo aos objetivos institucionais.</p></li>' +
       '<li><h4>Arquitetar mudanças</h4><p>Modelagem (AS-IS), análise, desenho do estado futuro (TO-BE) e definição da medição.</p></li>' +
       '<li><h4>Desenvolver iniciativas</h4><p>Planos de implantação, capacitação, mudanças e tecnologia (visão PMBOK do projeto).</p></li>' +
       '<li><h4>Implementar mudanças</h4><p>Execução dos planos, publicação de procedimentos e estabilização.</p></li>' +
-      '<li><h4>Medir o sucesso</h4><p>Monitoramento por indicadores e melhoria contínua (novo giro do ciclo).</p></li>' +
-      '</ol></div>' +
+      '<li><h4>Medir o sucesso</h4><p>Monitoramento por indicadores e melhoria contínua (novo giro do ciclo).</p></li></ol></div>' +
       '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M9)</h3>' +
       '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Roteiro-padrão de cada projeto de mapeamento, do primeiro contato com a área até a publicação no repositório:</p>' +
       '<ul class="marcos">' + MARCOS_ROTULOS.map(function (r) { return '<li class="feito"><span>' + esc(r) + '</span><i class="fas fa-check-circle" aria-hidden="true"></i></li>'; }).join('') + '</ul></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-layer-group" aria-hidden="true"></i> Hierarquia e tipos de processos</h3>' +
-      '<dl class="ficha-dl">' +
-      campo('Hierarquia (níveis de modelo)', 'Macroprocesso → Processo → Subprocesso → Atividade. Cada nível tem ficha própria, diagrama BPMN e vínculos de documentos, riscos e indicadores.', true) +
-      campo('Processos finalísticos (primários)', 'Entregam valor diretamente ao cliente/beneficiário — a razão de ser da organização.') +
-      campo('Processos de suporte', 'Sustentam os finalísticos (contratações, pessoas, TI), sem entregar valor direto ao beneficiário.') +
-      campo('Processos gerenciais', 'Medem, monitoram e controlam a atuação institucional (estratégia, riscos, governança).') +
-      campo('Dono do processo (process owner)', 'Responsável fim a fim pelo desempenho do processo — papel central da disciplina de BPM.') +
-      '</dl></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-database" aria-hidden="true"></i> Como este painel é alimentado</h3>' +
-      '<dl class="ficha-dl">' +
-      campo('1. Google Sheets (recomendado)', 'Importe a planilha-modelo para o Google Sheets, compartilhe como “qualquer pessoa com o link pode ver” e informe o ID em <code>PAINEL_CONFIG.googleSheetId</code> (index.html). O painel passa a ler em tempo real — mesmo padrão do Painel do PTD.', true) +
-      campo('2. Planilha no repositório', 'Sem Google Sheets, o painel lê <code>data/painel-processos-dados.xlsx</code> publicado junto com o site (GitHub Pages).', true) +
-      campo('3. Dados embutidos', 'Como reserva (inclusive offline/file://), usa <code>js/dados.js</code>, gerado por <code>scripts/planilha_para_js.py</code>.', true) +
-      '</dl></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-book" aria-hidden="true"></i> Referências</h3>' +
-      '<ul style="font-size:var(--fs-sm);padding-left:1.2rem">' +
-      '<li>ABPMP. <strong>BPM CBOK — Guia para o Gerenciamento de Processos de Negócio: Corpo Comum de Conhecimento</strong>, versão 4.0 (hierarquia e tipos de processos, ciclo de vida BPM, papéis, SIPOC, medição de desempenho e repositório de processos).</li>' +
-      '<li>PMI. <strong>Guia PMBOK</strong> — gestão dos projetos de mapeamento: termo de abertura, escopo, partes interessadas, riscos, entregáveis e lições aprendidas.</li>' +
-      '<li>Gov.br. <strong>Design System (govbr-ds v4)</strong> — padrão visual e de acessibilidade deste painel.</li></ul>' +
-      '<p class="pp-aviso" style="margin-top:var(--sp2)"><strong>Aviso:</strong> os dados atualmente exibidos são <strong>fictícios</strong>, criados para demonstração da estrutura do painel.</p></div>';
+      '<div class="pp-card"><h3><i class="fas fa-database" aria-hidden="true"></i> Como este painel é alimentado</h3><dl class="ficha-dl">' +
+      campo('1. Google Sheets (recomendado)', 'Importe a planilha para o Google Sheets, compartilhe como “qualquer pessoa com o link pode ver” e informe o ID em <code>PAINEL_CONFIG.googleSheetId</code> (index.html).', true) +
+      campo('2. Planilha no repositório', 'Sem Google Sheets, o painel lê <code>data/painel-processos-dados.xlsx</code> publicado junto com o site.', true) +
+      campo('3. Dados embutidos', 'Reserva (inclusive offline): <code>js/dados.js</code>, gerado por <code>scripts/planilha_para_js.py</code>.', true) +
+      '</dl><p class="pp-aviso" style="margin-top:var(--sp2)"><strong>Aviso:</strong> os dados atualmente exibidos são <strong>fictícios</strong>, para demonstração do painel.</p></div></section>';
+    var f1 = $('#repoCat'), f2 = $('#repoFase'), f3 = $('#repoQ');
+    if (f1) f1.onchange = function () { filtroRepo.cat = this.value; renderRepositorio(); };
+    if (f2) f2.onchange = function () { filtroRepo.fase = this.value; renderRepositorio(); };
+    if (f3) f3.oninput = function () { filtroRepo.q = this.value; renderRepositorio(); var n = $('#repoQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+  }
+
+  /* ── TELA: NUGEP ──────────────────────────────────────────────────── */
+  function iniciais(nome) {
+    var p = String(nome || '').trim().split(/\s+/);
+    return (((p[0] || '')[0] || '') + ((p.length > 1 ? p[p.length - 1][0] : '') || '')).toUpperCase();
+  }
+  function renderNugep() {
+    var el = $('#viewNugep');
+    var P = DADOS.params || {};
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h2>NUGEP — Núcleo de Gestão Normativa e de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="max-width:64rem;margin-bottom:var(--sp3)">Equipe multidisciplinar formada por integrantes de diferentes unidades da Codevasf, responsável pela condução do mapeamento, modelagem e melhoria contínua dos processos institucionais, em articulação com a Área de Estratégia e Finanças (AE), a Gerência de Planejamento Estratégico (GPE) e a Unidade de Gestão Normativa e de Processos (UNP), conforme a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025). Cadastre, altere ou remova integrantes na aba <strong>NUGEP</strong> da planilha.</p>' +
+      (DADOS.nugep.length ? '<div class="nugep-grid">' + DADOS.nugep.map(function (m) {
+        return '<article class="nugep-card"><span class="nugep-avatar" aria-hidden="true">' + esc(iniciais(m.Nome)) + '</span>' +
+          '<h4>' + esc(m.Nome) + '</h4><p class="nugep-papel">' + esc(m.Papel || '') + '</p>' +
+          '<p class="nugep-unid"><strong>' + esc(m.Unidade_Sigla || '') + '</strong>' + (m.Unidade_Nome ? '<br>' + esc(m.Unidade_Nome) : '') + '</p>' +
+          (m.Email ? '<a href="mailto:' + esc(m.Email) + '"><i class="fas fa-envelope" aria-hidden="true"></i> ' + esc(m.Email) + '</a>' : '') +
+          (m.Telefone ? '<a href="tel:+55' + esc(String(m.Telefone).replace(/\D/g, '')) + '"><i class="fas fa-phone" aria-hidden="true"></i> ' + esc(m.Telefone) + '</a>' : '') +
+          '</article>';
+      }).join('') + '</div>' : '<p class="pp-vazio">Nenhum integrante cadastrado na aba NUGEP da planilha.</p>') +
+      '<div class="pp-card" style="margin-top:var(--sp4)"><h3><i class="fas fa-building" aria-hidden="true"></i> Contato institucional</h3>' +
+      '<p style="font-size:var(--fs-sm)"><strong>' + esc(P.Contato_Unidade || 'Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)') + '</strong><br>' +
+      (P.Contato_Email ? 'E-mail: <a href="mailto:' + esc(P.Contato_Email) + '">' + esc(P.Contato_Email) + '</a>' : '') +
+      (P.Contato_Telefone ? ' · Telefone: ' + esc(P.Contato_Telefone) : '') + '</p></div>';
+  }
+
+  /* ── TELA: glossário ──────────────────────────────────────────────── */
+  var filtroGloss = { q: '', cat: '', letra: '' };
+  function renderGlossario() {
+    var el = $('#viewGlossario');
+    var todos = DADOS.glossario;
+    var cats = []; todos.forEach(function (t) { if (t.Categoria && cats.indexOf(t.Categoria) < 0) cats.push(t.Categoria); });
+    var ql = filtroGloss.q.toLowerCase();
+    var lista = todos.filter(function (t) {
+      var letra = String(t.Termo || '').charAt(0).toUpperCase();
+      return (!filtroGloss.cat || t.Categoria === filtroGloss.cat) &&
+        (!filtroGloss.letra || letra === filtroGloss.letra) &&
+        (!ql || String((t.Termo || '') + ' ' + (t.Definicao || '') + ' ' + (t.Termos_Relacionados || '')).toLowerCase().indexOf(ql) >= 0);
+    });
+    var letrasDisp = {}; todos.forEach(function (t) { letrasDisp[String(t.Termo || '').charAt(0).toUpperCase()] = 1; });
+    var abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    var porLetra = {};
+    lista.forEach(function (t) { var L = String(t.Termo || '').charAt(0).toUpperCase(); (porLetra[L] = porLetra[L] || []).push(t); });
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Glossário de Gestão de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp3)">' + todos.length + ' termos curados a partir do BPM CBOK 4.0 (ABPMP), do PMBOK (PMI), da ISO 31000 e da Metodologia de Gerenciamento de Processos da Codevasf (RES 031/2025) — mantidos na aba <strong>Glossario</strong> da planilha.</p>' +
+      '<div class="pp-filtros"><input type="search" id="glossQ" placeholder="Buscar termo, sigla ou conceito (ex.: SIPOC, KPI, raia)…" value="' + esc(filtroGloss.q) + '" aria-label="Buscar termo" style="flex:1;min-width:230px">' +
+      '<select id="glossCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias (' + todos.length + ')</option>' +
+      cats.map(function (c) { var n = todos.filter(function (t) { return t.Categoria === c; }).length; return '<option value="' + esc(c) + '"' + (filtroGloss.cat === c ? ' selected' : '') + '>' + esc(c) + ' (' + n + ')</option>'; }).join('') + '</select></div>' +
+      '<div class="gloss-abc" role="group" aria-label="Filtrar por letra"><button type="button" class="' + (filtroGloss.letra ? '' : 'ativo') + '" data-letra="">Todos</button>' +
+      abc.map(function (L) { return '<button type="button" data-letra="' + L + '" class="' + (filtroGloss.letra === L ? 'ativo' : '') + '"' + (letrasDisp[L] ? '' : ' disabled') + '>' + L + '</button>'; }).join('') + '</div>' +
+      '<p class="pp-muted" style="font-size:var(--fs-xs);margin:var(--sp2) 0">' + lista.length + ' resultado(s)</p>' +
+      (lista.length ? Object.keys(porLetra).sort().map(function (L) {
+        return '<h3 class="gloss-letra">' + L + '</h3><div class="gloss-grid">' + porLetra[L].map(function (t) {
+          return '<article class="gloss-card"><div class="gloss-topo"><h4>' + esc(t.Termo) + '</h4><span class="gloss-cat">' + esc(t.Categoria || '') + '</span></div>' +
+            '<p>' + esc(t.Definicao || '') + '</p>' +
+            '<div class="gloss-rodape">' + (t.Fonte ? '<span class="repo-fonte">Fonte: ' + esc(t.Fonte) + '</span>' : '') +
+            (t.Termos_Relacionados ? '<span class="chip-lista">' + listar(t.Termos_Relacionados).map(function (r) { return '<button type="button" class="chip gloss-rel" data-termo="' + esc(r) + '">' + esc(r) + '</button>'; }).join('') + '</span>' : '') +
+            '</div></article>';
+        }).join('') + '</div>';
+      }).join('') : '<p class="pp-vazio">Nenhum termo encontrado com esses filtros.</p>');
+    var q = $('#glossQ'), c = $('#glossCat');
+    if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; renderGlossario(); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+    if (c) c.onchange = function () { filtroGloss.cat = this.value; renderGlossario(); };
+    $all('.gloss-abc button', el).forEach(function (b) { b.onclick = function () { filtroGloss.letra = b.getAttribute('data-letra'); renderGlossario(); }; });
+    $all('.gloss-rel', el).forEach(function (b) { b.onclick = function () { filtroGloss.q = b.getAttribute('data-termo'); filtroGloss.letra = ''; filtroGloss.cat = ''; renderGlossario(); }; });
+  }
+
+  /* ── TELA: FAQ ────────────────────────────────────────────────────── */
+  var filtroFaq = '';
+  function renderFaq() {
+    var el = $('#viewFaq');
+    var todos = DADOS.faq;
+    var cats = []; todos.forEach(function (f) { if (f.Categoria && cats.indexOf(f.Categoria) < 0) cats.push(f.Categoria); });
+    var lista = filtroFaq ? todos.filter(function (f) { return f.Categoria === filtroFaq; }) : todos;
+    var porCat = {}; lista.forEach(function (f) { (porCat[f.Categoria || 'Geral'] = porCat[f.Categoria || 'Geral'] || []).push(f); });
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Perguntas frequentes</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp3)">Dúvidas sobre gestão DE e POR processos na Codevasf — CBOK 4.0, SIPOC, indicadores, riscos e o uso deste painel. Mantidas na aba <strong>FAQ</strong> da planilha.</p>' +
+      '<div class="faq-cats"><button type="button" class="chip ' + (filtroFaq ? '' : 'ativo') + '" data-cat="">Todas (' + todos.length + ')</button>' +
+      cats.map(function (c) { var n = todos.filter(function (f) { return f.Categoria === c; }).length; return '<button type="button" class="chip ' + (filtroFaq === c ? 'ativo' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + ' (' + n + ')</button>'; }).join('') + '</div>' +
+      Object.keys(porCat).map(function (cat) {
+        return '<h3 class="faq-cat-h">' + esc(cat) + '</h3>' + porCat[cat].map(function (f) {
+          return '<details class="faq-item"><summary><i class="fas fa-circle-question" aria-hidden="true"></i><span>' + esc(f.Pergunta) + '</span><i class="fas fa-chevron-down seta" aria-hidden="true"></i></summary><div class="faq-resp">' + esc(f.Resposta || '') + '</div></details>';
+        }).join('');
+      }).join('');
+    $all('.faq-cats .chip', el).forEach(function (b) { b.onclick = function () { filtroFaq = b.getAttribute('data-cat'); renderFaq(); }; });
   }
 
   /* ── TELA: busca global ───────────────────────────────────────────── */
@@ -919,9 +1090,11 @@
       sp: DADOS.subs.filter(function (s) { return bate(s.Codigo) || bate(s.Nome) || bate(s.Descricao); }),
       a: DADOS.ativs.filter(function (a) { return bate(a.Codigo) || bate(a.Nome) || bate(a.Descricao); }),
       doc: DADOS.docs.filter(function (x) { return bate(x.ID) || bate(x.Titulo); }),
-      reg: DADOS.diario.filter(function (e) { return bate(e.Titulo) || bate(e.Descricao); })
+      reg: DADOS.diario.filter(function (e) { return bate(e.Titulo) || bate(e.Descricao); }),
+      gl: DADOS.glossario.filter(function (t) { return bate(t.Termo) || bate(t.Definicao); }),
+      rp: DADOS.repo.filter(function (i) { return bate(i.Titulo) || bate(i.Descricao) || bate(i.Codigo); })
     };
-    var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.reg.length;
+    var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.reg.length + r.gl.length + r.rp.length;
     function linha(href, cod, nome, extra) {
       return '<div class="doc-item"><i class="fas fa-arrow-right fa-stack-ico" aria-hidden="true"></i><div>' +
         '<div class="tit"><a href="' + href + '"><span class="cod">' + esc(cod) + '</span> ' + esc(nome) + '</a></div>' +
@@ -942,6 +1115,12 @@
       }) +
       grupo('Diário de mapeamento', r.reg, function (e) {
         return linha('#/p/' + encodeURIComponent(e.Processo), e.Processo, e.Titulo || '(registro)', fmtData(e.Data) + ' · ' + esc(e.Tipo || ''));
+      }) +
+      grupo('Glossário', r.gl, function (t) {
+        return '<div class="doc-item"><i class="fas fa-spell-check fa-stack-ico" aria-hidden="true"></i><div><div class="tit"><a href="#/glossario">' + esc(t.Termo) + '</a></div><div class="meta">' + esc(String(t.Definicao || '').slice(0, 140)) + '…</div></div></div>';
+      }) +
+      grupo('Repositório de materiais', r.rp, function (i) {
+        return '<div class="doc-item"><i class="fas fa-toolbox fa-stack-ico" aria-hidden="true"></i><div><div class="tit">' + (i.Link ? '<a href="' + esc(i.Link) + '" target="_blank" rel="noopener">' + esc(i.Titulo) + '</a>' : esc(i.Titulo)) + '</div><div class="meta">' + esc(i.Categoria || '') + '</div></div></div>';
       });
   }
 
@@ -954,16 +1133,23 @@
     if ((c = $('#cntRiscos'))) c.textContent = DADOS.riscos.length;
     if ((c = $('#cntIndicadores'))) c.textContent = DADOS.inds.length;
     if ((c = $('#cntDiario'))) c.textContent = DADOS.diario.length;
+    if ((c = $('#cntRepositorio'))) c.textContent = DADOS.repo.length;
+    if ((c = $('#cntNugep'))) c.textContent = DADOS.nugep.length;
+    if ((c = $('#cntGlossario'))) c.textContent = DADOS.glossario.length;
+    if ((c = $('#cntFaq'))) c.textContent = DADOS.faq.length;
     montarAlertas();
     ligarAcoesCabecalho();
     if (window.PPUI) PPUI.setMenuSections([
       { rotulo: 'Início · Cadeia de Valor', href: '#/', icone: 'fa-house' },
       { rotulo: 'Catálogo de processos', href: '#/catalogo', icone: 'fa-layer-group' },
+      { rotulo: 'Repositório de materiais', href: '#/repositorio', icone: 'fa-toolbox' },
       { rotulo: 'Documentos', href: '#/documentos', icone: 'fa-folder-open' },
       { rotulo: 'Radar de riscos', href: '#/riscos', icone: 'fa-shield-halved' },
       { rotulo: 'Indicadores', href: '#/indicadores', icone: 'fa-chart-line' },
       { rotulo: 'Diário de mapeamento', href: '#/diario', icone: 'fa-timeline' },
-      { rotulo: 'Metodologia (CBOK · PMBOK)', href: '#/metodologia', icone: 'fa-book' }
+      { rotulo: 'NUGEP', href: '#/nugep', icone: 'fa-people-group' },
+      { rotulo: 'Glossário', href: '#/glossario', icone: 'fa-spell-check' },
+      { rotulo: 'Perguntas frequentes', href: '#/faq', icone: 'fa-circle-question' }
     ]);
     rota();
   }

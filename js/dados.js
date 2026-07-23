@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-23 15:38",
+ "_gerado_em": "2026-07-23 16:31",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -1260,6 +1260,1274 @@ window.PAINEL_DADOS = {
    "Saidas_Entregaveis": "Registro de entrevista; Insumos para o AS-IS",
    "Evidencias": "Registro|https://exemplo.codevasf.gov.br/sei/entrevista-p0401",
    "Memoria": null
+  }
+ ],
+ "Jornada": [
+  {
+   "Ordem": 1,
+   "Fase": "Descobrir",
+   "Nome": "Escuta e contextualização",
+   "Duracao": "1–2 semanas",
+   "Objetivo": "Compreender a dor real, o contexto e as expectativas de quem executa e de quem se beneficia do processo.",
+   "Atividades_Chave": "Reunião de sensibilização com a unidade demandante; Entrevistas semiestruturadas com executores e gestores; Aplicação do formulário de contextualização; Escuta ativa das partes interessadas (jornada empática)",
+   "Quem_Faz": "NUGEP; Interlocutor da área; Dono do processo",
+   "Entregaveis": "Ata de reunião; Formulário preenchido; Mapa de partes interessadas",
+   "Sentimento_Usuario": "Curiosidade e ansiedade: “por que estão olhando meu trabalho?”"
+  },
+  {
+   "Ordem": 2,
+   "Fase": "Definir",
+   "Nome": "Delimitação de escopo",
+   "Duracao": "1 semana",
+   "Objetivo": "Traçar limites claros: onde começa, onde termina, quem participa e o que está fora do mapeamento.",
+   "Atividades_Chave": "SIPOC preliminar (Fornecedores, Entradas, Processo, Saídas, Clientes); Identificação de sistemas e normativos aplicáveis; Definição de premissas, restrições e critérios de sucesso; Termo de abertura do projeto de mapeamento (PMBOK)",
+   "Quem_Faz": "Gerente do projeto; NUGEP",
+   "Entregaveis": "Ficha do mapeamento (Project Charter) publicada",
+   "Sentimento_Usuario": "Segurança: “agora sei o que esperam de mim”"
+  },
+  {
+   "Ordem": 3,
+   "Fase": "Desenvolver",
+   "Nome": "Modelagem AS-IS",
+   "Duracao": "2–4 semanas",
+   "Objetivo": "Fotografar o processo como ele é hoje, incluindo variações, filas, retrabalhos e workarounds.",
+   "Atividades_Chave": "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro no diário de bordo: hipóteses, dores, memória do mapeamento; Identificação de riscos, gargalos e handoffs",
+   "Quem_Faz": "Equipe de mapeamento; Executores do processo",
+   "Entregaveis": "Diagrama BPMN AS-IS; Lista de dores e riscos",
+   "Sentimento_Usuario": "Reconhecimento: “alguém finalmente enxerga o que a gente vive”"
+  },
+  {
+   "Ordem": 4,
+   "Fase": "Desenvolver",
+   "Nome": "Validação AS-IS",
+   "Duracao": "1 semana",
+   "Objetivo": "Confirmar com quem executa e com quem decide que o retrato do processo é fiel.",
+   "Atividades_Chave": "Reunião de validação com donos e executores; Ajustes finos no BPMN e nos artefatos; Homologação formal do AS-IS",
+   "Quem_Faz": "Dono do processo; NUGEP",
+   "Entregaveis": "AS-IS homologado e publicado no repositório",
+   "Sentimento_Usuario": "Orgulho: “é isso que a gente faz”"
+  },
+  {
+   "Ordem": 5,
+   "Fase": "Desenvolver",
+   "Nome": "Redesenho TO-BE",
+   "Duracao": "2–4 semanas",
+   "Objetivo": "Desenhar o processo desejado, eliminando desperdícios e melhorando a experiência de quem executa e de quem recebe.",
+   "Atividades_Chave": "Análise de causas-raiz das dores identificadas; Ideação de melhorias com a equipe da área; Modelagem TO-BE (BPMN) e simulação de cenários; Definição de indicadores de desempenho e riscos residuais",
+   "Quem_Faz": "NUGEP; Área; Escritório de Riscos (2ª linha)",
+   "Entregaveis": "Diagrama TO-BE; Indicadores; Plano de transição",
+   "Sentimento_Usuario": "Esperança: “dá pra melhorar de verdade”"
+  },
+  {
+   "Ordem": 6,
+   "Fase": "Entregar",
+   "Nome": "Publicação e transição",
+   "Duracao": "2 semanas",
+   "Objetivo": "Colocar o novo processo em operação com apoio, treinamento e comunicação clara.",
+   "Atividades_Chave": "Publicação no repositório institucional de processos; Capacitação dos executores e multiplicadores; Atualização de normativos e do e-Codevasf; Kick-off do TO-BE",
+   "Quem_Faz": "Área responsável; NUGEP; Comunicação",
+   "Entregaveis": "Processo publicado; Equipe capacitada; Comunicação institucional",
+   "Sentimento_Usuario": "Confiança: “fui preparado para o novo jeito”"
+  },
+  {
+   "Ordem": 7,
+   "Fase": "Evoluir",
+   "Nome": "Monitoramento e indicadores",
+   "Duracao": "Contínuo",
+   "Objetivo": "Acompanhar o desempenho real do processo e a experiência de quem o executa e recebe.",
+   "Atividades_Chave": "Coleta de indicadores (eficiência, eficácia, qualidade, satisfação); Monitoramento de riscos e controles (2ª linha); Escuta contínua da unidade e dos beneficiários",
+   "Quem_Faz": "Dono do processo; NUGEP; Escritório de Riscos",
+   "Entregaveis": "Painel de indicadores; Radar de riscos atualizado",
+   "Sentimento_Usuario": "Pertencimento: “meu trabalho é acompanhado e valorizado”"
+  },
+  {
+   "Ordem": 8,
+   "Fase": "Evoluir",
+   "Nome": "Melhoria contínua",
+   "Duracao": "Contínuo",
+   "Objetivo": "Fechar o ciclo: aprender, ajustar e reiniciar a jornada sempre que necessário (PDCA/CBOK 4.0).",
+   "Atividades_Chave": "Retrospectivas periódicas com a área; Revisão do processo com base em dados e feedback; Abertura de novo ciclo de redesenho quando necessário",
+   "Quem_Faz": "NUGEP; Comunidade de prática BPM",
+   "Entregaveis": "Novo ciclo de mapeamento ou ajustes incrementais",
+   "Sentimento_Usuario": "Autonomia: “nosso processo é vivo, evolui com a gente”"
+  }
+ ],
+ "Repositorio": [
+  {
+   "ID": "REP-001",
+   "Categoria": "Documento oficial",
+   "Fase_Ciclo": null,
+   "Codigo": "RES 031/2025",
+   "Titulo": "Metodologia de Gerenciamento de Processos da Codevasf",
+   "Descricao": "Documento normativo que institui a metodologia corporativa de gerenciamento de processos (disponível na intranet/SEI).",
+   "Fonte": "Codevasf",
+   "Link": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/met_gerenciamento-processos_res-031_2025-01-08.pdf",
+   "Ordem": 1
+  },
+  {
+   "ID": "REP-002",
+   "Categoria": "Documento oficial",
+   "Fase_Ciclo": null,
+   "Codigo": "RES 031/2025",
+   "Titulo": "Guia de Gerenciamento de Processos da Codevasf",
+   "Descricao": "Guia prático que detalha etapas, papéis, artefatos e padrões do mapeamento (disponível na intranet/SEI).",
+   "Fonte": "Codevasf",
+   "Link": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/guia_gerenciamento-processos_res-031_2025-01-08.pdf",
+   "Ordem": 2
+  },
+  {
+   "ID": "REP-003",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Planejamento",
+   "Codigo": null,
+   "Titulo": "Formulário de Levantamento de Processos",
+   "Descricao": "Template estruturado para coleta de informações com as áreas: objetivo, atores, atividades, insumos, produtos e normativos.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/formulario-levantamento.docx",
+   "Ordem": 3
+  },
+  {
+   "ID": "REP-004",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Planejamento",
+   "Codigo": null,
+   "Titulo": "Planilha de Controle do Mapeamento",
+   "Descricao": "Planilha com os processos pré-carregados, semáforos automáticos, marcos M1–M9 e listas suspensas — base de dados deste painel.",
+   "Fonte": "Codevasf",
+   "Link": "data/painel-processos-dados.xlsx",
+   "Ordem": 4
+  },
+  {
+   "ID": "REP-005",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "Modelo de Diagramas BPMN",
+   "Descricao": "Template padrão para modelagem em BPMN 2.0 (pools, lanes, eventos, atividades e gateways), em formato Bizagi e draw.io.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/template-bpmn.bpm",
+   "Ordem": 5
+  },
+  {
+   "ID": "REP-006",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Análise",
+   "Codigo": null,
+   "Titulo": "Roteiro de Reunião de Contextualização",
+   "Descricao": "Guia para conduzir a reunião de contextualização: perguntas-guia, dinâmicas de elicitação e checklist de tópicos.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/roteiro-contextualizacao.docx",
+   "Ordem": 6
+  },
+  {
+   "ID": "REP-007",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "Checklist de Validação AS-IS / TO-BE",
+   "Descricao": "Critérios de qualidade para verificação dos modelos antes da validação formal com a área responsável.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/checklist-validacao.docx",
+   "Ordem": 7
+  },
+  {
+   "ID": "REP-008",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Implementação",
+   "Codigo": null,
+   "Titulo": "Templates de Comunicação Oficial",
+   "Descricao": "Modelos de ofício, memorando e e-mail: envio de formulário, convite para reunião, validação e publicação.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/templates-comunicacao.zip",
+   "Ordem": 8
+  },
+  {
+   "ID": "REP-009",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Planejamento",
+   "Codigo": "TC-01",
+   "Titulo": "Termo de Abertura do Mapeamento (Process Charter)",
+   "Descricao": "Formaliza o início do mapeamento de um processo: escopo, dono, equipe, prazos e premissas.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/tc-01.docx",
+   "Ordem": 9
+  },
+  {
+   "ID": "REP-010",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Análise",
+   "Codigo": "SIPOC-01",
+   "Titulo": "Matriz SIPOC",
+   "Descricao": "Visão de alto nível do processo: Fornecedores, Entradas, Processo (5–7 passos), Saídas e Clientes.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/sipoc-01.docx",
+   "Ordem": 10
+  },
+  {
+   "ID": "REP-011",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": "BPMN-01",
+   "Titulo": "Checklist BPMN 2.0 (notação)",
+   "Descricao": "Lista de verificação dos elementos mínimos para um diagrama BPMN aderente ao padrão.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/bpmn-01.docx",
+   "Ordem": 11
+  },
+  {
+   "ID": "REP-012",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": "RACI-01",
+   "Titulo": "Matriz RACI",
+   "Descricao": "Atribui Responsável (R), Aprovador (A), Consultado (C) e Informado (I) por atividade.",
+   "Fonte": "PMBOK",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/raci-01.xlsx",
+   "Ordem": 12
+  },
+  {
+   "ID": "REP-013",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Monitoramento",
+   "Codigo": "KPI-01",
+   "Titulo": "Canvas de Indicador (KPI)",
+   "Descricao": "Define nome, fórmula, fonte, meta, periodicidade e responsável de um indicador.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/kpi-01.docx",
+   "Ordem": 13
+  },
+  {
+   "ID": "REP-014",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Análise",
+   "Codigo": "RISK-01",
+   "Titulo": "Registro de Riscos (ISO 31000)",
+   "Descricao": "Identifica risco, causa, efeito, probabilidade, impacto, resposta e responsável.",
+   "Fonte": "ISO 31000",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/risk-01.xlsx",
+   "Ordem": 14
+  },
+  {
+   "ID": "REP-015",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Análise",
+   "Codigo": "AS-IS-01",
+   "Titulo": "Roteiro de entrevista AS-IS",
+   "Descricao": "Perguntas-guia para levantar o processo como ele é hoje com quem executa.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/as-is-01.docx",
+   "Ordem": 15
+  },
+  {
+   "ID": "REP-016",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Implementação",
+   "Codigo": "TO-BE-01",
+   "Titulo": "Plano de transição AS-IS → TO-BE",
+   "Descricao": "Compara o processo atual e o futuro e organiza as ações de migração.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/to-be-01.docx",
+   "Ordem": 16
+  },
+  {
+   "ID": "REP-017",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Refinamento",
+   "Codigo": "MAT-01",
+   "Titulo": "Diagnóstico rápido de maturidade (PEMM)",
+   "Descricao": "Autoavaliação em 5 dimensões: desenho, executores, dono, infraestrutura e indicadores.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/mat-01.xlsx",
+   "Ordem": 17
+  },
+  {
+   "ID": "REP-018",
+   "Categoria": "Ferramenta",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "Bizagi Modeler",
+   "Descricao": "Ferramenta gratuita de modelagem BPMN 2.0, recomendada pela UNP para os diagramas AS-IS e TO-BE.",
+   "Fonte": "Bizagi",
+   "Link": "https://www.bizagi.com/pt/plataforma/modeler",
+   "Ordem": 18
+  },
+  {
+   "ID": "REP-019",
+   "Categoria": "Ferramenta",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "draw.io / diagrams.net",
+   "Descricao": "Ferramenta on-line gratuita para diagramas; suporta BPMN e integra com Google Drive.",
+   "Fonte": "diagrams.net",
+   "Link": "https://app.diagrams.net",
+   "Ordem": 19
+  },
+  {
+   "ID": "REP-020",
+   "Categoria": "Ferramenta",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "Microsoft Visio",
+   "Descricao": "Ferramenta Microsoft para diagramas e modelagem de processos, via licença corporativa da Codevasf.",
+   "Fonte": "Microsoft",
+   "Link": "https://exemplo.codevasf.gov.br/ti/solicitar-visio",
+   "Ordem": 20
+  },
+  {
+   "ID": "REP-021",
+   "Categoria": "Ferramenta",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "Lucidchart",
+   "Descricao": "Plataforma colaborativa on-line para modelagem, com edição simultânea por vários usuários.",
+   "Fonte": "Lucid",
+   "Link": "https://www.lucidchart.com",
+   "Ordem": 21
+  },
+  {
+   "ID": "REP-022",
+   "Categoria": "Referência",
+   "Fase_Ciclo": null,
+   "Codigo": null,
+   "Titulo": "BPM CBOK 4.0 — ABPMP International",
+   "Descricao": "Guia de referência em gerenciamento de processos de negócio; padrão metodológico principal da UNP.",
+   "Fonte": "ABPMP",
+   "Link": "https://www.abpmp-br.org",
+   "Ordem": 22
+  },
+  {
+   "ID": "REP-023",
+   "Categoria": "Referência",
+   "Fase_Ciclo": null,
+   "Codigo": null,
+   "Titulo": "PMBOK — Project Management Institute",
+   "Descricao": "Guia de gestão de projetos do PMI; referência complementar para gerir o próprio projeto de mapeamento.",
+   "Fonte": "PMI",
+   "Link": "https://www.pmi.org",
+   "Ordem": 23
+  },
+  {
+   "ID": "REP-024",
+   "Categoria": "Referência",
+   "Fase_Ciclo": null,
+   "Codigo": null,
+   "Titulo": "Decreto nº 10.382/2020 — Governo Federal",
+   "Descricao": "Política de governança das empresas estatais federais; base legal para gestão por processos e controles internos.",
+   "Fonte": "Planalto",
+   "Link": "http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2020/decreto/D10382.htm",
+   "Ordem": 24
+  }
+ ],
+ "NUGEP": [
+  {
+   "Ordem": 1,
+   "Nome": "Bruna Souza",
+   "Papel": "Coordenadora do NUGEP",
+   "Unidade_Sigla": "AE/GPE/UNP",
+   "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
+   "Email": "bruna.souza@codevasf.gov.br",
+   "Telefone": "(61) 2028-4441"
+  },
+  {
+   "Ordem": 2,
+   "Nome": "Carlos Eduardo Lima",
+   "Papel": "Analista de Processos",
+   "Unidade_Sigla": "AE/GPE",
+   "Unidade_Nome": "Gerência de Planejamento Estratégico",
+   "Email": "carlos.lima@codevasf.gov.br",
+   "Telefone": "(61) 2028-4442"
+  },
+  {
+   "Ordem": 3,
+   "Nome": "Daniela Ribeiro",
+   "Papel": "Especialista em BPM",
+   "Unidade_Sigla": "AT/GTI",
+   "Unidade_Nome": "Gerência de Tecnologia da Informação",
+   "Email": "daniela.ribeiro@codevasf.gov.br",
+   "Telefone": "(61) 2028-4501"
+  },
+  {
+   "Ordem": 4,
+   "Nome": "Eduardo Martins",
+   "Papel": "Interlocutor de Processos Finalísticos",
+   "Unidade_Sigla": "AR/GPR",
+   "Unidade_Nome": "Gerência de Projetos de Revitalização",
+   "Email": "eduardo.martins@codevasf.gov.br",
+   "Telefone": "(61) 2028-4612"
+  },
+  {
+   "Ordem": 5,
+   "Nome": "Fernanda Alves",
+   "Papel": "Analista de Riscos e Conformidade",
+   "Unidade_Sigla": "AE/GAG",
+   "Unidade_Nome": "Gerência de Auditoria e Governança",
+   "Email": "fernanda.alves@codevasf.gov.br",
+   "Telefone": "(61) 2028-4380"
+  },
+  {
+   "Ordem": 6,
+   "Nome": "Gustavo Pereira",
+   "Papel": "Apoio Metodológico — PMBOK/CBOK",
+   "Unidade_Sigla": "AE/GPE/UNP",
+   "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
+   "Email": "gustavo.pereira@codevasf.gov.br",
+   "Telefone": "(61) 2028-4443"
+  }
+ ],
+ "Glossario": [
+  {
+   "Termo": "ABPMP",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Association of Business Process Management Professionals — entidade internacional sem fins lucrativos que mantém o CBOK e certificações como CBPP (Certified Business Process Professional).",
+   "Fonte": "ABPMP",
+   "Termos_Relacionados": "CBOK; BPM"
+  },
+  {
+   "Termo": "Atividade",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Conjunto de tarefas executadas para transformar entradas em saídas dentro de um processo. É o nível operacional mapeado em diagramas BPMN.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Tarefa; Subprocesso; BPMN"
+  },
+  {
+   "Termo": "Arquitetura de Processos",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Visão estruturada e hierárquica de todos os processos da organização, do macroprocesso à tarefa, mostrando relações, donos e contribuição para a estratégia.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Cadeia de Valor; Macroprocesso"
+  },
+  {
+   "Termo": "AS-IS",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Modelo do processo no estado atual (como ele realmente é executado hoje), usado como base de diagnóstico antes de propor melhorias.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "TO-BE; Análise de Processos"
+  },
+  {
+   "Termo": "Análise de Processos",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Estudo do processo AS-IS para identificar gargalos, retrabalho, desperdícios e oportunidades de melhoria. Usa ferramentas como Ishikawa, 5 porquês e análise de valor agregado.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "AS-IS; Melhoria Contínua; Gargalo"
+  },
+  {
+   "Termo": "Agile",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Abordagem iterativa e incremental de gerenciamento, baseada no Manifesto Ágil, com entregas frequentes e adaptação contínua.",
+   "Fonte": "Manifesto Ágil",
+   "Termos_Relacionados": "Scrum; Kanban; Sprint"
+  },
+  {
+   "Termo": "AE",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Área de Estratégia e Finanças da Codevasf, instância superior da GPE/UNP.",
+   "Fonte": "Codevasf",
+   "Termos_Relacionados": "GPE; UNP"
+  },
+  {
+   "Termo": "Accountability",
+   "Categoria": "Governança e Papéis",
+   "Definicao": "Obrigação de prestar contas e responder pelos resultados, especialmente no setor público.",
+   "Fonte": "TCU",
+   "Termos_Relacionados": "Governança Pública"
+  },
+  {
+   "Termo": "BPM",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Business Process Management — disciplina gerencial integrada que combina técnicas, métodos e ferramentas para identificar, modelar, executar, monitorar e melhorar continuamente os processos de negócio, alinhando-os à estratégia e à entrega de valor ao cliente.",
+   "Fonte": "ABPMP CBOK 4.0",
+   "Termos_Relacionados": "Processo de Negócio; Ciclo de Vida BPM; Governança de Processos"
+  },
+  {
+   "Termo": "BPMN",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Business Process Model and Notation — padrão da OMG para modelagem gráfica de processos de negócio. Define símbolos para atividades, eventos, gateways, fluxos e raias.",
+   "Fonte": "OMG / CBOK 4.0",
+   "Termos_Relacionados": "Notação; Raia (Swimlane); Pool"
+  },
+  {
+   "Termo": "Beneficiário / Cidadão-usuário (Customer)",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Destinatário da saída do processo no setor público. Pode ser interno (outra unidade da Codevasf) ou externo — cidadão, irrigante, comunidade beneficiária, ente federativo ou órgão parceiro.",
+   "Fonte": "SIPOC",
+   "Termos_Relacionados": "SIPOC"
+  },
+  {
+   "Termo": "Baseline",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Valor de referência inicial de um indicador, usado como base para comparar resultados futuros.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Indicador; Meta"
+  },
+  {
+   "Termo": "Burndown",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Gráfico que mostra a quantidade de trabalho restante ao longo do tempo, comum em métodos ágeis.",
+   "Fonte": "Scrum",
+   "Termos_Relacionados": "Agile; Sprint"
+  },
+  {
+   "Termo": "Burnup",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Gráfico que mostra o trabalho concluído acumulado ao longo do tempo, comparando com o escopo total.",
+   "Fonte": "Agile",
+   "Termos_Relacionados": "Burndown; Agile"
+  },
+  {
+   "Termo": "CBOK",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Guide to the Business Process Management Common Body of Knowledge — referência da ABPMP que consolida conceitos, práticas e competências essenciais de BPM. A versão 4.0 reorganiza o conteúdo em 9 áreas de conhecimento.",
+   "Fonte": "ABPMP CBOK 4.0",
+   "Termos_Relacionados": "BPM; ABPMP"
+  },
+  {
+   "Termo": "Cadeia de Valor",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Representação visual dos macroprocessos de uma organização ordenados segundo sua contribuição para a entrega de valor. Permite visão sistêmica e priorização do mapeamento.",
+   "Fonte": "Porter / CBOK 4.0",
+   "Termos_Relacionados": "Macroprocesso; Arquitetura de Processos"
+  },
+  {
+   "Termo": "Ciclo de Vida BPM",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Sequência iterativa de fases para gerenciar processos: planejar, analisar, desenhar, implementar, monitorar e refinar (PDCA aplicado a processos).",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "BPM; Análise de Processos"
+  },
+  {
+   "Termo": "Cronograma",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Modelo que apresenta a sequência, datas e durações das atividades do projeto.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Gantt"
+  },
+  {
+   "Termo": "Caminho Crítico",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Sequência de atividades que determina a menor duração possível do projeto. Atrasos em qualquer atividade do caminho crítico atrasam o projeto.",
+   "Fonte": "PMBOK / CPM",
+   "Termos_Relacionados": "Cronograma"
+  },
+  {
+   "Termo": "CPI",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Cost Performance Index — índice de desempenho de custo. CPI < 1 indica estouro de orçamento.",
+   "Fonte": "EVM",
+   "Termos_Relacionados": "EVM; SPI"
+  },
+  {
+   "Termo": "Compliance",
+   "Categoria": "Governança e Papéis",
+   "Definicao": "Conformidade com leis, regulamentos, normas e políticas internas. Inclui prevenção a fraudes e corrupção.",
+   "Fonte": "Lei 12.846/2013",
+   "Termos_Relacionados": "Governança Pública; Controle Interno"
+  },
+  {
+   "Termo": "Controle Interno",
+   "Categoria": "Governança e Papéis",
+   "Definicao": "Conjunto de atividades, planos e métodos adotados para salvaguardar ativos, conferir exatidão e segurança aos dados e promover a eficiência operacional.",
+   "Fonte": "INTOSAI / IN 03/2017",
+   "Termos_Relacionados": "Compliance"
+  },
+  {
+   "Termo": "Desperdício (Muda)",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Toda atividade que consome recursos sem agregar valor ao cliente. Os 7+1 desperdícios clássicos: superprodução, espera, transporte, processamento excessivo, estoque, movimento, defeito e talento não utilizado.",
+   "Fonte": "Lean",
+   "Termos_Relacionados": "Lean; Valor Agregado"
+  },
+  {
+   "Termo": "Dono do Processo",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Pessoa formalmente responsável pelo desempenho, integridade e melhoria contínua de um processo de ponta a ponta, independentemente da estrutura hierárquica.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Governança de Processos"
+  },
+  {
+   "Termo": "Diagrama de Tartaruga",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Ferramenta de modelagem que detalha um processo por entradas, saídas, recursos, métodos, pessoas e indicadores, formando o desenho de uma tartaruga.",
+   "Fonte": "ISO 9001",
+   "Termos_Relacionados": "SIPOC"
+  },
+  {
+   "Termo": "Evento",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Acontecimento que afeta o fluxo do processo: início, fim, intermediário, de tempo, mensagem ou erro.",
+   "Fonte": "BPMN",
+   "Termos_Relacionados": "BPMN"
+  },
+  {
+   "Termo": "Escritório de Processos (BPM Office)",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Unidade organizacional responsável por orientar metodologia, manter o repositório de processos e apoiar áreas no mapeamento. Na Codevasf, esse papel é da UNP/GPE.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "UNP; Governança de Processos"
+  },
+  {
+   "Termo": "Entrada (Input)",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Insumo, informação, documento ou recurso necessário para iniciar ou executar uma atividade do processo.",
+   "Fonte": "SIPOC",
+   "Termos_Relacionados": "SIPOC"
+  },
+  {
+   "Termo": "Eficiência",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Relação entre o que foi produzido (saída) e os recursos consumidos (entrada). “Fazer certo as coisas”.",
+   "Fonte": "CBOK",
+   "Termos_Relacionados": "Eficácia; Efetividade"
+  },
+  {
+   "Termo": "Eficácia",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Grau em que os resultados pretendidos foram alcançados. “Fazer as coisas certas”.",
+   "Fonte": "CBOK",
+   "Termos_Relacionados": "Eficiência; Efetividade"
+  },
+  {
+   "Termo": "Efetividade",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Impacto real e duradouro do processo no público-alvo ou na sociedade. Combina eficiência e eficácia com sustentabilidade.",
+   "Fonte": "Gestão Pública",
+   "Termos_Relacionados": "Eficiência; Eficácia"
+  },
+  {
+   "Termo": "Escopo",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Soma dos produtos, serviços e resultados a serem entregues no projeto. Inclui escopo do produto e escopo do trabalho.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "EAP; Entrega"
+  },
+  {
+   "Termo": "EAP",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Estrutura Analítica do Projeto (Work Breakdown Structure — WBS) — decomposição hierárquica do escopo em entregas e pacotes de trabalho.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Escopo; Entrega; Pacote de Trabalho"
+  },
+  {
+   "Termo": "Entrega",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Produto, resultado ou capacidade único e verificável, obtido a partir de uma fase ou de todo o projeto.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Escopo"
+  },
+  {
+   "Termo": "EVM",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Earned Value Management — técnica que integra escopo, prazo e custo para medir o desempenho do projeto (SPI, CPI).",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "SPI; CPI; Cronograma"
+  },
+  {
+   "Termo": "Fornecedor (Supplier)",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Pessoa, área ou sistema que fornece insumos (entradas) ao processo.",
+   "Fonte": "SIPOC",
+   "Termos_Relacionados": "SIPOC"
+  },
+  {
+   "Termo": "Fluxograma",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Representação gráfica sequencial das etapas de um processo, usando símbolos padronizados para atividade, decisão, início e fim.",
+   "Fonte": "ASME / ISO",
+   "Termos_Relacionados": "BPMN"
+  },
+  {
+   "Termo": "Gateway",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Elemento BPMN que controla a divergência ou convergência do fluxo: decisão exclusiva, paralela ou inclusiva.",
+   "Fonte": "BPMN",
+   "Termos_Relacionados": "BPMN"
+  },
+  {
+   "Termo": "Gargalo",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Ponto do processo onde a capacidade é menor que a demanda, restringindo a vazão de todo o fluxo. Identificado por filas, atrasos e acúmulo de trabalho.",
+   "Fonte": "Teoria das Restrições",
+   "Termos_Relacionados": "Análise de Processos"
+  },
+  {
+   "Termo": "Governança de Processos",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Estrutura de papéis, responsabilidades, políticas e instâncias decisórias que garante que os processos sejam executados, monitorados e melhorados conforme a estratégia.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Dono do Processo"
+  },
+  {
+   "Termo": "Gantt",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Gráfico de barras horizontais que representa o cronograma do projeto ao longo do tempo, com início, duração e fim de cada atividade.",
+   "Fonte": "Henry Gantt",
+   "Termos_Relacionados": "Cronograma"
+  },
+  {
+   "Termo": "GPE",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Gerência de Planejamento Estratégico da Codevasf, à qual a UNP está subordinada.",
+   "Fonte": "Codevasf",
+   "Termos_Relacionados": "UNP; AE"
+  },
+  {
+   "Termo": "Governança Pública",
+   "Categoria": "Governança e Papéis",
+   "Definicao": "Conjunto de mecanismos de liderança, estratégia e controle postos em prática para avaliar, direcionar e monitorar a gestão pública.",
+   "Fonte": "Decreto 9.203/2017",
+   "Termos_Relacionados": "Accountability; Governança de Processos"
+  },
+  {
+   "Termo": "Handoff",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Transferência de responsabilidade entre áreas, sistemas ou pessoas no fluxo do processo. Cada handoff é ponto crítico de falha e atraso.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Processo Ponta a Ponta"
+  },
+  {
+   "Termo": "Indicador",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Medida quantitativa ou qualitativa que reflete o desempenho de um processo, atividade ou objetivo. Deve ter fórmula, fonte, meta, periodicidade e responsável.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "KPI; Meta; Baseline"
+  },
+  {
+   "Termo": "Impacto",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Magnitude das consequências de um evento de risco caso ele se concretize, normalmente avaliado em escala.",
+   "Fonte": "ISO 31000",
+   "Termos_Relacionados": "Risco; Probabilidade"
+  },
+  {
+   "Termo": "Interlocutor de Processos",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Empregado indicado pela unidade gestora para representar a área no projeto de mapeamento: facilita reuniões, valida modelos e mobiliza especialistas.",
+   "Fonte": "Metodologia Codevasf",
+   "Termos_Relacionados": "Dono do Processo; UNP"
+  },
+  {
+   "Termo": "Kaizen",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Filosofia japonesa de melhoria contínua que promove pequenas mudanças incrementais com participação de toda a equipe.",
+   "Fonte": "Lean",
+   "Termos_Relacionados": "PDCA; Melhoria Contínua"
+  },
+  {
+   "Termo": "KPI",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Key Performance Indicator — indicador-chave de desempenho. Métrica quantificável usada para avaliar o sucesso de um processo, projeto ou objetivo estratégico.",
+   "Fonte": "BSC / CBOK",
+   "Termos_Relacionados": "Indicador; Meta; SLA"
+  },
+  {
+   "Termo": "Kanban",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Método visual de gestão do fluxo de trabalho, com cartões e colunas (To Do, Doing, Done) e limites de WIP.",
+   "Fonte": "Toyota / Kanban Method",
+   "Termos_Relacionados": "Agile; WIP"
+  },
+  {
+   "Termo": "Lean",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Conjunto de práticas focadas na eliminação de desperdícios (muda) e maximização de valor para o cliente, oriundas do Sistema Toyota de Produção.",
+   "Fonte": "Toyota / Lean",
+   "Termos_Relacionados": "Valor Agregado; Desperdício (Muda)"
+  },
+  {
+   "Termo": "Linha de Base (Baseline)",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Versão aprovada do escopo, prazo ou custo, usada como referência para comparação com o desempenho real.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Baseline; Escopo; Cronograma"
+  },
+  {
+   "Termo": "Lições Aprendidas",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Conhecimento adquirido durante o projeto, registrado para uso em projetos futuros. Inclui o que deu certo, o que deu errado e recomendações.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": null
+  },
+  {
+   "Termo": "LGPD",
+   "Categoria": "Governança e Papéis",
+   "Definicao": "Lei Geral de Proteção de Dados Pessoais (Lei 13.709/2018) — disciplina o tratamento de dados pessoais por pessoas físicas e jurídicas, públicas e privadas.",
+   "Fonte": "Lei 13.709/2018",
+   "Termos_Relacionados": "Controle Interno"
+  },
+  {
+   "Termo": "Macroprocesso",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Agrupamento dos grandes processos de uma organização que atravessam várias áreas e contribuem de forma estratégica para a cadeia de valor. Na Codevasf, são classificados em gerenciais, finalísticos e de suporte.",
+   "Fonte": "CBOK 4.0 / Codevasf",
+   "Termos_Relacionados": "Cadeia de Valor; Processo de Negócio; Subprocesso"
+  },
+  {
+   "Termo": "Modelagem de Processos",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Representação gráfica e textual de um processo, mostrando atividades, papéis, fluxos, decisões e eventos. Geralmente utiliza notação BPMN.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "BPMN; AS-IS; TO-BE; SIPOC"
+  },
+  {
+   "Termo": "Melhoria Contínua",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Esforço sistemático e incremental para aperfeiçoar processos, fundamentado em ciclos PDCA e Kaizen.",
+   "Fonte": "Deming / CBOK 4.0",
+   "Termos_Relacionados": "PDCA; Kaizen; Ciclo de Vida BPM"
+  },
+  {
+   "Termo": "Maturidade em Processos",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Grau de evolução da gestão por processos em uma organização, geralmente medido em 5 níveis (inicial, gerenciado, definido, mensurado, otimizado).",
+   "Fonte": "CMMI / BPM-MM",
+   "Termos_Relacionados": "BPM; Governança de Processos"
+  },
+  {
+   "Termo": "Meta",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Valor numérico que se deseja alcançar para um indicador em um prazo determinado, geralmente desafiador e mensurável.",
+   "Fonte": "BSC",
+   "Termos_Relacionados": "Indicador; KPI"
+  },
+  {
+   "Termo": "Matriz de Risco",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Ferramenta que cruza probabilidade e impacto para classificar e priorizar riscos (baixo, moderado, alto, extremo).",
+   "Fonte": "ISO 31000",
+   "Termos_Relacionados": "Risco; Probabilidade; Impacto"
+  },
+  {
+   "Termo": "Mitigação",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Ação para reduzir a probabilidade ou o impacto de um risco, ou para tratar suas consequências.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Risco; Plano de Mitigação"
+  },
+  {
+   "Termo": "Marco (Milestone)",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Ponto significativo no cronograma, normalmente a conclusão de uma entrega importante. Não consome tempo.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Cronograma; Entrega"
+  },
+  {
+   "Termo": "Matriz RACI",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Matriz de responsabilidades que define quem é Responsável (executa), Accountable (responde), Consultado e Informado em cada atividade.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Stakeholder; Dono do Processo"
+  },
+  {
+   "Termo": "Mapeamento de Processos (Codevasf)",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Trabalho conduzido pela UNP em parceria com as unidades gestoras para documentar processos em formato padronizado (SIPOC, BPMN, indicadores e riscos), conforme a RES 031/2025.",
+   "Fonte": "RES 031/2025",
+   "Termos_Relacionados": "SIPOC; BPMN; Metodologia Codevasf"
+  },
+  {
+   "Termo": "Metodologia Codevasf",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Conjunto de etapas, artefatos e padrões definidos na Metodologia e no Guia de Gerenciamento de Processos (RES 031/2025) para conduzir o mapeamento e a melhoria dos processos.",
+   "Fonte": "RES 031/2025",
+   "Termos_Relacionados": "Mapeamento de Processos (Codevasf); UNP"
+  },
+  {
+   "Termo": "Notação",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Conjunto padronizado de símbolos para representar processos. BPMN é a mais usada em BPM.",
+   "Fonte": "CBOK",
+   "Termos_Relacionados": "BPMN; Fluxograma"
+  },
+  {
+   "Termo": "Processo de Negócio",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Conjunto definido de atividades, executadas por pessoas ou sistemas, que entrega um resultado de valor a um cliente interno ou externo. Tem início, fim, entradas, saídas e mensuração claros.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Macroprocesso; Subprocesso; Atividade; Tarefa"
+  },
+  {
+   "Termo": "Pool",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Contêiner BPMN que representa um participante (organização, sistema ou área) e agrupa raias.",
+   "Fonte": "BPMN",
+   "Termos_Relacionados": "BPMN; Raia (Swimlane)"
+  },
+  {
+   "Termo": "PDCA",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Plan-Do-Check-Act — ciclo de melhoria contínua atribuído a Deming/Shewhart: planejar, executar, verificar e agir corretivamente.",
+   "Fonte": "Deming",
+   "Termos_Relacionados": "Melhoria Contínua; Kaizen"
+  },
+  {
+   "Termo": "Processo Ponta a Ponta",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Visão completa do processo, do primeiro evento desencadeador até a entrega final ao cliente, atravessando todas as áreas envolvidas.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Processo de Negócio; Handoff"
+  },
+  {
+   "Termo": "Probabilidade",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Estimativa da chance de ocorrência de um evento de risco, geralmente em escala (muito baixa, baixa, média, alta, muito alta).",
+   "Fonte": "ISO 31000",
+   "Termos_Relacionados": "Risco; Impacto"
+  },
+  {
+   "Termo": "Plano de Mitigação",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Conjunto estruturado de ações, prazos e responsáveis para tratar um risco específico.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Mitigação; Risco"
+  },
+  {
+   "Termo": "PMBOK",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Project Management Body of Knowledge — guia do PMI que consolida boas práticas, princípios e domínios de desempenho em gerenciamento de projetos.",
+   "Fonte": "PMI",
+   "Termos_Relacionados": "PMI; Projeto"
+  },
+  {
+   "Termo": "PMI",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Project Management Institute — instituto internacional que mantém o PMBOK e certificações como PMP.",
+   "Fonte": "PMI",
+   "Termos_Relacionados": "PMBOK"
+  },
+  {
+   "Termo": "Projeto",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Esforço temporário empreendido para criar um produto, serviço ou resultado único. Tem início e fim definidos.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Programa; Portfólio; Entrega"
+  },
+  {
+   "Termo": "Programa",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Conjunto de projetos relacionados, gerenciados de forma coordenada para obter benefícios que não seriam alcançados se gerenciados individualmente.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Projeto; Portfólio"
+  },
+  {
+   "Termo": "Portfólio",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Conjunto de projetos, programas e operações gerenciados em grupo para atingir objetivos estratégicos.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Projeto; Programa"
+  },
+  {
+   "Termo": "Pacote de Trabalho",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Componente de menor nível da EAP, para o qual se pode estimar custo, prazo e responsável.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "EAP; Escopo"
+  },
+  {
+   "Termo": "Plano de Ações AE/GPE",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Plano de Ações 2026 conduzido pela AE/GPE/UNP para estruturar o escritório de processos, mapear processos prioritários e implantar a governança.",
+   "Fonte": "Codevasf 2026",
+   "Termos_Relacionados": "UNP; GPE; AE"
+  },
+  {
+   "Termo": "Raia (Swimlane)",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Faixa horizontal ou vertical no diagrama BPMN que indica o papel, área ou sistema responsável pelas atividades nela contidas.",
+   "Fonte": "BPMN",
+   "Termos_Relacionados": "BPMN; Pool"
+  },
+  {
+   "Termo": "Reengenharia",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Repensar e redesenhar radicalmente processos para obter ganhos expressivos em custo, qualidade, serviço e velocidade. Diferente da melhoria contínua incremental.",
+   "Fonte": "Hammer & Champy",
+   "Termos_Relacionados": "TO-BE; Melhoria Contínua"
+  },
+  {
+   "Termo": "Risco",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Efeito da incerteza sobre os objetivos. Pode ser ameaça (negativo) ou oportunidade (positivo). Tem causa, evento e consequência.",
+   "Fonte": "ISO 31000 / PMBOK",
+   "Termos_Relacionados": "Probabilidade; Impacto; Mitigação"
+  },
+  {
+   "Termo": "Subprocesso",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Recorte de um processo, com objetivo específico, que pode ser detalhado em atividades e tarefas. Permite gerenciar partes complexas do processo separadamente.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Processo de Negócio; Atividade"
+  },
+  {
+   "Termo": "SIPOC",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Ferramenta visual que descreve um processo em alto nível por meio de cinco elementos: Suppliers (Fornecedores), Inputs (Entradas), Process (Processo), Outputs (Saídas) e Customers (Clientes).",
+   "Fonte": "Six Sigma / CBOK",
+   "Termos_Relacionados": "Fornecedor (Supplier); Entrada (Input); Saída (Output)"
+  },
+  {
+   "Termo": "Saída (Output)",
+   "Categoria": "SIPOC e Modelagem",
+   "Definicao": "Produto, serviço, informação ou decisão gerada pelo processo e entregue a um cliente.",
+   "Fonte": "SIPOC",
+   "Termos_Relacionados": "SIPOC"
+  },
+  {
+   "Termo": "SLA",
+   "Categoria": "Indicadores e Riscos",
+   "Definicao": "Service Level Agreement — acordo formal entre prestador e cliente que define níveis de serviço, prazos, qualidade e penalidades.",
+   "Fonte": "ITIL",
+   "Termos_Relacionados": "KPI; Indicador"
+  },
+  {
+   "Termo": "Stakeholder",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Parte interessada — pessoa, grupo ou organização que afeta ou é afetada pelo projeto.",
+   "Fonte": "PMBOK",
+   "Termos_Relacionados": "Matriz RACI"
+  },
+  {
+   "Termo": "Scrum",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Framework ágil baseado em sprints curtas, papéis definidos (Product Owner, Scrum Master, Time) e cerimônias (planning, daily, review, retro).",
+   "Fonte": "Schwaber & Sutherland",
+   "Termos_Relacionados": "Agile; Sprint"
+  },
+  {
+   "Termo": "Sprint",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Iteração de duração fixa (geralmente 1 a 4 semanas) em Scrum, ao final da qual se entrega um incremento potencialmente utilizável.",
+   "Fonte": "Scrum",
+   "Termos_Relacionados": "Scrum; Agile"
+  },
+  {
+   "Termo": "SPI",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Schedule Performance Index — índice de desempenho de prazo do projeto. SPI < 1 indica atraso.",
+   "Fonte": "EVM",
+   "Termos_Relacionados": "EVM; CPI"
+  },
+  {
+   "Termo": "Status de Mapeamento",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Indicador do estágio em que se encontra o mapeamento de um processo: Não iniciado, Em andamento, Concluído ou Suspenso.",
+   "Fonte": "Codevasf",
+   "Termos_Relacionados": "Semáforo do Processo"
+  },
+  {
+   "Termo": "Semáforo do Processo",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Sinal visual (verde, amarelo, vermelho) que combina prazo e percentual de execução do mapeamento.",
+   "Fonte": "Codevasf",
+   "Termos_Relacionados": "Status de Mapeamento"
+  },
+  {
+   "Termo": "Tarefa",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Menor unidade de trabalho identificada em uma atividade. Pode ser manual, automatizada ou de regra de negócio.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "Atividade"
+  },
+  {
+   "Termo": "TO-BE",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Modelo do processo no estado futuro desejado, após análise e proposta de melhorias. Serve de referência para a implementação.",
+   "Fonte": "CBOK 4.0",
+   "Termos_Relacionados": "AS-IS; Melhoria Contínua"
+  },
+  {
+   "Termo": "UNP",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Unidade de Gestão Normativa e de Processos da Codevasf — vinculada à GPE/AE. Responsável por conduzir a metodologia de mapeamento e a governança dos processos da Empresa.",
+   "Fonte": "RES 031/2025",
+   "Termos_Relacionados": "GPE; AE"
+  },
+  {
+   "Termo": "Unidade Gestora",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Área da Codevasf responsável pelo processo, por seus resultados e pela manutenção da documentação atualizada.",
+   "Fonte": "Metodologia Codevasf",
+   "Termos_Relacionados": "Dono do Processo"
+  },
+  {
+   "Termo": "Valor Agregado",
+   "Categoria": "BPM (CBOK)",
+   "Definicao": "Atributo de uma atividade que transforma a entrada de forma percebida como valiosa pelo cliente. Atividades sem valor agregado devem ser eliminadas ou reduzidas.",
+   "Fonte": "Lean / CBOK",
+   "Termos_Relacionados": "Análise de Processos"
+  },
+  {
+   "Termo": "WIP",
+   "Categoria": "Projetos (PMBOK)",
+   "Definicao": "Work in Progress — quantidade de trabalho em andamento. Limitar o WIP reduz multitarefa e acelera entregas.",
+   "Fonte": "Kanban / Lean",
+   "Termos_Relacionados": "Kanban; Lean"
+  }
+ ],
+ "FAQ": [
+  {
+   "Ordem": 1,
+   "Categoria": "Conceitos básicos",
+   "Pergunta": "O que é Gestão de Processos (BPM)?",
+   "Resposta": "Business Process Management é uma disciplina gerencial integrada que combina técnicas, métodos e ferramentas para identificar, modelar, executar, monitorar e melhorar continuamente os processos de negócio, alinhando-os à estratégia e à entrega de valor (CBOK 4.0)."
+  },
+  {
+   "Ordem": 2,
+   "Categoria": "Conceitos básicos",
+   "Pergunta": "Qual a diferença entre Gestão DE Processos e Gestão POR Processos?",
+   "Resposta": "Gestão DE processos é o trabalho de melhorar processos individualmente: mapear, analisar, redesenhar e medir cada um. Gestão POR processos é o modelo de gestão da organização orientado a processos ponta a ponta — com donos, indicadores e decisões estruturadas pelos fluxos de valor, e não pelos silos funcionais. Este painel evidencia os dois: o repositório de processos (DE) e a cadeia de valor com governança (POR)."
+  },
+  {
+   "Ordem": 3,
+   "Categoria": "Conceitos básicos",
+   "Pergunta": "Qual a diferença entre macroprocesso, processo, subprocesso, atividade e tarefa?",
+   "Resposta": "São os níveis da arquitetura de processos (CBOK 4.0): o macroprocesso agrupa grandes conjuntos de processos da cadeia de valor; o processo entrega um resultado a um cliente interno ou externo; o subprocesso é um recorte gerenciável do processo; a atividade é o nível operacional modelado em BPMN; e a tarefa é a menor unidade de trabalho dentro de uma atividade."
+  },
+  {
+   "Ordem": 4,
+   "Categoria": "Conceitos básicos",
+   "Pergunta": "O que é um processo finalístico, gerencial e de suporte?",
+   "Resposta": "Finalísticos (ou primários) entregam valor diretamente ao beneficiário — na Codevasf, irrigação, revitalização e desenvolvimento territorial. De suporte habilitam os demais (licitações, pessoas, TI). Gerenciais medem, controlam e direcionam a organização (estratégia, riscos e governança)."
+  },
+  {
+   "Ordem": 5,
+   "Categoria": "Modelagem e SIPOC",
+   "Pergunta": "O que é SIPOC e como ler a ficha de um processo?",
+   "Resposta": "SIPOC é a visão de alto nível do processo em cinco colunas: Fornecedores, Entradas, Processo, Saídas e Clientes. Na ficha de cada processo deste painel, o SIPOC aparece logo após os dados gerais, seguido dos marcos M1–M9, indicadores, riscos, documentos e do diário de mapeamento."
+  },
+  {
+   "Ordem": 6,
+   "Categoria": "Modelagem e SIPOC",
+   "Pergunta": "O que é AS-IS e TO-BE?",
+   "Resposta": "AS-IS é o retrato do processo como ele é executado hoje, usado para diagnóstico. TO-BE é o desenho do processo futuro, após a análise de melhorias. Os dois modelos são validados formalmente com o dono do processo antes da publicação (marcos M5 e M8)."
+  },
+  {
+   "Ordem": 7,
+   "Categoria": "Modelagem e SIPOC",
+   "Pergunta": "Que notação a Codevasf usa para modelar processos?",
+   "Resposta": "BPMN 2.0, modelada preferencialmente no Bizagi Modeler, conforme o Guia de Gerenciamento de Processos (RES 031/2025). Os diagramas publicados aparecem na ficha de cada macroprocesso, processo e subprocesso."
+  },
+  {
+   "Ordem": 8,
+   "Categoria": "Modelagem e SIPOC",
+   "Pergunta": "Como propor uma mudança em um processo já mapeado?",
+   "Resposta": "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no diário de mapeamento."
+  },
+  {
+   "Ordem": 9,
+   "Categoria": "Cadeia de Valor e governança",
+   "Pergunta": "O que é a Cadeia de Valor Integrada da Codevasf?",
+   "Resposta": "É a representação dos macroprocessos da Companhia organizados por contribuição ao valor público: gerenciais no direcionamento, finalísticos na entrega à sociedade e de suporte na sustentação — emoldurados pela missão, visão, propósito e valores. Ela é a porta de entrada de navegação deste painel."
+  },
+  {
+   "Ordem": 10,
+   "Categoria": "Cadeia de Valor e governança",
+   "Pergunta": "Quem é o dono do processo?",
+   "Resposta": "É a pessoa formalmente responsável pelo desempenho, pela integridade e pela melhoria contínua do processo de ponta a ponta, independentemente da hierarquia (CBOK 4.0). O dono está identificado na ficha de cada processo."
+  },
+  {
+   "Ordem": 11,
+   "Categoria": "Cadeia de Valor e governança",
+   "Pergunta": "Qual o papel da UNP, da GPE e da AE?",
+   "Resposta": "A UNP é o escritório de processos: conduz a metodologia, mantém o repositório e apoia as áreas. Ela integra a GPE (Gerência de Planejamento Estratégico), que por sua vez se vincula à AE (Área de Estratégia e Finanças), instância superior de governança."
+  },
+  {
+   "Ordem": 12,
+   "Categoria": "Cadeia de Valor e governança",
+   "Pergunta": "Quem aprova as mudanças nos processos?",
+   "Resposta": "O dono do processo valida os modelos (AS-IS e TO-BE) e as instâncias de governança definidas na RES 031/2025 aprovam a publicação, com apoio metodológico da UNP. Mudanças que alteram normativos seguem também o fluxo do Sistema Normativo."
+  },
+  {
+   "Ordem": 13,
+   "Categoria": "Indicadores, metas e riscos",
+   "Pergunta": "O que é um KPI?",
+   "Resposta": "Key Performance Indicator: um indicador-chave de desempenho, com fórmula, fonte, meta, periodicidade e responsável definidos. A aba Indicadores lista os KPIs por nível (macroprocesso, processo, subprocesso) com a situação calculada em relação à meta."
+  },
+  {
+   "Ordem": 14,
+   "Categoria": "Indicadores, metas e riscos",
+   "Pergunta": "Qual a diferença entre eficiência, eficácia e efetividade?",
+   "Resposta": "Eficiência é fazer certo as coisas (relação produto/recursos); eficácia é fazer as coisas certas (alcançar o resultado pretendido); efetividade é o impacto real e duradouro no público-alvo — a combinação das duas com sustentabilidade."
+  },
+  {
+   "Ordem": 15,
+   "Categoria": "Indicadores, metas e riscos",
+   "Pergunta": "Como os riscos são classificados?",
+   "Resposta": "Pela matriz 5×5 de probabilidade × impacto: o produto P×I gera o nível — Baixo (até 4), Moderado (5 a 11), Alto (12 a 19) e Extremo (20 a 25). A aba Riscos mostra a matriz com os riscos posicionados e a tabela com resposta, controles e status."
+  },
+  {
+   "Ordem": 16,
+   "Categoria": "Indicadores, metas e riscos",
+   "Pergunta": "Onde vejo os riscos do projeto de mapeamento?",
+   "Resposta": "Na aba Riscos (visão geral, com matriz e tabela) e na ficha de cada item da hierarquia, que lista os riscos vinculados àquele macroprocesso, processo, subprocesso ou atividade."
+  },
+  {
+   "Ordem": 17,
+   "Categoria": "Plano de Ações AE/GPE",
+   "Pergunta": "O que é o Plano de Ações AE/GPE 2026?",
+   "Resposta": "É o plano conduzido pela AE/GPE/UNP para estruturar o escritório de processos, mapear os processos prioritários e implantar a governança de processos na Codevasf. Os projetos de mapeamento deste painel derivam dele. (Nesta demonstração, os dados são fictícios.)"
+  },
+  {
+   "Ordem": 18,
+   "Categoria": "Plano de Ações AE/GPE",
+   "Pergunta": "Quem é a responsável geral pelo plano?",
+   "Resposta": "A coordenação do NUGEP — Núcleo de Gestão Normativa e de Processos (ver aba NUGEP), em articulação com a GPE e a AE."
+  },
+  {
+   "Ordem": 19,
+   "Categoria": "Plano de Ações AE/GPE",
+   "Pergunta": "Como o avanço das ações é medido?",
+   "Resposta": "Pelos marcos M1–M9 de cada mapeamento, pelo percentual de execução, pelos indicadores da aba Indicadores e pelos registros rastreáveis do diário de mapeamento."
+  },
+  {
+   "Ordem": 20,
+   "Categoria": "Plano de Ações AE/GPE",
+   "Pergunta": "O painel usa PMBOK ou CBOK?",
+   "Resposta": "Os dois, com papéis distintos: o CBOK 4.0 orienta o conteúdo de processos (hierarquia, SIPOC, ciclo de vida BPM, indicadores); o PMBOK orienta a gestão de cada mapeamento como projeto (termo de abertura, escopo, marcos, riscos e lições aprendidas)."
+  },
+  {
+   "Ordem": 21,
+   "Categoria": "Como usar o painel",
+   "Pergunta": "Como pesquiso um processo?",
+   "Resposta": "Use a busca no topo da página (digite e pressione Enter) para pesquisar em processos, documentos, glossário e registros — ou navegue pela aba Processos, filtrando por macroprocesso, status e texto."
+  },
+  {
+   "Ordem": 22,
+   "Categoria": "Como usar o painel",
+   "Pergunta": "Como sugerir uma melhoria ou reportar um erro?",
+   "Resposta": "Pelo botão flutuante “Sugerir melhoria de processo”, que abre um e-mail para a UNP (ae.gpe.unp@codevasf.gov.br). Indique o código do processo para agilizar a análise."
+  },
+  {
+   "Ordem": 23,
+   "Categoria": "Como usar o painel",
+   "Pergunta": "Como o painel é alimentado?",
+   "Resposta": "Por uma planilha única (Google Sheets ou o arquivo data/painel-processos-dados.xlsx do repositório): cadeia de valor, fichas, documentos, riscos, indicadores, diário, jornada, repositório, NUGEP, glossário e FAQ vêm todos de lá. Os detalhes estão na aba LEIA-ME da planilha e no README."
+  },
+  {
+   "Ordem": 24,
+   "Categoria": "Como usar o painel",
+   "Pergunta": "Onde encontro os modelos, a metodologia e o guia oficiais?",
+   "Resposta": "Na aba Repositório: a jornada de mapeamento, a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025, na intranet/SEI), os instrumentos por fase do ciclo BPM, os templates e as ferramentas de modelagem."
+  }
+ ],
+ "Parametros": [
+  {
+   "Chave": "Contato_Unidade",
+   "Valor": "Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)"
+  },
+  {
+   "Chave": "Contato_Email",
+   "Valor": "ae.gpe.unp@codevasf.gov.br"
+  },
+  {
+   "Chave": "Contato_Telefone",
+   "Valor": "(61) 2028-4441"
+  },
+  {
+   "Chave": "Link_Metodologia",
+   "Valor": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/met_gerenciamento-processos_res-031_2025-01-08.pdf"
+  },
+  {
+   "Chave": "Link_Guia",
+   "Valor": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/guia_gerenciamento-processos_res-031_2025-01-08.pdf"
   }
  ]
 };

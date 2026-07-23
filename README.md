@@ -68,6 +68,15 @@ O `js/app.js` tenta as fontes **nesta ordem** e usa a primeira que funcionar
    python scripts/planilha_para_js.py     # requer: pip install openpyxl
    ```
 
+A planilha tem **16 abas**: além da hierarquia (Macroprocessos → Atividades) e dos
+vínculos (Documentos, Riscos, Indicadores, Diario_Mapeamento), as abas **Jornada**
+e **Repositorio** alimentam a aba *Repositório* do site (jornada de mapeamento,
+metodologia/guia RES 031/2025, instrumentos, modelos e ferramentas), **NUGEP**
+cadastra os integrantes do núcleo, **Glossario** e **FAQ** alimentam as abas
+homônimas, e **Parametros** guarda contato institucional e os links da metodologia
+e do guia. Nada de conteúdo fica fixo no site: para editar, adicionar ou remover
+qualquer informação, mexa na planilha.
+
 ### Regras de preenchimento (resumo — detalhes na aba LEIA-ME)
 
 Os vínculos usam os **códigos**: `Processos.Macroprocesso` → `MP-xx`,
@@ -94,18 +103,24 @@ python -m http.server 8080     # abra http://localhost:8080
 ```
 Abrir o `index.html` direto (file://) também funciona, pelos dados embutidos.
 
-## Diagramas do Bizagi
+## Diagramas do Bizagi (recomendado: por link)
 
-Exporte cada diagrama do Bizagi Modeler como imagem (SVG ou PNG) e salve em
-`img/diagramas/` **com o mesmo nome do arquivo atual** (ex.: `p-06-01.svg`) — ou
-ajuste a coluna `Imagem_Bizagi` na planilha (aceita caminho relativo ou URL).
+Exporte o diagrama do Bizagi como imagem e **publique-a on-line** (Google Drive
+público, intranet acessível, repositório de imagens etc.); depois cole a **URL na
+coluna `Imagem_Bizagi`** da planilha. O painel exibe a imagem e, ao clicar nela
+(ou no botão "Abrir diagrama no link publicado"), a pessoa é levada ao link
+original em nova aba. Links de compartilhamento do Google Drive são convertidos
+automaticamente para exibição; se a pré-visualização não carregar (link privado,
+bloqueio de intranet), o painel mostra o botão de acesso mesmo assim.
+Alternativa: salvar o arquivo em `img/diagramas/` e usar o caminho relativo.
 
 ## Ajustes que você provavelmente vai querer fazer
 
-No `index.html`: a seção **Quem é Quem** (cards da equipe — hoje com o card da
-UNP herdado do painel do PTD), a linha institucional do rodapé, o botão flutuante
-**"Sugerir melhoria de processo"** (aponta para `ae.gpe.unp@codevasf.gov.br`) e
-os textos dos modais "Como usar" e "Acessibilidade".
+Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
+repositório). No `index.html` ficam apenas: a linha institucional do rodapé, o
+botão flutuante **"Sugerir melhoria de processo"** (aponta para
+`ae.gpe.unp@codevasf.gov.br`) e os textos dos modais "Como usar" e
+"Acessibilidade". A seção de Ouvidoria/Fala.BR do painel anterior foi removida.
 
 ## Metodologia
 

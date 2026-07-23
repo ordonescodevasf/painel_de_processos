@@ -8,6 +8,10 @@ Estrutura (alinhada ao BPM CBOK 4.0 e ao PMBOK):
   Documentos | Riscos | Indicadores | Diario_Mapeamento | Listas
 """
 import datetime as dt
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import dados_conteudo as CONTEUDO
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -108,6 +112,15 @@ listas = {
     "Periodicidade": ["Mensal", "Bimestral", "Trimestral", "Semestral", "Anual"],
     "Tipo_Registro": ["Reunião", "Oficina", "Entrevista", "Validação",
                       "Decisão", "Entrega", "Marco", "Nota"],
+    "Fase_Jornada": ["Descobrir", "Definir", "Desenvolver", "Entregar", "Evoluir"],
+    "Categoria_Repositorio": ["Documento oficial", "Template", "Instrumento",
+                              "Ferramenta", "Referência"],
+    "Fase_Instrumento": ["Planejamento", "Análise", "Desenho", "Implementação",
+                         "Monitoramento", "Refinamento"],
+    "Categoria_Glossario": ["BPM (CBOK)", "Projetos (PMBOK)", "Metodologia Codevasf",
+                            "SIPOC e Modelagem", "Indicadores e Riscos", "Governança e Papéis"],
+    "Categoria_FAQ": ["Conceitos básicos", "Modelagem e SIPOC", "Cadeia de Valor e governança",
+                      "Indicadores, metas e riscos", "Plano de Ações AE/GPE", "Como usar o painel"],
 }
 for j, (nome, itens) in enumerate(listas.items(), start=1):
     c = ls.cell(row=1, column=j, value=nome)
@@ -755,6 +768,49 @@ di.freeze_panes = "E2"
 dv(di, "D", ref("Tipo_Registro"))
 
 # ----------------------------------------------------------------------------
+# JORNADA · REPOSITORIO · NUGEP · GLOSSARIO · FAQ · PARAMETROS
+# (conteúdo em scripts/dados_conteudo.py — edite depois direto na planilha)
+# ----------------------------------------------------------------------------
+jn = wb.create_sheet("Jornada")
+cabecalho(jn, ["Ordem", "Fase", "Nome", "Duracao", "Objetivo", "Atividades_Chave",
+               "Quem_Faz", "Entregaveis", "Sentimento_Usuario"],
+          [7, 13, 30, 12, 44, 60, 30, 40, 40])
+escreve(jn, [list(x) for x in CONTEUDO.JORNADA], wrap_cols={5, 6, 7, 8, 9}, center_cols={1})
+jn.freeze_panes = "D2"
+dv(jn, "B", ref("Fase_Jornada"))
+
+rp = wb.create_sheet("Repositorio")
+cabecalho(rp, ["ID", "Categoria", "Fase_Ciclo", "Codigo", "Titulo", "Descricao",
+               "Fonte", "Link", "Ordem"],
+          [10, 18, 15, 12, 42, 56, 12, 50, 7])
+escreve(rp, [list(x) for x in CONTEUDO.REPOSITORIO], wrap_cols={5, 6, 8}, center_cols={9})
+rp.freeze_panes = "E2"
+dv(rp, "B", ref("Categoria_Repositorio")); dv(rp, "C", ref("Fase_Instrumento"))
+
+ng = wb.create_sheet("NUGEP")
+cabecalho(ng, ["Ordem", "Nome", "Papel", "Unidade_Sigla", "Unidade_Nome", "Email", "Telefone"],
+          [7, 24, 34, 14, 38, 32, 16])
+escreve(ng, [list(x) for x in CONTEUDO.NUGEP], wrap_cols={3, 5}, center_cols={1})
+ng.freeze_panes = "C2"
+
+gl = wb.create_sheet("Glossario")
+cabecalho(gl, ["Termo", "Categoria", "Definicao", "Fonte", "Termos_Relacionados"],
+          [34, 22, 80, 18, 40])
+escreve(gl, [list(x) for x in CONTEUDO.GLOSSARIO], wrap_cols={3, 5})
+gl.freeze_panes = "B2"
+dv(gl, "B", ref("Categoria_Glossario"))
+
+fq = wb.create_sheet("FAQ")
+cabecalho(fq, ["Ordem", "Categoria", "Pergunta", "Resposta"], [7, 26, 50, 90])
+escreve(fq, [list(x) for x in CONTEUDO.FAQ], wrap_cols={3, 4}, center_cols={1})
+fq.freeze_panes = "C2"
+dv(fq, "B", ref("Categoria_FAQ"))
+
+pm = wb.create_sheet("Parametros")
+cabecalho(pm, ["Chave", "Valor"], [24, 90])
+escreve(pm, [list(x) for x in CONTEUDO.PARAMETROS], wrap_cols={2})
+
+# ----------------------------------------------------------------------------
 # LEIA-ME
 # ----------------------------------------------------------------------------
 lm = wb.create_sheet("LEIA-ME", 0)
@@ -799,7 +855,10 @@ linha(13, "Evidências (Diário)", "Formato Nome|URL, separando várias com ';'.
       "Ex.: 'Ata|https://...;Diagrama|img/diagramas/x.svg'.")
 linha(14, "Percentual", "Na aba Processos, use percentual (0% a 100%).")
 linha(15, "Datas", "Formato dd/mm/aaaa.")
-linha(16, "Imagens Bizagi", "Informe caminho relativo no repositório (img/diagramas/...) ou URL completa.")
+linha(16, "Imagens Bizagi", "Recomendado: publique a imagem exportada do Bizagi on-line "
+      "(Drive público, intranet acessível etc.) e cole a URL na coluna Imagem_Bizagi — o painel exibe a "
+      "imagem e o clique abre o link original. Links de compartilhamento do Google Drive são convertidos "
+      "automaticamente para exibição. Caminhos relativos (img/diagramas/...) também funcionam.")
 linha(17, "Células de fórmula", "Colunas com fundo cinza (Riscos: Nivel_PxI e Classificacao; "
       "Indicadores: Situacao) são CALCULADAS — não digite valores; ao inserir linhas, copie a fórmula da linha acima.")
 linha(18, "Validação de dados", "Campos com lista suspensa buscam os valores na aba 'Listas' "
@@ -815,6 +874,12 @@ abas_desc = [
     ("Riscos", "Riscos vinculados a qualquer nível; nível = Probabilidade × Impacto (matriz 5×5)."),
     ("Indicadores", "Indicadores de desempenho por nível, com meta, resultado e situação calculada."),
     ("Diario_Mapeamento", "Registro rastreável do trabalho: reuniões, oficinas, entrevistas, decisões, entregas e marcos, com entradas, saídas/entregáveis e evidências (CBOK 4.0; PMBOK)."),
+    ("Jornada", "Etapas da jornada de mapeamento (Descobrir → Evoluir), exibidas na aba Repositório do painel."),
+    ("Repositorio", "Materiais e ferramentas: metodologia e guia oficiais (RES 031/2025), templates, instrumentos por fase do ciclo BPM, ferramentas e referências."),
+    ("NUGEP", "Integrantes do Núcleo de Gestão Normativa e de Processos (aba NUGEP do painel)."),
+    ("Glossario", "Termos BPM (CBOK), PMBOK e metodologia Codevasf (aba Glossário)."),
+    ("FAQ", "Perguntas e respostas exibidas na aba FAQ."),
+    ("Parametros", "Configurações chave/valor: contato do NUGEP e links da metodologia e do guia."),
     ("Listas", "Domínios das listas suspensas (validação de dados)."),
 ]
 r = 21
@@ -832,6 +897,11 @@ contagens = [
     ("Riscos", "=COUNTA(Riscos!$A$2:$A$500)"),
     ("Indicadores", "=COUNTA(Indicadores!$A$2:$A$500)"),
     ("Registros do diário", "=COUNTA(Diario_Mapeamento!$A$2:$A$500)"),
+    ("Etapas da jornada", "=COUNTA(Jornada!$A$2:$A$500)"),
+    ("Itens do repositório", "=COUNTA(Repositorio!$A$2:$A$500)"),
+    ("Integrantes do NUGEP", "=COUNTA(NUGEP!$A$2:$A$500)"),
+    ("Termos do glossário", "=COUNTA(Glossario!$A$2:$A$500)"),
+    ("Perguntas do FAQ", "=COUNTA(FAQ!$A$2:$A$500)"),
 ]
 r2 = r + 2
 for nome, f in contagens:
@@ -849,5 +919,10 @@ linha(r2 + 2, "BPM CBOK 4.0", "Hierarquia e tipos de processos, ciclo de vida BP
 linha(r2 + 3, "PMBOK", "Gestão do projeto de mapeamento: termo de abertura, escopo, partes interessadas, "
       "riscos do projeto, entregáveis e lições aprendidas (PMI).")
 
+ordem_final = ["LEIA-ME", "Macroprocessos", "Processos", "Subprocessos", "Atividades",
+               "Documentos", "Riscos", "Indicadores", "Diario_Mapeamento", "Jornada",
+               "Repositorio", "NUGEP", "Glossario", "FAQ", "Parametros", "Listas"]
+wb._sheets = [wb[n] for n in ordem_final]
+wb.active = 0
 wb.save("/home/claude/painel-processos/data/painel-processos-dados.xlsx")
 print("Planilha gerada com sucesso.")
