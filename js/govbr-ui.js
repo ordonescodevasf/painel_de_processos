@@ -21,6 +21,38 @@
       }
     });
   }
+  /* Dropdowns marcados "dd-fixed" (ex.: o "Mais" da barra de abas, que vive
+     dentro de #navigation, position:sticky) são posicionados com
+     position:fixed calculado em JS a partir do botão-gatilho, em vez de
+     absolute/relative — assim ficam imunes a qualquer contexto de
+     empilhamento ou corte de overflow criado por ancestrais (barra de
+     abas fixa, cartões com z-index local etc.), sempre por cima. */
+  function posicionarDropdownFixo(panel, btn) {
+    var r = btn.getBoundingClientRect();
+    var margem = 8;
+    panel.style.position = 'fixed';
+    panel.style.top = Math.round(r.bottom + 6) + 'px';
+    panel.style.left = 'auto';
+    var direita = window.innerWidth - r.right;
+    if (direita < margem) direita = margem;
+    panel.style.right = Math.round(direita) + 'px';
+    panel.style.maxWidth = 'calc(100vw - ' + (margem * 2) + 'px)';
+    // se a largura mínima do painel não couber à esquerda do gatilho, gruda na margem esquerda
+    var larguraMin = parseFloat(getComputedStyle(panel).minWidth) || 0;
+    if (r.right - larguraMin < margem) { panel.style.right = margem + 'px'; }
+  }
+  function fecharDropdownsFixosNoScroll() {
+    $all('.dd-target.dd-fixed').forEach(function (p) {
+      if (!p.hidden) {
+        p.hidden = true;
+        var b = $('[data-target="' + p.id + '"]');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+  window.addEventListener('scroll', fecharDropdownsFixosNoScroll, { passive: true, capture: true });
+  window.addEventListener('resize', fecharDropdownsFixosNoScroll);
+
   d.addEventListener('click', function (ev) {
     var btn = ev.target.closest('[data-toggle="dropdown"]');
     if (btn) {
@@ -30,6 +62,7 @@
       closeAllDropdowns(abrir ? panel : null);
       panel.hidden = !abrir;
       btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+      if (abrir && panel.classList.contains('dd-fixed')) posicionarDropdownFixo(panel, btn);
       ev.stopPropagation();
       return;
     }

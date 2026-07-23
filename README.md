@@ -124,7 +124,19 @@ FAQ) ficam num botão **"Mais"**, que abre uma lista (mesmo componente List/Item
 do menu de atalhos do cabeçalho) — quando uma dessas seções está aberta, o
 próprio botão "Mais" mostra o nome dela. Em telas menores que ~992px, as abas
 fixas viram só ícone (com texto acessível para leitor de tela), garantindo que
-sempre caibam numa linha só, em qualquer tamanho de tela.
+sempre caibam numa linha só, em qualquer tamanho de tela. O painel "Mais" é
+posicionado por JavaScript (`position:fixed`, calculado a partir do botão),
+o que o deixa imune a cortes de overflow ou disputas de empilhamento com o
+resto da página — sempre visível e clicável por cima de tudo.
+
+## Responsividade
+
+Os cartões, grades e a cadeia de valor usam `minmax(min(Npx, 100%), 1fr)` —
+nunca vazam para o lado, mesmo em telas bem estreitas (a partir de 320px). Os
+valores institucionais da cadeia de valor ficam numa única linha quando cabem
+e quebram para duas ou mais linhas automaticamente em telas menores, sem
+precisar de rolagem. Tabelas longas (Riscos, Processos etc.) rolam apenas
+dentro de si mesmas quando não cabem, sem mover a página inteira.
 
 ## Ajustes que você provavelmente vai querer fazer
 

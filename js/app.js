@@ -622,8 +622,7 @@
       blocoCadeia('Macroprocessos Finalísticos — entrega de valor à sociedade', 'cat-finalistico', 'fa-hand-holding-heart', fin) + '</div>' +
       '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
-      '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' +
-      '<div class="cv-valores-trilho"><div class="cv-valores-lista">' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div></div></div>' +
+      '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
       '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-sm)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, subprocessos, atividades e tarefas.</p></section>';
   }
 
