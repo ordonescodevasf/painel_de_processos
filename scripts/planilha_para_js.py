@@ -16,7 +16,7 @@ BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 XLSX = os.path.join(BASE, "data", "painel-processos-dados.xlsx")
 SAIDA = os.path.join(BASE, "js", "dados.js")
 
-ABAS = ["Macroprocessos", "Processos", "Subprocessos", "Atividades",
+ABAS = ["Macroprocessos", "Processos", "Subprocessos", "Atividades", "Tarefas",
         "Documentos", "Riscos", "Indicadores", "Diario_Mapeamento",
         "Jornada", "Repositorio", "NUGEP", "Glossario", "FAQ", "Parametros"]
 

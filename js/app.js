@@ -14,8 +14,9 @@
   var CONFIG = Object.assign({
     googleSheetId: '',                      // cole aqui o ID da planilha Google (opcional)
     arquivoXlsx: 'data/painel-processos-dados.xlsx',
-    abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades',
-           'Documentos', 'Riscos', 'Indicadores', 'Diario_Mapeamento']
+    abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
+           'Documentos', 'Riscos', 'Indicadores', 'Diario_Mapeamento',
+           'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
   var d = document;
@@ -164,6 +165,7 @@
       procs: pega('Processos'),
       subs: pega('Subprocessos'),
       ativs: pega('Atividades'),
+      tarefas: pega('Tarefas'),
       docs: pega('Documentos'),
       riscos: pega('Riscos'),
       inds: pega('Indicadores'),
@@ -204,7 +206,7 @@
     dd.params = {};
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
-    var idx = { mp: {}, p: {}, sp: {}, a: {}, procsPorMacro: {}, subsPorProc: {}, ativsPorSub: {},
+    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorProc: {}, ativsPorSub: {}, tarefasPorAtiv: {},
       vinc: { docs: {}, riscos: {}, inds: {} }, diarioPorProc: {} };
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.macros.forEach(function (m) { idx.mp[m.Codigo] = m; });
@@ -222,6 +224,11 @@
     dd.ativs.forEach(function (a) {
       idx.a[a.Codigo] = a;
       (idx.ativsPorSub[a.Subprocesso] = idx.ativsPorSub[a.Subprocesso] || []).push(a);
+    });
+    dd.tarefas.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.tarefas.forEach(function (t) {
+      idx.t[t.Codigo] = t;
+      (idx.tarefasPorAtiv[t.Atividade] = idx.tarefasPorAtiv[t.Atividade] || []).push(t);
     });
     function vincula(mapa, item) {
       var ch = (item.Vinculo_Nivel || '') + '|' + (item.Vinculo_Codigo || '');
@@ -278,18 +285,23 @@
     return '<div' + (span2 ? ' class="span2"' : '') + '><dt>' + esc(rotulo) + '</dt><dd>' +
       (valorHtml || '<span class="pp-vazio">Não informado</span>') + '</dd></div>';
   }
+  var NIVEL_PREFIXO = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp',
+    'Atividade': 'a', 'Tarefa': 't' };
+  var NIVEL_ROTULO = { 'Macroprocesso': 'Macroprocesso', 'Processo': 'Processo de negócio',
+    'Subprocesso': 'Processo de trabalho', 'Atividade': 'Atividade', 'Tarefa': 'Tarefa' };
+  function nivelRotulo(n) { return NIVEL_ROTULO[n] || n; }
   function rotaDe(nivel, codigo) {
-    var pre = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp', 'Atividade': 'a' }[nivel];
+    var pre = NIVEL_PREFIXO[nivel];
     return pre ? '#/' + pre + '/' + encodeURIComponent(codigo) : '#/';
   }
   function nomeDe(nivel, codigo) {
     var it = nivel === 'Macroprocesso' ? IDX.mp[codigo] : nivel === 'Processo' ? IDX.p[codigo]
-      : nivel === 'Subprocesso' ? IDX.sp[codigo] : IDX.a[codigo];
+      : nivel === 'Subprocesso' ? IDX.sp[codigo] : nivel === 'Tarefa' ? IDX.t[codigo] : IDX.a[codigo];
     return it ? it.Nome : codigo;
   }
   function linkVinculo(nivel, codigo) {
     return '<a href="' + rotaDe(nivel, codigo) + '"><span class="cod">' + esc(codigo) +
-      '</span> ' + esc(nomeDe(nivel, codigo)) + '</a> <span class="pp-muted">(' + esc(nivel) + ')</span>';
+      '</span> ' + esc(nomeDe(nivel, codigo)) + '</a> <span class="pp-muted">(' + esc(nivelRotulo(nivel)) + ')</span>';
   }
   function breadcrumb(trilha) {   // [{rotulo, href?}]
     return '<nav class="pp-breadcrumb" aria-label="Você está em">' +
@@ -346,7 +358,7 @@
   }
   function tabelaRiscosHtml(riscos, comVinculo) {
     if (!riscos.length) return '<p class="pp-vazio">Nenhum risco registrado.</p>';
-    return '<div class="pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
+    return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
       (comVinculo ? '<th>Vinculado a</th>' : '') +
       '<th>Risco</th><th>P</th><th>I</th><th>P×I</th><th>Nível</th><th>Resposta</th><th>Status</th></tr></thead><tbody>' +
       riscos.map(function (r) {
@@ -361,7 +373,7 @@
   }
   function tabelaIndsHtml(inds, comVinculo) {
     if (!inds.length) return '<p class="pp-vazio">Nenhum indicador vinculado.</p>';
-    return '<div class="pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
+    return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
       (comVinculo ? '<th>Vinculado a</th>' : '') +
       '<th>Indicador</th><th>Meta</th><th>Resultado</th><th>Situação</th><th>Periodicidade</th><th>Última medição</th></tr></thead><tbody>' +
       inds.map(function (x) {
@@ -433,7 +445,7 @@
     else if (h === '#/glossario') { renderGlossario(); mostrarPainel('glossario'); }
     else if (h === '#/faq') { renderFaq(); mostrarPainel('faq'); }
     else if ((m = h.match(/^#\/busca\?q=(.*)$/))) { renderBusca(decodeURIComponent(m[1])); mostrarPainel('busca'); }
-    else if ((m = h.match(/^#\/(mp|p|sp|a)\/(.+)$/))) { renderDetalhe(m[1], decodeURIComponent(m[2])); mostrarPainel('detalhe'); }
+    else if ((m = h.match(/^#\/(mp|p|sp|a|t)\/(.+)$/))) { renderDetalhe(m[1], decodeURIComponent(m[2])); mostrarPainel('detalhe'); }
     else { renderInicio(); mostrarPainel('inicio'); }
     var alvo = $('#navigation');
     if (alvo && window.scrollY > alvo.offsetTop) alvo.scrollIntoView();
@@ -558,15 +570,13 @@
     var fin = DADOS.macros.filter(function (m) { return m._cat === 'finalistico'; });
     var sup = DADOS.macros.filter(function (m) { return m._cat === 'suporte'; });
     el.innerHTML =
-      '<section class="pp-hero"><span class="eyebrow">Gestão de processos · Gestão por processos · BPM CBOK 4.0 · PMBOK</span>' +
+      '<section class="pp-hero">' +
       '<h1>Cadeia de valor e mapeamento de processos da Codevasf</h1>' +
       '<p>Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), ' +
       'documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
-      '<div class="acoes"><a class="br-button inverted" href="#/catalogo"><i class="fas fa-layer-group" aria-hidden="true"></i>&nbsp;Catálogo de processos</a>' +
-      '<a class="br-button outline-inv" href="#/diario"><i class="fas fa-timeline" aria-hidden="true"></i>&nbsp;Diário de mapeamento</a>' +
-      '<a class="br-button outline-inv" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i>&nbsp;Repositório de materiais</a></div></section>' +
+      '<div class="acoes"><a class="br-button inverted" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i>&nbsp;Repositório de materiais</a></div></section>' +
       '<div class="kpi-grid">' +
-      '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + procs.length + ' processos · ' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + procs.length + ' proc. de negócio · ' + DADOS.subs.length + ' proc. de trabalho · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
       '<div class="kpi ok"><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
       '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento da carteira</span></div>' +
       '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '"><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
@@ -580,10 +590,7 @@
       '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
       '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
-      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-xs)">Clique em um macroprocesso para abrir a ficha e navegar até processos, subprocessos e atividades. Classificação conforme o BPM CBOK 4.0 (processos gerenciais, primários/finalísticos e de suporte).</p></section>' +
-      '<section class="pp-sec"><div class="pp-sec-h"><h2>Últimos registros do mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-card">' + timelineHtml(DADOS.diario.slice(0, 3)) +
-      '<p style="margin-top:var(--sp2)"><a class="br-button secondary small" href="#/diario">Ver diário completo</a></p></div></section>';
+      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-xs)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, processos de trabalho, atividades e tarefas.</p></section>';
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
@@ -677,7 +684,7 @@
     }
     if (tipo === 'p') {
       var p = IDX.p[cod];
-      if (!p) { el.innerHTML = naoEncontrado('Processo', cod); return; }
+      if (!p) { el.innerHTML = naoEncontrado('Processo de negócio', cod); return; }
       var mp = IDX.mp[p.Macroprocesso];
       var subs = IDX.subsPorProc[cod] || [];
       var regs = IDX.diarioPorProc[cod] || [];
@@ -708,8 +715,8 @@
         '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M9)</h3>' + marcosHtml(p) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         secVinculos('Processo', cod) +
-        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos</h3>' +
-        (subs.length ? '<div class="pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Entregas</th><th></th></tr></thead><tbody>' +
+        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos de trabalho (subprocessos)</h3>' +
+        (subs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo de trabalho</th><th>Entregas</th><th></th></tr></thead><tbody>' +
           subs.map(function (s) {
             return '<tr><td class="cod">' + esc(s.Codigo) + '</td><td><a href="#/sp/' + encodeURIComponent(s.Codigo) + '"><strong>' + esc(s.Nome) + '</strong></a>' +
               (s.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-xs)">' + esc(s.Descricao) + '</div>' : '') + '</td>' +
@@ -737,7 +744,7 @@
     }
     if (tipo === 'sp') {
       var s = IDX.sp[cod];
-      if (!s) { el.innerHTML = naoEncontrado('Subprocesso', cod); return; }
+      if (!s) { el.innerHTML = naoEncontrado('Processo de trabalho', cod); return; }
       var pp = IDX.p[s.Processo]; var mpp = pp && IDX.mp[pp.Macroprocesso];
       var ativs = IDX.ativsPorSub[cod] || [];
       el.innerHTML =
@@ -746,7 +753,7 @@
           .concat(pp ? [{ rotulo: pp.Codigo, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
           .concat([{ rotulo: s.Codigo + ' — ' + s.Nome }])) +
         '<section class="ficha-hero" style="background:var(--cv-blue)">' +
-        '<span class="eyebrow">Subprocesso' + (pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
+        '<span class="eyebrow">Processo de trabalho (subprocesso)' + (pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
         '<h2>' + esc(s.Codigo) + ' — ' + esc(s.Nome) + '</h2>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
         (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') + '</div></section>' +
@@ -758,7 +765,7 @@
         campo('Dono', s.Dono && esc(s.Dono)) +
         campo('Entregas', chips(s.Entregas)) + campo('Sistemas', chips(s.Sistemas, 'fa-desktop')) + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
-        (ativs.length ? '<div class="pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
+        (ativs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
           ativs.map(function (a, i) {
             return '<tr data-link><td>' + (i + 1) + '</td><td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
               '<div class="cod">' + esc(a.Codigo) + '</div></td><td style="font-size:var(--fs-xs)">' + esc(a.Responsavel_Ator || '—') + '</td>' +
@@ -769,7 +776,7 @@
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
-        (pp ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo pai</h3>' +
+        (pp ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3>' +
           '<a class="proc-card" href="#/p/' + encodeURIComponent(pp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(pp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(pp.Nome) + '</div></div>' + tagStatus(pp.Status_Mapeamento) + '</div></a></div>' : '') +
         '</aside></div>';
       // clique na linha abre a atividade
@@ -781,10 +788,11 @@
       });
       return;
     }
-    // tipo === 'a'
+    if (tipo === 'a') {
     var a = IDX.a[cod];
     if (!a) { el.innerHTML = naoEncontrado('Atividade', cod); return; }
     var sp2 = IDX.sp[a.Subprocesso]; var p2 = sp2 && IDX.p[sp2.Processo]; var mp2 = p2 && IDX.mp[p2.Macroprocesso];
+    var tf3 = IDX.tarefasPorAtiv[cod] || [];
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp2 ? [{ rotulo: mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
@@ -803,10 +811,56 @@
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket')) +
       campo('Sistemas', chips(a.Sistemas, 'fa-desktop')) +
       campo('Base normativa', a.Base_Normativa ? chips(a.Base_Normativa, 'fa-scale-balanced') : null) + '</dl></div>' +
+      '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Tarefas (menor unidade de trabalho — CBOK 4.0)</h3>' +
+      (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
+        tf3.map(function (t) {
+          return '<tr data-link><td class="cod">' + esc(t.Codigo) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a>' +
+            (t.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-xs)">' + esc(t.Descricao) + '</div>' : '') + '</td>' +
+            '<td style="font-size:var(--fs-xs)">' + esc(t.Tipo_Tarefa || '—') + '</td>' +
+            '<td style="font-size:var(--fs-xs);white-space:nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>';
+        }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       secVinculos('Atividade', cod) +
       '</div><aside>' +
-      (sp2 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso pai</h3>' +
+      (sp2 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de trabalho (pai)</h3>' +
         '<a class="proc-card" href="#/sp/' + encodeURIComponent(sp2.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(sp2.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(sp2.Nome) + '</div></div></div></a></div>' : '') +
+      '</aside></div>';
+    $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
+      tr.addEventListener('click', function (ev) {
+        if (ev.target.closest('a')) return;
+        var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
+      });
+    });
+    return;
+    }
+    // tipo === 't' — ficha da tarefa
+    var t = IDX.t[cod];
+    if (!t) { el.innerHTML = naoEncontrado('Tarefa', cod); return; }
+    var a3 = IDX.a[t.Atividade]; var sp3 = a3 && IDX.sp[a3.Subprocesso];
+    var p3 = sp3 && IDX.p[sp3.Processo]; var mp3 = p3 && IDX.mp[p3.Macroprocesso];
+    el.innerHTML =
+      breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
+        .concat(mp3 ? [{ rotulo: mp3.Codigo, href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])
+        .concat(p3 ? [{ rotulo: p3.Codigo, href: '#/p/' + encodeURIComponent(p3.Codigo) }] : [])
+        .concat(sp3 ? [{ rotulo: sp3.Codigo, href: '#/sp/' + encodeURIComponent(sp3.Codigo) }] : [])
+        .concat(a3 ? [{ rotulo: a3.Codigo, href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
+        .concat([{ rotulo: t.Codigo }])) +
+      '<section class="ficha-hero" style="background:var(--cv-navy)">' +
+      '<span class="eyebrow">Tarefa' + (a3 ? ' da atividade ' + esc(a3.Nome) : '') + '</span>' +
+      '<h2>' + esc(t.Codigo) + ' — ' + esc(t.Nome) + '</h2>' +
+      '<div class="meta">' + (t.Tipo_Tarefa ? '<span><i class="fas fa-gear" aria-hidden="true"></i> ' + esc(t.Tipo_Tarefa) + '</span>' : '') +
+      (t.Responsavel ? '<span>· ' + esc(t.Responsavel) + '</span>' : '') +
+      (t.Duracao_Estimada ? '<span>· Duração estimada: ' + esc(t.Duracao_Estimada) + '</span>' : '') + '</div></section>' +
+      '<div class="ficha-grid"><div>' +
+      '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
+      campo('Descrição', t.Descricao && esc(t.Descricao), true) +
+      campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa)) +
+      campo('Responsável', t.Responsavel && esc(t.Responsavel)) +
+      campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null) +
+      campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
+      secVinculos('Tarefa', cod) +
+      '</div><aside>' +
+      (a3 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Atividade (pai)</h3>' +
+        '<a class="proc-card" href="#/a/' + encodeURIComponent(a3.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(a3.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(a3.Nome) + '</div></div></div></a></div>' : '') +
       '</aside></div>';
   }
   function naoEncontrado(tipo, cod) {
@@ -980,7 +1034,7 @@
       campo('1. Google Sheets (recomendado)', 'Importe a planilha para o Google Sheets, compartilhe como “qualquer pessoa com o link pode ver” e informe o ID em <code>PAINEL_CONFIG.googleSheetId</code> (index.html).', true) +
       campo('2. Planilha no repositório', 'Sem Google Sheets, o painel lê <code>data/painel-processos-dados.xlsx</code> publicado junto com o site.', true) +
       campo('3. Dados embutidos', 'Reserva (inclusive offline): <code>js/dados.js</code>, gerado por <code>scripts/planilha_para_js.py</code>.', true) +
-      '</dl><p class="pp-aviso" style="margin-top:var(--sp2)"><strong>Aviso:</strong> os dados atualmente exibidos são <strong>fictícios</strong>, para demonstração do painel.</p></div></section>';
+      '</dl><div class="br-message warning" role="status" style="margin-top:var(--sp2)"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div></div></div></section>';
     var f1 = $('#repoCat'), f2 = $('#repoFase'), f3 = $('#repoQ');
     if (f1) f1.onchange = function () { filtroRepo.cat = this.value; renderRepositorio(); };
     if (f2) f2.onchange = function () { filtroRepo.fase = this.value; renderRepositorio(); };
@@ -1089,12 +1143,13 @@
       p: DADOS.procs.filter(function (p) { return bate(p.Codigo) || bate(p.Nome) || bate(p.Descricao); }),
       sp: DADOS.subs.filter(function (s) { return bate(s.Codigo) || bate(s.Nome) || bate(s.Descricao); }),
       a: DADOS.ativs.filter(function (a) { return bate(a.Codigo) || bate(a.Nome) || bate(a.Descricao); }),
+      t: DADOS.tarefas.filter(function (t) { return bate(t.Codigo) || bate(t.Nome) || bate(t.Descricao); }),
       doc: DADOS.docs.filter(function (x) { return bate(x.ID) || bate(x.Titulo); }),
       reg: DADOS.diario.filter(function (e) { return bate(e.Titulo) || bate(e.Descricao); }),
       gl: DADOS.glossario.filter(function (t) { return bate(t.Termo) || bate(t.Definicao); }),
       rp: DADOS.repo.filter(function (i) { return bate(i.Titulo) || bate(i.Descricao) || bate(i.Codigo); })
     };
-    var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.reg.length + r.gl.length + r.rp.length;
+    var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.reg.length + r.gl.length + r.rp.length + r.t.length;
     function linha(href, cod, nome, extra) {
       return '<div class="doc-item"><i class="fas fa-arrow-right fa-stack-ico" aria-hidden="true"></i><div>' +
         '<div class="tit"><a href="' + href + '"><span class="cod">' + esc(cod) + '</span> ' + esc(nome) + '</a></div>' +
@@ -1105,9 +1160,10 @@
       '<div class="pp-sec-h" style="margin-top:0"><h2>Resultados para “' + esc(q) + '”</h2><div class="linha" aria-hidden="true"></div></div>' +
       (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pelo <a href="#/catalogo">catálogo</a>.</p>') +
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m.Codigo, m.Nome, esc(m.Categoria)); }) +
-      grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
-      grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
+      grupo('Processos de negócio', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
+      grupo('Processos de trabalho (subprocessos)', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
       grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), a.Codigo, a.Nome, esc(a.Responsavel_Ator || '')); }) +
+      grupo('Tarefas', r.t, function (t) { return linha('#/t/' + encodeURIComponent(t.Codigo), t.Codigo, t.Nome, esc(t.Tipo_Tarefa || '')); }) +
       grupo('Documentos', r.doc, function (x) {
         return '<div class="doc-item"><i class="fas fa-file fa-stack-ico" aria-hidden="true"></i><div><div class="tit">' +
           (x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '</a>' : esc(x.Titulo)) +
@@ -1158,8 +1214,7 @@
     if (v) v.innerHTML = '<div class="pp-loading"><i class="fas fa-circle-notch" aria-hidden="true"></i> Carregando dados do painel…</div>';
     carregarDados().then(posCarga).catch(function (e) {
       console.error(e);
-      if (v) v.innerHTML = '<div class="pp-aviso"><strong>Não foi possível carregar os dados.</strong> ' +
-        'Verifique se data/painel-processos-dados.xlsx está publicado (ou gere js/dados.js com scripts/planilha_para_js.py). Detalhe: ' + esc(e.message) + '</div>';
+      if (v) v.innerHTML = '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Não foi possível carregar os dados.</span> <span class="message-body">Verifique se data/painel-processos-dados.xlsx está publicado (ou gere js/dados.js com scripts/planilha_para_js.py). Detalhe: ' + esc(e.message) + '</span></div></div>';
     });
   }
   window.addEventListener('hashchange', rota);

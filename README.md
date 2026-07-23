@@ -68,7 +68,7 @@ O `js/app.js` tenta as fontes **nesta ordem** e usa a primeira que funcionar
    python scripts/planilha_para_js.py     # requer: pip install openpyxl
    ```
 
-A planilha tem **16 abas**: além da hierarquia (Macroprocessos → Atividades) e dos
+A planilha tem **17 abas**. A hierarquia segue o CBOK 4.0 em cinco níveis: **Macroprocesso → Processo de negócio (aba Processos) → Processo de trabalho (aba Subprocessos) → Atividade → Tarefa (aba Tarefas)** — os nomes técnicos das abas foram mantidos por compatibilidade, e o site exibe a nomenclatura correta.  além da hierarquia (Macroprocessos → Atividades) e dos
 vínculos (Documentos, Riscos, Indicadores, Diario_Mapeamento), as abas **Jornada**
 e **Repositorio** alimentam a aba *Repositório* do site (jornada de mapeamento,
 metodologia/guia RES 031/2025, instrumentos, modelos e ferramentas), **NUGEP**
@@ -80,7 +80,8 @@ qualquer informação, mexa na planilha.
 ### Regras de preenchimento (resumo — detalhes na aba LEIA-ME)
 
 Os vínculos usam os **códigos**: `Processos.Macroprocesso` → `MP-xx`,
-`Subprocessos.Processo` → `P-xx.yy`, `Atividades.Subprocesso` → `SP-xx.yy.zz`;
+`Subprocessos.Processo` → `P-xx.yy`, `Atividades.Subprocesso` → `SP-xx.yy.zz`,
+`Tarefas.Atividade` → `A-xx.yy.zz.ww`;
 Documentos, Riscos e Indicadores usam `Vinculo_Nivel` + `Vinculo_Codigo`; o
 Diário usa o código do Processo. Listas dentro de uma célula são separadas por
 `;`. Evidências do diário seguem `Nome|URL` (várias separadas por `;`). Datas em
@@ -121,6 +122,7 @@ repositório). No `index.html` ficam apenas: a linha institucional do rodapé, o
 botão flutuante **"Sugerir melhoria de processo"** (aponta para
 `ae.gpe.unp@codevasf.gov.br`) e os textos dos modais "Como usar" e
 "Acessibilidade". A seção de Ouvidoria/Fala.BR do painel anterior foi removida.
+A logo do Governo Federal no rodapé aponta para uma URL externa (repositorio.ifms.edu.br); para não depender de site de terceiro, baixe o PNG para `img/` e ajuste o `src` no `index.html`.
 
 ## Metodologia
 

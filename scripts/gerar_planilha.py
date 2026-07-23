@@ -95,7 +95,8 @@ listas = {
     "Prioridade": ["Alta", "Média", "Baixa"],
     "Complexidade": ["Alta", "Média", "Baixa"],
     "Sim_Nao": ["Sim", "Não"],
-    "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso", "Atividade"],
+    "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso", "Atividade", "Tarefa"],
+    "Tipo_Tarefa": ["Manual", "Automatizada", "Regra de negócio"],
     "Tipo_Documento": [
         "Procedimento Operacional (POP)", "Manual", "Norma interna",
         "Formulário/Modelo", "Ata de reunião", "Diagrama BPMN",
@@ -768,6 +769,50 @@ di.freeze_panes = "E2"
 dv(di, "D", ref("Tipo_Registro"))
 
 # ----------------------------------------------------------------------------
+# TAREFAS (menor unidade de trabalho — CBOK 4.0)
+# ----------------------------------------------------------------------------
+tf = wb.create_sheet("Tarefas")
+cabecalho(tf,
+    ["Codigo", "Atividade", "Ordem", "Nome", "Descricao", "Tipo_Tarefa",
+     "Responsavel", "Sistema", "Duracao_Estimada", "Observacoes"],
+    [20, 16, 7, 38, 46, 16, 24, 22, 14, 28])
+tarefas = [
+    ["T-06.01.01.01.01", "A-06.01.01.01", 1, "Reunir informações da demanda",
+     "Levantar justificativa, quantitativos preliminares e alinhamento ao PCA junto ao gestor da área.",
+     "Manual", "Área demandante", "SEI", "0,5 dia", ""],
+    ["T-06.01.01.01.02", "A-06.01.01.01", 2, "Preencher o formulário DFD no SEI",
+     "Registrar o Documento de Formalização da Demanda no modelo padronizado.",
+     "Manual", "Área demandante", "SEI", "0,5 dia", "Modelo DOC-006/DOC-012."],
+    ["T-06.01.01.01.03", "A-06.01.01.01", 3, "Colher assinatura eletrônica do gestor",
+     "Encaminhar o DFD para assinatura da autoridade competente da unidade.",
+     "Manual", "Área demandante", "SEI", "1 dia", ""],
+    ["T-06.01.03.01.01", "A-06.01.03.01", 1, "Consultar o Painel de Preços",
+     "Pesquisar contratações públicas similares e extrair os relatórios de preços.",
+     "Manual", "Equipe de planejamento", "Painel de Preços", "0,5 dia", ""],
+    ["T-06.01.03.01.02", "A-06.01.03.01", 2, "Consultar contratações no PNCP",
+     "Verificar atas e contratos vigentes de objetos equivalentes no PNCP.",
+     "Manual", "Equipe de planejamento", "PNCP", "0,5 dia", ""],
+    ["T-06.01.03.01.03", "A-06.01.03.01", 3, "Registrar cotações de fornecedores",
+     "Solicitar e registrar cotações diretas quando as fontes oficiais forem insuficientes.",
+     "Manual", "Equipe de planejamento", "SEI", "3 dias", "Mínimo de 3 fontes (IN 65/2021)."],
+    ["T-06.01.03.01.04", "A-06.01.03.01", 4, "Aplicar tratamento estatístico",
+     "Calcular média/mediana, excluir valores inexequíveis ou excessivos e justificar o método.",
+     "Regra de negócio", "Equipe de planejamento", "Planilha padrão", "0,5 dia", ""],
+    ["T-06.02.01.01.01", "A-06.02.01.01", 1, "Cadastrar o edital no Compras.gov.br",
+     "Inserir o edital aprovado, anexos e cronograma do certame no sistema.",
+     "Manual", "Agente de contratação", "Compras.gov.br", "0,5 dia", ""],
+    ["T-06.02.01.01.02", "A-06.02.01.01", 2, "Publicar o aviso no PNCP",
+     "Divulgação automática do aviso de licitação a partir do cadastro no sistema.",
+     "Automatizada", "Compras.gov.br", "PNCP", "Imediato", ""],
+    ["T-04.01.01.01.01", "A-04.01.01.01", 1, "Consolidar demandas semanais dos lotes",
+     "Compilar os pedidos de água dos irrigantes por setor hidráulico para a programação.",
+     "Manual", "Equipe de operação", "SIG-Irrigação (fictício)", "1 dia", ""],
+]
+escreve(tf, tarefas, wrap_cols={5, 10}, center_cols={3, 6, 9})
+tf.freeze_panes = "D2"
+dv(tf, "F", ref("Tipo_Tarefa"))
+
+# ----------------------------------------------------------------------------
 # JORNADA · REPOSITORIO · NUGEP · GLOSSARIO · FAQ · PARAMETROS
 # (conteúdo em scripts/dados_conteudo.py — edite depois direto na planilha)
 # ----------------------------------------------------------------------------
@@ -844,9 +889,10 @@ linha(7, "1. Publicação", "Salve este arquivo em data/painel-processos-dados.x
       "O site lê a planilha diretamente no navegador (SheetJS).")
 linha(8, "2. Fallback", "Opcionalmente, gere js/dados.js com o script scripts/planilha_para_js.py "
       "(usado quando o site é aberto sem servidor/offline).")
-linha(9, "3. Vínculos", "Os relacionamentos usam os CÓDIGOS: Processos→Macroprocesso, "
-      "Subprocessos→Processo, Atividades→Subprocesso; Documentos/Riscos/Indicadores usam "
-      "Vinculo_Nivel + Vinculo_Codigo; o Diário usa o código do Processo.")
+linha(9, "3. Vínculos", "Hierarquia (CBOK 4.0): Macroprocesso → Processo de negócio (aba Processos) → "
+      "Processo de trabalho (aba Subprocessos) → Atividade → Tarefa. Os relacionamentos usam os CÓDIGOS: "
+      "Processos→Macroprocesso, Subprocessos→Processo, Atividades→Subprocesso, Tarefas→Atividade; "
+      "Documentos/Riscos/Indicadores usam Vinculo_Nivel + Vinculo_Codigo; o Diário usa o código do Processo.")
 
 titulo(11, "Convenções de preenchimento")
 linha(12, "Listas na célula", "Separe múltiplos itens com ponto e vírgula ( ; ). "
@@ -867,9 +913,10 @@ linha(18, "Validação de dados", "Campos com lista suspensa buscam os valores n
 titulo(20, "Dicionário de abas")
 abas_desc = [
     ("Macroprocessos", "1º nível da cadeia de valor (CBOK: processos primários/finalísticos, de suporte e gerenciais)."),
-    ("Processos", "2º nível, com ficha completa: SIPOC (fornecedores, entradas, saídas, clientes), status e marcos do mapeamento (M1–M9), fase do ciclo BPM e dados do projeto."),
-    ("Subprocessos", "3º nível, vinculado ao processo."),
-    ("Atividades", "4º nível (CBOK: atividades/tarefas), com entradas, saídas, ator, sistemas e prazos."),
+    ("Processos", "2º nível — processos de negócio, com ficha completa: SIPOC (fornecedores, entradas, saídas, clientes), status e marcos do mapeamento (M1–M9), fase do ciclo BPM e dados do projeto."),
+    ("Subprocessos", "3º nível — processos de trabalho, vinculados ao processo de negócio."),
+    ("Atividades", "4º nível (CBOK), com entradas, saídas, ator, sistemas e prazos."),
+    ("Tarefas", "5º e último nível (CBOK): menor unidade de trabalho de uma atividade — manual, automatizada ou regra de negócio."),
     ("Documentos", "Repositório: POPs, manuais, atas, diagramas BPMN (Bizagi), relatórios — vinculados a qualquer nível."),
     ("Riscos", "Riscos vinculados a qualquer nível; nível = Probabilidade × Impacto (matriz 5×5)."),
     ("Indicadores", "Indicadores de desempenho por nível, com meta, resultado e situação calculada."),
@@ -893,6 +940,7 @@ contagens = [
     ("Processos", "=COUNTA(Processos!$A$2:$A$500)"),
     ("Subprocessos", "=COUNTA(Subprocessos!$A$2:$A$500)"),
     ("Atividades", "=COUNTA(Atividades!$A$2:$A$500)"),
+    ("Tarefas", "=COUNTA(Tarefas!$A$2:$A$500)"),
     ("Documentos", "=COUNTA(Documentos!$A$2:$A$500)"),
     ("Riscos", "=COUNTA(Riscos!$A$2:$A$500)"),
     ("Indicadores", "=COUNTA(Indicadores!$A$2:$A$500)"),
@@ -920,7 +968,7 @@ linha(r2 + 3, "PMBOK", "Gestão do projeto de mapeamento: termo de abertura, esc
       "riscos do projeto, entregáveis e lições aprendidas (PMI).")
 
 ordem_final = ["LEIA-ME", "Macroprocessos", "Processos", "Subprocessos", "Atividades",
-               "Documentos", "Riscos", "Indicadores", "Diario_Mapeamento", "Jornada",
+               "Tarefas", "Documentos", "Riscos", "Indicadores", "Diario_Mapeamento", "Jornada",
                "Repositorio", "NUGEP", "Glossario", "FAQ", "Parametros", "Listas"]
 wb._sheets = [wb[n] for n in ordem_final]
 wb.active = 0

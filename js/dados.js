@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-23 16:31",
+ "_gerado_em": "2026-07-23 20:12",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -632,6 +632,128 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício)",
    "Prazo_Padrao": "Diário",
    "Base_Normativa": null
+  }
+ ],
+ "Tarefas": [
+  {
+   "Codigo": "T-06.01.01.01.01",
+   "Atividade": "A-06.01.01.01",
+   "Ordem": 1,
+   "Nome": "Reunir informações da demanda",
+   "Descricao": "Levantar justificativa, quantitativos preliminares e alinhamento ao PCA junto ao gestor da área.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Área demandante",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-06.01.01.01.02",
+   "Atividade": "A-06.01.01.01",
+   "Ordem": 2,
+   "Nome": "Preencher o formulário DFD no SEI",
+   "Descricao": "Registrar o Documento de Formalização da Demanda no modelo padronizado.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Área demandante",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": "Modelo DOC-006/DOC-012."
+  },
+  {
+   "Codigo": "T-06.01.01.01.03",
+   "Atividade": "A-06.01.01.01",
+   "Ordem": 3,
+   "Nome": "Colher assinatura eletrônica do gestor",
+   "Descricao": "Encaminhar o DFD para assinatura da autoridade competente da unidade.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Área demandante",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "1 dia",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-06.01.03.01.01",
+   "Atividade": "A-06.01.03.01",
+   "Ordem": 1,
+   "Nome": "Consultar o Painel de Preços",
+   "Descricao": "Pesquisar contratações públicas similares e extrair os relatórios de preços.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Equipe de planejamento",
+   "Sistema": "Painel de Preços",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-06.01.03.01.02",
+   "Atividade": "A-06.01.03.01",
+   "Ordem": 2,
+   "Nome": "Consultar contratações no PNCP",
+   "Descricao": "Verificar atas e contratos vigentes de objetos equivalentes no PNCP.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Equipe de planejamento",
+   "Sistema": "PNCP",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-06.01.03.01.03",
+   "Atividade": "A-06.01.03.01",
+   "Ordem": 3,
+   "Nome": "Registrar cotações de fornecedores",
+   "Descricao": "Solicitar e registrar cotações diretas quando as fontes oficiais forem insuficientes.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Equipe de planejamento",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "3 dias",
+   "Observacoes": "Mínimo de 3 fontes (IN 65/2021)."
+  },
+  {
+   "Codigo": "T-06.01.03.01.04",
+   "Atividade": "A-06.01.03.01",
+   "Ordem": 4,
+   "Nome": "Aplicar tratamento estatístico",
+   "Descricao": "Calcular média/mediana, excluir valores inexequíveis ou excessivos e justificar o método.",
+   "Tipo_Tarefa": "Regra de negócio",
+   "Responsavel": "Equipe de planejamento",
+   "Sistema": "Planilha padrão",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-06.02.01.01.01",
+   "Atividade": "A-06.02.01.01",
+   "Ordem": 1,
+   "Nome": "Cadastrar o edital no Compras.gov.br",
+   "Descricao": "Inserir o edital aprovado, anexos e cronograma do certame no sistema.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Agente de contratação",
+   "Sistema": "Compras.gov.br",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-06.02.01.01.02",
+   "Atividade": "A-06.02.01.01",
+   "Ordem": 2,
+   "Nome": "Publicar o aviso no PNCP",
+   "Descricao": "Divulgação automática do aviso de licitação a partir do cadastro no sistema.",
+   "Tipo_Tarefa": "Automatizada",
+   "Responsavel": "Compras.gov.br",
+   "Sistema": "PNCP",
+   "Duracao_Estimada": "Imediato",
+   "Observacoes": null
+  },
+  {
+   "Codigo": "T-04.01.01.01.01",
+   "Atividade": "A-04.01.01.01",
+   "Ordem": 1,
+   "Nome": "Consolidar demandas semanais dos lotes",
+   "Descricao": "Compilar os pedidos de água dos irrigantes por setor hidráulico para a programação.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Equipe de operação",
+   "Sistema": "SIG-Irrigação (fictício)",
+   "Duracao_Estimada": "1 dia",
+   "Observacoes": null
   }
  ],
  "Documentos": [
@@ -1616,6 +1738,94 @@ window.PAINEL_DADOS = {
    "Fonte": "Planalto",
    "Link": "http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2020/decreto/D10382.htm",
    "Ordem": 24
+  },
+  {
+   "ID": "REP-025",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Análise",
+   "Codigo": null,
+   "Titulo": "Mapa de Partes Interessadas (modelo)",
+   "Descricao": "Identifica e classifica stakeholders por interesse e influência, com estratégia de engajamento por grupo.",
+   "Fonte": "PMBOK",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/mapa-partes-interessadas.xlsx",
+   "Ordem": 25
+  },
+  {
+   "ID": "REP-026",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Análise",
+   "Codigo": null,
+   "Titulo": "Matriz GUT de Priorização",
+   "Descricao": "Prioriza problemas e processos pela Gravidade, Urgência e Tendência, apoiando a seleção da carteira.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/matriz-gut.xlsx",
+   "Ordem": 26
+  },
+  {
+   "ID": "REP-027",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Análise",
+   "Codigo": "ISH-01",
+   "Titulo": "Diagrama de Ishikawa (causa e efeito)",
+   "Descricao": "Template espinha de peixe para análise de causas-raiz das dores identificadas no AS-IS.",
+   "Fonte": "CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/ish-01.pptx",
+   "Ordem": 27
+  },
+  {
+   "ID": "REP-028",
+   "Categoria": "Instrumento",
+   "Fase_Ciclo": "Análise",
+   "Codigo": "5PQ-01",
+   "Titulo": "5 Porquês",
+   "Descricao": "Roteiro simples para chegar à causa-raiz de um problema perguntando “por quê?” sucessivamente.",
+   "Fonte": "Lean / CBOK 4.0",
+   "Link": "https://exemplo.codevasf.gov.br/instrumentos/5pq-01.docx",
+   "Ordem": 28
+  },
+  {
+   "ID": "REP-029",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Desenho",
+   "Codigo": null,
+   "Titulo": "Ata de Validação AS-IS / TO-BE (modelo)",
+   "Descricao": "Registro formal da homologação dos modelos pelo dono do processo e pela unidade gestora.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/ata-validacao.docx",
+   "Ordem": 29
+  },
+  {
+   "ID": "REP-030",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Implementação",
+   "Codigo": null,
+   "Titulo": "Termo de Encerramento do Mapeamento",
+   "Descricao": "Formaliza o fim do projeto com entregas aceitas, pendências e lições aprendidas registradas.",
+   "Fonte": "PMBOK",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/termo-encerramento.docx",
+   "Ordem": 30
+  },
+  {
+   "ID": "REP-031",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Implementação",
+   "Codigo": null,
+   "Titulo": "Plano de Comunicação do Mapeamento",
+   "Descricao": "Organiza públicos, mensagens-chave, canais e calendário da transição para o TO-BE.",
+   "Fonte": "PMBOK",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/plano-comunicacao.docx",
+   "Ordem": 31
+  },
+  {
+   "ID": "REP-032",
+   "Categoria": "Template",
+   "Fase_Ciclo": "Monitoramento",
+   "Codigo": null,
+   "Titulo": "Painel de Bordo do Processo (one-page)",
+   "Descricao": "Resumo executivo mensal do processo: indicadores, riscos, ações e destaques para o dono do processo.",
+   "Fonte": "Codevasf",
+   "Link": "https://exemplo.codevasf.gov.br/modelos/painel-de-bordo.pptx",
+   "Ordem": 32
   }
  ],
  "NUGEP": [
@@ -1672,6 +1882,42 @@ window.PAINEL_DADOS = {
    "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
    "Email": "gustavo.pereira@codevasf.gov.br",
    "Telefone": "(61) 2028-4443"
+  },
+  {
+   "Ordem": 7,
+   "Nome": "Juliana Tavares",
+   "Papel": "Analista de Processos",
+   "Unidade_Sigla": "AE/GPE/UNP",
+   "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
+   "Email": "juliana.tavares@codevasf.gov.br",
+   "Telefone": "(61) 2028-4444"
+  },
+  {
+   "Ordem": 8,
+   "Nome": "Rafael Menezes",
+   "Papel": "Analista de Dados e Indicadores",
+   "Unidade_Sigla": "AE/GPE",
+   "Unidade_Nome": "Gerência de Planejamento Estratégico",
+   "Email": "rafael.menezes@codevasf.gov.br",
+   "Telefone": "(61) 2028-4445"
+  },
+  {
+   "Ordem": 9,
+   "Nome": "Camila Duarte",
+   "Papel": "Interlocutora de Processos de Suporte",
+   "Unidade_Sigla": "AA/GLC",
+   "Unidade_Nome": "Gerência de Licitações e Contratos",
+   "Email": "camila.duarte@codevasf.gov.br",
+   "Telefone": "(61) 2028-4520"
+  },
+  {
+   "Ordem": 10,
+   "Nome": "Paulo Henrique Barros",
+   "Papel": "Apoio de Comunicação Institucional",
+   "Unidade_Sigla": "PR/ASCOM",
+   "Unidade_Nome": "Assessoria de Comunicação (fictícia)",
+   "Email": "paulo.barros@codevasf.gov.br",
+   "Telefone": "(61) 2028-4630"
   }
  ],
  "Glossario": [
@@ -2157,6 +2403,13 @@ window.PAINEL_DADOS = {
    "Definicao": "Plan-Do-Check-Act — ciclo de melhoria contínua atribuído a Deming/Shewhart: planejar, executar, verificar e agir corretivamente.",
    "Fonte": "Deming",
    "Termos_Relacionados": "Melhoria Contínua; Kaizen"
+  },
+  {
+   "Termo": "Processo de Trabalho",
+   "Categoria": "Metodologia Codevasf",
+   "Definicao": "Nível da hierarquia entre o processo de negócio e as atividades: recorte executável do processo, sob responsabilidade de uma unidade — também tratado como subprocesso. Na planilha deste painel, corresponde à aba Subprocessos.",
+   "Fonte": "Metodologia Codevasf / CBOK 4.0",
+   "Termos_Relacionados": "Processo de Negócio; Subprocesso; Atividade"
   },
   {
    "Termo": "Processo Ponta a Ponta",
