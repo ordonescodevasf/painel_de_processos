@@ -138,6 +138,33 @@ e quebram para duas ou mais linhas automaticamente em telas menores, sem
 precisar de rolagem. Tabelas longas (Riscos, Processos etc.) rolam apenas
 dentro de si mesmas quando não cabem, sem mover a página inteira.
 
+## Botões flutuantes, LGPD e tutorial
+
+Adaptados diretamente do painel do PTD (mesmos componentes gov.br DS), com os
+textos ajustados para este painel:
+
+- **Voltar ao topo** (canto inferior direito): discreto, só aparece depois de
+  rolar a página.
+- **Reportar um erro** (canto inferior esquerdo): abre um modal que tenta
+  capturar a tela (Screen Capture API — o navegador pede permissão; não existe
+  captura silenciosa) e oferece o print para download. Como um link `mailto:`
+  **não aceita anexos** (limitação de todos os navegadores/clientes de
+  e-mail, sem contorno possível), o e-mail abre pronto com título, descrição
+  e instrução para anexar manualmente o print baixado antes de enviar.
+- **Aviso de recursos de terceiros (LGPD)**: barra fixa no primeiro acesso,
+  listando honestamente o que o painel carrega (fontes, ícones, SheetJS,
+  VLibras e, se configurado, Google Sheets) — sem alegar cookies que não
+  existem no código. Só fecha com "Entendi" (fica salvo no navegador); o botão
+  de cookies no menu de atalhos reabre a versão detalhada a qualquer momento.
+- **Tutorial (onboarding)**: carrossel de 5 passos, abre sozinho no primeiro
+  acesso (meio segundo depois, para não competir com o carregamento dos
+  dados) e pode ser reaberto por "Como usar este painel" (rodapé ou menu de
+  atalhos) ou pelo switch "Abrir tutorial automaticamente" nesse mesmo menu.
+- **Equipe de Desenvolvimento**: link discreto no rodapé ("Sobre o Painel"),
+  distinto do NUGEP — credita quem desenvolve e mantém tecnicamente o painel
+  (por padrão, Antonio Ordones Neto; ajuste o nome/e-mail em `index.html`,
+  busque por `modalEquipeDev`).
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e

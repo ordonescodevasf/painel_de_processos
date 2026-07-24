@@ -105,7 +105,7 @@
         <div class="dropdown-wrap header-links"><button class="br-button circle small" type="button" id="btnQuickLinks" data-toggle="dropdown" data-target="quickLinksMenu" aria-label="Abrir atalhos institucionais" aria-controls="quickLinksMenu" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button><div class="br-list dd-target" id="quickLinksMenu" role="group" aria-label="Atalhos institucionais" hidden><div class="header"><div class="title">Atalhos institucionais</div></div><span class="br-divider" aria-hidden="true"></span><div class="quick-links-item quick-links-group"><button type="button" class="br-item" data-toggle="collapse" data-target="institucionalSub" aria-controls="institucionalSub" aria-expanded="false">Institucional<i class="fas fa-chevron-down" aria-hidden="true" style="margin-left:auto"></i></button><div id="institucionalSub" class="quick-links-sub" hidden><a class="br-item" href="https://www.gov.br/pt-br/orgaos-do-governo" target="_blank" rel="noopener">Órgãos do Governo<span class="sr-only"> (abre em nova aba)</span></a><a class="br-item" href="https://www.gov.br/acessoainformacao/pt-br" target="_blank" rel="noopener">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></a><a class="br-item" href="http://www4.planalto.gov.br/legislacao" target="_blank" rel="noopener">Legislação<span class="sr-only"> (abre em nova aba)</span></a></div></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/governodigital/pt-br/acessibilidade-digital" target="_blank" rel="noopener">Acessibilidade<span class="sr-only"> (abre em nova aba)</span></a></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/secom/pt-br/acesso-a-informacao/comunicabr" target="_blank" rel="noopener">Comunica BR<span class="sr-only"> (abre em nova aba)</span></a></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/pt-br/participacao-social" target="_blank" rel="noopener">Participe<span class="sr-only"> (abre em nova aba)</span></a></div></div></div>
         <span class="br-divider vertical" aria-hidden="true"></span>
         <div class="header-functions">
-          <div class="dropdown-wrap"><button class="br-button secondary small govbr-shortcuts-btn" type="button" id="btnHeaderFunctions" data-toggle="dropdown" data-target="headerFunctionsMenu" aria-label="Atalhos gov.br" aria-controls="headerFunctionsMenu" aria-expanded="false"><i class="fas fa-th" aria-hidden="true"></i> <span class="govbr-shortcuts-label">Atalhos gov.br</span></button><div class="br-list dd-target" id="headerFunctionsMenu" role="group" aria-label="Funcionalidades do painel" hidden><div class="header"><div class="title">Funcionalidades do painel</div></div><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="data/painel-processos-dados.xlsx" download><i class="fas fa-file-excel" aria-hidden="true"></i> Planilha de dados (modelo)</a><a class="br-item" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i> Repositório e metodologia</a><button type="button" class="br-item" id="btnRefresh" onclick="refreshAll()"><i class="fas fa-sync-alt" aria-hidden="true"></i> Atualizar</button><div class="br-item status-item" aria-live="polite"><i class="fas fa-broadcast-tower" aria-hidden="true"></i> Tempo real · <span id="syncChip">Aguardando…</span></div><button type="button" class="br-item" id="actExportCsv"><i class="fas fa-file-csv" aria-hidden="true"></i> Exportar CSV</button><button type="button" class="br-item" id="actCopyLink"><i class="fas fa-link" aria-hidden="true"></i> Copiar link do painel</button><a class="br-item" id="actOpenSheet" href="#" target="_blank" rel="noopener"><i class="fas fa-table" aria-hidden="true"></i> Abrir planilha de origem<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="#" id="menuHelpTrigger" data-modal-open="modalAjuda"><i class="fas fa-question-circle" aria-hidden="true"></i> Como usar este painel</a><a class="br-item" href="#" id="menuA11yStatementTrigger" data-modal-open="modalA11y"><i class="fas fa-universal-access" aria-hidden="true"></i> Declaração de Acessibilidade</a><div class="br-item switch-item"><div class="br-switch right small icon" role="presentation"><input id="obAutoToggle" type="checkbox" name="obAutoToggle" role="switch"><label for="obAutoToggle">Abrir tutorial automaticamente</label></div></div></div></div>
+          <div class="dropdown-wrap"><button class="br-button secondary small govbr-shortcuts-btn" type="button" id="btnHeaderFunctions" data-toggle="dropdown" data-target="headerFunctionsMenu" aria-label="Atalhos gov.br" aria-controls="headerFunctionsMenu" aria-expanded="false"><i class="fas fa-th" aria-hidden="true"></i> <span class="govbr-shortcuts-label">Atalhos gov.br</span></button><div class="br-list dd-target" id="headerFunctionsMenu" role="group" aria-label="Funcionalidades do painel" hidden><div class="header"><div class="title">Funcionalidades do painel</div></div><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="data/painel-processos-dados.xlsx" download><i class="fas fa-file-excel" aria-hidden="true"></i> Planilha de dados (modelo)</a><a class="br-item" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i> Repositório e metodologia</a><button type="button" class="br-item" id="btnRefresh" onclick="refreshAll()"><i class="fas fa-sync-alt" aria-hidden="true"></i> Atualizar</button><div class="br-item status-item" aria-live="polite"><i class="fas fa-broadcast-tower" aria-hidden="true"></i> Tempo real · <span id="syncChip">Aguardando…</span></div><button type="button" class="br-item" id="actExportCsv"><i class="fas fa-file-csv" aria-hidden="true"></i> Exportar CSV</button><button type="button" class="br-item" id="actCopyLink"><i class="fas fa-link" aria-hidden="true"></i> Copiar link do painel</button><a class="br-item" id="actOpenSheet" href="#" target="_blank" rel="noopener"><i class="fas fa-table" aria-hidden="true"></i> Abrir planilha de origem<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="#" id="menuHelpTrigger"><i class="fas fa-question-circle" aria-hidden="true"></i> Como usar este painel</a><a class="br-item" href="#" id="menuA11yStatementTrigger" data-modal-open="modalA11y"><i class="fas fa-universal-access" aria-hidden="true"></i> Declaração de Acessibilidade</a><div class="br-item switch-item"><div class="br-switch right small icon" role="presentation"><input id="obAutoToggle" type="checkbox" name="obAutoToggle" role="switch"><label for="obAutoToggle">Abrir tutorial automaticamente</label></div></div></div></div>
         </div>
         <span class="br-divider vertical" aria-hidden="true"></span><a class="br-sign-in primary small" id="govbrSignIn" href="https://sso.acesso.gov.br/" target="_blank" rel="noopener">Entrar com&nbsp;<span class="text-black">gov.br</span><span class="sr-only"> (abre em nova aba)</span></a>
       </div>
@@ -284,8 +284,9 @@
             <i class="fas fa-angle-up" aria-hidden="true"></i>
           </button>
           <div class="fs-items">
-            <a href="#" id="footerHelpTrigger" data-modal-open="modalAjuda">Como usar este painel</a>
+            <a href="#" id="footerHelpTrigger">Como usar este painel</a>
             <a href="#" id="a11yStatementTrigger" data-modal-open="modalA11y">Declaração de Acessibilidade</a>
+            <a href="#" id="footerDevTeamTrigger" data-modal-open="modalEquipeDev">Equipe de Desenvolvimento</a>
           </div>
         </div>
         <div class="fs-col">
@@ -351,19 +352,6 @@
   </footer>
 
 <!-- ─── Modais do painel (ajuda, acessibilidade, cookies) ─── -->
-<div class="br-scrim foco" id="modalAjuda" hidden>
-  <div class="br-modal medium" role="dialog" aria-modal="true" aria-labelledby="modalAjudaTitulo">
-    <div class="br-modal-header"><h1 class="modal-title" id="modalAjudaTitulo">Como usar este painel</h1>
-      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
-    <div class="br-modal-body">
-      <p><strong>Navegação hierárquica:</strong> na aba Início, clique em um macroprocesso da Cadeia de Valor para abrir a ficha; de lá, avance para processos, subprocessos e atividades. A trilha (breadcrumb) no topo de cada ficha mostra o caminho completo e permite voltar a qualquer nível.</p>
-      <p><strong>Fichas:</strong> cada nível traz objetivo, responsáveis, SIPOC, diagrama BPMN (Bizagi), documentos, riscos (P×I), indicadores e — nos processos — os marcos M1–M9 e o diário de mapeamento.</p>
-      <p><strong>Busca:</strong> use a lupa do cabeçalho para pesquisar por código, nome, documento ou registro.</p>
-      <p><strong>Alertas:</strong> o sino da faixa de navegação lista prazos de mapeamento vencidos e riscos Alto/Extremo em aberto.</p>
-      <p><strong>Dados:</strong> tudo vem da planilha (Google Sheets ou <code>data/painel-processos-dados.xlsx</code>). Edite a planilha e o painel reflete — detalhes na aba Metodologia.</p>
-    </div>
-  </div>
-</div>
 <div class="br-scrim foco" id="modalA11y" hidden>
   <div class="br-modal medium" role="dialog" aria-modal="true" aria-labelledby="modalA11yTitulo">
     <div class="br-modal-header"><h1 class="modal-title" id="modalA11yTitulo">Declaração de Acessibilidade</h1>
@@ -379,7 +367,154 @@
     <div class="br-modal-header"><h1 class="modal-title" id="modalCookiesTitulo">Cookies e privacidade</h1>
       <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
     <div class="br-modal-body">
-      <p>Este painel não utiliza cookies de rastreamento. Apenas preferências locais (como o modo de alto contraste) são guardadas no seu navegador, e você pode limpá-las a qualquer momento nas configurações do próprio navegador.</p>
+      <p>Este painel não utiliza cookies de rastreamento. Apenas preferências locais (como o modo de alto contraste) são guardadas no seu navegador, e você pode limpá-las a qualquer momento nas configurações do próprio navegador. Veja também o aviso de recursos de terceiros exibido no primeiro acesso.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Equipe de Desenvolvimento — crédito discreto de quem desenvolve e
+     mantém tecnicamente este painel (distinto do NUGEP, que conduz a
+     metodologia de mapeamento). Acessível pelo rodapé, em "Sobre o
+     Painel". ── -->
+<div class="br-scrim foco" id="modalEquipeDev" hidden>
+  <div class="br-modal small" role="dialog" aria-modal="true" aria-labelledby="modalEquipeDevTitulo">
+    <div class="br-modal-header"><h1 class="modal-title" id="modalEquipeDevTitulo">Equipe de Desenvolvimento</h1>
+      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
+    <div class="br-modal-body">
+      <p>Este painel — a plataforma, o código e a integração com a planilha de dados — é desenvolvido e mantido por:</p>
+      <div class="team-info" style="margin-top:8px">
+        <div class="team-name">Antonio Ordones Neto</div>
+        <div class="team-role">Analista em Desenvolvimento Regional — Desenvolvimento e Manutenção Técnica do Painel<br><span class="team-unit">AE/GPE/UNP</span></div>
+        <a class="team-email" href="mailto:antonio.ordones@codevasf.gov.br"><i class="fas fa-envelope" aria-hidden="true"></i> antonio.ordones@codevasf.gov.br</a>
+      </div>
+      <p style="margin-top:12px">Para dúvidas sobre <strong>conteúdo</strong> dos processos mapeados, procure a aba <a href="#/nugep">NUGEP</a>. Para problemas <strong>técnicos</strong> do painel, use o botão "Reportar um erro" (canto inferior esquerdo) ou o contato acima.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── COOKIEBAR (simplificado) — adaptação consciente: este painel é
+     ferramenta interna de gestão de processos (servidores Codevasf),
+     sem coleta deliberada de dados pessoais nem cookies próprios
+     definidos pelo código. Mantém-se o espírito de transparência da
+     LGPD informando, de forma honesta e específica, os recursos de
+     terceiros reais que o painel carrega — em vez de um aviso
+     genérico sobre "cookies" que não existem no código. Só é
+     dispensado por ação explícita ("Entendi"), sem fechar por Esc ou
+     clique fora, adequado a um aviso de transparência/consentimento. ── -->
+<div class="br-scrim foco" id="cookieScrim" aria-hidden="true"></div>
+<div class="br-cookiebar default" id="cookieNotice" role="dialog" aria-modal="true" aria-describedby="cookieNoticeText" aria-label="Aviso sobre recursos de terceiros" tabindex="-1">
+  <div class="cn-text" id="cookieNoticeText">
+    Este painel carrega recursos de terceiros para funcionar: fontes (Google Fonts), ícones (Font Awesome via Cloudflare), leitura de planilha (SheetJS via Cloudflare) e o widget de Libras (VLibras, gov.br). Se configurada, a leitura da base de dados via Google Sheets é um recurso adicional. Esses serviços podem registrar informações técnicas de acesso (como IP) segundo suas próprias políticas. O painel em si não coleta nem armazena dados pessoais do usuário — apenas sua preferência de alto contraste, salva localmente no seu navegador.
+  </div>
+  <div class="cn-actions">
+    <button type="button" class="br-button secondary" id="cookieNoticeDetails" aria-expanded="false" aria-controls="cookieNoticeDetailBox">Detalhes</button>
+    <button type="button" class="br-button primary" id="cookieNoticeAccept">Entendi</button>
+  </div>
+  <div class="cn-details" id="cookieNoticeDetailBox" hidden>
+    <ul>
+      <li><strong>fonts.googleapis.com / fonts.gstatic.com</strong> — fontes Noto Sans/Noto Sans Mono.</li>
+      <li><strong>cdnjs.cloudflare.com</strong> — ícones Font Awesome e biblioteca SheetJS (leitura da planilha .xlsx).</li>
+      <li><strong>vlibras.gov.br</strong> — widget oficial de tradução para Libras.</li>
+      <li><strong>docs.google.com / sheets.googleapis.com</strong> — apenas se este painel estiver configurado para ler os dados via Google Sheets (ver PAINEL_CONFIG no código).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ─── ONBOARDING — tour rápido de apresentação, mostrado automaticamente
+     no primeiro acesso (com atraso, para não competir com o carregamento
+     dos dados) e sempre reabrível por "Como usar este painel" (rodapé e
+     menu de atalhos). Dispensa fica salva em localStorage; o switch
+     "Abrir tutorial automaticamente" (menu de atalhos gov.br) permite
+     reativar. ── -->
+<div class="br-scrim foco" id="onboardingScrim" data-scrim="true" hidden>
+  <div class="br-onboarding" role="dialog" aria-modal="true" aria-labelledby="obTitle-0">
+    <div class="br-carousel ob-carousel" id="onboardingCarousel" aria-roledescription="carousel" aria-label="Tutorial do painel">
+      <div class="carousel-stage"><div id="onboardingCol">
+
+        <div class="ob-page active">
+          <div class="ob-illus" aria-hidden="true"><i class="fas fa-sitemap"></i></div>
+          <h2 class="ob-title" id="obTitle-0">Conheça o Painel de Processos!</h2>
+          <p class="ob-text">Cadeia de valor, mapeamento e repositório de processos da Codevasf, num só lugar. Vamos a um tour rápido (5 passos)?</p>
+          <button class="br-button primary ob-start" type="button">Iniciar</button>
+        </div>
+
+        <div class="ob-page">
+          <div class="ob-illus" aria-hidden="true"><i class="fas fa-diagram-project"></i></div>
+          <h2 class="ob-title" id="obTitle-1">A Cadeia de Valor é o ponto de partida</h2>
+          <p class="ob-text">Na tela inicial, clique em qualquer <strong>macroprocesso</strong> para abrir sua ficha. De lá, navegue até os <strong>processos</strong>, <strong>subprocessos</strong>, <strong>atividades</strong> e <strong>tarefas</strong> — a hierarquia completa da metodologia CBOK 4.0.</p>
+        </div>
+
+        <div class="ob-page">
+          <div class="ob-illus" aria-hidden="true"><i class="fas fa-id-card"></i></div>
+          <h2 class="ob-title" id="obTitle-2">Cada ficha traz tudo sobre o processo</h2>
+          <p class="ob-text">SIPOC, marcos do mapeamento (M1–M9), diagrama BPMN do Bizagi, documentos vinculados, riscos, indicadores e o diário de mapeamento — o histórico rastreável do trabalho.</p>
+        </div>
+
+        <div class="ob-page">
+          <div class="ob-illus" aria-hidden="true"><i class="fas fa-magnifying-glass"></i></div>
+          <h2 class="ob-title" id="obTitle-3">Radar de riscos, indicadores e busca</h2>
+          <p class="ob-text">As abas <strong>Riscos</strong> e <strong>Indicadores</strong> dão a visão geral da carteira; o <strong>Dashboard</strong> resume tudo para a gestão. Use a busca no topo para encontrar processos, documentos, termos do glossário e mais.</p>
+        </div>
+
+        <div class="ob-page">
+          <div class="ob-illus" aria-hidden="true"><i class="fas fa-check-circle"></i></div>
+          <h2 class="ob-title" id="obTitle-4">Pronto!</h2>
+          <p class="ob-text">O botão "Mais", na barra de seções, reúne o Repositório de materiais, o Diário, o NUGEP, o Glossário e o FAQ.<br><br>Dúvidas ou sugestões? Fale com a UNP: <a href="mailto:ae.gpe.unp@codevasf.gov.br">ae.gpe.unp@codevasf.gov.br</a> ou <a href="tel:+556120284441">(61) 2028-4441</a>.</p>
+          <button class="br-button primary ob-finish" type="button">Concluir</button>
+        </div>
+
+      </div></div>
+    </div>
+    <div class="ob-nav">
+      <button class="br-button circle terciary ob-prev" type="button" aria-label="Etapa anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+      <span class="ob-step" id="onboardingStepText" aria-live="polite"></span>
+      <button class="br-button circle terciary ob-next" type="button" aria-label="Próxima etapa"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+    </div>
+    <div class="ob-foot">
+      <a href="#" class="ob-skip" id="onboardingSkip">Pular tutorial</a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Voltar ao topo: fixo no canto inferior direito, discreto — só
+     aparece depois que a página é rolada. ── -->
+<div class="BackToTop-module">
+  <button class="br-button large primary circle" type="button" id="btnBackToTop" title="Voltar ao topo" aria-label="Voltar ao topo" hidden>
+    <i class="fa-solid fa-angle-up back-top" aria-hidden="true"></i>
+  </button>
+</div>
+
+<!-- ─── Reportar erro: botão fixo no canto inferior esquerdo, discreto,
+     sempre visível. Abre um modal que tenta capturar um print da tela
+     automaticamente (Screen Capture API — exige permissão do usuário;
+     não há como capturar a tela silenciosamente por trás, nem anexar
+     arquivos a um link mailto:, então o print é oferecido para
+     download e o e-mail é aberto com instrução para anexá-lo
+     manualmente antes de enviar). ── -->
+<button class="br-button large primary circle report-error-btn" type="button" id="btnReportError" title="Reportar um erro" aria-label="Reportar um erro">
+  <i class="fas fa-bug" aria-hidden="true"></i>
+</button>
+<div class="br-scrim foco" id="reportErrorScrim" data-scrim="true" hidden>
+  <div class="br-modal medium" role="dialog" aria-modal="true" aria-labelledby="reportErrorTitle">
+    <div class="br-modal-header">
+      <h1 class="modal-title" id="reportErrorTitle">Reportar um erro</h1>
+      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button>
+    </div>
+    <div class="br-modal-body">
+      <p>Descreva o que aconteceu. O painel já tenta capturar um print da tela automaticamente para anexar — seu navegador vai pedir para você escolher a tela/aba a compartilhar (é a única forma que os navegadores permitem; não existe captura silenciosa).</p>
+      <div class="br-textarea">
+        <label for="reportErrorText">Descrição do erro</label>
+        <textarea id="reportErrorText" rows="4" placeholder="O que você esperava que acontecesse, e o que aconteceu de fato?"></textarea>
+      </div>
+      <div class="report-error-shot" id="reportErrorShotBox">
+        <p class="report-error-shot-status" id="reportErrorShotStatus">Capturando print da tela…</p>
+        <img id="reportErrorShotPreview" alt="Pré-visualização do print capturado" hidden>
+        <a class="br-button secondary small" id="reportErrorShotDownload" download="print-erro-painel-processos.png" hidden><i class="fas fa-download" aria-hidden="true"></i> Baixar print</a>
+      </div>
+    </div>
+    <div class="br-modal-footer justify-content-between">
+      <button class="br-button secondary" type="button" id="btnRetryShot"><i class="fas fa-camera" aria-hidden="true"></i> Tentar capturar de novo</button>
+      <a class="br-button primary" type="button" id="btnSendReport" href="#"><i class="fas fa-paper-plane" aria-hidden="true"></i> Abrir e-mail</a>
     </div>
   </div>
 </div>

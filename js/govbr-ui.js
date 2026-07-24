@@ -199,6 +199,191 @@
     });
   });
 
+  /* ── VOLTAR AO TOPO — some/aparece conforme a rolagem ─────────────── */
+  (function () {
+    var btn = d.getElementById('btnBackToTop');
+    if (!btn) return;
+    function syncVisibility() {
+      if (window.scrollY > 400) btn.removeAttribute('hidden');
+      else btn.setAttribute('hidden', '');
+    }
+    window.addEventListener('scroll', syncVisibility, { passive: true });
+    syncVisibility();
+    btn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+
+  /* ── REPORTAR ERRO — tenta capturar print da tela (Screen Capture API,
+     exige permissão do usuário — não existe captura silenciosa) e abre
+     um e-mail com a descrição; como mailto: não aceita anexos, o print
+     é oferecido para download com instrução de anexar manualmente. ── */
+  (function () {
+    var openBtn = d.getElementById('btnReportError');
+    var scrimEl = d.getElementById('reportErrorScrim');
+    if (!openBtn || !scrimEl) return;
+    var retryBtn = d.getElementById('btnRetryShot');
+    var sendBtn = d.getElementById('btnSendReport');
+    var statusEl = d.getElementById('reportErrorShotStatus');
+    var previewEl = d.getElementById('reportErrorShotPreview');
+    var downloadEl = d.getElementById('reportErrorShotDownload');
+    var textEl = d.getElementById('reportErrorText');
+    var shotDataUrl = null;
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    function captureScreenshot() {
+      shotDataUrl = null;
+      previewEl.setAttribute('hidden', '');
+      downloadEl.setAttribute('hidden', '');
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        setStatus('Este navegador não permite captura automática de tela. Tire um print manualmente (Windows: tecla Print Screen ou Win+Shift+S; Mac: Cmd+Shift+4) e anexe ao e-mail.');
+        return;
+      }
+      setStatus('Capturando print da tela… escolha a tela/aba na janela que o navegador abrir.');
+      navigator.mediaDevices.getDisplayMedia({ video: true }).then(function (stream) {
+        var track = stream.getVideoTracks()[0];
+        var video = d.createElement('video');
+        video.srcObject = stream;
+        video.muted = true;
+        return video.play().then(function () {
+          return new Promise(function (resolve) { setTimeout(resolve, 250); });
+        }).then(function () {
+          var canvas = d.createElement('canvas');
+          canvas.width = video.videoWidth || 1280;
+          canvas.height = video.videoHeight || 720;
+          canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+          track.stop();
+          shotDataUrl = canvas.toDataURL('image/png');
+          previewEl.src = shotDataUrl;
+          previewEl.removeAttribute('hidden');
+          downloadEl.href = shotDataUrl;
+          downloadEl.removeAttribute('hidden');
+          setStatus('Print capturado. Baixe-o e anexe ao e-mail antes de enviar.');
+        });
+      }).catch(function () {
+        setStatus('Captura cancelada ou não permitida. Tire um print manualmente (Windows: tecla Print Screen ou Win+Shift+S; Mac: Cmd+Shift+4) e anexe ao e-mail, ou tente novamente.');
+      });
+    }
+
+    openBtn.addEventListener('click', function () {
+      textEl.value = '';
+      scrimEl.hidden = false;
+      captureScreenshot();
+    });
+    if (retryBtn) retryBtn.addEventListener('click', captureScreenshot);
+
+    if (sendBtn) sendBtn.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      var desc = textEl.value.trim() || '(não informada)';
+      var secao = (d.querySelector('#mainTabContent .tab-panel.active h1, #mainTabContent .tab-panel.active h2') || {}).textContent || d.title;
+      var lines = [
+        'Descrição do problema:', desc, '',
+        'Seção ativa: ' + secao.trim() + ' (' + (location.hash || '#/') + ')',
+        'Navegador: ' + navigator.userAgent,
+        'Data/hora: ' + new Date().toLocaleString('pt-BR')
+      ];
+      if (shotDataUrl) lines.push('', 'IMPORTANTE: anexe a este e-mail o print que foi baixado (botão "Baixar print" no painel) antes de enviar.');
+      var subject = encodeURIComponent('Erro no Painel de Processos');
+      var body = encodeURIComponent(lines.join('\n'));
+      window.location.href = 'mailto:ae.gpe.unp@codevasf.gov.br?subject=' + subject + '&body=' + body;
+    });
+  })();
+
+  /* ── COOKIEBAR (simplificado) — persistência via localStorage; só é
+     dispensado por ação explícita ("Entendi"), sem Esc/clique fora. ── */
+  (function () {
+    var KEY = 'painel_processos_cookie_notice_ack_v1';
+    var notice = d.getElementById('cookieNotice');
+    var scrim = d.getElementById('cookieScrim');
+    if (!notice) return;
+    var acceptBtn = d.getElementById('cookieNoticeAccept');
+    var detailsBtn = d.getElementById('cookieNoticeDetails');
+    var detailsBox = d.getElementById('cookieNoticeDetailBox');
+
+    function jaAceito() {
+      try { return !!localStorage.getItem(KEY); } catch (e) { return false; }
+    }
+    function release() {
+      d.body.style.overflow = '';
+      notice.classList.add('d-none');
+      if (scrim) scrim.setAttribute('hidden', '');
+      try { localStorage.setItem(KEY, '1'); } catch (e) { /* não persiste entre sessões */ }
+    }
+    if (acceptBtn) acceptBtn.addEventListener('click', release);
+    if (detailsBtn && detailsBox) {
+      detailsBtn.addEventListener('click', function () {
+        var open = detailsBtn.getAttribute('aria-expanded') === 'true';
+        detailsBtn.setAttribute('aria-expanded', String(!open));
+        if (open) detailsBox.setAttribute('hidden', ''); else detailsBox.removeAttribute('hidden');
+      });
+    }
+    if (jaAceito()) { notice.classList.add('d-none'); if (scrim) scrim.setAttribute('hidden', ''); }
+  })();
+
+  /* ── ONBOARDING — tour de apresentação em carrossel; abre sozinho no
+     primeiro acesso (a menos que já dispensado) e pode ser reaberto por
+     "Como usar este painel" (rodapé/menu) ou pelo switch dedicado. ── */
+  (function () {
+    var scrimEl = d.getElementById('onboardingScrim');
+    if (!scrimEl) return;
+    var col = d.getElementById('onboardingCol');
+    var pages = Array.prototype.slice.call(col.children);
+    var total = pages.length;
+    var nav = scrimEl.querySelector('.ob-nav');
+    var stepText = d.getElementById('onboardingStepText');
+    var prevBtn = scrimEl.querySelector('.ob-prev');
+    var nextBtn = scrimEl.querySelector('.ob-next');
+    var startBtn = scrimEl.querySelector('.ob-start');
+    var finishBtn = scrimEl.querySelector('.ob-finish');
+    var skipLink = d.getElementById('onboardingSkip');
+    var autoToggle = d.getElementById('obAutoToggle');
+    var current = 0;
+
+    function render() {
+      pages.forEach(function (p, i) { p.classList.toggle('active', i === current); });
+      var isFirst = current === 0, isLast = current === total - 1;
+      nav.style.display = (isFirst || isLast) ? 'none' : 'flex';
+      stepText.textContent = (isFirst || isLast) ? '' : ('Passo ' + current + ' de ' + (total - 2));
+    }
+    function go(idx) { current = Math.max(0, Math.min(total - 1, idx)); render(); }
+    prevBtn.addEventListener('click', function () { go(current - 1); });
+    nextBtn.addEventListener('click', function () { go(current + 1); });
+    if (startBtn) startBtn.addEventListener('click', function () { go(1); });
+    function fechar() { scrimEl.hidden = true; }
+    if (skipLink) skipLink.addEventListener('click', function (ev) { ev.preventDefault(); fechar(); });
+    if (finishBtn) finishBtn.addEventListener('click', fechar);
+    function openTour() { go(0); scrimEl.hidden = false; }
+
+    function isDismissed() {
+      try { return !!localStorage.getItem('painel_processos_onboarding_dismissed'); }
+      catch (e) { return false; }
+    }
+    function setDismissed(value) {
+      try {
+        if (value) localStorage.setItem('painel_processos_onboarding_dismissed', '1');
+        else localStorage.removeItem('painel_processos_onboarding_dismissed');
+      } catch (e) { /* não persiste entre sessões */ }
+    }
+    if (autoToggle) {
+      autoToggle.checked = !isDismissed();
+      autoToggle.addEventListener('change', function () { setDismissed(!autoToggle.checked); });
+    }
+
+    ['menuHelpTrigger', 'footerHelpTrigger'].forEach(function (id) {
+      var btn = d.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var menu = d.getElementById('sectionMenu');
+        if (menu && menu.classList.contains('active')) menu.classList.remove('active');
+        openTour();
+      });
+    });
+
+    if (!isDismissed()) setTimeout(openTour, 500);
+  })();
+
   /* ── API mínima para o app preencher o menu de seções ────────────── */
   window.PPUI = {
     setMenuSections: function (itens) {
