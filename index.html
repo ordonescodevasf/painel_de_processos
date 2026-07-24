@@ -287,6 +287,7 @@
             <a href="#" id="footerHelpTrigger">Como usar este painel</a>
             <a href="#" id="a11yStatementTrigger" data-modal-open="modalA11y">Declaração de Acessibilidade</a>
             <a href="#" id="footerDevTeamTrigger" data-modal-open="modalEquipeDev">Equipe de Desenvolvimento</a>
+            <a href="#" data-modal-open="modalPrivacidade">Política de Privacidade e Termos de Uso</a>
           </div>
         </div>
         <div class="fs-col">
@@ -295,6 +296,7 @@
             <i class="fas fa-angle-down" aria-hidden="true"></i>
           </button>
           <div class="fs-items" hidden>
+            <a href="https://falabr.cgu.gov.br/" target="_blank" rel="noopener">Ouvidoria da Codevasf (Fala.BR)<span class="sr-only"> (abre em nova aba)</span></a>
             <a href="https://www.gov.br/codevasf/pt-br/acesso-a-informacao" target="_blank" rel="noopener">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></a>
             <a href="mailto:ae.gpe.unp@codevasf.gov.br">Fale com a UNP (Gestão de Processos)</a>
             <a href="https://www.gov.br/codevasf/pt-br" target="_blank" rel="noopener">Portal da Codevasf<span class="sr-only"> (abre em nova aba)</span></a>
@@ -348,7 +350,7 @@
     </div>
     <span class="br-divider" aria-hidden="true"></span>
     <!-- Área de Informação Legal (Anatomia 9-11): centralizada -->
-    <div class="footer-legal"><div class="footer-org"><span class="fo-unit">Unidade de Gestão Normativa e de Processos — AE/GPE/UNP</span></div><p class="footer-license">Todo o conteúdo deste site está publicado sob a licença Creative Commons Atribuição-SemDerivações 3.0</p></div>
+    <div class="footer-legal"><div class="footer-org"><span class="fo-unit">Unidade de Gestão Normativa e de Processos — AE/GPE/UNP</span><span class="fo-address">Companhia de Desenvolvimento dos Vales do São Francisco e do Parnaíba — CNPJ 00.399.857/0001-26<br>SGAN 601, Conjunto I, Edifício Deputado Manoel Novaes, Sala 213, Asa Norte, Brasília (DF), CEP 70.830-019</span></div><p class="footer-license">Todo o conteúdo deste site está publicado sob a licença Creative Commons Atribuição-SemDerivações 3.0 · <a href="#" id="footerPrivacyTrigger" data-modal-open="modalPrivacidade">Política de Privacidade e Termos de Uso</a></p></div>
   </footer>
 
 <!-- ─── Modais do painel (ajuda, acessibilidade, cookies) ─── -->
@@ -372,6 +374,49 @@
   </div>
 </div>
 
+<!-- ─── Política de Privacidade e Termos de Uso — declaração LGPD completa.
+     Dados institucionais (CNPJ, endereço, Encarregado) conferidos na fonte
+     oficial da Codevasf (codevasf.gov.br/.../encarregado-pelo-tratamento-
+     de-dados-pessoais e .../institucional/enderecos) em jul/2026. ── -->
+<div class="br-scrim foco" id="modalPrivacidade" hidden>
+  <div class="br-modal large" role="dialog" aria-modal="true" aria-labelledby="modalPrivacidadeTitulo">
+    <div class="br-modal-header"><h1 class="modal-title" id="modalPrivacidadeTitulo">Política de Privacidade e Termos de Uso</h1>
+      <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
+    <div class="br-modal-body">
+      <p class="pp-muted" style="margin-bottom:var(--sp3)">Em linguagem simples, conforme a Lei Geral de Proteção de Dados Pessoais (LGPD, Lei nº 13.709/2018) e demais normas aplicáveis à administração pública federal.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin-bottom:6px"><i class="fas fa-building" aria-hidden="true"></i> 1. Quem é o controlador dos dados</h2>
+      <p>Companhia de Desenvolvimento dos Vales do São Francisco e do Parnaíba (Codevasf), empresa pública federal vinculada ao Ministério da Integração e do Desenvolvimento Regional.<br>
+      CNPJ: 00.399.857/0001-26<br>
+      Endereço: SGAN 601, Conjunto I, Edifício Deputado Manoel Novaes, Sala 213, Asa Norte, Brasília (DF), CEP 70.830-019.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-user-shield" aria-hidden="true"></i> 2. Encarregado pelo Tratamento de Dados (Encarregado/DPO)</h2>
+      <p>Leonardo Fortes Férrer de Almeida, Ouvidor da Codevasf, designado pela Decisão da Presidência nº 868/2023. Canal oficial de contato para exercício de direitos: <a href="https://falabr.cgu.gov.br/" target="_blank" rel="noopener">Plataforma Fala.BR<span class="sr-only"> (abre em nova aba)</span></a> (requer login gov.br).</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-database" aria-hidden="true"></i> 3. Quais dados este painel trata</h2>
+      <p>Este painel é uma ferramenta interna de gestão de processos. Ele <strong>não coleta, não envia a servidor algum e não armazena dados pessoais de quem o acessa</strong> — não há formulários, login próprio ou rastreamento. O único dado salvo é a sua preferência de alto contraste, gravada localmente no seu navegador (<code>localStorage</code>), que nunca sai do seu dispositivo.</p>
+      <p>Exceção: se você usar o botão "Reportar um erro", o e-mail que se abre pode conter, a seu critério, um print de tela e informações técnicas do navegador — esse envio é uma ação sua, feita pelo seu próprio cliente de e-mail, e não passa pelo painel.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-scale-balanced" aria-hidden="true"></i> 4. Base legal</h2>
+      <p>Quando dados de servidores da Codevasf aparecem nas fichas de processos (ex.: nome e contato do dono do processo, na aba NUGEP), o tratamento se baseia na <strong>execução de políticas públicas</strong> pela administração pública (art. 23 da LGPD), no âmbito das competências institucionais da UNP/GPE/AE.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-globe" aria-hidden="true"></i> 5. Recursos de terceiros e transferência internacional</h2>
+      <p>O painel carrega, do seu navegador, fontes (Google Fonts), ícones e a leitura da planilha (Font Awesome/SheetJS via Cloudflare) e o widget VLibras (gov.br) — detalhes no aviso exibido no primeiro acesso. Alguns desses serviços são hospedados fora do Brasil; o que trafega é técnico (ex.: seu IP, para entregar o arquivo), não dado pessoal coletado pelo painel.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> 6. Retenção e segurança</h2>
+      <p>Sua preferência de contraste fica salva até você limpar os dados do navegador. O conteúdo de processos (planilha) é mantido pela UNP enquanto for útil à gestão institucional. O painel é hospedado como site estático (GitHub Pages), sem banco de dados próprio.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-hand" aria-hidden="true"></i> 7. Seus direitos (art. 18 da LGPD)</h2>
+      <p>Confirmação de tratamento, acesso, correção, anonimização, eliminação, portabilidade e informação sobre compartilhamento. Para exercê-los sobre dados tratados pela Codevasf (não sobre o painel em si, que não coleta dados), use a Plataforma Fala.BR indicada no item 2.</p>
+
+      <h2 style="font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:14px 0 6px"><i class="fas fa-file-contract" aria-hidden="true"></i> 8. Termos de uso</h2>
+      <p>Ferramenta de uso interno da Codevasf. O conteúdo é publicado sob licença Creative Commons Atribuição-SemDerivações 3.0. Dados de exemplo eventualmente exibidos durante a implantação são fictícios. Uso por conta e risco do usuário; a Codevasf não garante disponibilidade contínua do serviço.</p>
+
+      <p class="pp-muted" style="margin-top:16px;font-size:var(--fs-sm)">Esta página resume o tratamento específico deste painel. Para a política corporativa completa da Codevasf, veja <a href="https://www.codevasf.gov.br/acesso-a-informacao/participacao-social/ouvidoria/encarregado-pelo-tratamento-de-dados-pessoais/encarregado-pelo-tratamento-de-dados-pessoais" target="_blank" rel="noopener">Encarregado pelo Tratamento de Dados Pessoais — Codevasf<span class="sr-only"> (abre em nova aba)</span></a>. Este resumo não substitui aconselhamento jurídico; em caso de dúvida, consulte a Assessoria Jurídica da Codevasf.</p>
+    </div>
+  </div>
+</div>
+
 <!-- ─── Equipe de Desenvolvimento — crédito discreto de quem desenvolve e
      mantém tecnicamente este painel (distinto do NUGEP, que conduz a
      metodologia de mapeamento). Acessível pelo rodapé, em "Sobre o
@@ -382,10 +427,14 @@
       <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
     <div class="br-modal-body">
       <p>Este painel — a plataforma, o código e a integração com a planilha de dados — é desenvolvido e mantido por:</p>
-      <div class="team-info" style="margin-top:8px">
-        <div class="team-name">Antonio Ordones Neto</div>
-        <div class="team-role">Analista em Desenvolvimento Regional — Desenvolvimento e Manutenção Técnica do Painel<br><span class="team-unit">AE/GPE/UNP</span></div>
-        <a class="team-email" href="mailto:antonio.ordones@codevasf.gov.br"><i class="fas fa-envelope" aria-hidden="true"></i> antonio.ordones@codevasf.gov.br</a>
+      <div class="br-card team-card" style="margin-top:8px">
+        <img class="team-photo" src="data:image/jpeg;base64,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" alt="Foto de Antonio Ordones Neto">
+        <div class="team-info">
+          <div class="team-name">Antonio Ordones Neto</div>
+          <div class="team-role">Analista em Desenvolvimento Regional — Desenvolvimento e Manutenção Técnica do Painel<br><span class="team-unit">AE/GPE/UNP</span></div>
+          <a class="team-email" href="mailto:antonio.ordones@codevasf.gov.br"><i class="fas fa-envelope" aria-hidden="true"></i> antonio.ordones@codevasf.gov.br</a>
+          <a class="team-email" href="tel:+556120284344"><i class="fas fa-phone" aria-hidden="true"></i> +55 (61) 2028-4344</a>
+        </div>
       </div>
       <p style="margin-top:12px">Para dúvidas sobre <strong>conteúdo</strong> dos processos mapeados, procure a aba <a href="#/nugep">NUGEP</a>. Para problemas <strong>técnicos</strong> do painel, use o botão "Reportar um erro" (canto inferior esquerdo) ou o contato acima.</p>
     </div>

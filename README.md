@@ -165,6 +165,24 @@ textos ajustados para este painel:
   (por padrão, Antonio Ordones Neto; ajuste o nome/e-mail em `index.html`,
   busque por `modalEquipeDev`).
 
+## LGPD, Ouvidoria e crédito da Equipe de Desenvolvimento
+
+- **Equipe de Desenvolvimento** (rodapé → "Sobre o Painel"): agora com foto,
+  e-mail e telefone do Antonio Ordones, no mesmo formato do card "Quem é Quem"
+  do painel do PTD.
+- **Rodapé → Atendimento**: link direto para a Ouvidoria da Codevasf
+  (Plataforma Fala.BR).
+- **Rodapé (linha institucional)**: endereço completo e CNPJ da Codevasf,
+  conferidos na fonte oficial (codevasf.gov.br).
+- **Política de Privacidade e Termos de Uso** (rodapé, dois links): página
+  completa e verificada — controlador (CNPJ/endereço), Encarregado/DPO
+  oficial da Codevasf com canal Fala.BR, quais dados o painel efetivamente
+  trata (praticamente nenhum: é estático, sem servidor próprio), base legal,
+  recursos de terceiros/transferência internacional, retenção, direitos do
+  titular (art. 18 da LGPD) e termos de uso. Não substitui aconselhamento
+  jurídico — para a política corporativa completa, a página linka a fonte
+  oficial da Codevasf.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
