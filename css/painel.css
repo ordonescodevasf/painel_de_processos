@@ -537,3 +537,11 @@ body.contraste-alto .graf svg text{fill:#fff !important;}
   .faq-item,.gloss-rel,.cv-chip{transition:none;}
   .proc-card:hover,.cv-bloco a:hover,.repo-oficial-card:hover{transform:none;}
 }
+
+/* ── modal Equipe de Desenvolvimento: card foto+texto confortável e
+   adaptável (era small/300px, apertava a foto contra o texto) ── */
+#modalEquipeDev .team-card{background:var(--gray-2);border-radius:var(--r-md);}
+@media(max-width:420px){
+  #modalEquipeDev .team-card{flex-direction:column;text-align:center;gap:var(--sp2);}
+  #modalEquipeDev .team-email{justify-content:center;}
+}
