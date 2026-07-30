@@ -355,6 +355,16 @@
     var raiz = cadeia[cadeia.length - 1];
     return raiz ? IDX.p[raiz.Vinculo_Pai] : null;
   }
+  function contarAtividadesRecursivo(codigoPai) {
+    // conta atividades de todos os subprocessos ligados a codigoPai, inclusive
+    // aninhados (subprocesso dentro de subprocesso, quantos níveis houver)
+    var subs = IDX.subsPorPai[codigoPai] || [], total = 0;
+    subs.forEach(function (s) {
+      total += (IDX.ativsPorSub[s.Codigo] || []).length;
+      total += contarAtividadesRecursivo(s.Codigo);
+    });
+    return total;
+  }
   function urlDrive(u) {                     // link de compartilhamento → imagem exibível
     var m = String(u || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
     return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000' : null;
@@ -1056,6 +1066,47 @@
     return svgWrap(titulo, corpo, '0 0 200 ' + (sz + 30));
   }
 
+  function grafGauge(titulo, valor, max, faixas) {   // faixas: [{ate, cor}] em ordem crescente
+    var cx = 150, cy = 140, r = 110, r2 = 82;
+    function pt(v, raio) {
+      var ang = Math.PI - (Math.max(0, Math.min(max, v)) / max) * Math.PI;
+      return [cx + raio * Math.cos(ang), cy - raio * Math.sin(ang)];
+    }
+    var faixasHtml = (faixas || []).map(function (f, i) {
+      var de = i === 0 ? 0 : faixas[i - 1].ate, a = pt(de, r), b = pt(f.ate, r);
+      var grande = (f.ate - de) / max > 0.5 ? 1 : 0;
+      return '<path d="M' + a[0].toFixed(1) + ',' + a[1].toFixed(1) + ' A' + r + ',' + r + ' 0 ' + grande + ',1 ' + b[0].toFixed(1) + ',' + b[1].toFixed(1) + '" stroke="' + f.cor + '" stroke-width="20" fill="none" opacity=".25"></path>';
+    }).join('');
+    var pa = pt(0, r2), pb = pt(valor, r2);
+    var grandeArco = (valor / max) > 0.5 ? 1 : 0;
+    var corAtual = '#005ca8';
+    (faixas || []).forEach(function (f) { if (valor <= f.ate) corAtual = corAtual === '#005ca8' ? f.cor : corAtual; });
+    var ponteiro = pt(valor, r2);
+    var corpo = faixasHtml +
+      '<path d="M' + pa[0].toFixed(1) + ',' + pa[1].toFixed(1) + ' A' + r2 + ',' + r2 + ' 0 ' + grandeArco + ',1 ' + pb[0].toFixed(1) + ',' + pb[1].toFixed(1) + '" stroke="' + corAtual + '" stroke-width="20" fill="none" stroke-linecap="round"></path>' +
+      '<circle cx="' + ponteiro[0].toFixed(1) + '" cy="' + ponteiro[1].toFixed(1) + '" r="7" fill="' + corAtual + '" stroke="#fff" stroke-width="2"></circle>' +
+      '<text x="' + cx + '" y="' + (cy - 18) + '" font-size="34" font-weight="700" fill="#222b54" text-anchor="middle">' + valor + '%</text>' +
+      '<text x="' + cx + '" y="' + (cy + 6) + '" font-size="11" fill="#5c5c5c" text-anchor="middle">de ' + max + '%</text>';
+    return svgWrap(titulo, corpo, '0 0 300 160');
+  }
+
+  function grafBubble(titulo, pontos, rotEixoX, rotEixoY) {   // [{x,y,r,rotulo,cor,href}], x,y 0-100
+    var lw = 30, bh = 210, bw = 380, mt = 10, maxY = Math.max(2, Math.max.apply(null, pontos.map(function (p) { return p.y; })) + 1);
+    function px(v) { return lw + (v / 100) * bw; }
+    function py(v) { return mt + bh - (v / maxY) * bh; }
+    var eixos = '<line x1="' + lw + '" y1="' + mt + '" x2="' + lw + '" y2="' + (mt + bh) + '" stroke="#ccc"></line>' +
+      '<line x1="' + lw + '" y1="' + (mt + bh) + '" x2="' + (lw + bw) + '" y2="' + (mt + bh) + '" stroke="#ccc"></line>' +
+      [0, 25, 50, 75, 100].map(function (v) { return '<text x="' + px(v) + '" y="' + (mt + bh + 14) + '" font-size="9" fill="#5c5c5c" text-anchor="middle">' + v + '</text>'; }).join('') +
+      '<text x="' + (lw + bw / 2) + '" y="' + (mt + bh + 30) + '" font-size="10" fill="#5c5c5c" text-anchor="middle">' + esc(rotEixoX) + '</text>' +
+      '<text x="4" y="' + (mt + 4) + '" font-size="9" fill="#5c5c5c">' + esc(rotEixoY) + ' ↑</text>';
+    var bolhas = pontos.map(function (p) {
+      var navAttr = p.href ? ' data-nav="1" data-href="' + esc(p.href) + '"' : '';
+      return '<circle cx="' + px(p.x).toFixed(1) + '" cy="' + py(p.y).toFixed(1) + '" r="' + (p.r || 8) + '" fill="' + (p.cor || '#005ca8') + '" fill-opacity=".78" stroke="#fff" stroke-width="1.5"' + navAttr + '>' +
+        '<title>' + esc(p.rotulo) + ' — ' + esc(rotEixoX) + ': ' + p.x + '% · ' + esc(rotEixoY) + ': ' + p.y + (p.href ? ' — clique para abrir' : '') + '</title></circle>';
+    }).join('');
+    return svgWrap(titulo, eixos + bolhas, '0 0 ' + (lw + bw + 20) + ' ' + (mt + bh + 45));
+  }
+
   /* ── TELA: dashboard gerencial ────────────────────────────────────── */
   function renderDashboard() {
     var el = $('#viewDashboard');
@@ -1097,6 +1148,8 @@
       '<div class="kpi" title="Total de tarefas mapeadas na carteira (menor unidade de trabalho, CBOK 4.0)."><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas</span><span class="sub">mapeadas na carteira</span></div>' +
       '</div>' +
       '<div class="graf-grid">' +
+      grafGauge('Avanço médio geral da carteira', media, 100, [
+        { ate: 40, cor: '#c5170b' }, { ate: 70, cor: '#8a6d00' }, { ate: 100, cor: '#137436' }]) +
       grafDonut('Situação do mapeamento', [
         { rotulo: 'Concluído', valor: concl, cor: '#137436' },
         { rotulo: 'Em andamento', valor: andam, cor: '#8a6d00' },
@@ -1111,6 +1164,13 @@
         return { rotulo: m.Codigo + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8', href: '#/mp/' + encodeURIComponent(m.Codigo),
           valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
       }), '%', 100) +
+      grafBubble('Priorização: avanço × riscos abertos por processo — clique para abrir', procs.map(function (p) {
+        var rp = vinculados('riscos', 'Processo', p.Codigo).filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
+        var ativs = contarAtividadesRecursivo(p.Codigo);
+        return { x: p.Percentual, y: rp.length, r: Math.max(6, Math.min(22, 6 + ativs * 1.5)),
+          rotulo: p.Codigo + ' — ' + p.Nome, cor: p.Percentual < 40 && rp.length >= 1 ? '#c5170b' : (CAT_COR[(IDX.mp[p.Macroprocesso] || {})._cat] || '#005ca8'),
+          href: '#/p/' + encodeURIComponent(p.Codigo) };
+      }), 'Avanço do mapeamento (%)', 'Riscos abertos') +
       grafFunil('Marcos concluídos na carteira (M1 → M10)', funil) +
       grafLinha('Processos publicados (acumulado)', linha) +
       grafHeat('Riscos abertos por probabilidade × impacto', heatArr) +

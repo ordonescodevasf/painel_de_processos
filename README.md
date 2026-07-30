@@ -342,6 +342,39 @@ Adicionada a especificação oficial **BPMN 2.0 (Business Process Model and
 Notation)** da OMG, usada por baixo dos panos em qualquer diagrama feito no
 Bizagi: <https://www.omg.org/spec/BPMN/2.0/>.
 
+## Correção: compartilhar/imprimir sem reagir ao clique
+
+A navegação principal usa `position:sticky` para ficar fixa no topo ao
+rolar a página. A barra de compartilhar/imprimir tinha sido colocada logo
+depois dela, fora desse contexto sticky — ao rolar mesmo que um pouco, a
+navegação fixa passava por cima da barra, tornando os botões inclicáveis
+(o clique caía na navegação, não nos botões). Um bug real de sobreposição
+visual, do tipo que testes automatizados não pegam por não fazerem
+renderização de layout de verdade. Corrigido movendo a barra para **dentro**
+de `#navigation`, no mesmo contexto sticky — agora rola junto com a
+navegação e nunca fica coberta.
+
+## Dois gráficos novos no Dashboard
+
+A partir do catálogo de possibilidades do amCharts que você mandou, dois
+tipos que ainda não usávamos e que encaixam bem com os dados que já temos:
+
+- **Gauge (medidor)** — Avanço médio geral da carteira, com faixas de cor
+  (vermelho/amber/verde) para leitura rápida do "estado geral" do
+  portfólio, sem precisar comparar vários números.
+- **Bubble (dispersão)** — Prioriza processos por avanço × riscos abertos:
+  cada bolha é um processo, o tamanho reflete a quantidade de atividades
+  mapeadas (contagem recursiva, considerando subprocessos aninhados),
+  clicar leva direto à ficha. Processos com avanço baixo e algum risco
+  aberto aparecem em vermelho — é o quadrante que merece atenção primeiro.
+
+**Outros candidatos fortes do catálogo, para uma próxima rodada se
+interessar:** um **Treemap** (categoria Hierarquia) mostrando a proporção
+do portfólio por quantidade de tarefas em cada macroprocesso/processo; e um
+**Gantt** (categoria Gantt) com o cronograma de mapeamento de cada
+processo (início/prazo/conclusão), sinalizando os atrasados — os dados de
+data já existem na planilha, só não estão visualizados como linha do tempo.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e

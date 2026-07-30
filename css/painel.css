@@ -23,7 +23,14 @@
 
 /* ── barra de compartilhar/imprimir — fora das views, aparece em toda
    página do painel sem precisar repetir em cada tela ── */
-.pp-acoes-pagina{max-width:1200px;margin:0 auto;padding:10px var(--sp3) 0;
+/* ── barra de compartilhar/imprimir — vive DENTRO de #navigation (mesmo
+   contexto sticky da tab-nav), não como filha solta de <main>. Colocá-la
+   fora do sticky fazia a nav cobri-la ao rolar a página, tornando os
+   botões inclicáveis assim que o usuário rolava um pouco (bug real:
+   testes automatizados não veem isso, pois não fazem layout/paint de
+   verdade — só checam presença no DOM). ── */
+.pp-acoes-pagina{max-width:1200px;margin:0 auto;padding:6px var(--sp3);
+  border-top:1px solid var(--gray-10);
   display:flex;justify-content:flex-end;gap:6px;}
 @media(min-width:1600px){.pp-acoes-pagina{max-width:1560px;}}
 .pp-acoes-pagina .br-button.circle{color:var(--gray-60);border-color:var(--gray-20);}
