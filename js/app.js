@@ -15,7 +15,7 @@
     googleSheetId: '',                      // cole aqui o ID da planilha Google (opcional)
     arquivoXlsx: 'data/painel-processos-dados.xlsx',
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
-           'Documentos', 'Riscos', 'Indicadores', 'Diario_Mapeamento',
+           'Documentos', 'Riscos', 'Indicadores',
            'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
@@ -169,7 +169,6 @@
       docs: pega('Documentos'),
       riscos: pega('Riscos'),
       inds: pega('Indicadores'),
-      diario: pega('Diario_Mapeamento'),
       jornada: pega('Jornada'),
       repo: pega('Repositorio'),
       nugep: pega('NUGEP'),
@@ -196,8 +195,6 @@
       r._nivel = r.Probabilidade_1a5 * r.Impacto_1a5;
       r._classe = classeRisco(r._nivel);
     });
-    dd.diario.forEach(function (e) { e.Data = isoData(e.Data); });
-    dd.diario.sort(function (a, b) { return String(b.Data || '').localeCompare(String(a.Data || '')); });
     dd.jornada.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.repo.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
@@ -207,7 +204,7 @@
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
     var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorSub: {}, tarefasPorAtiv: {},
-      vinc: { docs: {}, riscos: {}, inds: {} }, diarioPorProc: {} };
+      vinc: { docs: {}, riscos: {}, inds: {} } };
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.macros.forEach(function (m) { idx.mp[m.Codigo] = m; });
     dd.procs.sort(function (a, b) { return String(a.Codigo).localeCompare(String(b.Codigo)); });
@@ -241,9 +238,6 @@
     dd.docs.forEach(function (x) { vincula(idx.vinc.docs, x); });
     dd.riscos.forEach(function (x) { vincula(idx.vinc.riscos, x); });
     dd.inds.forEach(function (x) { vincula(idx.vinc.inds, x); });
-    dd.diario.forEach(function (e) {
-      (idx.diarioPorProc[e.Processo] = idx.diarioPorProc[e.Processo] || []).push(e);
-    });
     DADOS = dd; IDX = idx;
     return dd;
   }
@@ -317,9 +311,9 @@
           : '<span class="atual" aria-current="page">' + esc(t.rotulo) + '</span>');
       }).join('') + '</nav>';
   }
-  var MARCOS_ROTULOS = ['Reunião de contextualização', 'Macroprocesso e processo modelados',
-    'Subprocessos modelados', 'AS-IS modelado', 'AS-IS validado', 'Procedimento validado',
-    'Procedimento aprovado', 'TO-BE elaborado', 'TO-BE validado', 'Publicado no repositório'];
+  var MARCOS_ROTULOS = ['Reunião de contextualização', 'Processos modelados',
+    'Subprocessos modelados', 'AS-IS modelado', 'AS-IS validado', 'Procedimento elaborado',
+    'Procedimento aprovado', 'TO-BE elaborado', 'TO-BE aprovado', 'Publicado no repositório'];
   var MARCOS_CAMPOS = ['M1_Reuniao_Contextualizacao', 'M2_Macro_Processo_Modelados', 'M3_Subprocessos_Modelados',
     'M4_ASIS_Modelado', 'M5_ASIS_Validado', 'M6_Procedimento_Validado', 'M7_Procedimento_Aprovado',
     'M8_TOBE_Elaborado', 'M9_TOBE_Validado', 'M10_Publicado_Repositorio'];
@@ -329,10 +323,10 @@
     'Oficinas de modelagem dos subprocessos — podendo aprofundar vários níveis (subprocesso dentro de subprocesso) — inclusive identificando subprocessos ainda não mapeados.',
     'O conjunto de diagramas AS-IS (macroprocesso, processo, subprocessos e atividades) está consolidado.',
     'O dono do processo validou formalmente o AS-IS como retrato fiel da realidade atual.',
-    'O procedimento operacional padrão (POP) foi redigido e revisado tecnicamente pela equipe de mapeamento (CBOK 4.0).',
-    'O POP foi aprovado pela autoridade competente da área — pronto para orientar a execução do processo.',
+    'O procedimento operacional padrão (POP) foi redigido e revisado tecnicamente pela equipe de mapeamento (CBOK 4.0) e encaminhado para validação do dono do processo.',
+    'O POP foi aprovado pela Diretoria Executiva (DEX) — pronto para orientar a execução do processo.',
     'O redesenho (TO-BE) do processo foi elaborado, com melhorias, riscos residuais e indicadores propostos.',
-    'O dono do processo e a gerência da área validaram formalmente o TO-BE.',
+    'O dono do processo validou o TO-BE, que foi aprovado pela Diretoria Executiva (DEX).',
     'O processo, seus diagramas e o POP foram publicados no repositório institucional — mapeamento concluído.'
   ];
   function marcosHtml(p) {
@@ -365,16 +359,16 @@
     var m = String(u || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
     return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000' : null;
   }
-  function diagramaHtml(caminho, titulo) {
+  function diagramaHtml(caminho, titulo, semBotao) {
     if (!caminho) return '<p class="pp-vazio">Diagrama BPMN ainda não publicado para este item. Informe a URL da imagem exportada do Bizagi (ou um caminho do repositório) na coluna Imagem_Bizagi da planilha.</p>';
     var href = esc(caminho);
     var src = esc(urlDrive(caminho) || caminho);
     return '<figure class="diagrama-frame"><a href="' + href + '" target="_blank" rel="noopener" title="Abrir o diagrama no link original (nova aba)">' +
       '<img src="' + src + '" alt="Diagrama BPMN (Bizagi) — ' + esc(titulo) + '" loading="lazy" ' +
       'onerror="this.closest(&quot;figure&quot;).classList.add(&quot;sem-imagem&quot;)"></a>' +
-      '<figcaption class="diagrama-fallback"><i class="fas fa-diagram-project" aria-hidden="true"></i> A pré-visualização não pôde ser carregada aqui — abra o diagrama pelo botão abaixo.</figcaption></figure>' +
-      '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
-      '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir diagrama no link publicado<span class="sr-only"> (abre em nova aba)</span></a></div>';
+      '<figcaption class="diagrama-fallback"><i class="fas fa-diagram-project" aria-hidden="true"></i> A pré-visualização não pôde ser carregada aqui — abra o diagrama clicando na imagem.</figcaption></figure>' +
+      (semBotao ? '' : '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
+      '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir diagrama no link publicado<span class="sr-only"> (abre em nova aba)</span></a></div>');
   }
 
   function listaDocsHtml(docs) {
@@ -424,36 +418,12 @@
           '</td><td>' + fmtData(x.Ultima_Medicao) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
   }
-  function timelineHtml(regs) {
-    if (!regs.length) return '<p class="pp-vazio">Nenhum registro de mapeamento ainda.</p>';
-    return '<ol class="timeline">' + regs.map(function (e) {
-      var evs = evidencias(e.Evidencias);
-      return '<li><div class="quando"><span class="tipo">' + esc(e.Tipo || 'Nota') + '</span> ' +
-        fmtData(e.Data) + (e.Autor ? ' · ' + esc(e.Autor) : '') +
-        (e.Processo ? ' · <a href="#/p/' + encodeURIComponent(e.Processo) + '">' + esc(e.Processo) + '</a>' : '') +
-        '</div><h4>' + esc(e.Titulo || '(sem título)') + '</h4>' +
-        (e.Descricao ? '<p style="font-size:var(--fs-sm)">' + esc(e.Descricao) + '</p>' : '') +
-        (e.Participantes ? '<p class="pp-muted" style="font-size:var(--fs-sm)"><i class="fas fa-users" aria-hidden="true"></i> ' + esc(e.Participantes) + '</p>' : '') +
-        ((e.Entradas_Insumos || e.Saidas_Entregaveis)
-          ? '<div class="es-grid">' +
-            '<div class="es-caixa"><b><i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i> Entradas / insumos</b>' + (listar(e.Entradas_Insumos).map(esc).join('; ') || '—') + '</div>' +
-            '<div class="es-caixa"><b><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Saídas / entregáveis</b>' + (listar(e.Saidas_Entregaveis).map(esc).join('; ') || '—') + '</div></div>'
-          : '') +
-        (evs.length ? '<p class="evidencias" style="margin-top:6px"><b style="font-size:10px;text-transform:uppercase;color:var(--gray-60)">Evidências:</b> ' +
-          evs.map(function (ev) {
-            return ev.url ? '<a href="' + esc(ev.url) + '" target="_blank" rel="noopener"><i class="fas fa-paperclip" aria-hidden="true"></i> ' + esc(ev.nome) + '<span class="sr-only"> (abre em nova aba)</span></a>'
-              : '<span class="chip"><i class="fas fa-paperclip" aria-hidden="true"></i> ' + esc(ev.nome) + '</span>';
-          }).join(' ') + '</p>' : '') +
-        (e.Memoria ? '<p class="memoria"><i class="fas fa-book-open" aria-hidden="true"></i> ' + esc(e.Memoria) + '</p>' : '') +
-        '</li>';
-    }).join('') + '</ol>';
-  }
 
   /* ── roteador + abas ──────────────────────────────────────────────── */
   var ROTAS_ABA = { inicio: '#/', catalogo: '#/catalogo', dashboard: '#/dashboard', repositorio: '#/repositorio',
     documentos: '#/documentos', riscos: '#/riscos', indicadores: '#/indicadores',
-    diario: '#/diario', nugep: '#/nugep', glossario: '#/glossario', faq: '#/faq' };
-  var MAIS_ITENS = { diario: 'Diário', repositorio: 'Repositório', nugep: 'NUGEP',
+    nugep: '#/nugep', glossario: '#/glossario', faq: '#/faq' };
+  var MAIS_ITENS = { repositorio: 'Repositório', nugep: 'NUGEP',
     glossario: 'Glossário', faq: 'FAQ' };
   function mostrarPainel(id) {
     $all('#mainTabContent > .tab-panel').forEach(function (p) {
@@ -492,7 +462,6 @@
     else if (h === '#/documentos') { renderDocumentos(); mostrarPainel('documentos'); }
     else if (h === '#/riscos') { renderRiscos(); mostrarPainel('riscos'); }
     else if (h === '#/indicadores') { renderIndicadores(); mostrarPainel('indicadores'); }
-    else if (h === '#/diario') { renderDiario(); mostrarPainel('diario'); }
     else if (h === '#/dashboard') { renderDashboard(); mostrarPainel('dashboard'); }
     else if (h === '#/repositorio' || h === '#/metodologia') { renderRepositorio(); mostrarPainel('repositorio'); }
     else if (h === '#/nugep') { renderNugep(); mostrarPainel('nugep'); }
@@ -524,39 +493,6 @@
     }
   });
 
-  /* ── alertas operacionais (sino) ──────────────────────────────────── */
-  window.showNotifTab = function (qual, btn) {
-    $('#notifPanelOverdue').hidden = qual !== 'overdue';
-    $('#notifPanelOverdue').classList.toggle('active', qual === 'overdue');
-    $('#notifPanelRisk').hidden = qual !== 'risk';
-    $('#notifPanelRisk').classList.toggle('active', qual === 'risk');
-    $all('#notifTabs .tab-item').forEach(function (li) { li.classList.remove('active'); });
-    if (btn) { btn.closest('.tab-item').classList.add('active'); }
-  };
-  function montarAlertas() {
-    var hoje = hojeISO();
-    var vencidos = DADOS.procs.filter(function (p) {
-      return p.Prazo_Previsto && p.Prazo_Previsto < hoje && p._status !== 'concluido';
-    });
-    var criticos = DADOS.riscos.filter(function (r) {
-      return (r._classe === 'Alto' || r._classe === 'Extremo') && !/encerrad/i.test(String(r.Status || ''));
-    });
-    $('#notifOverdueCount').textContent = vencidos.length;
-    $('#notifRiskCount').textContent = criticos.length;
-    var badge = $('#notifBadge');
-    var total = vencidos.length + criticos.length;
-    badge.textContent = total; badge.hidden = !total;
-    $('#notifOverdueList').innerHTML = vencidos.length ? vencidos.map(function (p) {
-      return '<a class="br-item" href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Codigo) +
-        '</strong> — ' + esc(p.Nome) + '<br><span class="pp-muted">Prazo: ' + fmtData(p.Prazo_Previsto) + '</span></a>';
-    }).join('') : '<div class="br-item pp-vazio">Nenhum prazo vencido.</div>';
-    $('#notifRiskList').innerHTML = criticos.length ? criticos.map(function (r) {
-      return '<a class="br-item" href="' + rotaDe(r.Vinculo_Nivel, r.Vinculo_Codigo) + '"><strong>' + esc(r.ID) +
-        '</strong> ' + tagNivel(r._classe) + '<br>' + esc(r.Descricao_Risco) + '</a>';
-    }).join('') : '<div class="br-item pp-vazio">Nenhum risco crítico aberto.</div>';
-    var btnFechar = $('#notifCloseBtn');
-    if (btnFechar) btnFechar.onclick = function () { $('#notifPanel').hidden = true; };
-  }
 
   /* ── ações do cabeçalho ───────────────────────────────────────────── */
   window.refreshAll = function () {
@@ -634,7 +570,6 @@
     var criticos = DADOS.riscos.filter(function (r) {
       return (r._classe === 'Alto' || r._classe === 'Extremo') && !/encerrad/i.test(String(r.Status || ''));
     }).length;
-    var docsVig = DADOS.docs.filter(function (x) { return /vigente/i.test(String(x.Situacao || '')); }).length;
     var ger = DADOS.macros.filter(function (m) { return m._cat === 'gerencial'; });
     var fin = DADOS.macros.filter(function (m) { return m._cat === 'finalistico'; });
     var sup = DADOS.macros.filter(function (m) { return m._cat === 'suporte'; });
@@ -645,11 +580,11 @@
       'documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
       '</section>' +
       '<div class="kpi-grid">' +
-      '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + procs.length + ' processos · ' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
-      '<div class="kpi ok"><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
-      '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento da carteira</span></div>' +
-      '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '"><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
-      '<div class="kpi"><span class="num">' + docsVig + '</span><span class="lbl">Documentos vigentes</span><span class="sub">' + DADOS.diario.length + ' registros no diário</span></div>' +
+      '<div class="kpi" title="Total de macroprocessos na cadeia de valor institucional (gerenciais, finalísticos e de suporte)."><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
+      '<div class="kpi" title="Total de processos de negócio mapeados na carteira."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">de negócio, na carteira atual</span></div>' +
+      '<div class="kpi ok" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos."><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
+      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos da carteira."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento da carteira</span></div>' +
+      '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="cadeia">' +
@@ -684,7 +619,7 @@
       return true;
     });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Catálogo de processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-filtros" role="search">' +
       '<label class="sr-only" for="fMacro">Filtrar por macroprocesso</label>' +
       '<select id="fMacro"><option value="">Todos os macroprocessos</option>' +
@@ -707,13 +642,13 @@
   }
 
   /* ── TELA: detalhe (mp | p | sp | a) ──────────────────────────────── */
-  function secVinculos(nivel, codigo) {
+  function secVinculos(nivel, codigo, semIndicadores) {
     var docs = vinculados('docs', nivel, codigo);
     var riscos = vinculados('riscos', nivel, codigo);
-    var inds = vinculados('inds', nivel, codigo);
-    return '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>' +
+    var inds = semIndicadores ? [] : vinculados('inds', nivel, codigo);
+    return (semIndicadores ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos (matriz 5×5 · P×I)</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
-      '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>';
+      '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Normativos e documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>';
   }
   function renderDetalhe(tipo, cod) {
     var el = $('#viewDetalhe');
@@ -732,14 +667,13 @@
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
         campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
         campo('Unidade responsável', m.Unidade_Responsavel && esc(m.Unidade_Responsavel), false, 'quem') +
-        campo('Dono do processo (process owner)', m.Dono_Processo && esc(m.Dono_Processo), false, 'quem') +
+        campo('Dono do processo', m.Dono_Processo && esc(m.Dono_Processo), false, 'quem') +
         campo('Entregas (produtos/serviços)', chips(m.Entregas), true, 'valor') +
         campo('Beneficiários', chips(m.Clientes_Beneficiarios), false, 'valor') +
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
         campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop'), false, 'tecnico') +
-        campo('Normativos aplicáveis', chips(m.Normativos_Aplicaveis, 'fa-scale-balanced'), true, 'tecnico') +
         (m.Observacoes ? campo('Observações', esc(m.Observacoes), true) : '') + '</dl></div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome, true) + '</div>' +
         secVinculos('Macroprocesso', cod) +
         '</div><aside>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos vinculados</h3>' +
@@ -756,7 +690,6 @@
       if (!p) { el.innerHTML = naoEncontrado('Processo de negócio', cod); return; }
       var mp = IDX.mp[p.Macroprocesso];
       var subs = IDX.subsPorPai[cod] || [];
-      var regs = IDX.diarioPorProc[cod] || [];
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
           .concat(mp ? [{ rotulo: mp.Codigo, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : [])
@@ -766,14 +699,14 @@
         '<h2>' + esc(p.Codigo) + ' — ' + esc(p.Nome) + '</h2>' +
         '<div class="meta">' + tagStatus(p.Status_Mapeamento) +
         '<span>Mapeamento: <strong>' + p.Percentual + '%</strong></span>' +
-        (p.Fase_Ciclo_BPM ? '<span class="chip" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4);color:#fff">' + esc(p.Fase_Ciclo_BPM) + '</span>' : '') +
-        (p.Area_Responsavel ? '<span>Área: ' + esc(p.Area_Responsavel) + '</span>' : '') +
+        (p.Area_Responsavel ? '<span>Gerência: ' + esc(p.Area_Responsavel) + '</span>' : '') +
         (p.Processo_SEI ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> SEI ' + esc(p.Processo_SEI) + '</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
-        '<div class="pp-card"><h3><i class="fas fa-bullseye" aria-hidden="true"></i> Descrição e objetivo</h3>' +
-        '<p style="font-size:var(--fs-sm)">' + esc(p.Descricao || '') + '</p>' +
-        (p.Objetivo ? '<p style="font-size:var(--fs-sm);margin-top:var(--sp1)"><strong>Objetivo:</strong> ' + esc(p.Objetivo) + '</p>' : '') + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-bullseye" aria-hidden="true"></i> Descrição</h3>' +
+        '<p style="font-size:var(--fs-sm)">' + esc(p.Descricao || '') + '</p></div>' +
+        (p.Objetivo ? '<div class="pp-card"><h3><i class="fas fa-crosshairs" aria-hidden="true"></i> Objetivo</h3>' +
+        '<p style="font-size:var(--fs-sm)">' + esc(p.Objetivo) + '</p></div>' : '') +
         '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> SIPOC</h3><div class="sipoc">' +
         '<div class="col"><h4>Fornecedores</h4><ul>' + (listar(p.Fornecedores).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col"><h4>Entradas</h4><ul>' + (listar(p.Entradas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
@@ -784,25 +717,18 @@
         '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' + marcosHtml(p) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         secVinculos('Processo', cod) +
-        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos</h3>' +
-        (subs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Entregas</th><th></th></tr></thead><tbody>' +
-          subs.map(function (s) {
-            return '<tr><td class="cod">' + esc(s.Codigo) + '</td><td><a href="#/sp/' + encodeURIComponent(s.Codigo) + '"><strong>' + esc(s.Nome) + '</strong></a>' +
-              (s.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(s.Descricao) + '</div>' : '') + '</td>' +
-              '<td style="font-size:var(--fs-sm)">' + (listar(s.Entregas).map(esc).join('; ') || '—') + '</td>' +
-              '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(s.Codigo) + '">Abrir ficha</a></td></tr>';
-          }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhum subprocesso cadastrado.</p>') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-timeline" aria-hidden="true"></i> Diário de mapeamento deste processo</h3>' + timelineHtml(regs) + '</div>' +
         '</div><aside>' +
-        '<div class="pp-card"><h3><i class="fas fa-calendar-check" aria-hidden="true"></i> Cronograma do projeto</h3>' + barraPct(p.Percentual) +
-        '<dl class="ficha-dl" style="grid-template-columns:1fr 1fr;margin-top:var(--sp2)">' +
-        campo('Início', fmtData(p.Inicio_Mapeamento), false, 'tempo') + campo('Prazo', fmtData(p.Prazo_Previsto), false, 'tempo') +
-        campo('Conclusão', fmtData(p.Data_Conclusao), false, 'tempo') + campo('Atualizado em', fmtData(p.Ultima_Atualizacao), false, 'tempo') + '</dl></div>' +
+        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos vinculados</h3>' +
+        (subs.length ? subs.map(function (s) {
+          return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(s.Codigo) + '</span>' +
+            '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div></div></div></a>';
+        }).join('') : '<p class="pp-vazio">Nenhum subprocesso cadastrado.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Responsáveis</h3><dl class="ficha-dl" style="grid-template-columns:1fr">' +
         campo('Dono do processo', p.Dono_Processo && esc(p.Dono_Processo), false, 'quem') +
-        campo('Área responsável', p.Area_Responsavel && esc(p.Area_Responsavel), false, 'quem') +
-        campo('Interlocutor do mapeamento', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
-        campo('Prioridade / complexidade', esc(p.Prioridade || '—') + ' / ' + esc(p.Complexidade || '—'), false, 'quem') + '</dl></div>' +
+        campo('Gerência responsável', p.Area_Responsavel && esc(p.Area_Responsavel), false, 'quem') +
+        campo('Responsável no NUGEP', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
+        campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
+        campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
         (p.Proxima_Acao ? '<p style="font-size:var(--fs-sm)">' + esc(p.Proxima_Acao) + '</p>' : '<p class="pp-vazio">—</p>') +
         (p.Pendencia ? '<div class="pp-aviso" style="margin:var(--sp2) 0 0"><strong>Pendência:</strong> ' + esc(p.Pendencia) + '</div>' : '') + '</div>' +
@@ -898,7 +824,6 @@
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
       campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') +
       campo('Base normativa', a.Base_Normativa ? chips(a.Base_Normativa, 'fa-scale-balanced') : null, false, 'tecnico') + '</dl></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(a.Imagem_Bizagi, a.Nome) + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Tarefas (menor unidade de trabalho — CBOK 4.0)</h3>' +
       (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
         tf3.map(function (t) {
@@ -907,7 +832,7 @@
             '<td style="font-size:var(--fs-sm)">' + esc(t.Tipo_Tarefa || '—') + '</td>' +
             '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>';
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
-      secVinculos('Atividade', cod) +
+      secVinculos('Atividade', cod, true) +
       '</div><aside>' +
       (sp2 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
         '<a class="proc-card" href="#/sp/' + encodeURIComponent(sp2.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(sp2.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(sp2.Nome) + '</div></div></div></a></div>' : '') +
@@ -946,8 +871,6 @@
       campo('Responsável', t.Responsavel && esc(t.Responsavel), false, 'quem') +
       campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(t.Imagem_Bizagi, t.Nome) + '</div>' +
-      secVinculos('Tarefa', cod) +
       '</div><aside>' +
       (a3 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Atividade (pai)</h3>' +
         '<a class="proc-card" href="#/a/' + encodeURIComponent(a3.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(a3.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(a3.Nome) + '</div></div></div></a></div>' : '') +
@@ -956,7 +879,7 @@
   function naoEncontrado(tipo, cod) {
     return breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: tipo + ' não encontrado' }]) +
       '<div class="pp-card"><h3>' + esc(tipo) + ' não encontrado</h3><p style="font-size:var(--fs-sm)">O código <strong>' +
-      esc(cod) + '</strong> não existe na base atual. Verifique a planilha ou volte ao <a href="#/catalogo">catálogo</a>.</p></div>';
+      esc(cod) + '</strong> não existe na base atual. Verifique a planilha ou volte à lista de <a href="#/catalogo">processos</a>.</p></div>';
   }
 
   /* ── TELAS: documentos · riscos · indicadores · diário ────────────── */
@@ -1031,23 +954,6 @@
       atingidas + ' de ' + DADOS.inds.length + ' indicadores com meta atingida.</p>' +
       '<div class="pp-card">' + tabelaIndsHtml(DADOS.inds, true) + '</div>';
   }
-  var filtroDiario = '';
-  function renderDiario() {
-    var el = $('#viewDiario');
-    var lista = filtroDiario ? DADOS.diario.filter(function (e) { return e.Processo === filtroDiario; }) : DADOS.diario;
-    el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Diário de mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Registro rastreável do trabalho de gestão de processos: reuniões, oficinas, entrevistas, validações, decisões e entregas — cada um com insumos, entregáveis e evidências (CBOK 4.0 · PMBOK).</p>' +
-      '<div class="pp-filtros"><label class="sr-only" for="fProcDiario">Filtrar por processo</label>' +
-      '<select id="fProcDiario"><option value="">Todos os processos</option>' +
-      DADOS.procs.filter(function (p) { return (IDX.diarioPorProc[p.Codigo] || []).length; }).map(function (p) {
-        return '<option value="' + esc(p.Codigo) + '"' + (filtroDiario === p.Codigo ? ' selected' : '') + '>' + esc(p.Codigo + ' — ' + p.Nome) + '</option>';
-      }).join('') + '</select>' +
-      '<span class="pp-muted" style="font-size:var(--fs-sm)">' + lista.length + ' registros</span></div>' +
-      '<div class="pp-card">' + timelineHtml(lista) + '</div>';
-    $('#fProcDiario').onchange = function () { filtroDiario = this.value; renderDiario(); };
-  }
-
   /* ── TELA: metodologia ────────────────────────────────────────────── */
   /* ── GRÁFICOS (SVG puro, sem dependências; cores do DS gov.br) ────── */
   var PAL = ['#222b54', '#005ca8', '#007d4e', '#155bcb', '#74c9ea', '#89bd2b', '#8a6d00', '#c5170b'];
@@ -1076,16 +982,17 @@
     }).join('');
     return svgWrap(titulo, arcos + '<text x="' + cx + '" y="' + (cy + 5) + '" text-anchor="middle" font-size="20" font-weight="700" fill="#222b54">' + total + '</text>' + leg, '0 0 380 180');
   }
-  function grafBarras(titulo, dados, sufixo, meta) {   // [{rotulo, valor, cor}]
+  function grafBarras(titulo, dados, sufixo, meta) {   // [{rotulo, valor, cor, href}]
     if (!dados.length) return svgWrap(titulo, '', '0 0 480 120');
     var max = Math.max.apply(null, dados.map(function (d) { return d.valor; }).concat(meta ? [meta] : [1])) || 1;
     var lw = 132, bw = 320, h = 26, alt = dados.length * h + 24;
     var barras = dados.map(function (d, i) {
       var y = i * h + 8, w = Math.max(2, d.valor / max * bw);
+      var navAttr = d.href ? ' data-nav="1" data-href="' + esc(d.href) + '"' : '';
       return '<text x="0" y="' + (y + 13) + '" font-size="11" fill="#333">' + esc(String(d.rotulo).slice(0, 22)) + '</text>' +
         '<rect x="' + lw + '" y="' + y + '" width="' + bw + '" height="15" rx="3" fill="#f0f0f0"></rect>' +
-        '<rect x="' + lw + '" y="' + y + '" width="' + w.toFixed(1) + '" height="15" rx="3" fill="' + (d.cor || '#005ca8') + '">' +
-        '<title>' + esc(d.rotulo) + ': ' + d.valor + (sufixo || '') + '</title></rect>' +
+        '<rect x="' + lw + '" y="' + y + '" width="' + w.toFixed(1) + '" height="15" rx="3" fill="' + (d.cor || '#005ca8') + '"' + navAttr + '>' +
+        '<title>' + esc(d.rotulo) + ': ' + d.valor + (sufixo || '') + (d.href ? ' — clique para abrir' : '') + '</title></rect>' +
         '<text x="' + (lw + bw + 6) + '" y="' + (y + 12) + '" font-size="11" font-weight="700" fill="#222b54">' + d.valor + (sufixo || '') + '</text>';
     }).join('');
     var linhaMeta = meta ? '<line x1="' + (lw + meta / max * bw) + '" y1="2" x2="' + (lw + meta / max * bw) + '" y2="' + (alt - 16) +
@@ -1148,9 +1055,6 @@
     var atrasados = procs.filter(function (p) { return p.Prazo_Previsto && p.Prazo_Previsto < hoje && p._status !== 'concluido'; });
     var riscosAb = DADOS.riscos.filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
     var criticos = riscosAb.filter(function (r) { return r._classe === 'Alto' || r._classe === 'Extremo'; });
-    var indsMed = DADOS.inds.filter(function (x) { return x._sit && x._sit !== 'Sem medição'; });
-    var indsOk = indsMed.filter(function (x) { return x._sit === 'Meta atingida'; });
-    var pctInds = indsMed.length ? Math.round(indsOk.length / indsMed.length * 100) : 0;
     // marcos agregados (funil)
     var funil = MARCOS_ROTULOS.map(function (rot, i) {
       return { rotulo: 'M' + (i + 1) + ' · ' + rot, valor: procs.filter(function (p) { return simNao(p[MARCOS_CAMPOS[i]]); }).length };
@@ -1170,14 +1074,14 @@
     var CAT_COR = { gerencial: '#222b54', finalistico: '#005ca8', suporte: '#007d4e' };
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>Dashboard gerencial</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="margin-bottom:var(--sp3)">Visão executiva da carteira de mapeamento — atualizada automaticamente a cada carga da planilha. Última leitura: <strong>' + esc(FONTE) + '</strong>.</p>' +
       '<div class="kpi-grid" style="margin-top:0">' +
-      '<div class="kpi"><span class="num">' + cobertura + '%</span><span class="lbl">Cobertura da carteira</span><span class="sub">' + concl + ' de ' + procs.length + ' processos publicados</span></div>' +
-      '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
-      '<div class="kpi ' + (atrasados.length ? 'warn' : 'ok') + '"><span class="num">' + atrasados.length + '</span><span class="lbl">Prazos vencidos</span><span class="sub">sem conclusão registrada</span></div>' +
-      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '"><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
-      '<div class="kpi ' + (pctInds >= 70 ? 'ok' : 'warn') + '"><span class="num">' + pctInds + '%</span><span class="lbl">Indicadores na meta</span><span class="sub">' + indsOk.length + ' de ' + indsMed.length + ' medidos</span></div>' +
-      '<div class="kpi"><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas mapeadas</span><span class="sub">' + DADOS.ativs.length + ' atividades · ' + DADOS.subs.length + ' subprocessos</span></div>' +
+      '<div class="kpi" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total da carteira."><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
+      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos da carteira."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
+      '<div class="kpi ' + (atrasados.length ? 'warn' : 'ok') + '" title="Processos com prazo previsto já vencido e sem conclusão registrada."><span class="num">' + atrasados.length + '</span><span class="lbl">Prazos vencidos</span><span class="sub">sem conclusão registrada</span></div>' +
+      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
+      '<div class="kpi" title="Total de subprocessos mapeados na carteira (inclusive os aninhados, subprocesso dentro de subprocesso)."><span class="num">' + DADOS.subs.length + '</span><span class="lbl">Subprocessos</span><span class="sub">mapeados na carteira</span></div>' +
+      '<div class="kpi" title="Total de atividades mapeadas na carteira."><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades</span><span class="sub">mapeadas na carteira</span></div>' +
+      '<div class="kpi" title="Total de tarefas mapeadas na carteira (menor unidade de trabalho, CBOK 4.0)."><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas</span><span class="sub">mapeadas na carteira</span></div>' +
       '</div>' +
       '<div class="graf-grid">' +
       grafDonut('Situação do mapeamento', [
@@ -1189,21 +1093,17 @@
         return { rotulo: c === 'finalistico' ? 'Finalístico' : c === 'gerencial' ? 'Gerencial' : 'Suporte',
           valor: procs.filter(function (p) { var m = IDX.mp[p.Macroprocesso]; return m && m._cat === c; }).length, cor: CAT_COR[c] };
       })) +
-      grafBarras('Avanço por macroprocesso (%)', DADOS.macros.map(function (m) {
+      grafBarras('Avanço por macroprocesso (%) — clique para abrir', DADOS.macros.map(function (m) {
         var ps = IDX.procsPorMacro[m.Codigo] || [];
-        return { rotulo: m.Codigo + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8',
+        return { rotulo: m.Codigo + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8', href: '#/mp/' + encodeURIComponent(m.Codigo),
           valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
       }), '%', 100) +
-      grafFunil('Marcos concluídos na carteira (M1 → M9)', funil) +
+      grafFunil('Marcos concluídos na carteira (M1 → M10)', funil) +
       grafLinha('Processos publicados (acumulado)', linha) +
       grafHeat('Riscos abertos por probabilidade × impacto', heatArr) +
       grafBarras('Riscos abertos por categoria', (function () {
         var c = {}; riscosAb.forEach(function (r) { c[r.Categoria || '—'] = (c[r.Categoria || '—'] || 0) + 1; });
         return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (k, i) { return { rotulo: k, valor: c[k], cor: PAL[i % PAL.length] }; });
-      })()) +
-      grafBarras('Documentos por situação', (function () {
-        var c = {}; DADOS.docs.forEach(function (x) { c[x.Situacao || '—'] = (c[x.Situacao || '—'] || 0) + 1; });
-        return Object.keys(c).map(function (k, i) { return { rotulo: k, valor: c[k], cor: PAL[i % PAL.length] }; });
       })()) +
       '</div>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Pontos de atenção</h2><div class="linha" aria-hidden="true"></div></div>' +
@@ -1225,6 +1125,14 @@
       tr.addEventListener('click', function (ev) {
         if (ev.target.closest('a')) return;
         var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
+      });
+    });
+    $all('#viewDashboard [data-nav]').forEach(function (el2) {
+      el2.setAttribute('tabindex', '0');
+      el2.setAttribute('role', 'link');
+      el2.addEventListener('click', function () { location.hash = el2.getAttribute('data-href'); });
+      el2.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); location.hash = el2.getAttribute('data-href'); }
       });
     });
   }
@@ -1291,20 +1199,10 @@
       '<span class="pp-muted" style="font-size:var(--fs-sm)">' + lista.length + ' de ' + repo.length + ' itens</span></div>' +
       (lista.length ? '<div class="repo-grid">' + lista.map(cardRepo).join('') + '</div>' : '<p class="pp-vazio">Nenhum item com esses filtros.</p>') + '</section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Metodologia em resumo</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-rotate" aria-hidden="true"></i> Ciclo de vida BPM (CBOK 4.0)</h3><ol class="ciclo">' +
-      '<li><h4>Alinhamento à estratégia e metas</h4><p>Priorização da carteira e vínculo do processo aos objetivos institucionais.</p></li>' +
-      '<li><h4>Arquitetar mudanças</h4><p>Modelagem (AS-IS), análise, desenho do estado futuro (TO-BE) e definição da medição.</p></li>' +
-      '<li><h4>Desenvolver iniciativas</h4><p>Planos de implantação, capacitação, mudanças e tecnologia (visão PMBOK do projeto).</p></li>' +
-      '<li><h4>Implementar mudanças</h4><p>Execução dos planos, publicação de procedimentos e estabilização.</p></li>' +
-      '<li><h4>Medir o sucesso</h4><p>Monitoramento por indicadores e melhoria contínua (novo giro do ciclo).</p></li></ol></div>' +
       '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' +
       '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Roteiro-padrão de cada projeto de mapeamento, do primeiro contato com a área até a publicação no repositório — passe o cursor sobre um marco para ver o que ele significa:</p>' +
       '<ul class="marcos">' + MARCOS_ROTULOS.map(function (r, i) { return '<li class="feito" title="' + esc(MARCOS_DESCRICOES[i]) + '"><span>' + esc(r) + '</span><i class="fas fa-check-circle" aria-hidden="true"></i></li>'; }).join('') + '</ul></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-database" aria-hidden="true"></i> Como este painel é alimentado</h3><dl class="ficha-dl">' +
-      campo('1. Google Sheets (recomendado)', 'Importe a planilha para o Google Sheets, compartilhe como “qualquer pessoa com o link pode ver” e informe o ID em <code>PAINEL_CONFIG.googleSheetId</code> (index.html).', true) +
-      campo('2. Planilha no repositório', 'Sem Google Sheets, o painel lê <code>data/painel-processos-dados.xlsx</code> publicado junto com o site.', true) +
-      campo('3. Dados embutidos', 'Reserva (inclusive offline): <code>js/dados.js</code>, gerado por <code>scripts/planilha_para_js.py</code>.', true) +
-      '</dl><div class="br-message warning" role="status" style="margin-top:var(--sp2)"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div></div></div></section>';
+      '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div></div></section>';
     var f1 = $('#repoCat'), f2 = $('#repoFase'), f3 = $('#repoQ');
     if (f1) f1.onchange = function () { filtroRepo.cat = this.value; renderRepositorio(); };
     if (f2) f2.onchange = function () { filtroRepo.fase = this.value; renderRepositorio(); };
@@ -1316,6 +1214,13 @@
     var p = String(nome || '').trim().split(/\s+/);
     return (((p[0] || '')[0] || '') + ((p.length > 1 ? p[p.length - 1][0] : '') || '')).toUpperCase();
   }
+  function processosDoNugep(nome) {
+    var alvo = String(nome || '').trim().toLowerCase();
+    if (!alvo) return [];
+    return DADOS.procs.filter(function (p) {
+      return String(p.Interlocutor || '').toLowerCase().indexOf(alvo) === 0;
+    });
+  }
   function renderNugep() {
     var el = $('#viewNugep');
     var P = DADOS.params || {};
@@ -1323,11 +1228,17 @@
       '<div class="pp-sec-h" style="margin-top:0"><h2>NUGEP — Núcleo de Gestão Normativa e de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<p class="pp-muted" style="max-width:64rem;margin-bottom:var(--sp3)">Equipe multidisciplinar formada por integrantes de diferentes unidades da Codevasf, responsável pela condução do mapeamento, modelagem e melhoria contínua dos processos institucionais, em articulação com a Área de Estratégia e Finanças (AE), a Gerência de Planejamento Estratégico (GPE) e a Unidade de Gestão Normativa e de Processos (UNP), conforme a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025). Cadastre, altere ou remova integrantes na aba <strong>NUGEP</strong> da planilha.</p>' +
       (DADOS.nugep.length ? '<div class="nugep-grid">' + DADOS.nugep.map(function (m) {
+        var meusProcs = processosDoNugep(m.Nome);
         return '<article class="nugep-card"><span class="nugep-avatar" aria-hidden="true">' + esc(iniciais(m.Nome)) + '</span>' +
-          '<h4>' + esc(m.Nome) + '</h4><p class="nugep-papel">' + esc(m.Papel || '') + '</p>' +
-          '<p class="nugep-unid"><strong>' + esc(m.Unidade_Sigla || '') + '</strong>' + (m.Unidade_Nome ? '<br>' + esc(m.Unidade_Nome) : '') + '</p>' +
+          '<h4>' + esc(m.Nome) + '</h4>' +
+          '<p class="nugep-unid"><span class="nugep-sigla">' + esc(m.Unidade_Sigla || '') + '</span></p>' +
+          '<div class="nugep-contato">' +
           (m.Email ? '<a href="mailto:' + esc(m.Email) + '"><i class="fas fa-envelope" aria-hidden="true"></i> ' + esc(m.Email) + '</a>' : '') +
           (m.Telefone ? '<a href="tel:+55' + esc(String(m.Telefone).replace(/\D/g, '')) + '"><i class="fas fa-phone" aria-hidden="true"></i> ' + esc(m.Telefone) + '</a>' : '') +
+          '</div>' +
+          (meusProcs.length ? '<div class="nugep-procs"><b><i class="fas fa-diagram-project" aria-hidden="true"></i> Processos sob responsabilidade</b><ul>' +
+            meusProcs.map(function (p) { return '<li><a href="#/p/' + encodeURIComponent(p.Codigo) + '">' + esc(p.Codigo) + ' — ' + esc(p.Nome) + '</a></li>'; }).join('') +
+            '</ul></div>' : '') +
           '</article>';
       }).join('') + '</div>' : '<p class="pp-vazio">Nenhum integrante cadastrado na aba NUGEP da planilha.</p>') +
       '<div class="pp-card" style="margin-top:var(--sp4)"><h3><i class="fas fa-building" aria-hidden="true"></i> Contato institucional</h3>' +
@@ -1415,11 +1326,10 @@
       a: DADOS.ativs.filter(function (a) { return bate(a.Codigo) || bate(a.Nome) || bate(a.Descricao); }),
       t: DADOS.tarefas.filter(function (t) { return bate(t.Codigo) || bate(t.Nome) || bate(t.Descricao); }),
       doc: DADOS.docs.filter(function (x) { return bate(x.ID) || bate(x.Titulo); }),
-      reg: DADOS.diario.filter(function (e) { return bate(e.Titulo) || bate(e.Descricao); }),
       gl: DADOS.glossario.filter(function (t) { return bate(t.Termo) || bate(t.Definicao); }),
       rp: DADOS.repo.filter(function (i) { return bate(i.Titulo) || bate(i.Descricao) || bate(i.Codigo); })
     };
-    var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.reg.length + r.gl.length + r.rp.length + r.t.length;
+    var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.gl.length + r.rp.length + r.t.length;
     function linha(href, cod, nome, extra) {
       return '<div class="doc-item"><i class="fas fa-arrow-right fa-stack-ico" aria-hidden="true"></i><div>' +
         '<div class="tit"><a href="' + href + '"><span class="cod">' + esc(cod) + '</span> ' + esc(nome) + '</a></div>' +
@@ -1428,7 +1338,7 @@
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Busca' }]) +
       '<div class="pp-sec-h" style="margin-top:0"><h2>Resultados para “' + esc(q) + '”</h2><div class="linha" aria-hidden="true"></div></div>' +
-      (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pelo <a href="#/catalogo">catálogo</a>.</p>') +
+      (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pela lista de <a href="#/catalogo">processos</a>.</p>') +
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m.Codigo, m.Nome, esc(m.Categoria)); }) +
       grupo('Processos de negócio', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
       grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
@@ -1438,9 +1348,6 @@
         return '<div class="doc-item"><i class="fas fa-file fa-stack-ico" aria-hidden="true"></i><div><div class="tit">' +
           (x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '</a>' : esc(x.Titulo)) +
           '</div><div class="meta">' + linkVinculo(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</div></div></div>';
-      }) +
-      grupo('Diário de mapeamento', r.reg, function (e) {
-        return linha('#/p/' + encodeURIComponent(e.Processo), e.Processo, e.Titulo || '(registro)', fmtData(e.Data) + ' · ' + esc(e.Tipo || ''));
       }) +
       grupo('Glossário', r.gl, function (t) {
         return '<div class="doc-item"><i class="fas fa-spell-check fa-stack-ico" aria-hidden="true"></i><div><div class="tit"><a href="#/glossario">' + esc(t.Termo) + '</a></div><div class="meta">' + esc(String(t.Definicao || '').slice(0, 140)) + '…</div></div></div>';
@@ -1458,12 +1365,10 @@
     if ((c = $('#cntDocumentos'))) c.textContent = DADOS.docs.length;
     if ((c = $('#cntRiscos'))) c.textContent = DADOS.riscos.length;
     if ((c = $('#cntIndicadores'))) c.textContent = DADOS.inds.length;
-    if ((c = $('#cntDiario'))) c.textContent = DADOS.diario.length;
     if ((c = $('#cntRepositorio'))) c.textContent = DADOS.repo.length;
     if ((c = $('#cntNugep'))) c.textContent = DADOS.nugep.length;
     if ((c = $('#cntGlossario'))) c.textContent = DADOS.glossario.length;
     if ((c = $('#cntFaq'))) c.textContent = DADOS.faq.length;
-    montarAlertas();
     ligarAcoesCabecalho();
     if (window.PPUI) PPUI.setMenuSections([
       { rotulo: 'Início · Cadeia de Valor', href: '#/', icone: 'fa-house' },
@@ -1473,7 +1378,6 @@
       { rotulo: 'Documentos', href: '#/documentos', icone: 'fa-folder-open' },
       { rotulo: 'Radar de riscos', href: '#/riscos', icone: 'fa-shield-halved' },
       { rotulo: 'Indicadores', href: '#/indicadores', icone: 'fa-chart-line' },
-      { rotulo: 'Diário de mapeamento', href: '#/diario', icone: 'fa-timeline' },
       { rotulo: 'NUGEP', href: '#/nugep', icone: 'fa-people-group' },
       { rotulo: 'Glossário', href: '#/glossario', icone: 'fa-spell-check' },
       { rotulo: 'Perguntas frequentes', href: '#/faq', icone: 'fa-circle-question' }

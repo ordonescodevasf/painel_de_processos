@@ -228,6 +228,47 @@ corretamente em qualquer profundidade. Veja o exemplo já incluído:
 `SP-06.01.03` (Pesquisa de Preços), que por sua vez é filho do processo
 `P-06.01`.
 
+## Ajustes desta rodada (resumo)
+
+- **Marcos**: M2 "Processos modelados"; M6 "Procedimento elaborado" (tooltip
+  menciona o encaminhamento para validação do dono do processo); M7
+  "Procedimento aprovado" pela **Diretoria Executiva (DEX)**; M9 "TO-BE
+  aprovado" (validado pelo dono, aprovado no DEX).
+- **Diário de Mapeamento removido** do painel inteiro (menu, ficha do
+  processo, busca, planilha) — evidências agora ficam no processo
+  e-Codevasf/SEI.
+- **Repositório**: 18 itens removidos (formulários, templates e ferramentas
+  hoje cobertos pelo SEI/e-Codevasf ou fora do escopo atual); seções "Ciclo
+  de vida BPM" e "Como este painel é alimentado" removidas.
+- **Alertas (sino) removidos** do cabeçalho — não é mais necessário.
+- **Catálogo → Processos**: aba renomeada.
+- **Início**: tooltips em todos os KPIs; card de documentos/diário
+  removido; novo card de contagem de **Processos** como 2º card.
+- **Ficha do Macroprocesso**: campo "Normativos aplicáveis" removido; botão
+  explícito de abrir diagrama removido (a imagem já é clicável).
+- **Ficha do Processo**: "Gerência responsável" (era Área); "Responsável no
+  NUGEP" no lugar de "Interlocutor do mapeamento" (mesmo dado); Prioridade e
+  Complexidade em campos separados; Descrição e Objetivo em cards
+  separados; chip de fase do ciclo BPM removido; o card "Cronograma do
+  projeto" virou **"Subprocessos vinculados"** no aside — navegação por
+  drill-down igual à do macroprocesso.
+- **Ficha da Atividade**: sem diagrama (não existe nesse nível); sem
+  indicadores de desempenho.
+- **Ficha da Tarefa**: sem diagrama, sem riscos/indicadores/documentos.
+- **NUGEP**: sem cargo — só sigla do setor, e-mail e telefone — mais os
+  **processos sob responsabilidade** de cada pessoa (derivado
+  automaticamente da coluna `Interlocutor` da aba Processos).
+- **Dashboard**: "Processos publicados" (era Cobertura da carteira); cards
+  de Indicadores na meta e Tarefas mapeadas removidos; 3 novos cards
+  (Subprocessos, Atividades, Tarefas); gráficos maiores e interativos (a
+  barra "Avanço por macroprocesso" agora navega para a ficha ao clicar);
+  gráfico de marcos corrigido para M1→M10; gráfico "Documentos por
+  situação" removido; texto de introdução removido.
+- **Tradução**: termos em inglês soltos traduzidos ("process owner", os
+  parênteses do SIPOC etc.) — mantidas as siglas técnicas usadas assim
+  mesmo na redação oficial brasileira de BPM (SIPOC, BPMN, CBOK, PMBOK,
+  AS-IS, TO-BE, KPI, POP).
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e

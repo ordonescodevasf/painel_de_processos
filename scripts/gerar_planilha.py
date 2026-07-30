@@ -5,7 +5,7 @@ fonte de dados do Painel de Processos (GitHub Pages).
 
 Estrutura (alinhada ao BPM CBOK 4.0 e ao PMBOK):
   LEIA-ME | Macroprocessos | Processos | Subprocessos | Atividades |
-  Documentos | Riscos | Indicadores | Diario_Mapeamento | Listas
+  Documentos | Riscos | Indicadores | Listas
 """
 import datetime as dt
 import os
@@ -684,104 +684,6 @@ dv(ind, "K", ref("Periodicidade"))
 # ----------------------------------------------------------------------------
 # DIÁRIO DE MAPEAMENTO (evidências do trabalho — CBOK/PMBOK)
 # ----------------------------------------------------------------------------
-di = wb.create_sheet("Diario_Mapeamento")
-cabecalho(di,
-    ["ID", "Processo", "Data", "Tipo", "Titulo", "Descricao", "Autor",
-     "Participantes", "Entradas_Insumos", "Saidas_Entregaveis",
-     "Evidencias", "Memoria"],
-    [10, 10, 12, 12, 36, 50, 20, 36, 34, 36, 46, 44])
-diario = [
-    ["REG-001", "P-06.01", D(2026, 1, 5), "Marco", "Abertura do projeto de mapeamento",
-     "Aprovação do termo de abertura do projeto de mapeamento do processo, com escopo, equipe e cronograma.",
-     "Bruna Souza", "Bruna Souza; Ricardo Nogueira; Carlos Eduardo Lima",
-     "Plano de ação 2026; Priorização da carteira de processos",
-     "Termo de abertura aprovado (TAP)",
-     "Termo de abertura|https://exemplo.codevasf.gov.br/sei/tap-p0601",
-     "Escopo limitado ao planejamento da contratação; seleção e gestão contratual tratadas em projetos próprios."],
-    ["REG-002", "P-06.01", D(2026, 1, 12), "Reunião", "Reunião de contextualização com a GLC",
-     "Apresentação da metodologia, entendimento do contexto do processo e definição dos interlocutores.",
-     "Carlos Eduardo Lima",
-     "Equipe GLC; Ricardo Nogueira; Bruna Souza; Carlos Eduardo Lima",
-     "Formulário de levantamento preenchido",
-     "Ata da reunião; Lista preliminar de atividades",
-     "Ata|https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0601",
-     "A área destacou gargalo na pesquisa de preços e retrabalho na aprovação do ETP."],
-    ["REG-003", "P-06.01", D(2026, 1, 26), "Entrevista", "Entrevista com a equipe de ETP",
-     "Detalhamento das atividades de elaboração do ETP, entradas, saídas e sistemas utilizados.",
-     "Carlos Eduardo Lima", "Equipe de planejamento da contratação",
-     "Roteiro de entrevista; Amostras de ETP",
-     "Registro de entrevista; Insumos para o AS-IS",
-     "Registro de entrevista|https://exemplo.codevasf.gov.br/sei/entrevista-etp",
-     ""],
-    ["REG-004", "P-06.01", D(2026, 2, 9), "Oficina", "Oficina de modelagem AS-IS",
-     "Modelagem colaborativa do fluxo atual em BPMN no Bizagi Modeler, com validação visual dos participantes.",
-     "Daniela Ribeiro", "Equipe GLC; UNP",
-     "Insumos das entrevistas; Notação BPMN 2.0",
-     "Diagrama BPMN AS-IS v0.1",
-     "Diagrama AS-IS v0.1|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
-     "Identificados 3 retrabalhos e 2 handoffs desnecessários (princípios de desenho do CBOK)."],
-    ["REG-005", "P-06.01", D(2026, 3, 2), "Validação", "Validação do AS-IS com o dono do processo",
-     "Revisão e aprovação formal do diagrama AS-IS pelo dono do processo.",
-     "Carlos Eduardo Lima", "Ricardo Nogueira; Equipe GLC; UNP",
-     "Diagrama AS-IS v0.1", "Diagrama AS-IS v1.0 validado",
-     "Diagrama AS-IS v1.0|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01;Ata de validação|https://exemplo.codevasf.gov.br/sei/ata-validacao-asis",
-     ""],
-    ["REG-006", "P-06.01", D(2026, 3, 16), "Decisão", "Definição do escopo do TO-BE",
-     "Decisão de incorporar o roteiro de pesquisa de preços e o modelo simplificado de DFD no redesenho.",
-     "Bruna Souza", "Ricardo Nogueira; Bruna Souza",
-     "Relatório preliminar de melhorias", "Escopo do TO-BE registrado",
-     "Registro de decisão|https://exemplo.codevasf.gov.br/sei/decisao-tobe",
-     "Priorizado o redesenho 'de fora para dentro', a partir da área demandante (cliente interno)."],
-    ["REG-007", "P-06.01", D(2026, 4, 13), "Entrega", "TO-BE elaborado",
-     "Entrega do diagrama TO-BE e do relatório de oportunidades de melhoria.",
-     "Daniela Ribeiro", "UNP; Equipe GLC",
-     "AS-IS validado; Boas práticas (CBOK cap. 6)",
-     "Diagrama TO-BE v0.1; Relatório de melhorias",
-     "Relatório de melhorias|https://exemplo.codevasf.gov.br/repositorio/rel-melhorias-p0601.pdf",
-     ""],
-    ["REG-008", "P-06.01", D(2026, 5, 4), "Validação", "Validação do TO-BE",
-     "Aprovação do redesenho pelo dono do processo e pela gerência da área.",
-     "Carlos Eduardo Lima", "Ricardo Nogueira; Gerência AA",
-     "Diagrama TO-BE v0.1", "Diagrama TO-BE v1.0 validado",
-     "Ata de validação TO-BE|https://exemplo.codevasf.gov.br/sei/ata-validacao-tobe",
-     ""],
-    ["REG-009", "P-06.01", D(2026, 5, 18), "Marco", "Publicação no repositório de processos",
-     "Publicação do POP 06.01 e dos diagramas no repositório corporativo; encerramento do projeto.",
-     "Bruna Souza", "UNP",
-     "TO-BE validado; POP revisado",
-     "POP 06.01 v2.0 publicado; Página do processo no painel",
-     "POP 06.01|https://exemplo.codevasf.gov.br/repositorio/pop-06-01.pdf",
-     "Lições aprendidas registradas para o próximo ciclo (PMBOK — encerramento)."],
-    ["REG-010", "P-06.01", D(2026, 6, 15), "Reunião", "Monitoramento de indicadores (fase 5)",
-     "Primeira reunião do ciclo de medição do processo redesenhado (CBOK — medir o sucesso).",
-     "Gustavo Pereira", "UNP; GLC",
-     "Dados de mai/2026 (SEI e Compras.gov.br)",
-     "Ata; Ajuste da meta do IND-002",
-     "Ata de monitoramento|https://exemplo.codevasf.gov.br/sei/ata-monitoramento-jun26",
-     ""],
-    ["REG-011", "P-06.02", D(2026, 6, 2), "Reunião", "Contextualização — Seleção do Fornecedor",
-     "Início do mapeamento do processo de seleção, com apresentação do método e coleta do formulário.",
-     "Carlos Eduardo Lima", "Equipe GLC; UNP",
-     "Formulário de levantamento preenchido",
-     "Ata; Cronograma do projeto",
-     "Ata|https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0602",
-     ""],
-    ["REG-012", "P-06.02", D(2026, 6, 30), "Oficina", "Oficina de modelagem AS-IS (sessão 1)",
-     "Modelagem do fluxo da sessão pública e do julgamento de propostas.",
-     "Daniela Ribeiro", "Agentes de contratação; UNP",
-     "Insumos da contextualização", "Diagrama AS-IS parcial v0.2",
-     "Diagrama parcial|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
-     "Fluxo de recursos administrativos ainda pendente de detalhamento com a área."],
-    ["REG-013", "P-04.01", D(2026, 7, 10), "Entrevista", "Entrevista — operação do perímetro",
-     "Levantamento das rotinas de programação e distribuição hídrica com a equipe de campo.",
-     "Eduardo Martins", "Equipe de operação; UNP",
-     "Roteiro de entrevista", "Registro de entrevista; Insumos para o AS-IS",
-     "Registro|https://exemplo.codevasf.gov.br/sei/entrevista-p0401",
-     ""],
-]
-escreve(di, diario, wrap_cols={5, 6, 8, 9, 10, 11, 12}, center_cols={4}, date_cols={3})
-di.freeze_panes = "E2"
-dv(di, "D", ref("Tipo_Registro"))
 
 # ----------------------------------------------------------------------------
 # TAREFAS (menor unidade de trabalho — CBOK 4.0)
@@ -907,13 +809,11 @@ linha(8, "2. Fallback", "Opcionalmente, gere js/dados.js com o script scripts/pl
 linha(9, "3. Vínculos", "Hierarquia (CBOK 4.0): Macroprocesso → Processo de negócio (aba Processos) → "
       "Subprocesso → Atividade → Tarefa. Os relacionamentos usam os CÓDIGOS: "
       "Processos→Macroprocesso, Subprocessos→Processo (ou Subprocessos→outro Subprocesso, quando aninhado), Atividades→Subprocesso, Tarefas→Atividade; "
-      "Documentos/Riscos/Indicadores usam Vinculo_Nivel + Vinculo_Codigo; o Diário usa o código do Processo.")
+      "Documentos/Riscos/Indicadores usam Vinculo_Nivel + Vinculo_Codigo.")
 
 titulo(11, "Convenções de preenchimento")
 linha(12, "Listas na célula", "Separe múltiplos itens com ponto e vírgula ( ; ). "
       "Ex.: 'SEI; Compras.gov.br; PNCP'.")
-linha(13, "Evidências (Diário)", "Formato Nome|URL, separando várias com ';'. "
-      "Ex.: 'Ata|https://...;Diagrama|img/diagramas/x.svg'.")
 linha(14, "Percentual", "Na aba Processos, use percentual (0% a 100%).")
 linha(15, "Datas", "Formato dd/mm/aaaa.")
 linha(16, "Imagens Bizagi", "O painel NÃO usa pasta local de imagens: publique a imagem exportada do "
@@ -936,7 +836,6 @@ abas_desc = [
     ("Documentos", "Repositório: POPs, manuais, atas, diagramas BPMN (Bizagi), relatórios — vinculados a qualquer nível."),
     ("Riscos", "Riscos vinculados a qualquer nível; nível = Probabilidade × Impacto (matriz 5×5)."),
     ("Indicadores", "Indicadores de desempenho por nível, com meta, resultado e situação calculada."),
-    ("Diario_Mapeamento", "Registro rastreável do trabalho: reuniões, oficinas, entrevistas, decisões, entregas e marcos, com entradas, saídas/entregáveis e evidências (CBOK 4.0; PMBOK)."),
     ("Jornada", "Etapas da jornada de mapeamento (Descobrir → Evoluir), exibidas na aba Repositório do painel."),
     ("Repositorio", "Materiais e ferramentas: metodologia e guia oficiais (RES 031/2025), templates, instrumentos por fase do ciclo BPM, ferramentas e referências."),
     ("NUGEP", "Integrantes do Núcleo de Gestão Normativa e de Processos (aba NUGEP do painel)."),
@@ -960,7 +859,6 @@ contagens = [
     ("Documentos", "=COUNTA(Documentos!$A$2:$A$500)"),
     ("Riscos", "=COUNTA(Riscos!$A$2:$A$500)"),
     ("Indicadores", "=COUNTA(Indicadores!$A$2:$A$500)"),
-    ("Registros do diário", "=COUNTA(Diario_Mapeamento!$A$2:$A$500)"),
     ("Etapas da jornada", "=COUNTA(Jornada!$A$2:$A$500)"),
     ("Itens do repositório", "=COUNTA(Repositorio!$A$2:$A$500)"),
     ("Integrantes do NUGEP", "=COUNTA(NUGEP!$A$2:$A$500)"),
@@ -984,7 +882,7 @@ linha(r2 + 3, "PMBOK", "Gestão do projeto de mapeamento: termo de abertura, esc
       "riscos do projeto, entregáveis e lições aprendidas (PMI).")
 
 ordem_final = ["LEIA-ME", "Macroprocessos", "Processos", "Subprocessos", "Atividades",
-               "Tarefas", "Documentos", "Riscos", "Indicadores", "Diario_Mapeamento", "Jornada",
+               "Tarefas", "Documentos", "Riscos", "Indicadores", "Jornada",
                "Repositorio", "NUGEP", "Glossario", "FAQ", "Parametros", "Listas"]
 wb._sheets = [wb[n] for n in ordem_final]
 wb.active = 0

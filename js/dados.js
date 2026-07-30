@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-30 11:09",
+ "_gerado_em": "2026-07-30 15:33",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -1256,190 +1256,6 @@ window.PAINEL_DADOS = {
    "Ultima_Medicao": null
   }
  ],
- "Diario_Mapeamento": [
-  {
-   "ID": "REG-001",
-   "Processo": "P-06.01",
-   "Data": "2026-01-05",
-   "Tipo": "Marco",
-   "Titulo": "Abertura do projeto de mapeamento",
-   "Descricao": "Aprovação do termo de abertura do projeto de mapeamento do processo, com escopo, equipe e cronograma.",
-   "Autor": "Bruna Souza",
-   "Participantes": "Bruna Souza; Ricardo Nogueira; Carlos Eduardo Lima",
-   "Entradas_Insumos": "Plano de ação 2026; Priorização da carteira de processos",
-   "Saidas_Entregaveis": "Termo de abertura aprovado (TAP)",
-   "Evidencias": "Termo de abertura|https://exemplo.codevasf.gov.br/sei/tap-p0601",
-   "Memoria": "Escopo limitado ao planejamento da contratação; seleção e gestão contratual tratadas em projetos próprios."
-  },
-  {
-   "ID": "REG-002",
-   "Processo": "P-06.01",
-   "Data": "2026-01-12",
-   "Tipo": "Reunião",
-   "Titulo": "Reunião de contextualização com a GLC",
-   "Descricao": "Apresentação da metodologia, entendimento do contexto do processo e definição dos interlocutores.",
-   "Autor": "Carlos Eduardo Lima",
-   "Participantes": "Equipe GLC; Ricardo Nogueira; Bruna Souza; Carlos Eduardo Lima",
-   "Entradas_Insumos": "Formulário de levantamento preenchido",
-   "Saidas_Entregaveis": "Ata da reunião; Lista preliminar de atividades",
-   "Evidencias": "Ata|https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0601",
-   "Memoria": "A área destacou gargalo na pesquisa de preços e retrabalho na aprovação do ETP."
-  },
-  {
-   "ID": "REG-003",
-   "Processo": "P-06.01",
-   "Data": "2026-01-26",
-   "Tipo": "Entrevista",
-   "Titulo": "Entrevista com a equipe de ETP",
-   "Descricao": "Detalhamento das atividades de elaboração do ETP, entradas, saídas e sistemas utilizados.",
-   "Autor": "Carlos Eduardo Lima",
-   "Participantes": "Equipe de planejamento da contratação",
-   "Entradas_Insumos": "Roteiro de entrevista; Amostras de ETP",
-   "Saidas_Entregaveis": "Registro de entrevista; Insumos para o AS-IS",
-   "Evidencias": "Registro de entrevista|https://exemplo.codevasf.gov.br/sei/entrevista-etp",
-   "Memoria": null
-  },
-  {
-   "ID": "REG-004",
-   "Processo": "P-06.01",
-   "Data": "2026-02-09",
-   "Tipo": "Oficina",
-   "Titulo": "Oficina de modelagem AS-IS",
-   "Descricao": "Modelagem colaborativa do fluxo atual em BPMN no Bizagi Modeler, com validação visual dos participantes.",
-   "Autor": "Daniela Ribeiro",
-   "Participantes": "Equipe GLC; UNP",
-   "Entradas_Insumos": "Insumos das entrevistas; Notação BPMN 2.0",
-   "Saidas_Entregaveis": "Diagrama BPMN AS-IS v0.1",
-   "Evidencias": "Diagrama AS-IS v0.1|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
-   "Memoria": "Identificados 3 retrabalhos e 2 handoffs desnecessários (princípios de desenho do CBOK)."
-  },
-  {
-   "ID": "REG-005",
-   "Processo": "P-06.01",
-   "Data": "2026-03-02",
-   "Tipo": "Validação",
-   "Titulo": "Validação do AS-IS com o dono do processo",
-   "Descricao": "Revisão e aprovação formal do diagrama AS-IS pelo dono do processo.",
-   "Autor": "Carlos Eduardo Lima",
-   "Participantes": "Ricardo Nogueira; Equipe GLC; UNP",
-   "Entradas_Insumos": "Diagrama AS-IS v0.1",
-   "Saidas_Entregaveis": "Diagrama AS-IS v1.0 validado",
-   "Evidencias": "Diagrama AS-IS v1.0|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01;Ata de validação|https://exemplo.codevasf.gov.br/sei/ata-validacao-asis",
-   "Memoria": null
-  },
-  {
-   "ID": "REG-006",
-   "Processo": "P-06.01",
-   "Data": "2026-03-16",
-   "Tipo": "Decisão",
-   "Titulo": "Definição do escopo do TO-BE",
-   "Descricao": "Decisão de incorporar o roteiro de pesquisa de preços e o modelo simplificado de DFD no redesenho.",
-   "Autor": "Bruna Souza",
-   "Participantes": "Ricardo Nogueira; Bruna Souza",
-   "Entradas_Insumos": "Relatório preliminar de melhorias",
-   "Saidas_Entregaveis": "Escopo do TO-BE registrado",
-   "Evidencias": "Registro de decisão|https://exemplo.codevasf.gov.br/sei/decisao-tobe",
-   "Memoria": "Priorizado o redesenho 'de fora para dentro', a partir da área demandante (cliente interno)."
-  },
-  {
-   "ID": "REG-007",
-   "Processo": "P-06.01",
-   "Data": "2026-04-13",
-   "Tipo": "Entrega",
-   "Titulo": "TO-BE elaborado",
-   "Descricao": "Entrega do diagrama TO-BE e do relatório de oportunidades de melhoria.",
-   "Autor": "Daniela Ribeiro",
-   "Participantes": "UNP; Equipe GLC",
-   "Entradas_Insumos": "AS-IS validado; Boas práticas (CBOK cap. 6)",
-   "Saidas_Entregaveis": "Diagrama TO-BE v0.1; Relatório de melhorias",
-   "Evidencias": "Relatório de melhorias|https://exemplo.codevasf.gov.br/repositorio/rel-melhorias-p0601.pdf",
-   "Memoria": null
-  },
-  {
-   "ID": "REG-008",
-   "Processo": "P-06.01",
-   "Data": "2026-05-04",
-   "Tipo": "Validação",
-   "Titulo": "Validação do TO-BE",
-   "Descricao": "Aprovação do redesenho pelo dono do processo e pela gerência da área.",
-   "Autor": "Carlos Eduardo Lima",
-   "Participantes": "Ricardo Nogueira; Gerência AA",
-   "Entradas_Insumos": "Diagrama TO-BE v0.1",
-   "Saidas_Entregaveis": "Diagrama TO-BE v1.0 validado",
-   "Evidencias": "Ata de validação TO-BE|https://exemplo.codevasf.gov.br/sei/ata-validacao-tobe",
-   "Memoria": null
-  },
-  {
-   "ID": "REG-009",
-   "Processo": "P-06.01",
-   "Data": "2026-05-18",
-   "Tipo": "Marco",
-   "Titulo": "Publicação no repositório de processos",
-   "Descricao": "Publicação do POP 06.01 e dos diagramas no repositório corporativo; encerramento do projeto.",
-   "Autor": "Bruna Souza",
-   "Participantes": "UNP",
-   "Entradas_Insumos": "TO-BE validado; POP revisado",
-   "Saidas_Entregaveis": "POP 06.01 v2.0 publicado; Página do processo no painel",
-   "Evidencias": "POP 06.01|https://exemplo.codevasf.gov.br/repositorio/pop-06-01.pdf",
-   "Memoria": "Lições aprendidas registradas para o próximo ciclo (PMBOK — encerramento)."
-  },
-  {
-   "ID": "REG-010",
-   "Processo": "P-06.01",
-   "Data": "2026-06-15",
-   "Tipo": "Reunião",
-   "Titulo": "Monitoramento de indicadores (fase 5)",
-   "Descricao": "Primeira reunião do ciclo de medição do processo redesenhado (CBOK — medir o sucesso).",
-   "Autor": "Gustavo Pereira",
-   "Participantes": "UNP; GLC",
-   "Entradas_Insumos": "Dados de mai/2026 (SEI e Compras.gov.br)",
-   "Saidas_Entregaveis": "Ata; Ajuste da meta do IND-002",
-   "Evidencias": "Ata de monitoramento|https://exemplo.codevasf.gov.br/sei/ata-monitoramento-jun26",
-   "Memoria": null
-  },
-  {
-   "ID": "REG-011",
-   "Processo": "P-06.02",
-   "Data": "2026-06-02",
-   "Tipo": "Reunião",
-   "Titulo": "Contextualização — Seleção do Fornecedor",
-   "Descricao": "Início do mapeamento do processo de seleção, com apresentação do método e coleta do formulário.",
-   "Autor": "Carlos Eduardo Lima",
-   "Participantes": "Equipe GLC; UNP",
-   "Entradas_Insumos": "Formulário de levantamento preenchido",
-   "Saidas_Entregaveis": "Ata; Cronograma do projeto",
-   "Evidencias": "Ata|https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0602",
-   "Memoria": null
-  },
-  {
-   "ID": "REG-012",
-   "Processo": "P-06.02",
-   "Data": "2026-06-30",
-   "Tipo": "Oficina",
-   "Titulo": "Oficina de modelagem AS-IS (sessão 1)",
-   "Descricao": "Modelagem do fluxo da sessão pública e do julgamento de propostas.",
-   "Autor": "Daniela Ribeiro",
-   "Participantes": "Agentes de contratação; UNP",
-   "Entradas_Insumos": "Insumos da contextualização",
-   "Saidas_Entregaveis": "Diagrama AS-IS parcial v0.2",
-   "Evidencias": "Diagrama parcial|https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
-   "Memoria": "Fluxo de recursos administrativos ainda pendente de detalhamento com a área."
-  },
-  {
-   "ID": "REG-013",
-   "Processo": "P-04.01",
-   "Data": "2026-07-10",
-   "Tipo": "Entrevista",
-   "Titulo": "Entrevista — operação do perímetro",
-   "Descricao": "Levantamento das rotinas de programação e distribuição hídrica com a equipe de campo.",
-   "Autor": "Eduardo Martins",
-   "Participantes": "Equipe de operação; UNP",
-   "Entradas_Insumos": "Roteiro de entrevista",
-   "Saidas_Entregaveis": "Registro de entrevista; Insumos para o AS-IS",
-   "Evidencias": "Registro|https://exemplo.codevasf.gov.br/sei/entrevista-p0401",
-   "Memoria": null
-  }
- ],
  "Jornada": [
   {
    "Ordem": 1,
@@ -1460,7 +1276,7 @@ window.PAINEL_DADOS = {
    "Objetivo": "Traçar limites claros: onde começa, onde termina, quem participa e o que está fora do mapeamento.",
    "Atividades_Chave": "SIPOC preliminar (Fornecedores, Entradas, Processo, Saídas, Clientes); Identificação de sistemas e normativos aplicáveis; Definição de premissas, restrições e critérios de sucesso; Termo de abertura do projeto de mapeamento (PMBOK)",
    "Quem_Faz": "Gerente do projeto; NUGEP",
-   "Entregaveis": "Ficha do mapeamento (Project Charter) publicada",
+   "Entregaveis": "Ficha do mapeamento publicada",
    "Sentimento_Usuario": "Segurança: “agora sei o que esperam de mim”"
   },
   {
@@ -1469,7 +1285,7 @@ window.PAINEL_DADOS = {
    "Nome": "Modelagem AS-IS",
    "Duracao": "2–4 semanas",
    "Objetivo": "Fotografar o processo como ele é hoje, incluindo variações, filas, retrabalhos e workarounds.",
-   "Atividades_Chave": "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro no diário de bordo: hipóteses, dores, memória do mapeamento; Identificação de riscos, gargalos e handoffs",
+   "Atividades_Chave": "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro de hipóteses, dores e memória do mapeamento (no processo e-Codevasf/SEI); Identificação de riscos, gargalos e handoffs",
    "Quem_Faz": "Equipe de mapeamento; Executores do processo",
    "Entregaveis": "Diagrama BPMN AS-IS; Lista de dores e riscos",
    "Sentimento_Usuario": "Reconhecimento: “alguém finalmente enxerga o que a gente vive”"
@@ -1502,7 +1318,7 @@ window.PAINEL_DADOS = {
    "Nome": "Publicação e transição",
    "Duracao": "2 semanas",
    "Objetivo": "Colocar o novo processo em operação com apoio, treinamento e comunicação clara.",
-   "Atividades_Chave": "Publicação no repositório institucional de processos; Capacitação dos executores e multiplicadores; Atualização de normativos e do e-Codevasf; Kick-off do TO-BE",
+   "Atividades_Chave": "Publicação no repositório institucional de processos; Capacitação dos executores e multiplicadores; Atualização de normativos e do e-Codevasf; Lançamento do TO-BE",
    "Quem_Faz": "Área responsável; NUGEP; Comunicação",
    "Entregaveis": "Processo publicado; Equipe capacitada; Comunicação institucional",
    "Sentimento_Usuario": "Confiança: “fui preparado para o novo jeito”"
@@ -1554,28 +1370,6 @@ window.PAINEL_DADOS = {
    "Ordem": 2
   },
   {
-   "ID": "REP-003",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Planejamento",
-   "Codigo": null,
-   "Titulo": "Formulário de Levantamento de Processos",
-   "Descricao": "Template estruturado para coleta de informações com as áreas: objetivo, atores, atividades, insumos, produtos e normativos.",
-   "Fonte": "Codevasf",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/formulario-levantamento.docx",
-   "Ordem": 3
-  },
-  {
-   "ID": "REP-004",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Planejamento",
-   "Codigo": null,
-   "Titulo": "Planilha de Controle do Mapeamento",
-   "Descricao": "Planilha com os processos pré-carregados, semáforos automáticos, marcos M1–M10 e listas suspensas — base de dados deste painel.",
-   "Fonte": "Codevasf",
-   "Link": "data/painel-processos-dados.xlsx",
-   "Ordem": 4
-  },
-  {
    "ID": "REP-005",
    "Categoria": "Template",
    "Fase_Ciclo": "Desenho",
@@ -1596,50 +1390,6 @@ window.PAINEL_DADOS = {
    "Fonte": "Codevasf",
    "Link": "https://exemplo.codevasf.gov.br/modelos/roteiro-contextualizacao.docx",
    "Ordem": 6
-  },
-  {
-   "ID": "REP-007",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Desenho",
-   "Codigo": null,
-   "Titulo": "Checklist de Validação AS-IS / TO-BE",
-   "Descricao": "Critérios de qualidade para verificação dos modelos antes da validação formal com a área responsável.",
-   "Fonte": "Codevasf",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/checklist-validacao.docx",
-   "Ordem": 7
-  },
-  {
-   "ID": "REP-008",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Implementação",
-   "Codigo": null,
-   "Titulo": "Templates de Comunicação Oficial",
-   "Descricao": "Modelos de ofício, memorando e e-mail: envio de formulário, convite para reunião, validação e publicação.",
-   "Fonte": "Codevasf",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/templates-comunicacao.zip",
-   "Ordem": 8
-  },
-  {
-   "ID": "REP-009",
-   "Categoria": "Instrumento",
-   "Fase_Ciclo": "Planejamento",
-   "Codigo": "TC-01",
-   "Titulo": "Termo de Abertura do Mapeamento (Process Charter)",
-   "Descricao": "Formaliza o início do mapeamento de um processo: escopo, dono, equipe, prazos e premissas.",
-   "Fonte": "CBOK 4.0",
-   "Link": "https://exemplo.codevasf.gov.br/instrumentos/tc-01.docx",
-   "Ordem": 9
-  },
-  {
-   "ID": "REP-010",
-   "Categoria": "Instrumento",
-   "Fase_Ciclo": "Análise",
-   "Codigo": "SIPOC-01",
-   "Titulo": "Matriz SIPOC",
-   "Descricao": "Visão de alto nível do processo: Fornecedores, Entradas, Processo (5–7 passos), Saídas e Clientes.",
-   "Fonte": "CBOK 4.0",
-   "Link": "https://exemplo.codevasf.gov.br/instrumentos/sipoc-01.docx",
-   "Ordem": 10
   },
   {
    "ID": "REP-011",
@@ -1730,39 +1480,6 @@ window.PAINEL_DADOS = {
    "Ordem": 18
   },
   {
-   "ID": "REP-019",
-   "Categoria": "Ferramenta",
-   "Fase_Ciclo": "Desenho",
-   "Codigo": null,
-   "Titulo": "draw.io / diagrams.net",
-   "Descricao": "Ferramenta on-line gratuita para diagramas; suporta BPMN e integra com Google Drive.",
-   "Fonte": "diagrams.net",
-   "Link": "https://app.diagrams.net",
-   "Ordem": 19
-  },
-  {
-   "ID": "REP-020",
-   "Categoria": "Ferramenta",
-   "Fase_Ciclo": "Desenho",
-   "Codigo": null,
-   "Titulo": "Microsoft Visio",
-   "Descricao": "Ferramenta Microsoft para diagramas e modelagem de processos, via licença corporativa da Codevasf.",
-   "Fonte": "Microsoft",
-   "Link": "https://exemplo.codevasf.gov.br/ti/solicitar-visio",
-   "Ordem": 20
-  },
-  {
-   "ID": "REP-021",
-   "Categoria": "Ferramenta",
-   "Fase_Ciclo": "Desenho",
-   "Codigo": null,
-   "Titulo": "Lucidchart",
-   "Descricao": "Plataforma colaborativa on-line para modelagem, com edição simultânea por vários usuários.",
-   "Fonte": "Lucid",
-   "Link": "https://www.lucidchart.com",
-   "Ordem": 21
-  },
-  {
    "ID": "REP-022",
    "Categoria": "Referência",
    "Fase_Ciclo": null,
@@ -1774,28 +1491,6 @@ window.PAINEL_DADOS = {
    "Ordem": 22
   },
   {
-   "ID": "REP-023",
-   "Categoria": "Referência",
-   "Fase_Ciclo": null,
-   "Codigo": null,
-   "Titulo": "PMBOK — Project Management Institute",
-   "Descricao": "Guia de gestão de projetos do PMI; referência complementar para gerir o próprio projeto de mapeamento.",
-   "Fonte": "PMI",
-   "Link": "https://www.pmi.org",
-   "Ordem": 23
-  },
-  {
-   "ID": "REP-024",
-   "Categoria": "Referência",
-   "Fase_Ciclo": null,
-   "Codigo": null,
-   "Titulo": "Decreto nº 10.382/2020 — Governo Federal",
-   "Descricao": "Política de governança das empresas estatais federais; base legal para gestão por processos e controles internos.",
-   "Fonte": "Planalto",
-   "Link": "http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2020/decreto/D10382.htm",
-   "Ordem": 24
-  },
-  {
    "ID": "REP-025",
    "Categoria": "Template",
    "Fase_Ciclo": "Análise",
@@ -1805,83 +1500,6 @@ window.PAINEL_DADOS = {
    "Fonte": "PMBOK",
    "Link": "https://exemplo.codevasf.gov.br/modelos/mapa-partes-interessadas.xlsx",
    "Ordem": 25
-  },
-  {
-   "ID": "REP-026",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Análise",
-   "Codigo": null,
-   "Titulo": "Matriz GUT de Priorização",
-   "Descricao": "Prioriza problemas e processos pela Gravidade, Urgência e Tendência, apoiando a seleção da carteira.",
-   "Fonte": "Codevasf",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/matriz-gut.xlsx",
-   "Ordem": 26
-  },
-  {
-   "ID": "REP-027",
-   "Categoria": "Instrumento",
-   "Fase_Ciclo": "Análise",
-   "Codigo": "ISH-01",
-   "Titulo": "Diagrama de Ishikawa (causa e efeito)",
-   "Descricao": "Template espinha de peixe para análise de causas-raiz das dores identificadas no AS-IS.",
-   "Fonte": "CBOK 4.0",
-   "Link": "https://exemplo.codevasf.gov.br/instrumentos/ish-01.pptx",
-   "Ordem": 27
-  },
-  {
-   "ID": "REP-028",
-   "Categoria": "Instrumento",
-   "Fase_Ciclo": "Análise",
-   "Codigo": "5PQ-01",
-   "Titulo": "5 Porquês",
-   "Descricao": "Roteiro simples para chegar à causa-raiz de um problema perguntando “por quê?” sucessivamente.",
-   "Fonte": "Lean / CBOK 4.0",
-   "Link": "https://exemplo.codevasf.gov.br/instrumentos/5pq-01.docx",
-   "Ordem": 28
-  },
-  {
-   "ID": "REP-029",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Desenho",
-   "Codigo": null,
-   "Titulo": "Ata de Validação AS-IS / TO-BE (modelo)",
-   "Descricao": "Registro formal da homologação dos modelos pelo dono do processo e pela unidade gestora.",
-   "Fonte": "Codevasf",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/ata-validacao.docx",
-   "Ordem": 29
-  },
-  {
-   "ID": "REP-030",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Implementação",
-   "Codigo": null,
-   "Titulo": "Termo de Encerramento do Mapeamento",
-   "Descricao": "Formaliza o fim do projeto com entregas aceitas, pendências e lições aprendidas registradas.",
-   "Fonte": "PMBOK",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/termo-encerramento.docx",
-   "Ordem": 30
-  },
-  {
-   "ID": "REP-031",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Implementação",
-   "Codigo": null,
-   "Titulo": "Plano de Comunicação do Mapeamento",
-   "Descricao": "Organiza públicos, mensagens-chave, canais e calendário da transição para o TO-BE.",
-   "Fonte": "PMBOK",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/plano-comunicacao.docx",
-   "Ordem": 31
-  },
-  {
-   "ID": "REP-032",
-   "Categoria": "Template",
-   "Fase_Ciclo": "Monitoramento",
-   "Codigo": null,
-   "Titulo": "Painel de Bordo do Processo (one-page)",
-   "Descricao": "Resumo executivo mensal do processo: indicadores, riscos, ações e destaques para o dono do processo.",
-   "Fonte": "Codevasf",
-   "Link": "https://exemplo.codevasf.gov.br/modelos/painel-de-bordo.pptx",
-   "Ordem": 32
   }
  ],
  "NUGEP": [
@@ -2048,14 +1666,14 @@ window.PAINEL_DADOS = {
    "Termos_Relacionados": "Notação; Raia (Swimlane); Pool"
   },
   {
-   "Termo": "Beneficiário / Cidadão-usuário (Customer)",
+   "Termo": "Beneficiário / Cidadão-usuário",
    "Categoria": "SIPOC e Modelagem",
    "Definicao": "Destinatário da saída do processo no setor público. Pode ser interno (outra unidade da Codevasf) ou externo — cidadão, irrigante, comunidade beneficiária, ente federativo ou órgão parceiro.",
    "Fonte": "SIPOC",
    "Termos_Relacionados": "SIPOC"
   },
   {
-   "Termo": "Baseline",
+   "Termo": "Linha de Base (Indicador)",
    "Categoria": "Indicadores e Riscos",
    "Definicao": "Valor de referência inicial de um indicador, usado como base para comparar resultados futuros.",
    "Fonte": "PMBOK",
@@ -2167,7 +1785,7 @@ window.PAINEL_DADOS = {
    "Termos_Relacionados": "UNP; Governança de Processos"
   },
   {
-   "Termo": "Entrada (Input)",
+   "Termo": "Entrada",
    "Categoria": "SIPOC e Modelagem",
    "Definicao": "Insumo, informação, documento ou recurso necessário para iniciar ou executar uma atividade do processo.",
    "Fonte": "SIPOC",
@@ -2223,7 +1841,7 @@ window.PAINEL_DADOS = {
    "Termos_Relacionados": "SPI; CPI; Cronograma"
   },
   {
-   "Termo": "Fornecedor (Supplier)",
+   "Termo": "Fornecedor",
    "Categoria": "SIPOC e Modelagem",
    "Definicao": "Pessoa, área ou sistema que fornece insumos (entradas) ao processo.",
    "Fonte": "SIPOC",
@@ -2290,7 +1908,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Indicadores e Riscos",
    "Definicao": "Medida quantitativa ou qualitativa que reflete o desempenho de um processo, atividade ou objetivo. Deve ter fórmula, fonte, meta, periodicidade e responsável.",
    "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "KPI; Meta; Baseline"
+   "Termos_Relacionados": "KPI; Meta; Linha de Base (Indicador)"
   },
   {
    "Termo": "Impacto",
@@ -2335,7 +1953,7 @@ window.PAINEL_DADOS = {
    "Termos_Relacionados": "Valor Agregado; Desperdício (Muda)"
   },
   {
-   "Termo": "Linha de Base (Baseline)",
+   "Termo": "Linha de Base (Projeto)",
    "Categoria": "Projetos (PMBOK)",
    "Definicao": "Versão aprovada do escopo, prazo ou custo, usada como referência para comparação com o desempenho real.",
    "Fonte": "PMBOK",
@@ -2405,7 +2023,7 @@ window.PAINEL_DADOS = {
    "Termos_Relacionados": "Risco; Plano de Mitigação"
   },
   {
-   "Termo": "Marco (Milestone)",
+   "Termo": "Marco",
    "Categoria": "Projetos (PMBOK)",
    "Definicao": "Ponto significativo no cronograma, normalmente a conclusão de uma entrega importante. Não consome tempo.",
    "Fonte": "PMBOK",
@@ -2568,12 +2186,12 @@ window.PAINEL_DADOS = {
   {
    "Termo": "SIPOC",
    "Categoria": "SIPOC e Modelagem",
-   "Definicao": "Ferramenta visual que descreve um processo em alto nível por meio de cinco elementos: Fornecedores (Suppliers), Entradas (Inputs), Processo, Saídas (Outputs) e Beneficiários (Customers).",
+   "Definicao": "Ferramenta visual que descreve um processo em alto nível por meio de cinco elementos: Fornecedores, Entradas, Processo, Saídas e Beneficiários.",
    "Fonte": "Six Sigma / CBOK",
-   "Termos_Relacionados": "Fornecedor (Supplier); Entrada (Input); Saída (Output)"
+   "Termos_Relacionados": "Fornecedor; Entrada; Saída"
   },
   {
-   "Termo": "Saída (Output)",
+   "Termo": "Saída",
    "Categoria": "SIPOC e Modelagem",
    "Definicao": "Produto, serviço, informação ou decisão gerada pelo processo e entregue a um cliente.",
    "Fonte": "SIPOC",
@@ -2700,7 +2318,7 @@ window.PAINEL_DADOS = {
    "Ordem": 5,
    "Categoria": "Modelagem e SIPOC",
    "Pergunta": "O que é SIPOC e como ler a ficha de um processo?",
-   "Resposta": "SIPOC é a visão de alto nível do processo em cinco colunas: Fornecedores, Entradas, Processo, Saídas e Beneficiários. Na ficha de cada processo deste painel, o SIPOC aparece logo após os dados gerais, seguido dos marcos M1–M10, indicadores, riscos, documentos e do diário de mapeamento."
+   "Resposta": "SIPOC é a visão de alto nível do processo em cinco colunas: Fornecedores, Entradas, Processo, Saídas e Beneficiários. Na ficha de cada processo deste painel, o SIPOC aparece logo após os dados gerais, seguido dos marcos M1–M10, indicadores, riscos e documentos vinculados."
   },
   {
    "Ordem": 6,
@@ -2718,7 +2336,7 @@ window.PAINEL_DADOS = {
    "Ordem": 8,
    "Categoria": "Modelagem e SIPOC",
    "Pergunta": "Como propor uma mudança em um processo já mapeado?",
-   "Resposta": "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no diário de mapeamento."
+   "Resposta": "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no processo e-Codevasf/SEI correspondente."
   },
   {
    "Ordem": 9,
@@ -2784,7 +2402,7 @@ window.PAINEL_DADOS = {
    "Ordem": 19,
    "Categoria": "Plano de Ações AE/GPE",
    "Pergunta": "Como o avanço das ações é medido?",
-   "Resposta": "Pelos marcos M1–M10 de cada mapeamento, pelo percentual de execução, pelos indicadores da aba Indicadores e pelos registros rastreáveis do diário de mapeamento."
+   "Resposta": "Pelos marcos M1–M10 de cada mapeamento, pelo percentual de execução e pelos indicadores da aba Indicadores."
   },
   {
    "Ordem": 20,
@@ -2808,7 +2426,7 @@ window.PAINEL_DADOS = {
    "Ordem": 23,
    "Categoria": "Como usar o painel",
    "Pergunta": "Como o painel é alimentado?",
-   "Resposta": "Por uma planilha única (Google Sheets ou o arquivo data/painel-processos-dados.xlsx do repositório): cadeia de valor, fichas, documentos, riscos, indicadores, diário, jornada, repositório, NUGEP, glossário e FAQ vêm todos de lá. Os detalhes estão na aba LEIA-ME da planilha e no README."
+   "Resposta": "Por uma planilha única (Google Sheets ou o arquivo data/painel-processos-dados.xlsx do repositório): cadeia de valor, fichas, documentos, riscos, indicadores, jornada, repositório, NUGEP, glossário e FAQ vêm todos de lá. Os detalhes estão na aba LEIA-ME da planilha e no README."
   },
   {
    "Ordem": 24,
