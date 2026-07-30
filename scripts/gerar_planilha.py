@@ -146,8 +146,8 @@ cabecalho(mp,
     ["Codigo", "Nome", "Categoria", "Ordem", "Descricao", "Objetivo",
      "Unidade_Responsavel", "Dono_Processo", "Entregas",
      "Clientes_Beneficiarios", "Partes_Interessadas", "Sistemas",
-     "Normativos_Aplicaveis", "Imagem_Bizagi", "Observacoes"],
-    [9, 34, 12, 7, 46, 46, 16, 26, 40, 34, 34, 30, 40, 30, 26])
+     "Normativos_Aplicaveis", "Imagem_Bizagi", "Diagrama_Interativo", "Observacoes"],
+    [9, 34, 12, 7, 46, 46, 16, 26, 40, 34, 34, 30, 40, 30, 13, 26])
 macros = [
     ["MP-01", "Gestão Estratégica e Governança", "Gerencial", 1,
      "Formulação, desdobramento e monitoramento da estratégia corporativa, da governança e do desempenho institucional.",
@@ -158,7 +158,7 @@ macros = [
      "Ministério supervisor; Órgãos de controle; Sociedade",
      "e-Codevasf; SEI; Painéis de BI",
      "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-01", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-01", "N", ""],
     ["MP-02", "Gestão de Riscos, Integridade e Controles", "Gerencial", 2,
      "Identificação, avaliação e tratamento de riscos corporativos, integridade e controles internos (2ª linha).",
      "Assegurar razoável segurança para o alcance dos objetivos institucionais.",
@@ -168,7 +168,7 @@ macros = [
      "Auditoria interna; CGU; TCU",
      "SEI; Sistema de gestão de riscos",
      "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-02", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-02", "N", ""],
     ["MP-03", "Desenvolvimento Territorial e Estruturação Produtiva", "Finalístico", 3,
      "Apoio a arranjos produtivos, inclusão socioeconômica e estruturação de cadeias produtivas nos vales.",
      "Promover o desenvolvimento regional integrado e sustentável.",
@@ -178,7 +178,7 @@ macros = [
      "Parlamentares; Entes federados; Entidades parceiras",
      "TransfereGov; SEI",
      "Lei nº 14.133/2021; Portarias de transferências voluntárias",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-03", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-03", "N", ""],
     ["MP-04", "Gestão de Empreendimentos de Irrigação", "Finalístico", 4,
      "Implantação, operação, manutenção e transferência de gestão de perímetros públicos de irrigação.",
      "Ampliar a área irrigada produtiva com sustentabilidade hídrica e econômica.",
@@ -188,7 +188,7 @@ macros = [
      "ANA; Agências estaduais; Associações de usuários",
      "SIG-Irrigação (fictício); SEI",
      "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-04", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-04", "N", ""],
     ["MP-05", "Revitalização de Bacias Hidrográficas", "Finalístico", 5,
      "Ações de recuperação hidroambiental, segurança hídrica e uso sustentável dos recursos naturais.",
      "Contribuir para a revitalização das bacias dos rios São Francisco e Parnaíba.",
@@ -198,7 +198,7 @@ macros = [
      "Comitês de bacia; MMA; Órgãos ambientais",
      "SEI; GeoPortal (fictício)",
      "Legislação ambiental aplicável",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-05", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-05", "N", ""],
     ["MP-06", "Gestão de Licitações e Contratos", "Suporte", 6,
      "Planejamento das contratações, seleção de fornecedores e gestão dos contratos administrativos da Companhia.",
      "Prover contratações tempestivas, vantajosas e conformes à legislação.",
@@ -208,7 +208,7 @@ macros = [
      "Fornecedores; Assessoria Jurídica; Órgãos de controle; PNCP",
      "Compras.gov.br; PNCP; Painel de Preços; SEI",
      "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-06",
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-06", "N",
      "Macroprocesso priorizado no ciclo 2026 de mapeamento."],
     ["MP-07", "Gestão de Pessoas", "Suporte", 7,
      "Provimento, desenvolvimento, remuneração e qualidade de vida do corpo funcional.",
@@ -219,7 +219,7 @@ macros = [
      "Sindicatos; SEST; Ministério supervisor",
      "SIGEP (fictício); SEI",
      "CLT; Normas internas de pessoal",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-07", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-07", "N", ""],
     ["MP-08", "Gestão de Tecnologia da Informação", "Suporte", 8,
      "Planejamento, desenvolvimento, sustentação e segurança dos serviços de TI.",
      "Prover soluções digitais seguras que habilitem os processos de negócio.",
@@ -229,11 +229,11 @@ macros = [
      "SGD/MGI; Fornecedores de TI",
      "e-Codevasf; Service Desk",
      "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
-     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-08", ""],
+     "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-08", "N", ""],
 ]
-escreve(mp, macros, wrap_cols={5, 6, 9, 10, 11, 12, 13, 15}, center_cols={3, 4})
+escreve(mp, macros, wrap_cols={5, 6, 9, 10, 11, 12, 13, 16}, center_cols={3, 4, 15})
 mp.freeze_panes = "C2"
-dv(mp, "C", ref("Categoria_Macroprocesso"))
+dv(mp, "C", ref("Categoria_Macroprocesso")); dv(mp, "O", ref("Sim_Nao"))
 
 # ----------------------------------------------------------------------------
 # PROCESSOS
@@ -245,14 +245,14 @@ cabecalho(pr,
      "Complexidade", "Status_Mapeamento", "Percentual", "Fase_Ciclo_BPM",
      "Inicio_Mapeamento", "Prazo_Previsto", "Data_Conclusao",
      "Fornecedores", "Entradas", "Saidas", "Beneficiarios", "Sistemas",
-     "Normativos_Relacionados", "Processo_SEI", "Imagem_Bizagi",
+     "Normativos_Relacionados", "Processo_SEI", "Imagem_Bizagi", "Diagrama_Interativo",
      "M1_Reuniao_Contextualizacao", "M2_Macro_Processo_Modelados",
      "M3_Subprocessos_Modelados", "M4_ASIS_Modelado", "M5_ASIS_Validado",
      "M6_Procedimento_Validado", "M7_Procedimento_Aprovado", "M8_TOBE_Elaborado",
      "M9_TOBE_Validado", "M10_Publicado_Repositorio", "Proxima_Acao", "Pendencia",
      "Ultima_Atualizacao"],
     [10, 14, 34, 44, 40, 16, 24, 24, 10, 12, 14, 10, 30, 13, 13, 13,
-     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13])
+     30, 34, 34, 28, 28, 40, 20, 30, 13, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13])
 S, N = "Sim", "Não"
 procs = [
     ["P-06.01", "MP-06", "Planejamento da Contratação",
@@ -267,7 +267,7 @@ procs = [
      "AA/GLC (Seleção do Fornecedor); Assessoria Jurídica",
      "SEI; Compras.gov.br; Painel de Preços",
      "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
-     "59500.000123/2026-11", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
+     "59500.000123/2026-11", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01", "N",
      S, S, S, S, S, S, S, S, S, S,
      "Monitorar indicadores do processo e revisar POP em 12 meses.", "",
      D(2026, 7, 10)],
@@ -283,7 +283,7 @@ procs = [
      "Unidades demandantes; Fornecedores",
      "Compras.gov.br; PNCP; SEI",
      "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
-     "59500.000456/2026-22", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
+     "59500.000456/2026-22", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02", "N",
      S, S, S, S, N, N, N, N, N, N,
      "Validar AS-IS com o dono do processo (reunião marcada).",
      "Pendente retorno da área sobre fluxo de recursos administrativos.",
@@ -300,7 +300,7 @@ procs = [
      "Unidades demandantes; Fornecedores",
      "SEI; Compras.gov.br",
      "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
-     "59500.000789/2026-33", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-03",
+     "59500.000789/2026-33", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-03", "N",
      S, S, N, N, N, N, N, N, N, N,
      "Concluir modelagem AS-IS das medições e pagamentos.", "",
      D(2026, 7, 20)],
@@ -316,7 +316,7 @@ procs = [
      "Irrigantes; Distritos",
      "SIG-Irrigação (fictício); SEI",
      "Lei nº 12.787/2013",
-     "59500.000901/2026-44", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
+     "59500.000901/2026-44", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01", "N",
      S, S, S, N, N, N, N, N, N, N,
      "Agendar oficina de validação do AS-IS com o distrito.", "",
      D(2026, 7, 12)],
@@ -332,7 +332,7 @@ procs = [
      "Comunidades; Órgãos ambientais",
      "SEI; GeoPortal (fictício)",
      "Legislação ambiental aplicável",
-     "", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-05-01",
+     "", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-05-01", "N",
      N, N, N, N, N, N, N, N, N, N,
      "Enviar formulário de levantamento à área (previsto ago/2026).", "",
      D(2026, 7, 1)],
@@ -348,7 +348,7 @@ procs = [
      "Diretoria Executiva; Conselhos",
      "e-Codevasf; Painéis de BI",
      "Lei nº 13.303/2016",
-     "59500.000015/2025-77", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-01-01",
+     "59500.000015/2025-77", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-01-01", "N",
      S, S, S, S, S, S, S, S, S, S,
      "Ciclo de monitoramento trimestral (próximo: set/2026).", "",
      D(2026, 6, 30)],
@@ -364,19 +364,20 @@ procs = [
      "Novos empregados; Unidades de lotação",
      "SIGEP (fictício); SEI",
      "CLT; Normas internas de pessoal",
-     "", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-07-01",
+     "", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-07-01", "N",
      N, N, N, N, N, N, N, N, N, N,
      "Aguardando priorização no ciclo 2027.", "",
      D(2026, 6, 15)],
 ]
 escreve(pr, procs,
-        wrap_cols={4, 5, 17, 18, 19, 20, 21, 22, 35, 36},
-        center_cols={9, 10, 11, 12} | set(range(25, 35)),
-        pct_cols={12}, date_cols={14, 15, 16, 37})
+        wrap_cols={4, 5, 17, 18, 19, 20, 21, 22, 36, 37},
+        center_cols={9, 10, 11, 12, 25} | set(range(26, 36)),
+        pct_cols={12}, date_cols={14, 15, 16, 38})
 pr.freeze_panes = "D2"
 dv(pr, "I", ref("Prioridade")); dv(pr, "J", ref("Complexidade"))
 dv(pr, "K", ref("Status_Mapeamento")); dv(pr, "M", ref("Fase_Ciclo_BPM"))
-for k in range(25, 35):
+dv(pr, get_column_letter(25), ref("Sim_Nao"))  # Diagrama_Interativo
+for k in range(26, 36):
     dv(pr, get_column_letter(k), ref("Sim_Nao"))
 
 # ----------------------------------------------------------------------------
@@ -385,25 +386,25 @@ for k in range(25, 35):
 sp = wb.create_sheet("Subprocessos")
 cabecalho(sp,
     ["Codigo", "Vinculo_Pai", "Ordem", "Nome", "Descricao", "Objetivo",
-     "Unidade_Responsavel", "Dono", "Entregas", "Sistemas", "Imagem_Bizagi"],
-    [16, 16, 7, 34, 46, 40, 16, 24, 40, 28, 30])
+     "Unidade_Responsavel", "Dono", "Entregas", "Sistemas", "Imagem_Bizagi", "Diagrama_Interativo"],
+    [16, 16, 7, 34, 46, 40, 16, 24, 40, 28, 30, 13])
 subs = [
     ["SP-06.01.01", "P-06.01", 1, "Estudo Técnico Preliminar (ETP)",
      "Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.",
      "Fundamentar tecnicamente a melhor solução para a necessidade.",
      "AA/GLC", "Ricardo Nogueira",
-     "ETP aprovado no SEI", "SEI; Compras.gov.br", "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-01"],
+     "ETP aprovado no SEI", "SEI; Compras.gov.br", "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-01", "N"],
     ["SP-06.01.02", "P-06.01", 2, "Termo de Referência (TR)",
      "Definição do objeto, requisitos, modelo de execução e gestão contratual, e critérios de julgamento.",
      "Especificar com precisão o objeto e as condições da contratação.",
      "AA/GLC", "Ricardo Nogueira",
-     "TR aprovado e validado juridicamente", "SEI", "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-02"],
+     "TR aprovado e validado juridicamente", "SEI", "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-02", "N"],
     ["SP-06.01.03", "P-06.01", 3, "Pesquisa de Preços",
      "Levantamento de preços em fontes admitidas (Painel de Preços, PNCP, cotações) e consolidação do valor estimado.",
      "Estimar o valor da contratação conforme a IN SEGES nº 65/2021.",
      "AA/GLC", "Ricardo Nogueira",
      "Relatório de pesquisa de preços; Mapa comparativo", "Painel de Preços; PNCP; SEI",
-     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03"],
+     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03", "N"],
     # Exemplo de subprocesso DENTRO de outro subprocesso — o CBOK 4.0 não fixa a
     # profundidade da decomposição ("Levels Vary in Number and Name"): ao
     # mapear a Pesquisa de Preços, a equipe percebeu que o tratamento de
@@ -415,21 +416,22 @@ subs = [
      "Evitar que outliers de preço distorçam o valor estimado da contratação.",
      "AA/GLC", "Ricardo Nogueira",
      "Valores discrepantes identificados e justificados", "Planilha padrão; SEI",
-     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03-01"],
+     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03-01", "N"],
     ["SP-06.02.01", "P-06.02", 1, "Condução da Sessão Pública",
      "Abertura da sessão no sistema, fase de lances, julgamento, habilitação e registro em ata.",
      "Conduzir o certame com transparência e celeridade.",
      "AA/GLC", "Ricardo Nogueira",
-     "Ata da sessão; Resultado por item", "Compras.gov.br", "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-02-01"],
+     "Ata da sessão; Resultado por item", "Compras.gov.br", "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-02-01", "N"],
     ["SP-04.01.01", "P-04.01", 1, "Distribuição de Água aos Irrigantes",
      "Programação semanal, operação de comportas e bombas, e registro de volumes distribuídos.",
      "Entregar a água programada com eficiência e equidade.",
      "AI/GOM", "Marcos Vinícius",
      "Programação hídrica executada; Registros de volume", "SIG-Irrigação (fictício)",
-     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-04-01-01"],
+     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-04-01-01", "N"],
 ]
 escreve(sp, subs, wrap_cols={5, 6, 9, 10}, center_cols={3})
 sp.freeze_panes = "D2"
+dv(sp, "L", ref("Sim_Nao"))  # Diagrama_Interativo
 
 # ----------------------------------------------------------------------------
 # ATIVIDADES
@@ -818,15 +820,22 @@ linha(14, "Percentual", "Na aba Processos, use percentual (0% a 100%).")
 linha(15, "Datas", "Formato dd/mm/aaaa.")
 linha(16, "Imagens Bizagi", "O painel NÃO usa pasta local de imagens: publique a imagem exportada do "
       "Bizagi on-line (Drive público, intranet acessível etc.) e cole a URL na coluna Imagem_Bizagi de "
-      "qualquer nível (macroprocesso a tarefa, onde for pertinente). O painel exibe a imagem e o clique "
-      "abre o link original em nova aba; links de compartilhamento do Google Drive são convertidos "
-      "automaticamente. As URLs atuais (placehold.co) são exemplos — substitua pelas suas.")
-linha(17, "Células de fórmula", "Colunas com fundo cinza (Riscos: Nivel_PxI e Classificacao; "
+      "Macroprocessos, Processos ou Subprocessos (única forma disponível para Atividades e Tarefas, que "
+      "não têm diagrama). O painel exibe a imagem e o clique abre o link original em nova aba; links de "
+      "compartilhamento do Google Drive são convertidos automaticamente. As URLs atuais (placehold.co) "
+      "são exemplos — substitua pelas suas.")
+linha(17, "Diagrama interativo (Bizagi Web)", "Se o processo tiver uma publicação web do Bizagi (Bizagi "
+      "Modeler → Publish → Web), cole a URL da publicação em Imagem_Bizagi e marque Diagrama_Interativo "
+      "= Sim: o painel passa a incorporar o diagrama por iframe (com pan/zoom e clique nos subprocessos), "
+      "em vez de mostrar uma imagem estática — o mesmo padrão já usado na Base de Conhecimento da "
+      "Codevasf (AA/GTI) para o Gerenciamento de Incidentes de TI. Exige que o servidor que hospeda a "
+      "publicação permita ser incorporado por outra origem (o painel roda no GitHub Pages).")
+linha(18, "Células de fórmula", "Colunas com fundo cinza (Riscos: Nivel_PxI e Classificacao; "
       "Indicadores: Situacao) são CALCULADAS — não digite valores; ao inserir linhas, copie a fórmula da linha acima.")
-linha(18, "Validação de dados", "Campos com lista suspensa buscam os valores na aba 'Listas' "
+linha(19, "Validação de dados", "Campos com lista suspensa buscam os valores na aba 'Listas' "
       "(edite lá para incluir novas opções).")
 
-titulo(20, "Dicionário de abas")
+titulo(21, "Dicionário de abas")
 abas_desc = [
     ("Macroprocessos", "1º nível da cadeia de valor (CBOK: processos primários/finalísticos, de suporte e gerenciais)."),
     ("Processos", "2º nível — processos de negócio, com ficha completa: SIPOC (fornecedores, entradas, saídas, beneficiários), status e marcos do mapeamento (M1–M10), fase do ciclo BPM e dados do projeto."),
@@ -844,7 +853,7 @@ abas_desc = [
     ("Parametros", "Configurações chave/valor: contato do NUGEP e links da metodologia e do guia."),
     ("Listas", "Domínios das listas suspensas (validação de dados)."),
 ]
-r = 21
+r = 22
 for nome, desc in abas_desc:
     linha(r, nome, desc)
     r += 1

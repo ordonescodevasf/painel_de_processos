@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-30 15:33",
+ "_gerado_em": "2026-07-30 15:45",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -19,6 +19,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "e-Codevasf; SEI; Painéis de BI",
    "Normativos_Aplicaveis": "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-01",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   },
   {
@@ -36,6 +37,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; Sistema de gestão de riscos",
    "Normativos_Aplicaveis": "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-02",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   },
   {
@@ -53,6 +55,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "TransfereGov; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Portarias de transferências voluntárias",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-03",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   },
   {
@@ -70,6 +73,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício); SEI",
    "Normativos_Aplicaveis": "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-04",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   },
   {
@@ -87,6 +91,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; GeoPortal (fictício)",
    "Normativos_Aplicaveis": "Legislação ambiental aplicável",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-05",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   },
   {
@@ -104,6 +109,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-06",
+   "Diagrama_Interativo": "N",
    "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento."
   },
   {
@@ -121,6 +127,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIGEP (fictício); SEI",
    "Normativos_Aplicaveis": "CLT; Normas internas de pessoal",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-07",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   },
   {
@@ -138,6 +145,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "e-Codevasf; Service Desk",
    "Normativos_Aplicaveis": "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
    "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-08",
+   "Diagrama_Interativo": "N",
    "Observacoes": null
   }
  ],
@@ -167,6 +175,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Processo_SEI": "59500.000123/2026-11",
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -206,6 +215,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
    "Processo_SEI": "59500.000456/2026-22",
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -245,6 +255,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
    "Processo_SEI": "59500.000789/2026-33",
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-03",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Não",
@@ -284,6 +295,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "Lei nº 12.787/2013",
    "Processo_SEI": "59500.000901/2026-44",
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -323,6 +335,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "Legislação ambiental aplicável",
    "Processo_SEI": null,
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-05-01",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Não",
    "M2_Macro_Processo_Modelados": "Não",
    "M3_Subprocessos_Modelados": "Não",
@@ -362,6 +375,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "Lei nº 13.303/2016",
    "Processo_SEI": "59500.000015/2025-77",
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-01-01",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -401,6 +415,7 @@ window.PAINEL_DADOS = {
    "Normativos_Relacionados": "CLT; Normas internas de pessoal",
    "Processo_SEI": null,
    "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-07-01",
+   "Diagrama_Interativo": "N",
    "M1_Reuniao_Contextualizacao": "Não",
    "M2_Macro_Processo_Modelados": "Não",
    "M3_Subprocessos_Modelados": "Não",
@@ -428,7 +443,8 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "ETP aprovado no SEI",
    "Sistemas": "SEI; Compras.gov.br",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-01"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-01",
+   "Diagrama_Interativo": "N"
   },
   {
    "Codigo": "SP-06.01.02",
@@ -441,7 +457,8 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "TR aprovado e validado juridicamente",
    "Sistemas": "SEI",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-02"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-02",
+   "Diagrama_Interativo": "N"
   },
   {
    "Codigo": "SP-06.01.03",
@@ -454,7 +471,8 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "Relatório de pesquisa de preços; Mapa comparativo",
    "Sistemas": "Painel de Preços; PNCP; SEI",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03",
+   "Diagrama_Interativo": "N"
   },
   {
    "Codigo": "SP-06.01.03.01",
@@ -467,7 +485,8 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "Valores discrepantes identificados e justificados",
    "Sistemas": "Planilha padrão; SEI",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03-01"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03-01",
+   "Diagrama_Interativo": "N"
   },
   {
    "Codigo": "SP-06.02.01",
@@ -480,7 +499,8 @@ window.PAINEL_DADOS = {
    "Dono": "Ricardo Nogueira",
    "Entregas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-02-01"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-02-01",
+   "Diagrama_Interativo": "N"
   },
   {
    "Codigo": "SP-04.01.01",
@@ -493,7 +513,8 @@ window.PAINEL_DADOS = {
    "Dono": "Marcos Vinícius",
    "Entregas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-04-01-01"
+   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-04-01-01",
+   "Diagrama_Interativo": "N"
   }
  ],
  "Atividades": [

@@ -269,6 +269,31 @@ corretamente em qualquer profundidade. Veja o exemplo já incluído:
   mesmo na redação oficial brasileira de BPM (SIPOC, BPMN, CBOK, PMBOK,
   AS-IS, TO-BE, KPI, POP).
 
+## Diagrama interativo via iframe (Bizagi Web Publish)
+
+Além da imagem estática, o painel agora também aceita **incorporar o diagrama
+ao vivo por iframe** — o mesmo padrão que a própria Codevasf já usa
+internamente (Base de Conhecimento/Wiki.js, AA/GTI) para o "Gerenciamento de
+Incidentes de TI", carregando a publicação web do Bizagi Modeler direto de
+`fluxosti.codevasf.gov.br`. Disponível em **Macroprocessos, Processos e
+Subprocessos** (os 3 níveis com diagrama).
+
+Como usar: no Bizagi Modeler, **Publish → Web**, suba o pacote gerado num
+servidor; na planilha, cole a URL da publicação em `Imagem_Bizagi` e marque
+`Diagrama_Interativo = Sim`. O painel troca automaticamente de imagem para
+iframe, com pan/zoom nativo e clique para entrar nos subprocessos. Deixe em
+`Não` (padrão) para continuar com a imagem estática — os dois modos
+convivem, item por item.
+
+**Antes de marcar Sim, confirme com quem hospeda a publicação:** como o
+painel roda no GitHub Pages (origem diferente de qualquer servidor interno
+Codevasf), o cabeçalho `Content-Security-Policy: frame-ancestors` do
+servidor da publicação precisa incluir o domínio do painel — sem isso, o
+quadro aparece em branco (o painel sempre mostra também um botão "Abrir em
+nova aba" como alternativa, que funciona independentemente disso). Se o
+servidor for de rede interna, quem acessa o painel fora da VPN não verá o
+conteúdo do iframe.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
