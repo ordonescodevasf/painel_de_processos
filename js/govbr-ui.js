@@ -384,6 +384,48 @@
     if (!isDismissed()) setTimeout(openTour, 500);
   })();
 
+  /* ── COMPARTILHAR / IMPRIMIR — presentes em toda página. Compartilhar usa
+     a API nativa do navegador quando existe (menu de compartilhamento do
+     sistema); sem suporte, copia o link pra área de transferência; sem
+     isso também, mostra o link num prompt pra copiar manualmente. Nunca
+     falha silenciosamente. ── */
+  (function () {
+    var btnShare = d.getElementById('btnCompartilhar');
+    var btnPrint = d.getElementById('btnImprimir');
+    if (btnPrint) btnPrint.addEventListener('click', function () { window.print(); });
+    if (!btnShare) return;
+
+    function tituloAtual() {
+      var painelAtivo = d.querySelector('#mainTabContent .tab-panel:not([hidden])');
+      var h = painelAtivo && painelAtivo.querySelector('h1, h2');
+      return (h ? h.textContent.trim() + ' — ' : '') + 'Painel de Gestão de Processos · Codevasf';
+    }
+    function toast(msg) {
+      var el = d.getElementById('ppShareToast');
+      if (!el) {
+        el = d.createElement('div');
+        el.id = 'ppShareToast'; el.className = 'pp-share-toast'; el.setAttribute('role', 'status');
+        d.body.appendChild(el);
+      }
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(el._t); el._t = setTimeout(function () { el.classList.remove('show'); }, 2200);
+    }
+    btnShare.addEventListener('click', function () {
+      var dados = { title: tituloAtual(), url: location.href };
+      if (navigator.share) {
+        navigator.share(dados).catch(function () { /* usuário cancelou o menu do sistema */ });
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(location.href).then(function () {
+          toast('Link copiado para a área de transferência!');
+        }).catch(function () { window.prompt('Copie o link para compartilhar:', location.href); });
+        return;
+      }
+      window.prompt('Copie o link para compartilhar:', location.href);
+    });
+  })();
+
   /* ── API mínima para o app preencher o menu de seções ────────────── */
   window.PPUI = {
     setMenuSections: function (itens) {

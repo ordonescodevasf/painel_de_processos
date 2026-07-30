@@ -20,6 +20,35 @@
 /* ── layout base das abas ── */
 .pp-cnt{max-width:1200px;margin:0 auto;padding:var(--sp4) var(--sp3) var(--sp7);}
 @media(min-width:1600px){.pp-cnt{max-width:1560px;}}
+
+/* ── barra de compartilhar/imprimir — fora das views, aparece em toda
+   página do painel sem precisar repetir em cada tela ── */
+.pp-acoes-pagina{max-width:1200px;margin:0 auto;padding:10px var(--sp3) 0;
+  display:flex;justify-content:flex-end;gap:6px;}
+@media(min-width:1600px){.pp-acoes-pagina{max-width:1560px;}}
+.pp-acoes-pagina .br-button.circle{color:var(--gray-60);border-color:var(--gray-20);}
+.pp-acoes-pagina .br-button.circle:hover{color:var(--cv-blue);border-color:var(--cv-blue);}
+.pp-share-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);
+  background:var(--cv-navy);color:#fff;padding:8px 18px;border-radius:999px;
+  font:600 var(--fs-sm)/1.4 var(--font);z-index:var(--z-layer-4,9000);
+  box-shadow:var(--sh-card-hover);opacity:0;pointer-events:none;
+  transition:opacity var(--dur-fast) var(--ease);}
+.pp-share-toast.show{opacity:1;}
+
+/* ── impressão: some com navegação, rodapé e utilidades; mostra só o
+   conteúdo da página atual ── */
+@media print{
+  .br-header-topbar,.br-header,#navigation,#footer,.pp-acoes-pagina,
+  .report-error-btn,.BackToTop-module,#cookieNotice,#cookieScrim,.br-scrim,
+  .vw-plugin-top-wrapper,#sectionMenu,.br-skiplink{display:none!important;}
+  body{background:#fff!important;}
+  main{margin:0!important;}
+  .pp-cnt{max-width:100%!important;padding:0!important;}
+  .ficha-hero{background:#fff!important;color:#000!important;border:1px solid #ccc;}
+  .ficha-hero .chip,.ficha-hero .eyebrow{color:#000!important;}
+  .pp-card,.diagrama-frame{break-inside:avoid;border:1px solid #ccc!important;}
+  .diagrama-iframe{height:auto!important;}
+}
 .pp-sec{margin-top:var(--sp6);}
 .pp-sec-h{display:flex;align-items:center;gap:var(--sp2);margin-bottom:var(--sp3);}
 .pp-sec-h h2{font:700 var(--fs-xl)/1.25 var(--font);color:var(--cv-navy);}

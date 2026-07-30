@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-30 16:16",
+ "_gerado_em": "2026-07-30 20:41",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -1500,6 +1500,17 @@ window.PAINEL_DADOS = {
    "Fonte": "ABPMP",
    "Link": "https://www.abpmp-br.org",
    "Ordem": 22
+  },
+  {
+   "ID": "REP-033",
+   "Categoria": "Referência",
+   "Fase_Ciclo": null,
+   "Codigo": null,
+   "Titulo": "BPMN 2.0 — Business Process Model and Notation",
+   "Descricao": "Especificação oficial da notação usada nos diagramas (Bizagi e demais ferramentas de modelagem): símbolos, semântica de execução e serialização XML.",
+   "Fonte": "OMG (Object Management Group)",
+   "Link": "https://www.omg.org/spec/BPMN/2.0/",
+   "Ordem": 23
   },
   {
    "ID": "REP-025",

@@ -321,6 +321,27 @@ conteúdo do iframe.
   pai direto (Processo ou outro Subprocesso) — acesso rápido ao topo da
   cadeia mesmo quando o subprocesso está vários níveis abaixo.
 
+## Compartilhar e imprimir (em toda página)
+
+Dois botões discretos aparecem no topo do conteúdo, em toda página do
+painel (não é preciso trocar de tela para vê-los — ficam fora das views
+individuais, então funcionam igual em qualquer rota, inclusive fichas).
+
+- **Compartilhar**: usa o menu nativo de compartilhamento do
+  sistema/navegador quando disponível (Web Share API); sem suporte, copia o
+  link da página atual para a área de transferência (com uma confirmação
+  visual); sem nenhum dos dois, mostra o link num diálogo para copiar à
+  mão. Nunca falha silenciosamente.
+- **Imprimir**: abre a caixa de impressão do navegador. O painel já tem uma
+  folha de estilo própria para impressão — some com menu, rodapé, cookiebar
+  e botões flutuantes, mostrando só o conteúdo da página.
+
+## Novo material no Repositório
+
+Adicionada a especificação oficial **BPMN 2.0 (Business Process Model and
+Notation)** da OMG, usada por baixo dos panos em qualquer diagrama feito no
+Bizagi: <https://www.omg.org/spec/BPMN/2.0/>.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
