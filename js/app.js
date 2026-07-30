@@ -359,32 +359,23 @@
     var m = String(u || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
     return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000' : null;
   }
-  function diagramaHtml(caminho, titulo, semBotao, interativo) {
-    if (!caminho) return '<p class="pp-vazio">Diagrama BPMN ainda não publicado para este item. Informe a URL da imagem exportada do Bizagi (ou um caminho do repositório) na coluna Imagem_Bizagi da planilha.</p>';
+  function diagramaHtml(caminho, titulo) {
+    if (!caminho) return '<p class="pp-vazio">Diagrama ainda não publicado para este item. No Bizagi Modeler, use Publish → Web, suba o pacote num servidor e cole a URL na coluna Imagem_Bizagi da planilha.</p>';
     var href = esc(caminho);
-    if (interativo) {
-      // Bizagi Web Publish incorporado por iframe — mesmo padrão já usado
-      // internamente na Codevasf (Base de Conhecimento / Wiki.js) para o
-      // Gerenciamento de Incidentes de TI. Exige que o servidor que hospeda
-      // a publicação permita ser incorporado por outra origem (o painel
-      // roda no GitHub Pages): Content-Security-Policy: frame-ancestors
-      // precisa incluir o domínio do painel. Sem essa liberação no
-      // servidor, o quadro abaixo aparece em branco — daí o link de
-      // abrir direto, que sempre funciona independente disso.
-      return '<div class="diagrama-frame diagrama-iframe">' +
-        '<iframe src="' + href + '" title="Diagrama BPMN interativo (Bizagi Web Publish) — ' + esc(titulo) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
-        '</div>' +
-        '<p class="pp-muted" style="font-size:var(--fs-sm);margin-top:6px"><i class="fas fa-circle-info" aria-hidden="true"></i> Diagrama interativo (Bizagi Web Publish). Se o quadro acima aparecer em branco, o servidor pode estar bloqueando a incorporação ou exigir rede interna — use o link abaixo.</p>' +
-        '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
-        '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir em nova aba<span class="sr-only"> (abre em nova aba)</span></a></div>';
-    }
-    var src = esc(urlDrive(caminho) || caminho);
-    return '<figure class="diagrama-frame"><a href="' + href + '" target="_blank" rel="noopener" title="Abrir o diagrama no link original (nova aba)">' +
-      '<img src="' + src + '" alt="Diagrama BPMN (Bizagi) — ' + esc(titulo) + '" loading="lazy" ' +
-      'onerror="this.closest(&quot;figure&quot;).classList.add(&quot;sem-imagem&quot;)"></a>' +
-      '<figcaption class="diagrama-fallback"><i class="fas fa-diagram-project" aria-hidden="true"></i> A pré-visualização não pôde ser carregada aqui — abra o diagrama clicando na imagem.</figcaption></figure>' +
-      (semBotao ? '' : '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
-      '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir diagrama no link publicado<span class="sr-only"> (abre em nova aba)</span></a></div>');
+    // Diagrama incorporado por iframe (Bizagi Web Publish) — mesmo padrão já
+    // usado internamente na Codevasf (Base de Conhecimento / Wiki.js, AA/GTI)
+    // para o Gerenciamento de Incidentes de TI. Exige que o servidor que
+    // hospeda a publicação permita ser incorporado por outra origem (o
+    // painel roda no GitHub Pages): Content-Security-Policy: frame-ancestors
+    // precisa incluir o domínio do painel. Sem essa liberação, o quadro
+    // abaixo aparece em branco — daí o link de abrir direto, que sempre
+    // funciona independente disso.
+    return '<div class="diagrama-frame diagrama-iframe">' +
+      '<iframe src="' + href + '" title="Diagrama BPMN interativo — ' + esc(titulo) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
+      '</div>' +
+      '<p class="pp-muted" style="font-size:var(--fs-sm);margin-top:6px"><i class="fas fa-circle-info" aria-hidden="true"></i> Diagrama interativo (Bizagi Web Publish). Se o quadro acima aparecer em branco, o servidor pode estar bloqueando a incorporação ou exigir rede interna — use o link abaixo.</p>' +
+      '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
+      '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir em nova aba<span class="sr-only"> (abre em nova aba)</span></a></div>';
   }
 
   function listaDocsHtml(docs) {
@@ -689,7 +680,7 @@
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
         campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop'), false, 'tecnico') +
         (m.Observacoes ? campo('Observações', esc(m.Observacoes), true) : '') + '</dl></div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome, true, simNao(m.Diagrama_Interativo)) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome) + '</div>' +
         secVinculos('Macroprocesso', cod) +
         '</div><aside>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos vinculados</h3>' +
@@ -721,8 +712,8 @@
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-bullseye" aria-hidden="true"></i> Descrição</h3>' +
         '<p style="font-size:var(--fs-sm)">' + esc(p.Descricao || '') + '</p></div>' +
-        (p.Objetivo ? '<div class="pp-card"><h3><i class="fas fa-crosshairs" aria-hidden="true"></i> Objetivo</h3>' +
-        '<p style="font-size:var(--fs-sm)">' + esc(p.Objetivo) + '</p></div>' : '') +
+        '<div class="pp-card"><h3><i class="fas fa-crosshairs" aria-hidden="true"></i> Objetivo</h3>' +
+        '<p style="font-size:var(--fs-sm)">' + (p.Objetivo ? esc(p.Objetivo) : '<span class="pp-vazio">Não informado.</span>') + '</p></div>' +
         '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> SIPOC</h3><div class="sipoc">' +
         '<div class="col"><h4>Fornecedores</h4><ul>' + (listar(p.Fornecedores).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col"><h4>Entradas</h4><ul>' + (listar(p.Entradas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
@@ -731,7 +722,7 @@
         '<div class="col"><h4>Beneficiários</h4><ul>' + (listar(p.Beneficiarios || p.Clientes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '</div></div>' +
         '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' + marcosHtml(p) + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome, false, simNao(p.Diagrama_Interativo)) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos vinculados</h3>' +
@@ -748,7 +739,6 @@
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
         (p.Proxima_Acao ? '<p style="font-size:var(--fs-sm)">' + esc(p.Proxima_Acao) + '</p>' : '<p class="pp-vazio">—</p>') +
         (p.Pendencia ? '<div class="pp-aviso" style="margin:var(--sp2) 0 0"><strong>Pendência:</strong> ' + esc(p.Pendencia) + '</div>' : '') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-scale-balanced" aria-hidden="true"></i> Normativos relacionados</h3>' + chips(p.Normativos_Relacionados, 'fa-scale-balanced') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-desktop" aria-hidden="true"></i> Sistemas</h3>' + chips(p.Sistemas, 'fa-desktop') + '</div>' +
         '</aside></div>';
       return;
@@ -780,15 +770,19 @@
         campo('Objetivo', s.Objetivo && esc(s.Objetivo), true, 'desc') +
         campo('Unidade responsável', s.Unidade_Responsavel && esc(s.Unidade_Responsavel), false, 'quem') +
         campo('Dono', s.Dono && esc(s.Dono), false, 'quem') +
-        campo('Entregas', chips(s.Entregas), false, 'valor') + campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
-        (subsFilhos.length ? '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
-          '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Entregas</th><th></th></tr></thead><tbody>' +
+        campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
+        campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
+        campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
+        '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
+        (subsFilhos.length ?
+          '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Saídas</th><th></th></tr></thead><tbody>' +
           subsFilhos.map(function (sf) {
             return '<tr data-link><td class="cod">' + esc(sf.Codigo) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
               (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
-              '<td style="font-size:var(--fs-sm)">' + (listar(sf.Entregas).map(esc).join('; ') || '—') + '</td>' +
+              '<td style="font-size:var(--fs-sm)">' + (listar(sf.Saidas).map(esc).join('; ') || '—') + '</td>' +
               '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>';
-          }).join('') + '</tbody></table></div></div>' : '') +
+          }).join('') + '</tbody></table></div>'
+          : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
         (ativs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
           ativs.map(function (a, i) {
@@ -798,13 +792,16 @@
               '<td style="font-size:var(--fs-sm)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
               '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma atividade cadastrada.</p>') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome, false, simNao(s.Diagrama_Interativo)) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
         (paiEhSub && paiDireto ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
           '<a class="proc-card" href="#/sp/' + encodeURIComponent(paiDireto.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(paiDireto.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(paiDireto.Nome) + '</div></div></div></a></div>' :
         pp ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3>' +
-          '<a class="proc-card" href="#/p/' + encodeURIComponent(pp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(pp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(pp.Nome) + '</div></div>' + tagStatus(pp.Status_Mapeamento) + '</div></a></div>' : '') +
+          '<a class="proc-card" href="#/p/' + encodeURIComponent(pp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(pp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(pp.Nome) + '</div></div>' + tagStatus(pp.Status_Mapeamento) + '</div></a></div>' :
+        '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3><p class="pp-vazio">Nenhum processo vinculado.</p></div>') +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Macroprocesso</h3>' +
+        (mpp ? '<a class="proc-card" href="#/mp/' + encodeURIComponent(mpp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(mpp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(mpp.Nome) + '</div></div></div></a>' : '<p class="pp-vazio">Nenhum macroprocesso vinculado.</p>') + '</div>' +
         '</aside></div>';
       // clique na linha abre a atividade
       $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
@@ -850,8 +847,8 @@
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       secVinculos('Atividade', cod, true) +
       '</div><aside>' +
-      (sp2 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
-        '<a class="proc-card" href="#/sp/' + encodeURIComponent(sp2.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(sp2.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(sp2.Nome) + '</div></div></div></a></div>' : '') +
+      '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
+      (sp2 ? '<a class="proc-card" href="#/sp/' + encodeURIComponent(sp2.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(sp2.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(sp2.Nome) + '</div></div></div></a>' : '<p class="pp-vazio">Nenhum subprocesso vinculado.</p>') + '</div>' +
       '</aside></div>';
     $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
       tr.addEventListener('click', function (ev) {
@@ -888,8 +885,8 @@
       campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
       '</div><aside>' +
-      (a3 ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Atividade (pai)</h3>' +
-        '<a class="proc-card" href="#/a/' + encodeURIComponent(a3.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(a3.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(a3.Nome) + '</div></div></div></a></div>' : '') +
+      '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Atividade (pai)</h3>' +
+      (a3 ? '<a class="proc-card" href="#/a/' + encodeURIComponent(a3.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(a3.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(a3.Nome) + '</div></div></div></a>' : '<p class="pp-vazio">Nenhuma atividade vinculada.</p>') + '</div>' +
       '</aside></div>';
   }
   function naoEncontrado(tipo, cod) {

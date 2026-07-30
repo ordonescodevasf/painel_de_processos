@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-07-30 15:45",
+ "_gerado_em": "2026-07-30 16:16",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -18,8 +18,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Ministério supervisor; Órgãos de controle; Sociedade",
    "Sistemas": "e-Codevasf; SEI; Painéis de BI",
    "Normativos_Aplicaveis": "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-01",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   },
   {
@@ -36,8 +35,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Auditoria interna; CGU; TCU",
    "Sistemas": "SEI; Sistema de gestão de riscos",
    "Normativos_Aplicaveis": "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-02",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   },
   {
@@ -54,8 +52,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Parlamentares; Entes federados; Entidades parceiras",
    "Sistemas": "TransfereGov; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Portarias de transferências voluntárias",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-03",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   },
   {
@@ -72,8 +69,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "ANA; Agências estaduais; Associações de usuários",
    "Sistemas": "SIG-Irrigação (fictício); SEI",
    "Normativos_Aplicaveis": "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-04",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   },
   {
@@ -90,8 +86,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Comitês de bacia; MMA; Órgãos ambientais",
    "Sistemas": "SEI; GeoPortal (fictício)",
    "Normativos_Aplicaveis": "Legislação ambiental aplicável",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-05",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   },
   {
@@ -108,8 +103,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Fornecedores; Assessoria Jurídica; Órgãos de controle; PNCP",
    "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-06",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento."
   },
   {
@@ -126,8 +120,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Sindicatos; SEST; Ministério supervisor",
    "Sistemas": "SIGEP (fictício); SEI",
    "Normativos_Aplicaveis": "CLT; Normas internas de pessoal",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-07",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   },
   {
@@ -144,8 +137,7 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "SGD/MGI; Fornecedores de TI",
    "Sistemas": "e-Codevasf; Service Desk",
    "Normativos_Aplicaveis": "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
-   "Imagem_Bizagi": "https://placehold.co/960x420/222b54/ffffff?text=Diagrama+BPMN+MP-08",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "Observacoes": null
   }
  ],
@@ -174,8 +166,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; Compras.gov.br; Painel de Preços",
    "Normativos_Relacionados": "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Processo_SEI": "59500.000123/2026-11",
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": "https://fluxosti.codevasf.gov.br/incidentes/",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -187,8 +178,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Sim",
    "M10_Publicado_Repositorio": "Sim",
    "Proxima_Acao": "Monitorar indicadores do processo e revisar POP em 12 meses.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": "2026-07-10"
+   "Pendencia": null
   },
   {
    "Codigo": "P-06.02",
@@ -214,8 +204,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "Compras.gov.br; PNCP; SEI",
    "Normativos_Relacionados": "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
    "Processo_SEI": "59500.000456/2026-22",
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -227,8 +216,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Validar AS-IS com o dono do processo (reunião marcada).",
-   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos.",
-   "Ultima_Atualizacao": "2026-07-15"
+   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos."
   },
   {
    "Codigo": "P-06.03",
@@ -254,8 +242,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; Compras.gov.br",
    "Normativos_Relacionados": "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
    "Processo_SEI": "59500.000789/2026-33",
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-03",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Não",
@@ -267,8 +254,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Concluir modelagem AS-IS das medições e pagamentos.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": "2026-07-20"
+   "Pendencia": null
   },
   {
    "Codigo": "P-04.01",
@@ -294,8 +280,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício); SEI",
    "Normativos_Relacionados": "Lei nº 12.787/2013",
    "Processo_SEI": "59500.000901/2026-44",
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -307,8 +292,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Agendar oficina de validação do AS-IS com o distrito.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": "2026-07-12"
+   "Pendencia": null
   },
   {
    "Codigo": "P-05.01",
@@ -334,8 +318,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; GeoPortal (fictício)",
    "Normativos_Relacionados": "Legislação ambiental aplicável",
    "Processo_SEI": null,
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-05-01",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Não",
    "M2_Macro_Processo_Modelados": "Não",
    "M3_Subprocessos_Modelados": "Não",
@@ -347,8 +330,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Enviar formulário de levantamento à área (previsto ago/2026).",
-   "Pendencia": null,
-   "Ultima_Atualizacao": "2026-07-01"
+   "Pendencia": null
   },
   {
    "Codigo": "P-01.01",
@@ -374,8 +356,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "e-Codevasf; Painéis de BI",
    "Normativos_Relacionados": "Lei nº 13.303/2016",
    "Processo_SEI": "59500.000015/2025-77",
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-01-01",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
    "M3_Subprocessos_Modelados": "Sim",
@@ -387,8 +368,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Sim",
    "M10_Publicado_Repositorio": "Sim",
    "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
-   "Pendencia": null,
-   "Ultima_Atualizacao": "2026-06-30"
+   "Pendencia": null
   },
   {
    "Codigo": "P-07.01",
@@ -414,8 +394,7 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIGEP (fictício); SEI",
    "Normativos_Relacionados": "CLT; Normas internas de pessoal",
    "Processo_SEI": null,
-   "Imagem_Bizagi": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-07-01",
-   "Diagrama_Interativo": "N",
+   "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Não",
    "M2_Macro_Processo_Modelados": "Não",
    "M3_Subprocessos_Modelados": "Não",
@@ -427,8 +406,7 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Aguardando priorização no ciclo 2027.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": "2026-06-15"
+   "Pendencia": null
   }
  ],
  "Subprocessos": [
@@ -441,10 +419,10 @@ window.PAINEL_DADOS = {
    "Objetivo": "Fundamentar tecnicamente a melhor solução para a necessidade.",
    "Unidade_Responsavel": "AA/GLC",
    "Dono": "Ricardo Nogueira",
-   "Entregas": "ETP aprovado no SEI",
+   "Entradas": "DFD; Levantamento de soluções de mercado",
+   "Saidas": "ETP aprovado no SEI",
    "Sistemas": "SEI; Compras.gov.br",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-01",
-   "Diagrama_Interativo": "N"
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "SP-06.01.02",
@@ -455,10 +433,10 @@ window.PAINEL_DADOS = {
    "Objetivo": "Especificar com precisão o objeto e as condições da contratação.",
    "Unidade_Responsavel": "AA/GLC",
    "Dono": "Ricardo Nogueira",
-   "Entregas": "TR aprovado e validado juridicamente",
+   "Entradas": "ETP aprovado; Modelos padronizados de TR",
+   "Saidas": "TR aprovado e validado juridicamente",
    "Sistemas": "SEI",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-02",
-   "Diagrama_Interativo": "N"
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "SP-06.01.03",
@@ -469,10 +447,10 @@ window.PAINEL_DADOS = {
    "Objetivo": "Estimar o valor da contratação conforme a IN SEGES nº 65/2021.",
    "Unidade_Responsavel": "AA/GLC",
    "Dono": "Ricardo Nogueira",
-   "Entregas": "Relatório de pesquisa de preços; Mapa comparativo",
+   "Entradas": "TR validado; Fontes de preços admitidas",
+   "Saidas": "Relatório de pesquisa de preços; Mapa comparativo",
    "Sistemas": "Painel de Preços; PNCP; SEI",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03",
-   "Diagrama_Interativo": "N"
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "SP-06.01.03.01",
@@ -483,10 +461,10 @@ window.PAINEL_DADOS = {
    "Objetivo": "Evitar que outliers de preço distorçam o valor estimado da contratação.",
    "Unidade_Responsavel": "AA/GLC",
    "Dono": "Ricardo Nogueira",
-   "Entregas": "Valores discrepantes identificados e justificados",
+   "Entradas": "Amostra de preços coletados na pesquisa",
+   "Saidas": "Valores discrepantes identificados e justificados",
    "Sistemas": "Planilha padrão; SEI",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03-01",
-   "Diagrama_Interativo": "N"
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "SP-06.02.01",
@@ -497,10 +475,10 @@ window.PAINEL_DADOS = {
    "Objetivo": "Conduzir o certame com transparência e celeridade.",
    "Unidade_Responsavel": "AA/GLC",
    "Dono": "Ricardo Nogueira",
-   "Entregas": "Ata da sessão; Resultado por item",
+   "Entradas": "Edital publicado; Propostas dos licitantes",
+   "Saidas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-02-01",
-   "Diagrama_Interativo": "N"
+   "Imagem_Bizagi": null
   },
   {
    "Codigo": "SP-04.01.01",
@@ -511,10 +489,10 @@ window.PAINEL_DADOS = {
    "Objetivo": "Entregar a água programada com eficiência e equidade.",
    "Unidade_Responsavel": "AI/GOM",
    "Dono": "Marcos Vinícius",
-   "Entregas": "Programação hídrica executada; Registros de volume",
+   "Entradas": "Outorga de uso; Demanda de irrigação",
+   "Saidas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-04-01-01",
-   "Diagrama_Interativo": "N"
+   "Imagem_Bizagi": null
   }
  ],
  "Atividades": [
@@ -855,8 +833,8 @@ window.PAINEL_DADOS = {
    "Versao": "1.0",
    "Data": "2026-03-02",
    "Situacao": "Vigente",
-   "Link": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
-   "Observacoes": "Exportado do Bizagi Modeler."
+   "Link": "https://fluxosti.codevasf.gov.br/incidentes/",
+   "Observacoes": "Exportado do Bizagi Modeler. Mesmo link da ficha do processo (P-06.01)."
   },
   {
    "ID": "DOC-003",
@@ -963,7 +941,7 @@ window.PAINEL_DADOS = {
    "Versao": "0.3",
    "Data": "2026-07-08",
    "Situacao": "Em elaboração",
-   "Link": "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
+   "Link": null,
    "Observacoes": "Modelagem em curso."
   },
   {
@@ -1001,6 +979,18 @@ window.PAINEL_DADOS = {
    "Situacao": "Vigente",
    "Link": "https://exemplo.codevasf.gov.br/repositorio/plano-tobe-p0601.pdf",
    "Observacoes": null
+  },
+  {
+   "ID": "DOC-015",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "P-06.01",
+   "Tipo_Documento": "Checklist",
+   "Titulo": "Checklist de Conformidade — Planejamento da Contratação",
+   "Versao": "1.0",
+   "Data": "2026-05-18",
+   "Situacao": "Vigente",
+   "Link": "https://exemplo.codevasf.gov.br/repositorio/checklist-p0601.pdf",
+   "Observacoes": "Exemplo — checklist ainda não padronizado para os demais processos da carteira."
   }
  ],
  "Riscos": [
