@@ -196,7 +196,7 @@ MODAIS = """
       <button class="br-button close circle small" type="button" data-dismiss="true" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button></div>
     <div class="br-modal-body">
       <p><strong>Navegação hierárquica:</strong> na aba Início, clique em um macroprocesso da Cadeia de Valor para abrir a ficha; de lá, avance para processos, subprocessos e atividades. A trilha (breadcrumb) no topo de cada ficha mostra o caminho completo e permite voltar a qualquer nível.</p>
-      <p><strong>Fichas:</strong> cada nível traz objetivo, responsáveis, SIPOC, diagrama BPMN (Bizagi), documentos, riscos (P×I), indicadores e — nos processos — os marcos M1–M9 e o diário de mapeamento.</p>
+      <p><strong>Fichas:</strong> cada nível traz objetivo, responsáveis, SIPOC, diagrama BPMN (Bizagi), documentos, riscos (P×I), indicadores e — nos processos — os marcos M1–M10 e o diário de mapeamento.</p>
       <p><strong>Busca:</strong> use a lupa do cabeçalho para pesquisar por código, nome, documento ou registro.</p>
       <p><strong>Alertas:</strong> o sino da faixa de navegação lista prazos de mapeamento vencidos e riscos Alto/Extremo em aberto.</p>
       <p><strong>Dados:</strong> tudo vem da planilha (Google Sheets ou <code>data/painel-processos-dados.xlsx</code>). Edite a planilha e o painel reflete — detalhes na aba Metodologia.</p>

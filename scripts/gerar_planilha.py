@@ -246,13 +246,13 @@ cabecalho(pr,
      "Inicio_Mapeamento", "Prazo_Previsto", "Data_Conclusao",
      "Fornecedores", "Entradas", "Saidas", "Beneficiarios", "Sistemas",
      "Normativos_Relacionados", "Processo_SEI", "Imagem_Bizagi",
-     "M1_Formulario_Enviado", "M2_Formulario_Retornado",
-     "M3_Reuniao_Contextualizacao", "M4_ASIS_Modelado", "M5_ASIS_Validado",
-     "M6_Normativos_Identificados", "M7_TOBE_Elaborado", "M8_TOBE_Validado",
-     "M9_Publicado_Repositorio", "Proxima_Acao", "Pendencia",
+     "M1_Reuniao_Contextualizacao", "M2_Macro_Processo_Modelados",
+     "M3_Subprocessos_Modelados", "M4_ASIS_Modelado", "M5_ASIS_Validado",
+     "M6_Procedimento_Validado", "M7_Procedimento_Aprovado", "M8_TOBE_Elaborado",
+     "M9_TOBE_Validado", "M10_Publicado_Repositorio", "Proxima_Acao", "Pendencia",
      "Ultima_Atualizacao"],
     [10, 14, 34, 44, 40, 16, 24, 24, 10, 12, 14, 10, 30, 13, 13, 13,
-     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13])
+     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13])
 S, N = "Sim", "Não"
 procs = [
     ["P-06.01", "MP-06", "Planejamento da Contratação",
@@ -268,7 +268,7 @@ procs = [
      "SEI; Compras.gov.br; Painel de Preços",
      "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
      "59500.000123/2026-11", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-01",
-     S, S, S, S, S, S, S, S, S,
+     S, S, S, S, S, S, S, S, S, S,
      "Monitorar indicadores do processo e revisar POP em 12 meses.", "",
      D(2026, 7, 10)],
     ["P-06.02", "MP-06", "Seleção do Fornecedor",
@@ -284,7 +284,7 @@ procs = [
      "Compras.gov.br; PNCP; SEI",
      "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
      "59500.000456/2026-22", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-02",
-     S, S, S, S, N, N, N, N, N,
+     S, S, S, S, N, N, N, N, N, N,
      "Validar AS-IS com o dono do processo (reunião marcada).",
      "Pendente retorno da área sobre fluxo de recursos administrativos.",
      D(2026, 7, 15)],
@@ -301,7 +301,7 @@ procs = [
      "SEI; Compras.gov.br",
      "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
      "59500.000789/2026-33", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-06-03",
-     S, S, S, N, N, N, N, N, N,
+     S, S, N, N, N, N, N, N, N, N,
      "Concluir modelagem AS-IS das medições e pagamentos.", "",
      D(2026, 7, 20)],
     ["P-04.01", "MP-04", "Operação e Manutenção de Perímetros Irrigados",
@@ -317,7 +317,7 @@ procs = [
      "SIG-Irrigação (fictício); SEI",
      "Lei nº 12.787/2013",
      "59500.000901/2026-44", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-04-01",
-     S, S, S, S, N, N, N, N, N,
+     S, S, S, N, N, N, N, N, N, N,
      "Agendar oficina de validação do AS-IS com o distrito.", "",
      D(2026, 7, 12)],
     ["P-05.01", "MP-05", "Recuperação de Nascentes e Matas Ciliares",
@@ -333,7 +333,7 @@ procs = [
      "SEI; GeoPortal (fictício)",
      "Legislação ambiental aplicável",
      "", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-05-01",
-     N, N, N, N, N, N, N, N, N,
+     N, N, N, N, N, N, N, N, N, N,
      "Enviar formulário de levantamento à área (previsto ago/2026).", "",
      D(2026, 7, 1)],
     ["P-01.01", "MP-01", "Formulação e Monitoramento do Planejamento Estratégico",
@@ -349,7 +349,7 @@ procs = [
      "e-Codevasf; Painéis de BI",
      "Lei nº 13.303/2016",
      "59500.000015/2025-77", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-01-01",
-     S, S, S, S, S, S, S, S, S,
+     S, S, S, S, S, S, S, S, S, S,
      "Ciclo de monitoramento trimestral (próximo: set/2026).", "",
      D(2026, 6, 30)],
     ["P-07.01", "MP-07", "Admissão e Integração de Empregados",
@@ -365,20 +365,18 @@ procs = [
      "SIGEP (fictício); SEI",
      "CLT; Normas internas de pessoal",
      "", "https://placehold.co/960x420/005ca8/ffffff?text=Diagrama+BPMN+P-07-01",
-     N, N, N, N, N, N, N, N, N,
+     N, N, N, N, N, N, N, N, N, N,
      "Aguardando priorização no ciclo 2027.", "",
      D(2026, 6, 15)],
 ]
 escreve(pr, procs,
-        wrap_cols={4, 5, 17, 18, 19, 20, 21, 22, 34, 35},
-        center_cols={9, 10, 11, 12} | set(range(25, 34)),
-        pct_cols={12}, date_cols={14, 15, 16, 36})
+        wrap_cols={4, 5, 17, 18, 19, 20, 21, 22, 35, 36},
+        center_cols={9, 10, 11, 12} | set(range(25, 35)),
+        pct_cols={12}, date_cols={14, 15, 16, 37})
 pr.freeze_panes = "D2"
 dv(pr, "I", ref("Prioridade")); dv(pr, "J", ref("Complexidade"))
 dv(pr, "K", ref("Status_Mapeamento")); dv(pr, "M", ref("Fase_Ciclo_BPM"))
-for col in "YZ" + "".join(get_column_letter(k) for k in range(27, 34)):
-    pass
-for k in range(25, 34):
+for k in range(25, 35):
     dv(pr, get_column_letter(k), ref("Sim_Nao"))
 
 # ----------------------------------------------------------------------------
@@ -386,9 +384,9 @@ for k in range(25, 34):
 # ----------------------------------------------------------------------------
 sp = wb.create_sheet("Subprocessos")
 cabecalho(sp,
-    ["Codigo", "Processo", "Ordem", "Nome", "Descricao", "Objetivo",
+    ["Codigo", "Vinculo_Pai", "Ordem", "Nome", "Descricao", "Objetivo",
      "Unidade_Responsavel", "Dono", "Entregas", "Sistemas", "Imagem_Bizagi"],
-    [13, 10, 7, 34, 46, 40, 16, 24, 40, 28, 30])
+    [16, 16, 7, 34, 46, 40, 16, 24, 40, 28, 30])
 subs = [
     ["SP-06.01.01", "P-06.01", 1, "Estudo Técnico Preliminar (ETP)",
      "Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.",
@@ -406,6 +404,18 @@ subs = [
      "AA/GLC", "Ricardo Nogueira",
      "Relatório de pesquisa de preços; Mapa comparativo", "Painel de Preços; PNCP; SEI",
      "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03"],
+    # Exemplo de subprocesso DENTRO de outro subprocesso — o CBOK 4.0 não fixa a
+    # profundidade da decomposição ("Levels Vary in Number and Name"): ao
+    # mapear a Pesquisa de Preços, a equipe percebeu que o tratamento de
+    # valores inexequíveis/excessivos merecia seu próprio subprocesso,
+    # descoberto só durante as oficinas de modelagem (marco M3).
+    # Vinculo_Pai aqui é OUTRO SUBPROCESSO (SP-...), não um Processo (P-...).
+    ["SP-06.01.03.01", "SP-06.01.03", 1, "Tratamento de Preços Inexequíveis ou Excessivos",
+     "Identificação e exclusão de valores discrepantes coletados na pesquisa, com justificativa técnica registrada.",
+     "Evitar que outliers de preço distorçam o valor estimado da contratação.",
+     "AA/GLC", "Ricardo Nogueira",
+     "Valores discrepantes identificados e justificados", "Planilha padrão; SEI",
+     "https://placehold.co/960x420/007d4e/ffffff?text=Diagrama+BPMN+SP-06-01-03-01"],
     ["SP-06.02.01", "P-06.02", 1, "Condução da Sessão Pública",
      "Abertura da sessão no sistema, fase de lances, julgamento, habilitação e registro em ata.",
      "Conduzir o certame com transparência e celeridade.",
@@ -465,6 +475,11 @@ ativs = [
      "Aplicar o método definido (média/mediana/menor preço) e justificar a estimativa final.",
      "Equipe de planejamento da contratação", "Relatório de pesquisa",
      "Valor estimado consolidado", "SEI", "3 dias úteis", "IN SEGES nº 65/2021, art. 6º"],
+    # Atividade do subprocesso ANINHADO SP-06.01.03.01 (subprocesso dentro de subprocesso)
+    ["A-06.01.03.01.01", "SP-06.01.03.01", 1, "Aplicar critério de exclusão de valores discrepantes",
+     "Comparar cada preço coletado à mediana da amostra e excluir, com justificativa registrada, os valores inexequíveis ou excessivos.",
+     "Equipe de planejamento da contratação", "Amostra de preços coletados",
+     "Amostra tratada; Justificativa de exclusão", "Planilha padrão", "1 dia útil", "IN SEGES nº 65/2021, art. 6º, §3º", ""],
     ["A-06.02.01.01", "SP-06.02.01", 1, "Publicar o edital",
      "Divulgar o edital no PNCP e no sistema de compras, observando prazos mínimos legais.",
      "Agente de contratação", "Edital aprovado; Parecer jurídico",
@@ -891,7 +906,7 @@ linha(8, "2. Fallback", "Opcionalmente, gere js/dados.js com o script scripts/pl
       "(usado quando o site é aberto sem servidor/offline).")
 linha(9, "3. Vínculos", "Hierarquia (CBOK 4.0): Macroprocesso → Processo de negócio (aba Processos) → "
       "Subprocesso → Atividade → Tarefa. Os relacionamentos usam os CÓDIGOS: "
-      "Processos→Macroprocesso, Subprocessos→Processo, Atividades→Subprocesso, Tarefas→Atividade; "
+      "Processos→Macroprocesso, Subprocessos→Processo (ou Subprocessos→outro Subprocesso, quando aninhado), Atividades→Subprocesso, Tarefas→Atividade; "
       "Documentos/Riscos/Indicadores usam Vinculo_Nivel + Vinculo_Codigo; o Diário usa o código do Processo.")
 
 titulo(11, "Convenções de preenchimento")
@@ -914,8 +929,8 @@ linha(18, "Validação de dados", "Campos com lista suspensa buscam os valores n
 titulo(20, "Dicionário de abas")
 abas_desc = [
     ("Macroprocessos", "1º nível da cadeia de valor (CBOK: processos primários/finalísticos, de suporte e gerenciais)."),
-    ("Processos", "2º nível — processos de negócio, com ficha completa: SIPOC (fornecedores, entradas, saídas, beneficiários), status e marcos do mapeamento (M1–M9), fase do ciclo BPM e dados do projeto."),
-    ("Subprocessos", "3º nível (CBOK): subprocessos do processo de negócio."),
+    ("Processos", "2º nível — processos de negócio, com ficha completa: SIPOC (fornecedores, entradas, saídas, beneficiários), status e marcos do mapeamento (M1–M10), fase do ciclo BPM e dados do projeto."),
+    ("Subprocessos", "3º nível (CBOK): subprocessos do processo de negócio. Vinculo_Pai aceita o código de um Processo (P-...) OU de OUTRO subprocesso (SP-...) — o CBOK não fixa a profundidade da decomposição, então um subprocesso pode conter outro subprocesso, tantos níveis quanto o processo exigir."),
     ("Atividades", "4º nível (CBOK), com entradas, saídas, ator, sistemas e prazos."),
     ("Tarefas", "5º e último nível (CBOK): menor unidade de trabalho de uma atividade — manual, automatizada ou regra de negócio."),
     ("Documentos", "Repositório: POPs, manuais, atas, diagramas BPMN (Bizagi), relatórios — vinculados a qualquer nível."),

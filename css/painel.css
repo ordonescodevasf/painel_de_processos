@@ -545,3 +545,25 @@ body.contraste-alto .graf svg text{fill:#fff !important;}
   #modalEquipeDev .team-card{flex-direction:column;text-align:center;gap:var(--sp2);}
   #modalEquipeDev .team-email{justify-content:center;}
 }
+
+/* ── categorização por cor dos campos da ficha (Macroprocesso, Processo,
+   Subprocesso, Atividade, Tarefa) — com muita informação preenchida, os
+   campos se misturavam visualmente. Uma barra lateral + rótulo tingido
+   agrupa por tipo de informação, só com tokens já usados no painel:
+   azul = descritivo · navy = responsabilidade · verde = valor entregue ·
+   petróleo = técnico/normativo. Sem legenda: o próprio nome do campo já
+   diz o que é; a cor só reforça o agrupamento ao passar o olho rápido. ── */
+.ficha-dl > div[class*="campo-"]{border-left:3px solid transparent;
+  padding:2px 0 2px 10px;border-radius:0 4px 4px 0;transition:background var(--dur-fast) var(--ease);}
+.ficha-dl > div.campo-desc{border-left-color:var(--cv-blue);background:rgba(0,92,168,.05);}
+.ficha-dl > div.campo-desc dt{color:var(--cv-blue);}
+.ficha-dl > div.campo-quem{border-left-color:var(--cv-navy);background:rgba(34,43,84,.05);}
+.ficha-dl > div.campo-quem dt{color:var(--cv-navy);}
+.ficha-dl > div.campo-valor{border-left-color:var(--pp-verde);background:rgba(0,125,78,.05);}
+.ficha-dl > div.campo-valor dt{color:var(--pp-verde);}
+.ficha-dl > div.campo-tecnico{border-left-color:#0a6b80;background:rgba(10,107,128,.05);}
+.ficha-dl > div.campo-tecnico dt{color:#0a6b80;}
+.ficha-dl > div.campo-tempo{border-left-color:#8a6d00;background:rgba(138,109,0,.05);}
+.ficha-dl > div.campo-tempo dt{color:#8a6d00;}
+body.contraste-alto .ficha-dl > div[class*="campo-"]{background:transparent;border-left-color:var(--gold-vivid-20,#ffbe2e);}
+body.contraste-alto .ficha-dl > div[class*="campo-"] dt{color:#fff;}

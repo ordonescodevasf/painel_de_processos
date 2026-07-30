@@ -206,7 +206,7 @@
     dd.params = {};
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
-    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorProc: {}, ativsPorSub: {}, tarefasPorAtiv: {},
+    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorSub: {}, tarefasPorAtiv: {},
       vinc: { docs: {}, riscos: {}, inds: {} }, diarioPorProc: {} };
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.macros.forEach(function (m) { idx.mp[m.Codigo] = m; });
@@ -218,7 +218,11 @@
     dd.subs.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.subs.forEach(function (s) {
       idx.sp[s.Codigo] = s;
-      (idx.subsPorProc[s.Processo] = idx.subsPorProc[s.Processo] || []).push(s);
+      // Vinculo_Pai aponta para um Processo (P-...) OU para outro Subprocesso (SP-...) —
+      // o CBOK 4.0 não fixa a profundidade da decomposição ("Levels Vary in Number and
+      // Name"): um subprocesso pode conter outro subprocesso, tantos níveis quanto o
+      // processo exigir, até chegar à atividade.
+      (idx.subsPorPai[s.Vinculo_Pai] = idx.subsPorPai[s.Vinculo_Pai] || []).push(s);
     });
     dd.ativs.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.ativs.forEach(function (a) {
@@ -281,8 +285,9 @@
       return '<span class="chip">' + (icone ? '<i class="fas ' + icone + '" aria-hidden="true"></i> ' : '') + esc(x) + '</span>';
     }).join('') + '</div>';
   }
-  function campo(rotulo, valorHtml, span2) {
-    return '<div' + (span2 ? ' class="span2"' : '') + '><dt>' + esc(rotulo) + '</dt><dd>' +
+  function campo(rotulo, valorHtml, span2, categoria) {
+    var cls = (span2 ? 'span2 ' : '') + (categoria ? 'campo-' + categoria : '');
+    return '<div' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '><dt>' + esc(rotulo) + '</dt><dd>' +
       (valorHtml || '<span class="pp-vazio">Não informado</span>') + '</dd></div>';
   }
   var NIVEL_PREFIXO = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp',
@@ -312,18 +317,49 @@
           : '<span class="atual" aria-current="page">' + esc(t.rotulo) + '</span>');
       }).join('') + '</nav>';
   }
-  var MARCOS_ROTULOS = ['Formulário enviado', 'Formulário retornado', 'Reunião de contextualização',
-    'AS-IS modelado', 'AS-IS validado', 'Normativos identificados', 'TO-BE elaborado',
-    'TO-BE validado', 'Publicado no repositório'];
-  var MARCOS_CAMPOS = ['M1_Formulario_Enviado', 'M2_Formulario_Retornado', 'M3_Reuniao_Contextualizacao',
-    'M4_ASIS_Modelado', 'M5_ASIS_Validado', 'M6_Normativos_Identificados', 'M7_TOBE_Elaborado',
-    'M8_TOBE_Validado', 'M9_Publicado_Repositorio'];
+  var MARCOS_ROTULOS = ['Reunião de contextualização', 'Macroprocesso e processo modelados',
+    'Subprocessos modelados', 'AS-IS modelado', 'AS-IS validado', 'Procedimento validado',
+    'Procedimento aprovado', 'TO-BE elaborado', 'TO-BE validado', 'Publicado no repositório'];
+  var MARCOS_CAMPOS = ['M1_Reuniao_Contextualizacao', 'M2_Macro_Processo_Modelados', 'M3_Subprocessos_Modelados',
+    'M4_ASIS_Modelado', 'M5_ASIS_Validado', 'M6_Procedimento_Validado', 'M7_Procedimento_Aprovado',
+    'M8_TOBE_Elaborado', 'M9_TOBE_Validado', 'M10_Publicado_Repositorio'];
+  var MARCOS_DESCRICOES = [
+    'Primeira reunião com a área para apresentar a metodologia, entender o contexto do processo e coletar o formulário de levantamento.',
+    'Oficinas de modelagem do macroprocesso e do processo em BPMN, com a equipe de mapeamento e a área.',
+    'Oficinas de modelagem dos subprocessos — podendo aprofundar vários níveis (subprocesso dentro de subprocesso) — inclusive identificando subprocessos ainda não mapeados.',
+    'O conjunto de diagramas AS-IS (macroprocesso, processo, subprocessos e atividades) está consolidado.',
+    'O dono do processo validou formalmente o AS-IS como retrato fiel da realidade atual.',
+    'O procedimento operacional padrão (POP) foi redigido e revisado tecnicamente pela equipe de mapeamento (CBOK 4.0).',
+    'O POP foi aprovado pela autoridade competente da área — pronto para orientar a execução do processo.',
+    'O redesenho (TO-BE) do processo foi elaborado, com melhorias, riscos residuais e indicadores propostos.',
+    'O dono do processo e a gerência da área validaram formalmente o TO-BE.',
+    'O processo, seus diagramas e o POP foram publicados no repositório institucional — mapeamento concluído.'
+  ];
   function marcosHtml(p) {
     return '<ul class="marcos">' + MARCOS_CAMPOS.map(function (c, i) {
       var feito = simNao(p[c]);
-      return '<li class="' + (feito ? 'feito' : '') + '"><span>' + esc(MARCOS_ROTULOS[i]) +
+      return '<li class="' + (feito ? 'feito' : '') + '" title="' + esc(MARCOS_DESCRICOES[i]) + '"><span>' + esc(MARCOS_ROTULOS[i]) +
         '</span><i class="fas ' + (feito ? 'fa-check-circle' : 'fa-circle') + '" aria-hidden="true"></i></li>';
     }).join('') + '</ul>';
+  }
+  // Sobe a cadeia de um subprocesso até achar seu Processo — como o CBOK permite
+  // subprocesso dentro de subprocesso (profundidade variável), o "pai" de um
+  // subprocesso pode ser outro subprocesso (código "SP-...") em vez de um
+  // processo (código "P-...") direto. Retorna [maisFundo, ..., maisRaso],
+  // sempre terminando no subprocesso que é filho direto do Processo.
+  function cadeiaSubprocessos(spCodigo) {
+    var cadeia = [], atual = IDX.sp[spCodigo], guarda = {};
+    while (atual && !guarda[atual.Codigo]) {
+      cadeia.push(atual); guarda[atual.Codigo] = true;
+      if (String(atual.Vinculo_Pai || '').indexOf('SP-') === 0) atual = IDX.sp[atual.Vinculo_Pai];
+      else break;
+    }
+    return cadeia;
+  }
+  function processoDoSubprocesso(spCodigo) {
+    var cadeia = cadeiaSubprocessos(spCodigo);
+    var raiz = cadeia[cadeia.length - 1];
+    return raiz ? IDX.p[raiz.Vinculo_Pai] : null;
   }
   function urlDrive(u) {                     // link de compartilhamento → imagem exibível
     var m = String(u || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
@@ -667,7 +703,7 @@
         : '<p class="pp-vazio">Nenhum processo corresponde aos filtros. Limpe os filtros para ver todos.</p>');
     $('#fMacro').onchange = function () { filtroCat.macro = this.value; renderCatalogo(); };
     $('#fStatus').onchange = function () { filtroCat.status = this.value; renderCatalogo(); };
-    $('#fBusca').oninput = function () { filtroCat.q = this.value; renderCatalogo(); $('#fBusca').focus(); };
+    $('#fBusca').oninput = function () { filtroCat.q = this.value; renderCatalogo(); var n = $('#fBusca'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
   }
 
   /* ── TELA: detalhe (mp | p | sp | a) ──────────────────────────────── */
@@ -694,14 +730,14 @@
         '<div class="meta">' + tagCat(m.Categoria) + '<span>' + filhos.length + ' processos vinculados</span><span>· mapeamento médio ' + media + '%</span></div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
-        campo('Objetivo', m.Objetivo && esc(m.Objetivo)) + campo('Descrição', m.Descricao && esc(m.Descricao)) +
-        campo('Unidade responsável', m.Unidade_Responsavel && esc(m.Unidade_Responsavel)) +
-        campo('Dono do processo (process owner)', m.Dono_Processo && esc(m.Dono_Processo)) +
-        campo('Entregas (produtos/serviços)', chips(m.Entregas), true) +
-        campo('Beneficiários', chips(m.Clientes_Beneficiarios)) +
-        campo('Partes interessadas', chips(m.Partes_Interessadas)) +
-        campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop')) +
-        campo('Normativos aplicáveis', chips(m.Normativos_Aplicaveis, 'fa-scale-balanced'), true) +
+        campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
+        campo('Unidade responsável', m.Unidade_Responsavel && esc(m.Unidade_Responsavel), false, 'quem') +
+        campo('Dono do processo (process owner)', m.Dono_Processo && esc(m.Dono_Processo), false, 'quem') +
+        campo('Entregas (produtos/serviços)', chips(m.Entregas), true, 'valor') +
+        campo('Beneficiários', chips(m.Clientes_Beneficiarios), false, 'valor') +
+        campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
+        campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop'), false, 'tecnico') +
+        campo('Normativos aplicáveis', chips(m.Normativos_Aplicaveis, 'fa-scale-balanced'), true, 'tecnico') +
         (m.Observacoes ? campo('Observações', esc(m.Observacoes), true) : '') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome) + '</div>' +
         secVinculos('Macroprocesso', cod) +
@@ -719,7 +755,7 @@
       var p = IDX.p[cod];
       if (!p) { el.innerHTML = naoEncontrado('Processo de negócio', cod); return; }
       var mp = IDX.mp[p.Macroprocesso];
-      var subs = IDX.subsPorProc[cod] || [];
+      var subs = IDX.subsPorPai[cod] || [];
       var regs = IDX.diarioPorProc[cod] || [];
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
@@ -745,7 +781,7 @@
         '<div class="col"><h4>Saídas</h4><ul>' + (listar(p.Saidas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col"><h4>Beneficiários</h4><ul>' + (listar(p.Beneficiarios || p.Clientes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '</div></div>' +
-        '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M9)</h3>' + marcosHtml(p) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' + marcosHtml(p) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         secVinculos('Processo', cod) +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos</h3>' +
@@ -760,13 +796,13 @@
         '</div><aside>' +
         '<div class="pp-card"><h3><i class="fas fa-calendar-check" aria-hidden="true"></i> Cronograma do projeto</h3>' + barraPct(p.Percentual) +
         '<dl class="ficha-dl" style="grid-template-columns:1fr 1fr;margin-top:var(--sp2)">' +
-        campo('Início', fmtData(p.Inicio_Mapeamento)) + campo('Prazo', fmtData(p.Prazo_Previsto)) +
-        campo('Conclusão', fmtData(p.Data_Conclusao)) + campo('Atualizado em', fmtData(p.Ultima_Atualizacao)) + '</dl></div>' +
+        campo('Início', fmtData(p.Inicio_Mapeamento), false, 'tempo') + campo('Prazo', fmtData(p.Prazo_Previsto), false, 'tempo') +
+        campo('Conclusão', fmtData(p.Data_Conclusao), false, 'tempo') + campo('Atualizado em', fmtData(p.Ultima_Atualizacao), false, 'tempo') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Responsáveis</h3><dl class="ficha-dl" style="grid-template-columns:1fr">' +
-        campo('Dono do processo', p.Dono_Processo && esc(p.Dono_Processo)) +
-        campo('Área responsável', p.Area_Responsavel && esc(p.Area_Responsavel)) +
-        campo('Interlocutor do mapeamento', p.Interlocutor && esc(p.Interlocutor)) +
-        campo('Prioridade / complexidade', esc(p.Prioridade || '—') + ' / ' + esc(p.Complexidade || '—')) + '</dl></div>' +
+        campo('Dono do processo', p.Dono_Processo && esc(p.Dono_Processo), false, 'quem') +
+        campo('Área responsável', p.Area_Responsavel && esc(p.Area_Responsavel), false, 'quem') +
+        campo('Interlocutor do mapeamento', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
+        campo('Prioridade / complexidade', esc(p.Prioridade || '—') + ' / ' + esc(p.Complexidade || '—'), false, 'quem') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
         (p.Proxima_Acao ? '<p style="font-size:var(--fs-sm)">' + esc(p.Proxima_Acao) + '</p>' : '<p class="pp-vazio">—</p>') +
         (p.Pendencia ? '<div class="pp-aviso" style="margin:var(--sp2) 0 0"><strong>Pendência:</strong> ' + esc(p.Pendencia) + '</div>' : '') + '</div>' +
@@ -778,25 +814,39 @@
     if (tipo === 'sp') {
       var s = IDX.sp[cod];
       if (!s) { el.innerHTML = naoEncontrado('Subprocesso', cod); return; }
-      var pp = IDX.p[s.Processo]; var mpp = pp && IDX.mp[pp.Macroprocesso];
+      var cadeiaSp = cadeiaSubprocessos(cod).slice(1); // pais SP, do mais raso ao mais fundo (exclui o próprio "s")
+      cadeiaSp.reverse();
+      var pp = processoDoSubprocesso(cod); var mpp = pp && IDX.mp[pp.Macroprocesso];
+      var paiDireto = null, paiEhSub = String(s.Vinculo_Pai || '').indexOf('SP-') === 0;
+      if (paiEhSub) paiDireto = IDX.sp[s.Vinculo_Pai]; else paiDireto = pp;
+      var subsFilhos = IDX.subsPorPai[cod] || [];
       var ativs = IDX.ativsPorSub[cod] || [];
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
           .concat(mpp ? [{ rotulo: mpp.Codigo, href: '#/mp/' + encodeURIComponent(mpp.Codigo) }] : [])
           .concat(pp ? [{ rotulo: pp.Codigo, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
+          .concat(cadeiaSp.map(function (sp2) { return { rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
           .concat([{ rotulo: s.Codigo + ' — ' + s.Nome }])) +
         '<section class="ficha-hero" style="background:var(--cv-blue)">' +
-        '<span class="eyebrow">Subprocesso' + (pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
+        '<span class="eyebrow">Subprocesso' + (paiEhSub ? ' de ' + esc(paiDireto.Nome) + ' (subprocesso)' : pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
         '<h2>' + esc(s.Codigo) + ' — ' + esc(s.Nome) + '</h2>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
         (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') + '</div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do subprocesso</h3><dl class="ficha-dl">' +
-        campo('Descrição', s.Descricao && esc(s.Descricao), true) +
-        campo('Objetivo', s.Objetivo && esc(s.Objetivo), true) +
-        campo('Unidade responsável', s.Unidade_Responsavel && esc(s.Unidade_Responsavel)) +
-        campo('Dono', s.Dono && esc(s.Dono)) +
-        campo('Entregas', chips(s.Entregas)) + campo('Sistemas', chips(s.Sistemas, 'fa-desktop')) + '</dl></div>' +
+        campo('Descrição', s.Descricao && esc(s.Descricao), true, 'desc') +
+        campo('Objetivo', s.Objetivo && esc(s.Objetivo), true, 'desc') +
+        campo('Unidade responsável', s.Unidade_Responsavel && esc(s.Unidade_Responsavel), false, 'quem') +
+        campo('Dono', s.Dono && esc(s.Dono), false, 'quem') +
+        campo('Entregas', chips(s.Entregas), false, 'valor') + campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
+        (subsFilhos.length ? '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
+          '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Entregas</th><th></th></tr></thead><tbody>' +
+          subsFilhos.map(function (sf) {
+            return '<tr data-link><td class="cod">' + esc(sf.Codigo) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
+              (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
+              '<td style="font-size:var(--fs-sm)">' + (listar(sf.Entregas).map(esc).join('; ') || '—') + '</td>' +
+              '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>';
+          }).join('') + '</tbody></table></div></div>' : '') +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
         (ativs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
           ativs.map(function (a, i) {
@@ -809,7 +859,9 @@
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
-        (pp ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3>' +
+        (paiEhSub && paiDireto ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
+          '<a class="proc-card" href="#/sp/' + encodeURIComponent(paiDireto.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(paiDireto.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(paiDireto.Nome) + '</div></div></div></a></div>' :
+        pp ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3>' +
           '<a class="proc-card" href="#/p/' + encodeURIComponent(pp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(pp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(pp.Nome) + '</div></div>' + tagStatus(pp.Status_Mapeamento) + '</div></a></div>' : '') +
         '</aside></div>';
       // clique na linha abre a atividade
@@ -824,13 +876,15 @@
     if (tipo === 'a') {
     var a = IDX.a[cod];
     if (!a) { el.innerHTML = naoEncontrado('Atividade', cod); return; }
-    var sp2 = IDX.sp[a.Subprocesso]; var p2 = sp2 && IDX.p[sp2.Processo]; var mp2 = p2 && IDX.mp[p2.Macroprocesso];
+    var sp2 = IDX.sp[a.Subprocesso];
+    var cadeiaSp2 = sp2 ? cadeiaSubprocessos(sp2.Codigo).slice().reverse() : []; // mais raso -> mais fundo
+    var p2 = sp2 && processoDoSubprocesso(sp2.Codigo); var mp2 = p2 && IDX.mp[p2.Macroprocesso];
     var tf3 = IDX.tarefasPorAtiv[cod] || [];
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp2 ? [{ rotulo: mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
         .concat(p2 ? [{ rotulo: p2.Codigo, href: '#/p/' + encodeURIComponent(p2.Codigo) }] : [])
-        .concat(sp2 ? [{ rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }] : [])
+        .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
         .concat([{ rotulo: a.Codigo }])) +
       '<section class="ficha-hero" style="background:var(--pp-verde)">' +
       '<span class="eyebrow">Atividade' + (sp2 ? ' do subprocesso ' + esc(sp2.Nome) : '') + '</span>' +
@@ -839,11 +893,11 @@
       (a.Prazo_Padrao ? '<span>· Prazo padrão: ' + esc(a.Prazo_Padrao) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da atividade</h3><dl class="ficha-dl">' +
-      campo('Descrição', a.Descricao && esc(a.Descricao), true) +
-      campo('Entradas (insumos)', chips(a.Entradas, 'fa-arrow-right-to-bracket')) +
-      campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket')) +
-      campo('Sistemas', chips(a.Sistemas, 'fa-desktop')) +
-      campo('Base normativa', a.Base_Normativa ? chips(a.Base_Normativa, 'fa-scale-balanced') : null) + '</dl></div>' +
+      campo('Descrição', a.Descricao && esc(a.Descricao), true, 'desc') +
+      campo('Entradas (insumos)', chips(a.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
+      campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
+      campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') +
+      campo('Base normativa', a.Base_Normativa ? chips(a.Base_Normativa, 'fa-scale-balanced') : null, false, 'tecnico') + '</dl></div>' +
       '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(a.Imagem_Bizagi, a.Nome) + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Tarefas (menor unidade de trabalho — CBOK 4.0)</h3>' +
       (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
@@ -870,12 +924,13 @@
     var t = IDX.t[cod];
     if (!t) { el.innerHTML = naoEncontrado('Tarefa', cod); return; }
     var a3 = IDX.a[t.Atividade]; var sp3 = a3 && IDX.sp[a3.Subprocesso];
-    var p3 = sp3 && IDX.p[sp3.Processo]; var mp3 = p3 && IDX.mp[p3.Macroprocesso];
+    var cadeiaSp3 = sp3 ? cadeiaSubprocessos(sp3.Codigo).slice().reverse() : []; // mais raso -> mais fundo
+    var p3 = sp3 && processoDoSubprocesso(sp3.Codigo); var mp3 = p3 && IDX.mp[p3.Macroprocesso];
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp3 ? [{ rotulo: mp3.Codigo, href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])
         .concat(p3 ? [{ rotulo: p3.Codigo, href: '#/p/' + encodeURIComponent(p3.Codigo) }] : [])
-        .concat(sp3 ? [{ rotulo: sp3.Codigo, href: '#/sp/' + encodeURIComponent(sp3.Codigo) }] : [])
+        .concat(cadeiaSp3.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
         .concat(a3 ? [{ rotulo: a3.Codigo, href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
         .concat([{ rotulo: t.Codigo }])) +
       '<section class="ficha-hero" style="background:var(--cv-navy)">' +
@@ -886,10 +941,10 @@
       (t.Duracao_Estimada ? '<span>· Duração estimada: ' + esc(t.Duracao_Estimada) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
-      campo('Descrição', t.Descricao && esc(t.Descricao), true) +
-      campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa)) +
-      campo('Responsável', t.Responsavel && esc(t.Responsavel)) +
-      campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null) +
+      campo('Descrição', t.Descricao && esc(t.Descricao), true, 'desc') +
+      campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa), false, 'tecnico') +
+      campo('Responsável', t.Responsavel && esc(t.Responsavel), false, 'quem') +
+      campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
       '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(t.Imagem_Bizagi, t.Nome) + '</div>' +
       secVinculos('Tarefa', cod) +
@@ -933,7 +988,7 @@
       }).join('') : '<tr><td colspan="5" class="pp-vazio">Nenhum documento corresponde aos filtros.</td></tr>') +
       '</tbody></table></div></div>';
     $('#fTipoDoc').onchange = function () { filtroDoc.tipo = this.value; renderDocumentos(); };
-    $('#fBuscaDoc').oninput = function () { filtroDoc.q = this.value; renderDocumentos(); $('#fBuscaDoc').focus(); };
+    $('#fBuscaDoc').oninput = function () { filtroDoc.q = this.value; renderDocumentos(); var n = $('#fBuscaDoc'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
   }
   function renderRiscos() {
     var el = $('#viewRiscos');
@@ -1242,9 +1297,9 @@
       '<li><h4>Desenvolver iniciativas</h4><p>Planos de implantação, capacitação, mudanças e tecnologia (visão PMBOK do projeto).</p></li>' +
       '<li><h4>Implementar mudanças</h4><p>Execução dos planos, publicação de procedimentos e estabilização.</p></li>' +
       '<li><h4>Medir o sucesso</h4><p>Monitoramento por indicadores e melhoria contínua (novo giro do ciclo).</p></li></ol></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M9)</h3>' +
-      '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Roteiro-padrão de cada projeto de mapeamento, do primeiro contato com a área até a publicação no repositório:</p>' +
-      '<ul class="marcos">' + MARCOS_ROTULOS.map(function (r) { return '<li class="feito"><span>' + esc(r) + '</span><i class="fas fa-check-circle" aria-hidden="true"></i></li>'; }).join('') + '</ul></div>' +
+      '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' +
+      '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Roteiro-padrão de cada projeto de mapeamento, do primeiro contato com a área até a publicação no repositório — passe o cursor sobre um marco para ver o que ele significa:</p>' +
+      '<ul class="marcos">' + MARCOS_ROTULOS.map(function (r, i) { return '<li class="feito" title="' + esc(MARCOS_DESCRICOES[i]) + '"><span>' + esc(r) + '</span><i class="fas fa-check-circle" aria-hidden="true"></i></li>'; }).join('') + '</ul></div>' +
       '<div class="pp-card"><h3><i class="fas fa-database" aria-hidden="true"></i> Como este painel é alimentado</h3><dl class="ficha-dl">' +
       campo('1. Google Sheets (recomendado)', 'Importe a planilha para o Google Sheets, compartilhe como “qualquer pessoa com o link pode ver” e informe o ID em <code>PAINEL_CONFIG.googleSheetId</code> (index.html).', true) +
       campo('2. Planilha no repositório', 'Sem Google Sheets, o painel lê <code>data/painel-processos-dados.xlsx</code> publicado junto com o site.', true) +

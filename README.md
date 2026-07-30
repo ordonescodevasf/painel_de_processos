@@ -183,6 +183,51 @@ textos ajustados para este painel:
   jurídico — para a política corporativa completa, a página linka a fonte
   oficial da Codevasf.
 
+## Cores nos campos da ficha
+
+Com muitos campos preenchidos, o texto das fichas (Macroprocesso, Processo,
+Subprocesso, Atividade, Tarefa) ficava difícil de escanear rápido. Os campos
+agora têm uma barra lateral + rótulo tingido por categoria — só com cores já
+usadas no painel: **azul** = descritivo (Descrição, Objetivo), **navy** =
+responsabilidade (Dono, Unidade Responsável, Interlocutor), **verde** = valor
+entregue (Entregas, Beneficiários, Entradas/Saídas), **petróleo** =
+técnico/normativo (Sistemas, Normativos, Base Normativa). Sem legenda — o
+nome do campo já diz o que é; a cor só ajuda a agrupar visualmente. Some
+sozinho no modo alto contraste.
+
+## Metodologia: marcos do mapeamento (M1–M10)
+
+Os marcos passaram de 9 para **10 etapas**, começando pela reunião de
+contextualização (antes era o 3º passo):
+
+`M1` Reunião de contextualização · `M2` Macroprocesso e processo modelados ·
+`M3` Subprocessos modelados · `M4` AS-IS modelado · `M5` AS-IS validado ·
+`M6` Procedimento validado · `M7` Procedimento aprovado · `M8` TO-BE
+elaborado · `M9` TO-BE validado · `M10` Publicado no repositório.
+
+M2 e M3 representam as diversas oficinas de modelagem entre a contextualização
+e o AS-IS consolidado — desenhando macroprocesso, processo e subprocessos
+(inclusive descobrindo subprocessos ainda não mapeados). M6/M7 tratam do POP
+(Procedimento Operacional Padrão, CBOK 4.0): primeiro validado tecnicamente
+pela equipe, depois aprovado pela autoridade competente. Cada marco tem um
+tooltip explicando o que significa — passe o cursor sobre ele na ficha do
+processo ou na aba Repositório. Na planilha, as colunas viraram
+`M1_Reuniao_Contextualizacao` … `M10_Publicado_Repositorio` (10 colunas
+Sim/Não na aba Processos).
+
+## Subprocesso dentro de subprocesso
+
+O CBOK 4.0 não fixa a profundidade da decomposição de processos ("Levels Vary
+in Number and Name") — um subprocesso pode conter outro subprocesso, quantos
+níveis o processo exigir, até chegar à atividade. Na aba **Subprocessos** da
+planilha, a coluna `Vinculo_Pai` aceita tanto o código de um **Processo**
+(`P-...`) quanto de **outro Subprocesso** (`SP-...`); o painel detecta
+automaticamente pelo prefixo do código e monta o breadcrumb e a ficha
+corretamente em qualquer profundidade. Veja o exemplo já incluído:
+`SP-06.01.03.01` (Tratamento de Preços Inexequíveis ou Excessivos) é filho de
+`SP-06.01.03` (Pesquisa de Preços), que por sua vez é filho do processo
+`P-06.01`.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
@@ -197,5 +242,5 @@ A logo do Governo Federal no rodapé aponta para uma URL externa (repositorio.if
 Estruturado no **BPM CBOK 4.0** (hierarquia macroprocesso → processo →
 subprocesso → atividade; tipos finalístico/suporte/gerencial; ciclo de vida BPM
 em 5 fases; SIPOC; dono do processo) e no **PMBOK** (cada mapeamento tratado
-como projeto: termo de abertura, marcos M1–M9, entregáveis, riscos e lições
+como projeto: termo de abertura, marcos M1–M10, entregáveis, riscos e lições
 aprendidas). A aba **Metodologia** do painel documenta tudo isso para o público.
