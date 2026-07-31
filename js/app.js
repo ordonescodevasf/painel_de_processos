@@ -365,6 +365,28 @@
     });
     return total;
   }
+  var HIER_INFO = {
+    mp: { rotulo: 'Macroprocesso', icone: 'fa-diagram-project', classe: 'hier-mp' },
+    p: { rotulo: 'Processo', icone: 'fa-briefcase', classe: 'hier-p' },
+    sp: { rotulo: 'Subprocesso', icone: 'fa-sitemap', classe: 'hier-sp' },
+    a: { rotulo: 'Atividade', icone: 'fa-list-check', classe: 'hier-a' }
+  };
+  // Card único de navegação hierárquica — reúne o acesso a TODOS os
+  // ancestrais (do Macroprocesso até o pai mais próximo) num só lugar,
+  // em vez de vários cards avulsos repetindo "suba um nível". Cada item:
+  // { tipo: 'mp'|'p'|'sp'|'a', codigo, nome, href }.
+  function cardHierarquia(itens) {
+    if (!itens.length) return '';
+    return '<div class="pp-card"><h3><i class="fas fa-route" aria-hidden="true"></i> Navegar para</h3><div class="hier-lista">' +
+      itens.map(function (it) {
+        var info = HIER_INFO[it.tipo];
+        return '<a class="hier-item ' + info.classe + '" href="' + it.href + '">' +
+          '<span class="hier-ic"><i class="fas ' + info.icone + '" aria-hidden="true"></i></span>' +
+          '<span class="hier-tx"><span class="hier-tipo">' + info.rotulo + '</span>' +
+          '<span class="hier-nome">' + esc(it.codigo) + ' — ' + esc(it.nome) + '</span></span>' +
+          '<i class="fas fa-chevron-right" aria-hidden="true"></i></a>';
+      }).join('') + '</div></div>';
+  }
   function urlDrive(u) {                     // link de compartilhamento → imagem exibível
     var m = String(u || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]{20,})/);
     return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000' : null;
@@ -735,6 +757,7 @@
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
+        cardHierarquia(mp ? [{ tipo: 'mp', codigo: mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos vinculados</h3>' +
         (subs.length ? subs.map(function (s) {
           return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(s.Codigo) + '</span>' +
@@ -805,13 +828,11 @@
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
-        (paiEhSub && paiDireto ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
-          '<a class="proc-card" href="#/sp/' + encodeURIComponent(paiDireto.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(paiDireto.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(paiDireto.Nome) + '</div></div></div></a></div>' :
-        pp ? '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3>' +
-          '<a class="proc-card" href="#/p/' + encodeURIComponent(pp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(pp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(pp.Nome) + '</div></div>' + tagStatus(pp.Status_Mapeamento) + '</div></a></div>' :
-        '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Processo de negócio (pai)</h3><p class="pp-vazio">Nenhum processo vinculado.</p></div>') +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Macroprocesso</h3>' +
-        (mpp ? '<a class="proc-card" href="#/mp/' + encodeURIComponent(mpp.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(mpp.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(mpp.Nome) + '</div></div></div></a>' : '<p class="pp-vazio">Nenhum macroprocesso vinculado.</p>') + '</div>' +
+        cardHierarquia(
+          (mpp ? [{ tipo: 'mp', codigo: mpp.Codigo, nome: mpp.Nome, href: '#/mp/' + encodeURIComponent(mpp.Codigo) }] : [])
+          .concat(pp ? [{ tipo: 'p', codigo: pp.Codigo, nome: pp.Nome, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
+          .concat(cadeiaSp.map(function (sp2) { return { tipo: 'sp', codigo: sp2.Codigo, nome: sp2.Nome, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
+        ) +
         '</aside></div>';
       // clique na linha abre a atividade
       $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
@@ -857,8 +878,11 @@
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       secVinculos('Atividade', cod, true) +
       '</div><aside>' +
-      '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Subprocesso (pai)</h3>' +
-      (sp2 ? '<a class="proc-card" href="#/sp/' + encodeURIComponent(sp2.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(sp2.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(sp2.Nome) + '</div></div></div></a>' : '<p class="pp-vazio">Nenhum subprocesso vinculado.</p>') + '</div>' +
+      cardHierarquia(
+        (mp2 ? [{ tipo: 'mp', codigo: mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
+        .concat(p2 ? [{ tipo: 'p', codigo: p2.Codigo, nome: p2.Nome, href: '#/p/' + encodeURIComponent(p2.Codigo) }] : [])
+        .concat(cadeiaSp2.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
+      ) +
       '</aside></div>';
     $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
       tr.addEventListener('click', function (ev) {
@@ -895,8 +919,12 @@
       campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
       '</div><aside>' +
-      '<div class="pp-card"><h3><i class="fas fa-arrow-turn-up" aria-hidden="true"></i> Atividade (pai)</h3>' +
-      (a3 ? '<a class="proc-card" href="#/a/' + encodeURIComponent(a3.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(a3.Codigo) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(a3.Nome) + '</div></div></div></a>' : '<p class="pp-vazio">Nenhuma atividade vinculada.</p>') + '</div>' +
+      cardHierarquia(
+        (mp3 ? [{ tipo: 'mp', codigo: mp3.Codigo, nome: mp3.Nome, href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])
+        .concat(p3 ? [{ tipo: 'p', codigo: p3.Codigo, nome: p3.Nome, href: '#/p/' + encodeURIComponent(p3.Codigo) }] : [])
+        .concat(cadeiaSp3.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
+        .concat(a3 ? [{ tipo: 'a', codigo: a3.Codigo, nome: a3.Nome, href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
+      ) +
       '</aside></div>';
   }
   function naoEncontrado(tipo, cod) {

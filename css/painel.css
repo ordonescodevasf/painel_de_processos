@@ -333,6 +333,32 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 .pp-filtros select:focus,.pp-filtros input:focus{outline:none;border-color:var(--interactive,#1351b4);
   background:var(--blue-warm-vivid-5);}
 
+/* ── navegação hierárquica — um único card compacto reunindo o acesso a
+   TODOS os ancestrais (Macroprocesso → ... → pai direto), em vez de
+   vários cards avulsos repetindo "suba um nível". Cada linha é um nível;
+   a cor da barra lateral e o ícone identificam o tipo, ordem sempre do
+   topo da cadeia (Macroprocesso) para o pai mais próximo. ── */
+.hier-lista{display:flex;flex-direction:column;gap:2px;}
+.hier-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);
+  text-decoration:none;color:inherit;border-left:3px solid transparent;
+  transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease);}
+.hier-item:hover{background:var(--blue-warm-vivid-5);}
+.hier-item:focus-visible{outline:3px solid var(--focus,#da680b);outline-offset:-2px;}
+.hier-item .hier-ic{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:11px;color:#fff;}
+.hier-item .hier-tx{min-width:0;flex:1;}
+.hier-item .hier-tipo{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--gray-60);}
+.hier-item .hier-nome{display:block;font-size:var(--fs-sm);font-weight:600;color:var(--cv-navy);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hier-item .fa-chevron-right{flex-shrink:0;font-size:11px;color:var(--gray-40);}
+.hier-item.hier-mp{border-left-color:var(--cv-navy);} .hier-item.hier-mp .hier-ic{background:var(--cv-navy);}
+.hier-item.hier-p{border-left-color:var(--cv-blue);} .hier-item.hier-p .hier-ic{background:var(--cv-blue);}
+.hier-item.hier-sp{border-left-color:var(--pp-verde);} .hier-item.hier-sp .hier-ic{background:var(--pp-verde);}
+.hier-item.hier-a{border-left-color:#0a6b80;} .hier-item.hier-a .hier-ic{background:#0a6b80;}
+body.contraste-alto .hier-item{border-left-color:#fff!important;}
+body.contraste-alto .hier-item .hier-ic{background:#000;border:1px solid #fff;}
+body.contraste-alto .hier-item .hier-nome{color:#fff;}
+
 /* ── metodologia (ciclo BPM) ── */
 .ciclo{display:grid;gap:var(--sp2);grid-template-columns:repeat(auto-fit,minmax(min(180px, 100%), 1fr));
   counter-reset:fase;list-style:none;margin:0;padding:0;}

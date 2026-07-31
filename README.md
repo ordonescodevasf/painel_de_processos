@@ -375,6 +375,18 @@ do portfólio por quantidade de tarefas em cada macroprocesso/processo; e um
 processo (início/prazo/conclusão), sinalizando os atrasados — os dados de
 data já existem na planilha, só não estão visualizados como linha do tempo.
 
+## Navegação hierárquica — um card por ficha, todos os ancestrais
+
+Cada ficha (Processo, Subprocesso, Atividade, Tarefa) agora tem um único
+card **"Navegar para"** no aside, reunindo o acesso direto a **todos** os
+níveis acima do atual — não só o pai imediato. Por exemplo, na ficha de
+uma tarefa: Macroprocesso, Processo, Subprocesso (a cadeia toda, se houver
+subprocesso dentro de subprocesso) e Atividade, cada um numa linha
+compacta e clicável, com ícone e cor por tipo. Substituiu os cards de
+"pai" avulsos que existiam antes (um card por nível, repetindo "suba um
+nível") — mesma informação, mas consolidada, mais rápida de escanear e sem
+precisar subir um nível de cada vez para chegar ao topo da cadeia.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e
