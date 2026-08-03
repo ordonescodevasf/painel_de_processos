@@ -232,8 +232,10 @@
       (idx.tarefasPorAtiv[t.Atividade] = idx.tarefasPorAtiv[t.Atividade] || []).push(t);
     });
     function vincula(mapa, item) {
-      var ch = (item.Vinculo_Nivel || '') + '|' + (item.Vinculo_Codigo || '');
-      (mapa[ch] = mapa[ch] || []).push(item);
+      listaVinculoPares(item.Vinculo_Nivel, item.Vinculo_Codigo).forEach(function (par) {
+        var ch = par[0] + '|' + par[1];
+        (mapa[ch] = mapa[ch] || []).push(item);
+      });
     }
     dd.docs.forEach(function (x) { vincula(idx.vinc.docs, x); });
     dd.riscos.forEach(function (x) { vincula(idx.vinc.riscos, x); });
@@ -286,7 +288,7 @@
   }
   var NIVEL_PREFIXO = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp',
     'Atividade': 'a', 'Tarefa': 't' };
-  var NIVEL_ROTULO = { 'Macroprocesso': 'Macroprocesso', 'Processo': 'Processo de negócio',
+  var NIVEL_ROTULO = { 'Macroprocesso': 'Macroprocesso', 'Processo': 'Processo',
     'Subprocesso': 'Subprocesso', 'Atividade': 'Atividade', 'Tarefa': 'Tarefa' };
   function nivelRotulo(n) { return NIVEL_ROTULO[n] || n; }
   function rotaDe(nivel, codigo) {
@@ -301,6 +303,21 @@
   function linkVinculo(nivel, codigo) {
     return '<a href="' + rotaDe(nivel, codigo) + '"><span class="cod">' + esc(codigo) +
       '</span> ' + esc(nomeDe(nivel, codigo)) + '</a> <span class="pp-muted">(' + esc(nivelRotulo(nivel)) + ')</span>';
+  }
+  // Um mesmo item (documento, risco ou indicador) pode estar vinculado a dois ou mais
+  // processos, dois ou mais subprocessos, ou a um processo e um subprocesso ao mesmo
+  // tempo: Vinculo_Nivel e Vinculo_Codigo aceitam listas paralelas separadas por ';'.
+  function listaVinculoPares(nivelStr, codigoStr) {
+    var niveis = listar(nivelStr), codigos = listar(codigoStr), pares = [];
+    for (var i = 0; i < Math.max(niveis.length, codigos.length); i++) {
+      if (niveis[i] && codigos[i]) pares.push([niveis[i], codigos[i]]);
+    }
+    return pares;
+  }
+  function linkVinculos(nivelStr, codigoStr) {
+    var pares = listaVinculoPares(nivelStr, codigoStr);
+    if (!pares.length) return '<span class="pp-vazio">—</span>';
+    return '<div class="vinculo-lista">' + pares.map(function (par) { return linkVinculo(par[0], par[1]); }).join('') + '</div>';
   }
   function breadcrumb(trilha) {   // [{rotulo, href?}]
     return '<nav class="pp-breadcrumb" aria-label="Você está em">' +
@@ -432,7 +449,7 @@
       '<th>Risco</th><th>P</th><th>I</th><th>P×I</th><th>Nível</th><th>Resposta</th><th>Status</th></tr></thead><tbody>' +
       riscos.map(function (r) {
         return '<tr id="risco-' + esc(r.ID) + '"><td class="cod">' + esc(r.ID) + '</td>' +
-          (comVinculo ? '<td>' + linkVinculo(r.Vinculo_Nivel, r.Vinculo_Codigo) + '</td>' : '') +
+          (comVinculo ? '<td>' + linkVinculos(r.Vinculo_Nivel, r.Vinculo_Codigo) + '</td>' : '') +
           '<td>' + esc(r.Descricao_Risco) +
           (r.Controles_Tratamento ? '<div class="pp-muted" style="font-size:var(--fs-sm)">Tratamento: ' + esc(r.Controles_Tratamento) + '</div>' : '') +
           '</td><td>' + r.Probabilidade_1a5 + '</td><td>' + r.Impacto_1a5 + '</td><td><strong>' + r._nivel +
@@ -443,16 +460,16 @@
   function tabelaIndsHtml(inds, comVinculo) {
     if (!inds.length) return '<p class="pp-vazio">Nenhum indicador vinculado.</p>';
     return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
-      (comVinculo ? '<th>Vinculado a</th>' : '') +
-      '<th>Indicador</th><th>Meta</th><th>Resultado</th><th>Situação</th><th>Periodicidade</th><th>Última medição</th></tr></thead><tbody>' +
+      '<th>Indicador</th>' + (comVinculo ? '<th>Vinculado a</th>' : '') +
+      '<th>Meta</th><th>Resultado</th><th>Situação</th><th>Periodicidade</th><th>Última medição</th></tr></thead><tbody>' +
       inds.map(function (x) {
         var cls = x._sit === 'Meta atingida' ? 'sit-ok' : (x._sit === 'Sem medição' || x._sit === 'Sem meta') ? 'sit-neutra' : 'sit-ruim';
         var un = x.Unidade ? ' ' + esc(x.Unidade) : '';
         return '<tr><td class="cod">' + esc(x.ID) + '</td>' +
-          (comVinculo ? '<td>' + linkVinculo(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' : '') +
           '<td><strong>' + esc(x.Nome) + '</strong>' +
           (x.Descricao_Formula ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(x.Descricao_Formula) + '</div>' : '') +
-          '</td><td>' + (x.Meta != null ? x.Meta + un : '—') + '</td><td>' + (x.Resultado_Atual != null ? x.Resultado_Atual + un : '—') +
+          '</td>' + (comVinculo ? '<td>' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' : '') +
+          '<td>' + (x.Meta != null ? x.Meta + un : '—') + '</td><td>' + (x.Resultado_Atual != null ? x.Resultado_Atual + un : '—') +
           '</td><td class="' + cls + '">' + esc(x._sit) + '</td><td>' + esc(x.Periodicidade || '—') +
           '</td><td>' + fmtData(x.Ultima_Medicao) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
@@ -614,18 +631,17 @@
     var sup = DADOS.macros.filter(function (m) { return m._cat === 'suporte'; });
     el.innerHTML =
       '<section class="pp-hero">' +
-      '<h1>Cadeia de valor e mapeamento de processos da Codevasf</h1>' +
-      '<p>Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), ' +
-      'documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
+      '<h1>Mapeamento de processos da Codevasf</h1>' +
       '</section>' +
       '<div class="kpi-grid">' +
       '<div class="kpi" title="Total de macroprocessos na cadeia de valor institucional (gerenciais, finalísticos e de suporte)."><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
-      '<div class="kpi" title="Total de processos de negócio mapeados na carteira."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">de negócio, na carteira atual</span></div>' +
+      '<div class="kpi" title="Total de processos mapeados na carteira."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">na carteira atual</span></div>' +
       '<div class="kpi ok" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos."><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
       '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos da carteira."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento da carteira</span></div>' +
       '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<p class="pp-muted" style="margin-top:calc(var(--sp2) * -1);margin-bottom:var(--sp3);font-size:var(--fs-sm);max-width:74ch">Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
       '<div class="cadeia">' +
       '<aside class="cv-aside cv-missao"><h3><i class="fas fa-flag" aria-hidden="true"></i> Missão</h3><p>' + esc(INSTITUCIONAL.missao) + '</p><h3><i class="fas fa-eye" aria-hidden="true"></i> Visão</h3><p>' + esc(INSTITUCIONAL.visao) + '</p></aside>' +
       '<div class="cv-centro">' + blocoCadeia('Macroprocessos Gerenciais', 'cat-gerencial', 'fa-compass', ger) +
@@ -633,7 +649,7 @@
       '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
       '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
-      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-sm)">Clique em um macroprocesso para abrir a ficha e navegar até os processos de negócio, subprocessos, atividades e tarefas.</p></section>';
+      '</div><p class="pp-muted" style="margin-top:var(--sp2);font-size:var(--fs-sm)">Clique em um macroprocesso para abrir a ficha e navegar até os processos, subprocessos, atividades e tarefas.</p></section>';
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
@@ -701,7 +717,7 @@
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }, { rotulo: m.Codigo + ' — ' + m.Nome }]) +
         '<section class="ficha-hero" style="background:' + (CORES[m._cat] || 'var(--cv-navy)') + '">' +
         '<span class="eyebrow">Macroprocesso ' + esc(m.Categoria) + '</span><h2>' + esc(m.Codigo) + ' — ' + esc(m.Nome) + '</h2>' +
-        '<div class="meta">' + tagCat(m.Categoria) + '<span>' + filhos.length + ' processos vinculados</span><span>· mapeamento médio ' + media + '%</span></div></section>' +
+        '<div class="meta">' + tagCat(m.Categoria) + '<span>' + filhos.length + ' processos vinculados</span><span>· mapeamento atual em ' + media + '%</span></div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
         campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
@@ -726,7 +742,7 @@
     }
     if (tipo === 'p') {
       var p = IDX.p[cod];
-      if (!p) { el.innerHTML = naoEncontrado('Processo de negócio', cod); return; }
+      if (!p) { el.innerHTML = naoEncontrado('Processo', cod); return; }
       var mp = IDX.mp[p.Macroprocesso];
       var subs = IDX.subsPorPai[cod] || [];
       el.innerHTML =
@@ -737,15 +753,20 @@
         '<span class="eyebrow">Processo' + (mp ? ' · ' + esc(mp.Categoria) : '') + '</span>' +
         '<h2>' + esc(p.Codigo) + ' — ' + esc(p.Nome) + '</h2>' +
         '<div class="meta">' + tagStatus(p.Status_Mapeamento) +
-        '<span>Mapeamento: <strong>' + p.Percentual + '%</strong></span>' +
+        '<span>Mapeamento em <strong>' + p.Percentual + '%</strong></span>' +
         (p.Area_Responsavel ? '<span>Gerência: ' + esc(p.Area_Responsavel) + '</span>' : '') +
         (p.Processo_SEI ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> SEI ' + esc(p.Processo_SEI) + '</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
-        '<div class="pp-card"><h3><i class="fas fa-bullseye" aria-hidden="true"></i> Descrição</h3>' +
-        '<p style="font-size:var(--fs-sm)">' + esc(p.Descricao || '') + '</p></div>' +
-        '<div class="pp-card"><h3><i class="fas fa-crosshairs" aria-hidden="true"></i> Objetivo</h3>' +
-        '<p style="font-size:var(--fs-sm)">' + (p.Objetivo ? esc(p.Objetivo) : '<span class="pp-vazio">Não informado.</span>') + '</p></div>' +
+        '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do processo</h3><dl class="ficha-dl">' +
+        campo('Objetivo', p.Objetivo && esc(p.Objetivo), false, 'desc') +
+        campo('Descrição', p.Descricao && esc(p.Descricao), false, 'desc') +
+        campo('Gerência responsável', p.Area_Responsavel && esc(p.Area_Responsavel), false, 'quem') +
+        campo('Dono do processo', p.Dono_Processo && esc(p.Dono_Processo), false, 'quem') +
+        campo('Responsável no NUGEP', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
+        campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
+        campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
+        campo('Sistemas utilizados', chips(p.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> SIPOC</h3><div class="sipoc">' +
         '<div class="col"><h4>Fornecedores</h4><ul>' + (listar(p.Fornecedores).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col"><h4>Entradas</h4><ul>' + (listar(p.Entradas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
@@ -763,16 +784,9 @@
           return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(s.Codigo) + '</span>' +
             '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div></div></div></a>';
         }).join('') : '<p class="pp-vazio">Nenhum subprocesso cadastrado.</p>') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Responsáveis</h3><dl class="ficha-dl" style="grid-template-columns:1fr">' +
-        campo('Dono do processo', p.Dono_Processo && esc(p.Dono_Processo), false, 'quem') +
-        campo('Gerência responsável', p.Area_Responsavel && esc(p.Area_Responsavel), false, 'quem') +
-        campo('Responsável no NUGEP', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
-        campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
-        campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
         (p.Proxima_Acao ? '<p style="font-size:var(--fs-sm)">' + esc(p.Proxima_Acao) + '</p>' : '<p class="pp-vazio">—</p>') +
         (p.Pendencia ? '<div class="pp-aviso" style="margin:var(--sp2) 0 0"><strong>Pendência:</strong> ' + esc(p.Pendencia) + '</div>' : '') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-desktop" aria-hidden="true"></i> Sistemas</h3>' + chips(p.Sistemas, 'fa-desktop') + '</div>' +
         '</aside></div>';
       return;
     }
@@ -816,6 +830,7 @@
               '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>';
           }).join('') + '</tbody></table></div>'
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
         (ativs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
           ativs.map(function (a, i) {
@@ -825,7 +840,6 @@
               '<td style="font-size:var(--fs-sm)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
               '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma atividade cadastrada.</p>') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
         cardHierarquia(
@@ -864,10 +878,10 @@
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da atividade</h3><dl class="ficha-dl">' +
       campo('Descrição', a.Descricao && esc(a.Descricao), true, 'desc') +
+      campo('Objetivo', a.Objetivo && esc(a.Objetivo), true, 'desc') +
       campo('Entradas (insumos)', chips(a.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
-      campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') +
-      campo('Base normativa', a.Base_Normativa ? chips(a.Base_Normativa, 'fa-scale-balanced') : null, false, 'tecnico') + '</dl></div>' +
+      campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
       '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Tarefas (menor unidade de trabalho — CBOK 4.0)</h3>' +
       (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
         tf3.map(function (t) {
@@ -876,7 +890,6 @@
             '<td style="font-size:var(--fs-sm)">' + esc(t.Tipo_Tarefa || '—') + '</td>' +
             '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>';
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
-      secVinculos('Atividade', cod, true) +
       '</div><aside>' +
       cardHierarquia(
         (mp2 ? [{ tipo: 'mp', codigo: mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
@@ -914,6 +927,7 @@
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
       campo('Descrição', t.Descricao && esc(t.Descricao), true, 'desc') +
+      campo('Objetivo', t.Objetivo && esc(t.Objetivo), true, 'desc') +
       campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa), false, 'tecnico') +
       campo('Responsável', t.Responsavel && esc(t.Responsavel), false, 'quem') +
       campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
@@ -958,7 +972,7 @@
         var tit = x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '<span class="sr-only"> (abre em nova aba)</span></a>' : esc(x.Titulo);
         return '<tr><td class="cod">' + esc(x.ID) + '</td><td><strong>' + tit + '</strong><div class="pp-muted" style="font-size:var(--fs-sm)">' +
           esc(x.Tipo_Documento || '') + (x.Versao ? ' · v' + esc(x.Versao) : '') + '</div></td>' +
-          '<td>' + linkVinculo(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td><td>' + fmtData(x.Data) + '</td><td>' + esc(x.Situacao || '—') + '</td></tr>';
+          '<td>' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td><td>' + fmtData(x.Data) + '</td><td>' + esc(x.Situacao || '—') + '</td></tr>';
       }).join('') : '<tr><td colspan="5" class="pp-vazio">Nenhum documento corresponde aos filtros.</td></tr>') +
       '</tbody></table></div></div>';
     $('#fTipoDoc').onchange = function () { filtroDoc.tipo = this.value; renderDocumentos(); };
@@ -1008,14 +1022,15 @@
   /* ── TELA: metodologia ────────────────────────────────────────────── */
   /* ── GRÁFICOS (SVG puro, sem dependências; cores do DS gov.br) ────── */
   var PAL = ['#222b54', '#005ca8', '#007d4e', '#155bcb', '#74c9ea', '#89bd2b', '#8a6d00', '#c5170b'];
-  function svgWrap(titulo, conteudo, vb, altura) {
-    return '<figure class="graf"><figcaption>' + esc(titulo) + '</figcaption>' +
-      '<svg viewBox="' + vb + '" role="img" aria-label="' + esc(titulo) + '" ' +
+  function svgWrap(titulo, conteudo, vb, altura, legenda) {
+    return '<figure class="graf"><figcaption>' + esc(titulo) +
+      (legenda ? ' <i class="fas fa-circle-info graf-info" tabindex="0" data-tooltip-text="' + esc(legenda) + '" aria-label="O que este gráfico mostra e como lê-lo"></i>' : '') + '</figcaption>' +
+      '<svg viewBox="' + vb + '" role="img" aria-label="' + esc(titulo) + (legenda ? '. ' + esc(legenda) : '') + '" ' +
       (altura ? 'style="height:' + altura + 'px"' : '') + '>' + conteudo + '</svg></figure>';
   }
-  function grafDonut(titulo, dados) {           // [{rotulo, valor, cor}]
+  function grafDonut(titulo, dados, legenda) {           // [{rotulo, valor, cor}]
     var total = dados.reduce(function (a, b) { return a + b.valor; }, 0);
-    if (!total) return svgWrap(titulo, '<text x="150" y="90" text-anchor="middle" font-size="12" fill="#5c5c5c">Sem dados</text>', '0 0 300 180');
+    if (!total) return svgWrap(titulo, '<text x="150" y="90" text-anchor="middle" font-size="12" fill="#5c5c5c">Sem dados</text>', '0 0 300 180', null, legenda);
     var ang = -Math.PI / 2, R = 62, r = 38, cx = 90, cy = 90, arcos = '';
     dados.forEach(function (d) {
       if (!d.valor) return;
@@ -1031,10 +1046,10 @@
       return '<g transform="translate(180,' + (34 + i * 22) + ')"><rect width="11" height="11" rx="2" fill="' + d.cor + '"></rect>' +
         '<text x="17" y="10" font-size="11" fill="#333">' + esc(d.rotulo) + ' (' + d.valor + ')</text></g>';
     }).join('');
-    return svgWrap(titulo, arcos + '<text x="' + cx + '" y="' + (cy + 5) + '" text-anchor="middle" font-size="20" font-weight="700" fill="#222b54">' + total + '</text>' + leg, '0 0 380 180');
+    return svgWrap(titulo, arcos + '<text x="' + cx + '" y="' + (cy + 5) + '" text-anchor="middle" font-size="20" font-weight="700" fill="#222b54">' + total + '</text>' + leg, '0 0 380 180', null, legenda);
   }
-  function grafBarras(titulo, dados, sufixo, meta) {   // [{rotulo, valor, cor, href}]
-    if (!dados.length) return svgWrap(titulo, '', '0 0 480 120');
+  function grafBarras(titulo, dados, sufixo, meta, legenda) {   // [{rotulo, valor, cor, href}]
+    if (!dados.length) return svgWrap(titulo, '', '0 0 480 120', null, legenda);
     var max = Math.max.apply(null, dados.map(function (d) { return d.valor; }).concat(meta ? [meta] : [1])) || 1;
     var lw = 132, bw = 320, h = 26, alt = dados.length * h + 24;
     var barras = dados.map(function (d, i) {
@@ -1048,9 +1063,9 @@
     }).join('');
     var linhaMeta = meta ? '<line x1="' + (lw + meta / max * bw) + '" y1="2" x2="' + (lw + meta / max * bw) + '" y2="' + (alt - 16) +
       '" stroke="#c5170b" stroke-width="1.5" stroke-dasharray="4 3"><title>Meta: ' + meta + (sufixo || '') + '</title></line>' : '';
-    return svgWrap(titulo, barras + linhaMeta, '0 0 500 ' + alt);
+    return svgWrap(titulo, barras + linhaMeta, '0 0 500 ' + alt, null, legenda);
   }
-  function grafFunil(titulo, etapas) {          // [{rotulo, valor}]
+  function grafFunil(titulo, etapas, legenda) {          // [{rotulo, valor}]
     var max = etapas[0] ? etapas[0].valor : 1, h = 30, alt = etapas.length * h + 12;
     var corpo = etapas.map(function (e, i) {
       var w = Math.max(6, (e.valor / (max || 1)) * 300), y = i * h + 4;
@@ -1059,10 +1074,10 @@
         '<text x="0" y="' + (y + 16) + '" font-size="11" fill="#333">' + esc(e.rotulo) + '</text>' +
         '<text x="' + (300 + 150 + w / 2 + 8) + '" y="' + (y + 16) + '" font-size="11" font-weight="700" fill="#222b54">' + e.valor + '</text>';
     }).join('');
-    return svgWrap(titulo, corpo, '0 0 640 ' + alt);
+    return svgWrap(titulo, corpo, '0 0 640 ' + alt, null, legenda);
   }
-  function grafLinha(titulo, pontos) {          // [{rotulo, valor}]
-    if (pontos.length < 2) return svgWrap(titulo, '<text x="200" y="70" text-anchor="middle" font-size="12" fill="#5c5c5c">Dados insuficientes</text>', '0 0 400 140');
+  function grafLinha(titulo, pontos, legenda) {          // [{rotulo, valor}]
+    if (pontos.length < 2) return svgWrap(titulo, '<text x="200" y="70" text-anchor="middle" font-size="12" fill="#5c5c5c">Dados insuficientes</text>', '0 0 400 140', null, legenda);
     var w = 420, h = 120, pad = 30;
     var max = Math.max.apply(null, pontos.map(function (p) { return p.valor; })) || 1;
     var pts = pontos.map(function (p, i) {
@@ -1075,9 +1090,9 @@
         '<text x="' + p[0].toFixed(1) + '" y="' + (h - 6) + '" font-size="9" fill="#5c5c5c" text-anchor="middle">' + esc(pontos[i].rotulo) + '</text>';
     }).join('');
     return svgWrap(titulo, '<path d="' + area + '" fill="#005ca8" opacity="0.12"></path>' +
-      '<path d="' + linha + '" fill="none" stroke="#005ca8" stroke-width="2.5"></path>' + marcas, '0 0 ' + w + ' ' + h);
+      '<path d="' + linha + '" fill="none" stroke="#005ca8" stroke-width="2.5"></path>' + marcas, '0 0 ' + w + ' ' + h, null, legenda);
   }
-  function grafHeat(titulo, dados) {            // matriz risco compacta [{p,i,qtd}]
+  function grafHeat(titulo, dados, legenda) {            // matriz risco compacta [{p,i,qtd}]
     var cel = 30, sz = 5 * cel, corpo = '';
     for (var i = 5; i >= 1; i--) {
       for (var pb = 1; pb <= 5; pb++) {
@@ -1091,10 +1106,10 @@
     }
     for (var k = 1; k <= 5; k++) corpo += '<text x="' + (26 + (k - 1) * cel + cel / 2 - 1.5) + '" y="' + (sz + 10) + '" font-size="10" fill="#5c5c5c" text-anchor="middle">' + k + '</text>';
     corpo += '<text x="88" y="' + (sz + 24) + '" font-size="10" fill="#5c5c5c">Probabilidade →</text>';
-    return svgWrap(titulo, corpo, '0 0 200 ' + (sz + 30));
+    return svgWrap(titulo, corpo, '0 0 200 ' + (sz + 30), null, legenda);
   }
 
-  function grafGauge(titulo, valor, max, faixas) {   // faixas: [{ate, cor}] em ordem crescente
+  function grafGauge(titulo, valor, max, faixas, legenda) {   // faixas: [{ate, cor}] em ordem crescente
     var cx = 150, cy = 140, r = 110, r2 = 82;
     function pt(v, raio) {
       var ang = Math.PI - (Math.max(0, Math.min(max, v)) / max) * Math.PI;
@@ -1111,14 +1126,14 @@
     (faixas || []).forEach(function (f) { if (valor <= f.ate) corAtual = corAtual === '#005ca8' ? f.cor : corAtual; });
     var ponteiro = pt(valor, r2);
     var corpo = faixasHtml +
-      '<path d="M' + pa[0].toFixed(1) + ',' + pa[1].toFixed(1) + ' A' + r2 + ',' + r2 + ' 0 ' + grandeArco + ',1 ' + pb[0].toFixed(1) + ',' + pb[1].toFixed(1) + '" stroke="' + corAtual + '" stroke-width="20" fill="none" stroke-linecap="round"></path>' +
+      '<path d="M' + pa[0].toFixed(1) + ',' + pa[1].toFixed(1) + ' A' + r2 + ',' + r2 + ' 0 ' + grandeArco + ',1 ' + pb[0].toFixed(1) + ',' + pb[1].toFixed(1) + '" stroke="' + corAtual + '" stroke-width="20" fill="none" stroke-linecap="round"><title>' + esc(titulo) + ': ' + valor + '% (de ' + max + '%)</title></path>' +
       '<circle cx="' + ponteiro[0].toFixed(1) + '" cy="' + ponteiro[1].toFixed(1) + '" r="7" fill="' + corAtual + '" stroke="#fff" stroke-width="2"></circle>' +
       '<text x="' + cx + '" y="' + (cy - 18) + '" font-size="34" font-weight="700" fill="#222b54" text-anchor="middle">' + valor + '%</text>' +
       '<text x="' + cx + '" y="' + (cy + 6) + '" font-size="11" fill="#5c5c5c" text-anchor="middle">de ' + max + '%</text>';
-    return svgWrap(titulo, corpo, '0 0 300 160');
+    return svgWrap(titulo, corpo, '0 0 300 160', null, legenda);
   }
 
-  function grafBubble(titulo, pontos, rotEixoX, rotEixoY) {   // [{x,y,r,rotulo,cor,href}], x,y 0-100
+  function grafBubble(titulo, pontos, rotEixoX, rotEixoY, legenda) {   // [{x,y,r,rotulo,cor,href}], x,y 0-100
     var lw = 30, bh = 210, bw = 380, mt = 10, maxY = Math.max(2, Math.max.apply(null, pontos.map(function (p) { return p.y; })) + 1);
     function px(v) { return lw + (v / 100) * bw; }
     function py(v) { return mt + bh - (v / maxY) * bh; }
@@ -1132,7 +1147,7 @@
       return '<circle cx="' + px(p.x).toFixed(1) + '" cy="' + py(p.y).toFixed(1) + '" r="' + (p.r || 8) + '" fill="' + (p.cor || '#005ca8') + '" fill-opacity=".78" stroke="#fff" stroke-width="1.5"' + navAttr + '>' +
         '<title>' + esc(p.rotulo) + ' — ' + esc(rotEixoX) + ': ' + p.x + '% · ' + esc(rotEixoY) + ': ' + p.y + (p.href ? ' — clique para abrir' : '') + '</title></circle>';
     }).join('');
-    return svgWrap(titulo, eixos + bolhas, '0 0 ' + (lw + bw + 20) + ' ' + (mt + bh + 45));
+    return svgWrap(titulo, eixos + bolhas, '0 0 ' + (lw + bw + 20) + ' ' + (mt + bh + 45), null, legenda);
   }
 
   /* ── TELA: dashboard gerencial ────────────────────────────────────── */
@@ -1169,47 +1184,49 @@
       '<div class="kpi-grid" style="margin-top:0">' +
       '<div class="kpi" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total da carteira."><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
       '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos da carteira."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
-      '<div class="kpi ' + (atrasados.length ? 'warn' : 'ok') + '" title="Processos com prazo previsto já vencido e sem conclusão registrada."><span class="num">' + atrasados.length + '</span><span class="lbl">Prazos vencidos</span><span class="sub">sem conclusão registrada</span></div>' +
-      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
+      '<div class="kpi" title="Total de processos mapeados na carteira."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">mapeados na carteira</span></div>' +
       '<div class="kpi" title="Total de subprocessos mapeados na carteira (inclusive os aninhados, subprocesso dentro de subprocesso)."><span class="num">' + DADOS.subs.length + '</span><span class="lbl">Subprocessos</span><span class="sub">mapeados na carteira</span></div>' +
       '<div class="kpi" title="Total de atividades mapeadas na carteira."><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades</span><span class="sub">mapeadas na carteira</span></div>' +
       '<div class="kpi" title="Total de tarefas mapeadas na carteira (menor unidade de trabalho, CBOK 4.0)."><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas</span><span class="sub">mapeadas na carteira</span></div>' +
+      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
       '</div>' +
       '<div class="graf-grid">' +
       grafGauge('Avanço médio geral da carteira', media, 100, [
-        { ate: 40, cor: '#c5170b' }, { ate: 70, cor: '#8a6d00' }, { ate: 100, cor: '#137436' }]) +
+        { ate: 40, cor: '#c5170b' }, { ate: 70, cor: '#8a6d00' }, { ate: 100, cor: '#137436' }],
+        'Percentual médio de avanço do mapeamento entre todos os processos da carteira. As faixas de cor indicam o estágio geral: vermelho abaixo de 40%, âmbar entre 40% e 70%, verde a partir de 70%.') +
       grafDonut('Situação do mapeamento', [
         { rotulo: 'Concluído', valor: concl, cor: '#137436' },
         { rotulo: 'Em andamento', valor: andam, cor: '#8a6d00' },
         { rotulo: 'Não iniciado', valor: porStatus['Não iniciado'] || 0, cor: '#9e9e9e' },
-        { rotulo: 'Suspenso', valor: porStatus['Suspenso'] || 0, cor: '#c5170b' }]) +
+        { rotulo: 'Suspenso', valor: porStatus['Suspenso'] || 0, cor: '#c5170b' }],
+        'Quantidade de processos em cada status de mapeamento. O tamanho de cada fatia é proporcional ao número de processos; passe o mouse sobre uma fatia para ver o total e o percentual.') +
       grafDonut('Processos por tipo (CBOK)', ['gerencial', 'finalistico', 'suporte'].map(function (c) {
         return { rotulo: c === 'finalistico' ? 'Finalístico' : c === 'gerencial' ? 'Gerencial' : 'Suporte',
           valor: procs.filter(function (p) { var m = IDX.mp[p.Macroprocesso]; return m && m._cat === c; }).length, cor: CAT_COR[c] };
-      })) +
+      }), 'Distribuição dos processos mapeados entre os três tipos de macroprocesso do CBOK 4.0: gerencial, finalístico e de suporte.') +
       grafBarras('Avanço por macroprocesso (%) — clique para abrir', DADOS.macros.map(function (m) {
         var ps = IDX.procsPorMacro[m.Codigo] || [];
         return { rotulo: m.Codigo + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8', href: '#/mp/' + encodeURIComponent(m.Codigo),
           valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
-      }), '%', 100) +
+      }), '%', 100, 'Percentual médio de avanço dos processos de cada macroprocesso. A linha tracejada marca a meta de 100%; clique em uma barra para abrir a ficha do macroprocesso.') +
       grafBubble('Priorização: avanço × riscos abertos por processo — clique para abrir', procs.map(function (p) {
         var rp = vinculados('riscos', 'Processo', p.Codigo).filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
         var ativs = contarAtividadesRecursivo(p.Codigo);
         return { x: p.Percentual, y: rp.length, r: Math.max(6, Math.min(22, 6 + ativs * 1.5)),
           rotulo: p.Codigo + ' — ' + p.Nome, cor: p.Percentual < 40 && rp.length >= 1 ? '#c5170b' : (CAT_COR[(IDX.mp[p.Macroprocesso] || {})._cat] || '#005ca8'),
           href: '#/p/' + encodeURIComponent(p.Codigo) };
-      }), 'Avanço do mapeamento (%)', 'Riscos abertos') +
-      grafFunil('Marcos concluídos na carteira (M1 → M10)', funil) +
-      grafLinha('Processos publicados (acumulado)', linha) +
-      grafHeat('Riscos abertos por probabilidade × impacto', heatArr) +
+      }), 'Avanço do mapeamento (%)', 'Riscos abertos', 'Cada bolha é um processo: posição horizontal = avanço do mapeamento, posição vertical = riscos abertos, tamanho = atividades mapeadas. Bolhas vermelhas (avanço baixo e algum risco aberto) merecem atenção prioritária; clique para abrir a ficha.') +
+      grafFunil('Marcos concluídos na carteira (M1 → M10)', funil, 'Quantidade de processos que já concluíram cada marco do mapeamento, do M1 ao M10. Como os marcos são sequenciais, o número tende a diminuir da primeira para a última etapa.') +
+      grafLinha('Processos publicados (acumulado)', linha, 'Quantidade acumulada de processos concluídos, por mês de conclusão. Cada ponto soma os concluídos até aquele mês; passe o mouse sobre um ponto para ver o mês e o total acumulado.') +
+      grafHeat('Riscos abertos por probabilidade × impacto', heatArr, 'Quantidade de riscos abertos por combinação de probabilidade e impacto (escala 1 a 5). Células mais à direita e mais acima concentram os riscos mais graves.') +
       grafBarras('Riscos abertos por categoria', (function () {
         var c = {}; riscosAb.forEach(function (r) { c[r.Categoria || '—'] = (c[r.Categoria || '—'] || 0) + 1; });
         return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (k, i) { return { rotulo: k, valor: c[k], cor: PAL[i % PAL.length] }; });
-      })()) +
+      })(), undefined, undefined, 'Quantidade de riscos abertos, agrupados por categoria. Passe o mouse sobre uma barra para ver o total exato.') +
       '</div>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Pontos de atenção</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-card"><h3><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Processos com prazo vencido</h3>' +
-      (atrasados.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo de negócio</th><th>Responsável</th><th>Prazo</th><th>Avanço</th></tr></thead><tbody>' +
+      (atrasados.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo</th><th>Responsável</th><th>Prazo</th><th>Avanço</th></tr></thead><tbody>' +
         atrasados.map(function (p) {
           return '<tr data-link><td class="cod">' + esc(p.Codigo) + '</td><td><a href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
             '<td style="font-size:var(--fs-sm)">' + esc(p.Dono_Processo || '—') + '</td><td style="font-size:var(--fs-sm);white-space:nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
@@ -1441,14 +1458,14 @@
       '<div class="pp-sec-h" style="margin-top:0"><h2>Resultados para “' + esc(q) + '”</h2><div class="linha" aria-hidden="true"></div></div>' +
       (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pela lista de <a href="#/catalogo">processos</a>.</p>') +
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m.Codigo, m.Nome, esc(m.Categoria)); }) +
-      grupo('Processos de negócio', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
+      grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
       grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
       grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), a.Codigo, a.Nome, esc(a.Responsavel_Ator || '')); }) +
       grupo('Tarefas', r.t, function (t) { return linha('#/t/' + encodeURIComponent(t.Codigo), t.Codigo, t.Nome, esc(t.Tipo_Tarefa || '')); }) +
       grupo('Documentos', r.doc, function (x) {
         return '<div class="doc-item"><i class="fas fa-file fa-stack-ico" aria-hidden="true"></i><div><div class="tit">' +
           (x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '</a>' : esc(x.Titulo)) +
-          '</div><div class="meta">' + linkVinculo(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</div></div></div>';
+          '</div><div class="meta">' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</div></div></div>';
       }) +
       grupo('Glossário', r.gl, function (t) {
         return '<div class="doc-item"><i class="fas fa-spell-check fa-stack-ico" aria-hidden="true"></i><div><div class="tit"><a href="#/glossario">' + esc(t.Termo) + '</a></div><div class="meta">' + esc(String(t.Definicao || '').slice(0, 140)) + '…</div></div></div>';

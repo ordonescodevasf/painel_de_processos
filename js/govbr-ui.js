@@ -426,6 +426,71 @@
     });
   })();
 
+  /* ── Tooltips (Componente Tooltip, gov.br DS) ──────────────────────
+     1) [data-tooltip-text] em elementos HTML normais (ex.: ícone de
+        explicação nos gráficos do dashboard): cria/reaproveita um
+        .tt-bubble filho e alterna .is-visible no hover/foco.
+     2) Formas SVG dos gráficos (círculos, barras, arcos) já carregam
+        um <title> nativo — aqui reaproveitamos esse mesmo texto para
+        um balão flutuante (.graf-tip) com a identidade visual do DS,
+        em vez do tooltip feio e lento do navegador. ── */
+  (function () {
+    document.addEventListener('mouseover', function (ev) {
+      var el = ev.target.closest && ev.target.closest('[data-tooltip-text]');
+      if (el) {
+        var b = el.querySelector(':scope > .tt-bubble');
+        if (!b) { b = document.createElement('span'); b.className = 'tt-bubble'; b.textContent = el.getAttribute('data-tooltip-text'); el.appendChild(b); }
+        b.classList.add('is-visible');
+      }
+    });
+    document.addEventListener('mouseout', function (ev) {
+      var el = ev.target.closest && ev.target.closest('[data-tooltip-text]');
+      if (el && !el.contains(ev.relatedTarget)) {
+        var b = el.querySelector(':scope > .tt-bubble'); if (b) b.classList.remove('is-visible');
+      }
+    });
+    document.addEventListener('focusin', function (ev) {
+      var el = ev.target.closest && ev.target.closest('[data-tooltip-text]');
+      if (el) {
+        var b = el.querySelector(':scope > .tt-bubble');
+        if (!b) { b = document.createElement('span'); b.className = 'tt-bubble'; b.textContent = el.getAttribute('data-tooltip-text'); el.appendChild(b); }
+        b.classList.add('is-visible');
+      }
+    });
+    document.addEventListener('focusout', function (ev) {
+      var el = ev.target.closest && ev.target.closest('[data-tooltip-text]');
+      if (el) { var b = el.querySelector(':scope > .tt-bubble'); if (b) b.classList.remove('is-visible'); }
+    });
+
+    var graftip = null;
+    function graftipEl() {
+      if (!graftip) { graftip = document.createElement('div'); graftip.className = 'graf-tip'; document.body.appendChild(graftip); }
+      return graftip;
+    }
+    function posiciona(ev) {
+      var t = graftipEl(), x = ev.clientX + 14, y = ev.clientY + 14;
+      if (x + 260 > window.innerWidth) x = ev.clientX - 260 - 14;
+      if (y + 60 > window.innerHeight) y = ev.clientY - 40;
+      t.style.left = x + 'px'; t.style.top = y + 'px';
+    }
+    document.addEventListener('mouseover', function (ev) {
+      var el = ev.target;
+      if (el && el.namespaceURI === 'http://www.w3.org/2000/svg' && el.closest('.graf')) {
+        var tt = el.querySelector(':scope > title');
+        if (tt) { var t = graftipEl(); t.textContent = tt.textContent; t.classList.add('is-visible'); posiciona(ev); }
+      }
+    });
+    document.addEventListener('mousemove', function (ev) {
+      if (graftip && graftip.classList.contains('is-visible')) posiciona(ev);
+    });
+    document.addEventListener('mouseout', function (ev) {
+      var el = ev.target;
+      if (el && el.namespaceURI === 'http://www.w3.org/2000/svg' && el.querySelector(':scope > title') && graftip) {
+        graftip.classList.remove('is-visible');
+      }
+    });
+  })();
+
   /* ── API mínima para o app preencher o menu de seções ────────────── */
   window.PPUI = {
     setMenuSections: function (itens) {

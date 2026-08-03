@@ -265,7 +265,7 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 
 /* ── matriz de riscos 5×5 ── */
 .matriz{display:grid;grid-template-columns:auto repeat(5,minmax(min(52px, 100%), 1fr));gap:3px;
-  max-width:560px;font-size:var(--fs-sm);}
+  max-width:560px;margin-inline:auto;font-size:var(--fs-sm);}
 .matriz .cab{display:flex;align-items:center;justify-content:center;
   font:700 var(--fs-sm)/1.2 var(--font);color:var(--gray-60);padding:4px;}
 .matriz .cel{min-height:46px;border-radius:var(--r-sm);display:flex;flex-wrap:wrap;
@@ -275,7 +275,23 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 .matriz .risco-pin{background:var(--pure-0);border:1px solid var(--gray-30);
   border-radius:var(--r-sm);font:700 10px/1.5 var(--font);padding:0 5px;cursor:pointer;}
 .matriz .risco-pin:hover{border-color:var(--cv-blue);color:var(--cv-blue);}
-.matriz-legenda{display:flex;flex-wrap:wrap;gap:var(--sp2);margin-top:var(--sp2);font-size:var(--fs-sm);}
+.matriz-legenda{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--sp2);margin-top:var(--sp2);font-size:var(--fs-sm);}
+
+/* ── vínculo múltiplo (documento/risco/indicador ligado a 2+ itens) ── */
+.vinculo-lista{display:flex;flex-direction:column;gap:4px;}
+
+/* ── ícone de explicação do gráfico (Tooltip reutilizado no figcaption) ── */
+.graf-info{font-size:12px;color:var(--gray-40);cursor:help;}
+.graf-info:hover,.graf-info:focus-visible{color:var(--cv-blue);}
+
+/* ── tooltip flutuante para pontos de gráfico SVG (mesmo visual do
+     Componente Tooltip, mas posicionado via JS/mousemove porque elementos
+     SVG não são caixas CSS normais e não podem receber um .tt-bubble filho) ── */
+.graf-tip{position:fixed;z-index:var(--z-layer-4);background:var(--blue-warm-vivid-90);color:var(--pure-0);
+  font:400 11px/1.4 var(--font);padding:6px 9px;border-radius:var(--r-sm);box-shadow:var(--sh-level1);
+  max-width:260px;pointer-events:none;opacity:0;visibility:hidden;
+  transition:opacity var(--dur-fast) var(--ease);}
+.graf-tip.is-visible{opacity:1;visibility:visible;}
 
 /* ── diagrama (Bizagi) ── */
 .diagrama-frame{border:1px solid var(--d-bd);border-radius:var(--r-md);overflow:hidden;background:var(--pure-0);}

@@ -41,7 +41,10 @@
          também contra o CSS computado real da página. */
       --red-vivid-50:#e52207; --red-vivid-10:#fde0db;
       --yellow-vivid-20:#ffcd07; --yellow-vivid-5:#fff5c2;
-      --gray-80:#333; --gray-70:#555; --gray-40:#888;
+      /* --gray-70 corrigido para #4A4A4A — valor real gov.br DS v4
+         (figma/color.json); o valor anterior (#555) era uma aproximação. */
+      --gray-90:#1b1b1b; --gray-80:#333; --gray-70:#4a4a4a; --gray-60:#636363;
+      --gray-50:#757575; --gray-40:#888;
       --gray-20:#ccc; --gray-10:#e6e6e6; --gray-5:#f0f0f0; --gray-2:#f8f8f8;
       --pure-0:#ffffff; --gold-vivid-20:#ffbe2e;
       --background:var(--pure-0); --color:var(--gray-80);
@@ -70,13 +73,19 @@
          (govbr-ds/core v4.0.0-next.11, dist/core.css compilado).
          Camadas DS: level1=cards/header (sombra suave), level4=modais/critico (sombra forte).
          O documento especifica: blur padrão=--surface-blur-lg (6px offset), cor preta/opacidade baixa. */
-      --sh-level1:0 1px 1px rgba(0,0,0,.2),0 0 4px rgba(0,0,0,.2);
-      --sh-level4:0 12px 12px rgba(0,0,0,.2),0 0 16px rgba(0,0,0,.2);
+      /* Elevação: fórmula única de sombra, alinhada aos 5 níveis reais do
+         v4 (figma/elevation.json) — a versão anterior usava duas camadas
+         somadas, aproximação que não existe na spec real. */
+      --elevation-0:none; --elevation-1:0 1px 4px 0 rgba(0,0,0,.2);
+      --elevation-2:0 4px 8px 0 rgba(0,0,0,.2); --elevation-3:0 8px 12px 0 rgba(0,0,0,.2);
+      --elevation-4:0 12px 16px 0 rgba(0,0,0,.2);
+      --sh-level1:var(--elevation-1);
+      --sh-level4:var(--elevation-4);
       /* --sh-level4-up: mesma intensidade de --sh-level4, com o sinal do
          eixo Y invertido — necessário para elementos fixos na BASE da
          tela (ex: cookiebar), onde a sombra deve indicar elevação para
          CIMA do conteúdo abaixo, não para baixo. */
-      --sh-level4-up:0 -12px 12px rgba(0,0,0,.2),0 0 16px rgba(0,0,0,.2);
+      --sh-level4-up:0 -12px 16px 0 rgba(0,0,0,.2);
       /* Aliases curtos para retrocompatibilidade */
       --sh-sm:var(--sh-level1); --sh-md:var(--sh-level4);
       /* --sh-card: sombra de nível 1 mais sutil que --sh-sm, usada
@@ -84,8 +93,10 @@
          (.br-card). Mantém o valor visual já estabelecido em todas as
          rodadas anteriores — tokenizado aqui para eliminar o valor
          hardcoded que existia, sem alterar a aparência visual aprovada. */
-      --sh-card:0 1px 1px rgba(0,0,0,.08),0 0 4px rgba(0,0,0,.06);
-      --sh-card-hover:0 4px 4px rgba(0,0,0,.08),0 0 8px rgba(0,0,0,.08);
+      /* Cards usam diretamente a escala oficial de elevação (nível 1 em
+         repouso, nível 2 no hover) — sem fórmula própria. */
+      --sh-card:var(--elevation-1);
+      --sh-card-hover:var(--elevation-2);
       /* --divider-section: cor do divisor de título de seção (.sec-line),
          conforme Componente Divider gov.br DS (documento especifica
          --gray-20 para fundo claro). Mantém-se aqui o tom mais sutil já
@@ -100,8 +111,12 @@
          layer-3=sticky nav/header, layer-4=modais/crítico */
       --z-layer-0:0; --z-layer-1:1000; --z-layer-2:2000; --z-layer-3:3000; --z-layer-4:4000;
       /* DS radii — equivalente a --surface-rounder-sm/md/lg (4/8/16px) */
-      --r-sm:4px; --r-md:8px; --r-lg:16px; --r-pill:999px;
-      /* --r-xl: extensão consciente da escala DS (que vai até 16px) para o
+      /* --r-lg corrigido para 12px — valor real de --radius-lg no v4
+         (figma/surface.json); o documento de fundamentos observa que a
+         escala não usa raio grande em componentes comuns (cards/inputs
+         usam --r-sm; modais usam --r-md) — ver correções pontuais abaixo. */
+      --r-sm:4px; --r-md:8px; --r-lg:12px; --r-pill:9999px;
+      /* --r-xl: extensão consciente da escala DS (que vai só até 12px) para o
          elemento de maior destaque visual do painel (.hero); usado uma única
          vez, de forma consistente, conforme o princípio de "criar e seguir
          padrões" do Fundamento Superfície */
@@ -109,12 +124,26 @@
       /* DS border widths — equivalente a --surface-width-sm/md/lg (1/2/4px) */
       --w-sm:1px; --w-md:2px; --w-lg:4px;
       /* DS opacity — equivalente a --surface-opacity-xs/sm/md/lg/xl (0.16/0.30/0.45/0.65/0.85) */
-      --op-xs:.16; --op-sm:.30; --op-md:.45; --op-lg:.65; --op-xl:.85;
+      /* Escala real de opacidade do v4 (figma/surface.json), degraus de 10%.
+         Aliases antigos (--op-xs..xl) mantidos e reapontados para o degrau
+         real mais próximo, para não quebrar nenhum uso existente. */
+      --op-10:.1; --op-20:.2; --op-30:.3; --op-40:.4; --op-50:.5;
+      --op-60:.6; --op-70:.7; --op-80:.8; --op-90:.9;
+      --op-xs:var(--op-10); --op-sm:var(--op-30); --op-md:var(--op-40);
+      --op-lg:var(--op-50); --op-xl:var(--op-80);
       /* DS motion — equivalente a --duration-very-fast/fast (0.10s/0.30s) e
          --animation-ease (cubic-bezier padrão), usados nas micro-transições
          de hover/focus do painel (0.1–0.2s, dentro da faixa "muito rápido"
          a "rápido" recomendada para feedback de interações frequentes) */
-      --dur-vfast:.1s; --dur-fast:.18s; --ease:cubic-bezier(.25,.1,.25,1);
+      /* Curvas e durações reais do v4 (figma/motion.json) — usadas em
+         estados (hover/foco/pressed) e no switch (elastic-out, spec
+         confirmada no README). Aliases antigos preservados. */
+      --ease:cubic-bezier(.25,.1,.25,1); --ease-in:cubic-bezier(.42,0,1,1);
+      --ease-out:cubic-bezier(0,0,.58,1); --ease-in-out:cubic-bezier(.42,0,.58,1);
+      --ease-bounce-out:cubic-bezier(.25,2.1,.5,0); --ease-elastic-out:cubic-bezier(.7,3.3,.3,0);
+      --dur-fast-1:50ms; --dur-fast-2:100ms; --dur-fast-3:150ms; --dur-fast-4:200ms;
+      --dur-moderate-1:250ms; --dur-moderate-2:300ms; --dur-slow-1:450ms;
+      --dur-vfast:var(--dur-fast-2); --dur-fast:var(--dur-fast-4);
       /* Header DS tokens */
       --hdr-logo-h:48px; --hdr-logo-h-mob:40px;
       /* Codevasf brand (Manual MIV) */
@@ -606,9 +635,12 @@
       border:none;cursor:pointer;
       font:700 var(--fs-base)/1 var(--font);
       transition:background var(--dur-fast) var(--ease),transform var(--dur-vfast) var(--ease);white-space:nowrap;}
-    .br-button.primary{background:var(--interactive);color:var(--pure-0);}
-    .br-button.primary:hover{background:var(--blue-warm-vivid-60);}
-    .br-button.primary:active{transform:scale(.97);}
+    /* Hover por overlay de opacidade (não troca de matiz), conforme
+       Fundamento Cor/Estados do v4: escurece a mesma cor em vez de
+       trocar para outro tom da escala. Pressed usa sombra, não cor. */
+    .br-button.primary{background:var(--interactive);color:var(--pure-0);position:relative;}
+    .br-button.primary:hover{filter:brightness(.88);}
+    .br-button.primary:active{transform:scale(.97);box-shadow:var(--elevation-1);}
     .br-button:disabled{background:var(--gray-40);cursor:not-allowed;opacity:var(--op-lg);}
     /* variante circle + small, usada como acionador de dropdown (botão "⋮")
        Padrão oficial gov.br: botão circular sem ênfase (nem primary nem
@@ -632,7 +664,7 @@
        @media(max-width:575px) para não se sobreporem no celular. (Removido
        aqui um bloco .fab-back-top/.fab-report-error que não correspondia a
        nenhum elemento do HTML — CSS morto de uma nomenclatura anterior.) */
-    .br-button.circle.primary:hover{background:var(--blue-warm-vivid-60);}
+    .br-button.circle.primary:hover{filter:brightness(.88);}
     .br-button.circle.secondary{background:var(--gray-2);color:var(--gray-80);border:var(--w-sm) solid var(--gray-20);}
     .br-button.circle.secondary:hover{background:var(--gray-5);}
     .br-button.circle.small{width:32px;height:32px;font-size:13px;}
@@ -763,7 +795,7 @@
       width:100%;max-width:var(--modal-size);
       background:var(--pure-0);box-shadow:var(--sh-sm);
       display:flex;flex-direction:column;max-height:90vh;
-      border-radius:var(--r-lg);z-index:var(--z-layer-4);
+      border-radius:var(--r-md);z-index:var(--z-layer-4);
       animation:scrimIn var(--dur-fast) var(--ease);}
     @keyframes scrimIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
     .br-modal.xsmall{--modal-size:var(--modal-xsmall);}
@@ -1119,10 +1151,13 @@
     /* Sombras alinhadas a br.elevation.shadowStyle.level1 (padrão) e
        level2 (hover) do govbr-ds/core v4 — leve elevação que aumenta
        sutilmente ao passar o mouse. */
-    .br-card{background:var(--d-card);border:1px solid var(--d-bd);
-      border-radius:var(--r-lg);box-shadow:var(--sh-card);
-      transition:border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease);}
-    .br-card:hover{border-color:var(--d-bd-s);box-shadow:var(--sh-card-hover);}
+    /* Sem borda visível — só a elevação (sombra) separa o card do fundo,
+       conforme Fundamento Superfície do v4. Raio pequeno (--r-sm), como
+       cards/inputs no restante da spec (não há raio grande de uso comum). */
+    .br-card{background:var(--d-card);border:none;
+      border-radius:var(--r-sm);box-shadow:var(--sh-card);
+      transition:box-shadow var(--dur-fast) var(--ease);}
+    .br-card:hover{box-shadow:var(--sh-card-hover);}
     .card-hd{padding:var(--sp3) var(--sp3) 0;}
     .card-title{margin:0;font:700 15px/1.3 var(--font);color:var(--gray-80);}
     .card-sub{font:400 var(--fs-sm)/1.5 var(--font);color:var(--gray-70);margin-top:var(--sp-half);}
@@ -1633,7 +1668,7 @@
       border-radius:100em;content:"";height:var(--switch-h);position:absolute;width:var(--switch-w);}
     .br-switch input + label::after{background-color:var(--off);border-radius:50%;content:"";
       height:var(--switch-toggle);position:absolute;
-      transition:all .2s ease-in-out;width:var(--switch-toggle);}
+      transition:all var(--dur-moderate-1) var(--ease-elastic-out);width:var(--switch-toggle);}
     .br-switch input:checked + label::after{background-color:var(--on);}
     .br-switch.right input + label{padding-left:calc(var(--sp2) + var(--switch-w));}
     .br-switch.right input + label::before{left:0;}
