@@ -203,8 +203,9 @@
     dd.params = {};
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
-    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorSub: {}, tarefasPorAtiv: {},
+    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorPai: {}, tarefasPorAtiv: {},
       vinc: { docs: {}, riscos: {}, inds: {} } };
+    idx.ativsPorSub = idx.ativsPorPai;   // nome antigo do índice, mantido por compatibilidade
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.macros.forEach(function (m) { idx.mp[m.Codigo] = m; });
     dd.procs.sort(function (a, b) { return String(a.Codigo).localeCompare(String(b.Codigo)); });
@@ -223,8 +224,15 @@
     });
     dd.ativs.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.ativs.forEach(function (a) {
+      // Vinculo_Pai aceita o código de um Subprocesso (SP-...) OU de um Processo
+      // (P-...): há processo que não tem subprocesso e se decompõe direto em
+      // atividades (e estas em tarefas) — o CBOK 4.0 não obriga o nível
+      // intermediário ("Levels Vary in Number and Name"). "Subprocesso" era o
+      // nome da coluna até esta versão e segue aceito, para não quebrar
+      // planilhas que ainda não foram regeradas.
+      a._pai = String(a.Vinculo_Pai || a.Subprocesso || a.Processo || '').trim();
       idx.a[a.Codigo] = a;
-      (idx.ativsPorSub[a.Subprocesso] = idx.ativsPorSub[a.Subprocesso] || []).push(a);
+      (idx.ativsPorPai[a._pai] = idx.ativsPorPai[a._pai] || []).push(a);
     });
     dd.tarefas.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.tarefas.forEach(function (t) {
@@ -281,6 +289,18 @@
       return '<span class="chip">' + (icone ? '<i class="fas ' + icone + '" aria-hidden="true"></i> ' : '') + esc(x) + '</span>';
     }).join('') + '</div>';
   }
+  // ── texto responsivo ──────────────────────────────────────────────
+  // A mesma informação em 3 níveis de detalhe; o CSS mostra só a variante que
+  // cabe na largura atual (breakpoints do gov.br DS: xs <576px · sm/md
+  // 576–991.98px · lg ≥992px). As outras saem do fluxo com display:none, então
+  // o leitor de tela lê uma única vez e a impressão usa sempre a completa.
+  function txResp(curto, medio, completo) {
+    return '<span class="pp-tx-resp">' +
+      '<span class="tx-xs">' + curto + '</span>' +
+      '<span class="tx-sm">' + medio + '</span>' +
+      '<span class="tx-lg">' + completo + '</span></span>';
+  }
+  function plural(n, sing, plur) { return n + ' ' + (n === 1 ? sing : plur); }
   function campo(rotulo, valorHtml, span2, categoria) {
     var cls = (span2 ? 'span2 ' : '') + (categoria ? 'campo-' + categoria : '');
     return '<div' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '><dt>' + esc(rotulo) + '</dt><dd>' +
@@ -346,11 +366,22 @@
     'O dono do processo validou o TO-BE, que foi aprovado pela Diretoria Executiva (DEX).',
     'O processo, seus diagramas e o POP foram publicados no repositório institucional — mapeamento concluído.'
   ];
+  // Estado de um marco: concluído, "não se aplica" ou pendente. O terceiro
+  // estado existe para casos legítimos como o M3 (Subprocessos modelados) num
+  // processo que não tem subprocessos — sem ele, o marco ficaria eternamente
+  // pendente e o processo nunca pareceria concluído.
+  function marcoEstado(v) {
+    var s = String(v == null ? '' : v).trim();
+    if (v === true || /^s/i.test(s)) return 'feito';
+    if (/^n(ã|a)o\s*se\s*aplica$/i.test(s) || /^n\/?a$/i.test(s)) return 'na';
+    return '';
+  }
   function marcosHtml(p) {
     return '<ul class="marcos">' + MARCOS_CAMPOS.map(function (c, i) {
-      var feito = simNao(p[c]);
-      return '<li class="' + (feito ? 'feito' : '') + '" title="' + esc(MARCOS_DESCRICOES[i]) + '"><span>' + esc(MARCOS_ROTULOS[i]) +
-        '</span><i class="fas ' + (feito ? 'fa-check-circle' : 'fa-circle') + '" aria-hidden="true"></i></li>';
+      var est = marcoEstado(p[c]);
+      var ic = est === 'feito' ? 'fa-check-circle' : est === 'na' ? 'fa-minus-circle' : 'fa-circle';
+      return '<li class="' + est + '" title="' + esc(MARCOS_DESCRICOES[i] + (est === 'na' ? ' — Não se aplica a este processo.' : '')) + '"><span>' + esc(MARCOS_ROTULOS[i]) +
+        '</span><i class="fas ' + ic + '" aria-hidden="true"></i></li>';
     }).join('') + '</ul>';
   }
   // Sobe a cadeia de um subprocesso até achar seu Processo — como o CBOK permite
@@ -372,14 +403,45 @@
     var raiz = cadeia[cadeia.length - 1];
     return raiz ? IDX.p[raiz.Vinculo_Pai] : null;
   }
+  function ehCodigoSub(c) { return String(c || '').indexOf('SP-') === 0; }
+  function atividadesDe(codigo) { return IDX.ativsPorPai[codigo] || []; }
+  // Pai direto de uma atividade: um Subprocesso (SP-...) ou o próprio Processo
+  // (P-...), quando o processo não tem subprocessos.
+  function paiDaAtividade(a) {
+    if (!a) return null;
+    var c = a._pai || a.Vinculo_Pai || a.Subprocesso || '';
+    if (ehCodigoSub(c)) return IDX.sp[c] ? { tipo: 'sp', item: IDX.sp[c] } : null;
+    return IDX.p[c] ? { tipo: 'p', item: IDX.p[c] } : null;
+  }
+  // Ancestrais de uma atividade, prontos para o breadcrumb e para o card
+  // "Navegar para": macroprocesso, processo e a cadeia de subprocessos — que
+  // vem vazia quando a atividade pende direto do processo.
+  function ancestraisDaAtividade(a) {
+    var pai = paiDaAtividade(a), sp = null, p = null;
+    if (pai && pai.tipo === 'sp') { sp = pai.item; p = processoDoSubprocesso(sp.Codigo); }
+    else if (pai) { p = pai.item; }
+    return { pai: pai, sp: sp, p: p, mp: p ? IDX.mp[p.Macroprocesso] : null,
+      cadeiaSp: sp ? cadeiaSubprocessos(sp.Codigo).slice().reverse() : [] };
+  }
   function contarAtividadesRecursivo(codigoPai) {
-    // conta atividades de todos os subprocessos ligados a codigoPai, inclusive
-    // aninhados (subprocesso dentro de subprocesso, quantos níveis houver)
-    var subs = IDX.subsPorPai[codigoPai] || [], total = 0;
-    subs.forEach(function (s) {
-      total += (IDX.ativsPorSub[s.Codigo] || []).length;
+    // atividades ligadas DIRETO a codigoPai (processo sem subprocesso, ou
+    // subprocesso) + as de todos os subprocessos descendentes, em qualquer
+    // profundidade (subprocesso dentro de subprocesso)
+    var total = atividadesDe(codigoPai).length;
+    (IDX.subsPorPai[codigoPai] || []).forEach(function (s) {
       total += contarAtividadesRecursivo(s.Codigo);
     });
+    return total;
+  }
+  function contarSubprocessosRecursivo(codigoPai) {
+    var subs = IDX.subsPorPai[codigoPai] || [], total = subs.length;
+    subs.forEach(function (s) { total += contarSubprocessosRecursivo(s.Codigo); });
+    return total;
+  }
+  function contarTarefasRecursivo(codigoPai) {
+    var total = 0;
+    atividadesDe(codigoPai).forEach(function (a) { total += (IDX.tarefasPorAtiv[a.Codigo] || []).length; });
+    (IDX.subsPorPai[codigoPai] || []).forEach(function (s) { total += contarTarefasRecursivo(s.Codigo); });
     return total;
   }
   var HIER_INFO = {
@@ -441,6 +503,29 @@
         (x.Versao ? ' · v' + esc(x.Versao) : '') + (x.Data ? ' · ' + fmtData(x.Data) : '') +
         (x.Situacao ? ' · ' + esc(x.Situacao) : '') + '</div></div></div>';
     }).join('');
+  }
+  // Tabela de atividades — usada na ficha do Subprocesso e na ficha do
+  // Processo (quando as atividades penduram direto no processo).
+  function tabelaAtividadesHtml(ativs, vazio) {
+    if (!ativs.length) return '<p class="pp-vazio">' + (vazio || 'Nenhuma atividade cadastrada.') + '</p>';
+    return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
+      ativs.map(function (a, i) {
+        var nt = (IDX.tarefasPorAtiv[a.Codigo] || []).length;
+        return '<tr data-link><td>' + (i + 1) + '</td><td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
+          '<div class="cod">' + esc(a.Codigo) + (nt ? ' · ' + plural(nt, 'tarefa', 'tarefas') : '') + '</div></td>' +
+          '<td style="font-size:var(--fs-sm)">' + esc(a.Responsavel_Ator || '—') + '</td>' +
+          '<td style="font-size:var(--fs-sm)">' + (listar(a.Entradas).map(esc).join('; ') || '—') + '</td>' +
+          '<td style="font-size:var(--fs-sm)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
+          '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  function ligarLinhasTabela() {
+    $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
+      tr.addEventListener('click', function (ev) {
+        if (ev.target.closest('a')) return;
+        var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
+      });
+    });
   }
   function tabelaRiscosHtml(riscos, comVinculo) {
     if (!riscos.length) return '<p class="pp-vazio">Nenhum risco registrado.</p>';
@@ -641,7 +726,10 @@
       '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="margin-top:calc(var(--sp2) * -1);margin-bottom:var(--sp3);font-size:var(--fs-sm);max-width:74ch">Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.</p>' +
+      '<p class="pp-muted" style="margin-top:calc(var(--sp2) * -1);margin-bottom:var(--sp3);font-size:var(--fs-sm);max-width:74ch">' + txResp(
+        'Consulte a hierarquia completa, do macroprocesso à atividade.',
+        'Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN, documentos, riscos e indicadores.',
+        'Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.') + '</p>' +
       '<div class="cadeia">' +
       '<aside class="cv-aside cv-missao"><h3><i class="fas fa-flag" aria-hidden="true"></i> Missão</h3><p>' + esc(INSTITUCIONAL.missao) + '</p><h3><i class="fas fa-eye" aria-hidden="true"></i> Visão</h3><p>' + esc(INSTITUCIONAL.visao) + '</p></aside>' +
       '<div class="cv-centro">' + blocoCadeia('Macroprocessos Gerenciais', 'cat-gerencial', 'fa-compass', ger) +
@@ -745,6 +833,11 @@
       if (!p) { el.innerHTML = naoEncontrado('Processo', cod); return; }
       var mp = IDX.mp[p.Macroprocesso];
       var subs = IDX.subsPorPai[cod] || [];
+      // Um processo pode não ter subprocesso e ainda assim ter atividades (e
+      // tarefas) ligadas direto a ele — é o que ativsDiretas cobre.
+      var ativsDiretas = atividadesDe(cod);
+      var totalAtivs = contarAtividadesRecursivo(cod);
+      var totalTarefas = contarTarefasRecursivo(cod);
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
           .concat(mp ? [{ rotulo: mp.Codigo, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : [])
@@ -754,6 +847,8 @@
         '<h2>' + esc(p.Codigo) + ' — ' + esc(p.Nome) + '</h2>' +
         '<div class="meta">' + tagStatus(p.Status_Mapeamento) +
         '<span>Mapeamento em <strong>' + p.Percentual + '%</strong></span>' +
+        '<span>· ' + plural(contarSubprocessosRecursivo(cod), 'subprocesso', 'subprocessos') + ' · ' +
+        plural(totalAtivs, 'atividade', 'atividades') + ' · ' + plural(totalTarefas, 'tarefa', 'tarefas') + '</span>' +
         (p.Area_Responsavel ? '<span>Gerência: ' + esc(p.Area_Responsavel) + '</span>' : '') +
         (p.Processo_SEI ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> SEI ' + esc(p.Processo_SEI) + '</span>' : '') +
         '</div></section>' +
@@ -776,6 +871,10 @@
         '</div></div>' +
         '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' + marcosHtml(p) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades ligadas direto ao processo</h3>' +
+        (subs.length && !ativsDiretas.length
+          ? '<p class="pp-vazio">Nenhuma atividade ligada diretamente ao processo — neste caso as atividades ficam dentro dos subprocessos listados ao lado.</p>'
+          : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.')) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
         cardHierarquia(mp ? [{ tipo: 'mp', codigo: mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
@@ -783,11 +882,14 @@
         (subs.length ? subs.map(function (s) {
           return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(s.Codigo) + '</span>' +
             '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div></div></div></a>';
-        }).join('') : '<p class="pp-vazio">Nenhum subprocesso cadastrado.</p>') + '</div>' +
+        }).join('') : '<p class="pp-vazio">' + (ativsDiretas.length
+          ? 'Nenhum subprocesso cadastrado — este processo se decompõe direto em atividades.'
+          : 'Nenhum subprocesso cadastrado.') + '</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
         (p.Proxima_Acao ? '<p style="font-size:var(--fs-sm)">' + esc(p.Proxima_Acao) + '</p>' : '<p class="pp-vazio">—</p>') +
         (p.Pendencia ? '<div class="pp-aviso" style="margin:var(--sp2) 0 0"><strong>Pendência:</strong> ' + esc(p.Pendencia) + '</div>' : '') + '</div>' +
         '</aside></div>';
+      ligarLinhasTabela();
       return;
     }
     if (tipo === 'sp') {
@@ -799,7 +901,7 @@
       var paiDireto = null, paiEhSub = String(s.Vinculo_Pai || '').indexOf('SP-') === 0;
       if (paiEhSub) paiDireto = IDX.sp[s.Vinculo_Pai]; else paiDireto = pp;
       var subsFilhos = IDX.subsPorPai[cod] || [];
-      var ativs = IDX.ativsPorSub[cod] || [];
+      var ativs = atividadesDe(cod);
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
           .concat(mpp ? [{ rotulo: mpp.Codigo, href: '#/mp/' + encodeURIComponent(mpp.Codigo) }] : [])
@@ -832,14 +934,7 @@
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
-        (ativs.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
-          ativs.map(function (a, i) {
-            return '<tr data-link><td>' + (i + 1) + '</td><td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
-              '<div class="cod">' + esc(a.Codigo) + '</div></td><td style="font-size:var(--fs-sm)">' + esc(a.Responsavel_Ator || '—') + '</td>' +
-              '<td style="font-size:var(--fs-sm)">' + (listar(a.Entradas).map(esc).join('; ') || '—') + '</td>' +
-              '<td style="font-size:var(--fs-sm)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
-              '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
-          }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma atividade cadastrada.</p>') + '</div>' +
+        tabelaAtividadesHtml(ativs) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
         cardHierarquia(
@@ -860,9 +955,11 @@
     if (tipo === 'a') {
     var a = IDX.a[cod];
     if (!a) { el.innerHTML = naoEncontrado('Atividade', cod); return; }
-    var sp2 = IDX.sp[a.Subprocesso];
-    var cadeiaSp2 = sp2 ? cadeiaSubprocessos(sp2.Codigo).slice().reverse() : []; // mais raso -> mais fundo
-    var p2 = sp2 && processoDoSubprocesso(sp2.Codigo); var mp2 = p2 && IDX.mp[p2.Macroprocesso];
+    // Pai da atividade: um subprocesso (SP-...) ou o processo (P-...) direto,
+    // quando o processo não tem subprocessos. O breadcrumb e o card "Navegar
+    // para" simplesmente não mostram o nível que não existe.
+    var anc2 = ancestraisDaAtividade(a);
+    var sp2 = anc2.sp, cadeiaSp2 = anc2.cadeiaSp, p2 = anc2.p, mp2 = anc2.mp;
     var tf3 = IDX.tarefasPorAtiv[cod] || [];
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
@@ -871,7 +968,7 @@
         .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
         .concat([{ rotulo: a.Codigo }])) +
       '<section class="ficha-hero" style="background:var(--pp-verde)">' +
-      '<span class="eyebrow">Atividade' + (sp2 ? ' do subprocesso ' + esc(sp2.Nome) : '') + '</span>' +
+      '<span class="eyebrow">Atividade' + (sp2 ? ' do subprocesso ' + esc(sp2.Nome) : p2 ? ' do processo ' + esc(p2.Nome) : '') + '</span>' +
       '<h2>' + esc(a.Codigo) + ' — ' + esc(a.Nome) + '</h2>' +
       '<div class="meta">' + (a.Responsavel_Ator ? '<span><i class="fas fa-user" aria-hidden="true"></i> ' + esc(a.Responsavel_Ator) + '</span>' : '') +
       (a.Prazo_Padrao ? '<span>· Prazo padrão: ' + esc(a.Prazo_Padrao) + '</span>' : '') + '</div></section>' +
@@ -908,9 +1005,9 @@
     // tipo === 't' — ficha da tarefa
     var t = IDX.t[cod];
     if (!t) { el.innerHTML = naoEncontrado('Tarefa', cod); return; }
-    var a3 = IDX.a[t.Atividade]; var sp3 = a3 && IDX.sp[a3.Subprocesso];
-    var cadeiaSp3 = sp3 ? cadeiaSubprocessos(sp3.Codigo).slice().reverse() : []; // mais raso -> mais fundo
-    var p3 = sp3 && processoDoSubprocesso(sp3.Codigo); var mp3 = p3 && IDX.mp[p3.Macroprocesso];
+    var a3 = IDX.a[t.Atividade];
+    var anc3 = ancestraisDaAtividade(a3);
+    var sp3 = anc3.sp, cadeiaSp3 = anc3.cadeiaSp, p3 = anc3.p, mp3 = anc3.mp;
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp3 ? [{ rotulo: mp3.Codigo, href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])

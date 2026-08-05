@@ -403,3 +403,90 @@ subprocesso → atividade; tipos finalístico/suporte/gerencial; ciclo de vida B
 em 5 fases; SIPOC; dono do processo) e no **PMBOK** (cada mapeamento tratado
 como projeto: termo de abertura, marcos M1–M10, entregáveis, riscos e lições
 aprendidas). A aba **Metodologia** do painel documenta tudo isso para o público.
+
+## Processo sem subprocessos: atividades e tarefas direto no processo
+
+O CBOK 4.0 não obriga todos os níveis da decomposição ("Levels Vary in Number
+and Name"). Há processo que não tem subprocesso e se decompõe direto em
+**atividades** — e essas atividades têm **tarefas**, como sempre. O painel
+agora trata esse caso como um caminho normal, não como exceção:
+
+- Na aba **Atividades** da planilha, a coluna `Subprocesso` passou a se chamar
+  `Vinculo_Pai` e aceita o código de um **Subprocesso** (`SP-...`) **ou** de um
+  **Processo** (`P-...`). O painel identifica o nível pelo prefixo do código —
+  mesma regra que a aba Subprocessos já usava. O nome antigo da coluna
+  continua sendo lido, então planilhas ainda não atualizadas não quebram.
+- A **ficha do Processo** ganhou o card *"Atividades ligadas direto ao
+  processo"*, com a mesma tabela da ficha do Subprocesso (responsável,
+  entradas, saídas, prazo e a contagem de tarefas de cada atividade). Quando o
+  processo tem subprocessos e nenhuma atividade direta, o card explica onde as
+  atividades estão, em vez de sumir.
+- O card **"Subprocessos vinculados"** informa, quando está vazio e existem
+  atividades diretas, que o processo se decompõe direto em atividades.
+- **Breadcrumb** e card **"Navegar para"** (Atividade e Tarefa) montam a cadeia
+  sem o nível que não existe: Macroprocesso › Processo › Atividade › Tarefa.
+- A faixa da ficha do Processo mostra a contagem de subprocessos, atividades e
+  tarefas — atividades e tarefas contadas **recursivamente**, somando as que
+  penduram direto no processo e as de todos os subprocessos, em qualquer
+  profundidade. O gráfico de bolhas do Dashboard usa a mesma contagem.
+- **Marco M3 ("Subprocessos modelados")** aceita agora o valor
+  **"Não se aplica"** na planilha (lista `Sim_Nao`), com ícone neutro e
+  tooltip próprio na ficha. Sem isso, um processo sem subprocessos ficaria com
+  um marco eternamente pendente.
+
+### Como atualizar a planilha
+
+A planilha entregue tem colunas acrescentadas depois da geração inicial (ex.:
+`Objetivo` em Atividades e Tarefas). Por isso **não** rode
+`gerar_planilha.py` sobre ela — esse script recria a planilha de exemplo do
+zero. Use o script novo, que altera o arquivo existente no lugar, preservando
+dados, colunas extras, formatação, fórmulas e validações:
+
+```bash
+python scripts/atualizar_planilha.py --exemplo   # estrutura + exemplo P-06.03
+python scripts/planilha_para_js.py               # regenera js/dados.js
+```
+
+O `--exemplo` insere o caso demonstrativo: **P-06.03 (Gestão e Fiscalização
+Contratual)**, um processo sem subprocessos, com duas atividades ligadas direto
+a ele (`A-06.03.01`, `A-06.03.02`) e três tarefas da segunda. Esse exemplo já
+está no `js/dados.js` desta versão, então o modo offline (abrir o
+`index.html` com dois cliques) mostra o caso mesmo antes de rodar os scripts.
+
+## Texto da Cadeia de Valor conforme o tamanho da tela
+
+O parágrafo de apresentação da Cadeia de Valor tem três versões — curta, média
+e completa — e o navegador mostra a que cabe na largura atual, usando os
+breakpoints do gov.br DS (xs até 575,98px · sm/md 576–991,98px · lg a partir de
+992px):
+
+| Largura | Texto exibido |
+| --- | --- |
+| < 576px | Consulte a hierarquia completa, do macroprocesso à atividade. |
+| 576–991,98px | …com fichas, diagramas BPMN, documentos, riscos e indicadores. |
+| ≥ 992px | Texto completo, com "(Bizagi)" e o registro rastreável de cada mapeamento. |
+
+A troca é feita em CSS (`.pp-tx-resp`), não em JavaScript: acompanha o
+redimensionamento e a rotação do aparelho na hora, sem recarregar a tela. As
+versões não exibidas saem do fluxo com `display:none`, então o leitor de tela
+lê o texto uma única vez; na impressão vale sempre a versão completa. O helper
+`txResp(curto, medio, completo)` do `js/app.js` está disponível para
+qualquer outro texto que precise do mesmo comportamento.
+
+## Alinhamento ao gov.br DS nesta rodada
+
+O Fundamento de Superfície do DS gov.br v4 pede fundos **sólidos** no chrome de
+interface — imagem, ilustração e trama ficam reservadas a conteúdo editorial,
+estados vazios e telas de erro. Os gradientes decorativos do
+`css/painel.css` foram trocados por cor plana da paleta institucional:
+
+- `.pp-hero`: gradiente de três paradas → `--cv-navy`; a trama de pontos
+  (`radial-gradient` repetido) foi removida.
+- `.cadeia`: gradiente claro → `--gray-2`.
+- `.cv-aside`, `.cv-valores` e os três títulos de bloco da cadeia
+  (`.cv-bloco.cat-*`): gradiente → cor da categoria (navy, azul, verde).
+
+Nada mais mudou no visual: tipografia (Noto Sans/Noto Sans Mono), escala de
+espaçamento, raios, elevação, foco laranja, ícones Font Awesome 6 e as cores
+semânticas (`#168821` sucesso · `#B38C00` alerta · `#E52207` erro ·
+`#155BCB` informação) já seguiam os tokens da v4.

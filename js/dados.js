@@ -245,7 +245,7 @@ window.PAINEL_DADOS = {
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
-   "M3_Subprocessos_Modelados": "Não",
+   "M3_Subprocessos_Modelados": "Não se aplica",
    "M4_ASIS_Modelado": "Não",
    "M5_ASIS_Validado": "Não",
    "M6_Procedimento_Validado": "Não",
@@ -498,7 +498,7 @@ window.PAINEL_DADOS = {
  "Atividades": [
   {
    "Codigo": "A-06.01.01.01",
-   "Subprocesso": "SP-06.01.01",
+   "Vinculo_Pai": "SP-06.01.01",
    "Ordem": 1,
    "Nome": "Formalizar a necessidade (DFD)",
    "Descricao": "Registrar o Documento de Formalização da Demanda com justificativa, quantitativos e alinhamento ao PCA.",
@@ -513,7 +513,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.01.02",
-   "Subprocesso": "SP-06.01.01",
+   "Vinculo_Pai": "SP-06.01.01",
    "Ordem": 2,
    "Nome": "Levantar soluções de mercado",
    "Descricao": "Pesquisar soluções disponíveis, contratações similares e alternativas (inclusive não contratar).",
@@ -528,7 +528,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.01.03",
-   "Subprocesso": "SP-06.01.01",
+   "Vinculo_Pai": "SP-06.01.01",
    "Ordem": 3,
    "Nome": "Estimar quantidades e resultados",
    "Descricao": "Definir quantitativos com memória de cálculo e resultados pretendidos com a contratação.",
@@ -543,7 +543,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.01.04",
-   "Subprocesso": "SP-06.01.01",
+   "Vinculo_Pai": "SP-06.01.01",
    "Ordem": 4,
    "Nome": "Elaborar e aprovar o ETP",
    "Descricao": "Consolidar o ETP no sistema e submeter à aprovação da autoridade competente.",
@@ -558,7 +558,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.02.01",
-   "Subprocesso": "SP-06.01.02",
+   "Vinculo_Pai": "SP-06.01.02",
    "Ordem": 1,
    "Nome": "Redigir o Termo de Referência",
    "Descricao": "Elaborar o TR a partir do ETP, definindo objeto, requisitos, modelo de execução e critérios de medição.",
@@ -573,7 +573,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.02.02",
-   "Subprocesso": "SP-06.01.02",
+   "Vinculo_Pai": "SP-06.01.02",
    "Ordem": 2,
    "Nome": "Validar o TR com a Assessoria Jurídica",
    "Descricao": "Submeter a minuta ao órgão jurídico e ajustar conforme o parecer.",
@@ -588,7 +588,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.03.01",
-   "Subprocesso": "SP-06.01.03",
+   "Vinculo_Pai": "SP-06.01.03",
    "Ordem": 1,
    "Nome": "Realizar a pesquisa de preços",
    "Descricao": "Consultar fontes admitidas, registrar parâmetros e tratar valores inexequíveis ou excessivos.",
@@ -603,7 +603,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.03.02",
-   "Subprocesso": "SP-06.01.03",
+   "Vinculo_Pai": "SP-06.01.03",
    "Ordem": 2,
    "Nome": "Consolidar o valor estimado",
    "Descricao": "Aplicar o método definido (média/mediana/menor preço) e justificar a estimativa final.",
@@ -618,7 +618,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.01.03.01.01",
-   "Subprocesso": "SP-06.01.03.01",
+   "Vinculo_Pai": "SP-06.01.03.01",
    "Ordem": 1,
    "Nome": "Aplicar critério de exclusão de valores discrepantes",
    "Descricao": "Comparar cada preço coletado à mediana da amostra e excluir, com justificativa registrada, os valores inexequíveis ou excessivos.",
@@ -633,7 +633,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.02.01.01",
-   "Subprocesso": "SP-06.02.01",
+   "Vinculo_Pai": "SP-06.02.01",
    "Ordem": 1,
    "Nome": "Publicar o edital",
    "Descricao": "Divulgar o edital no PNCP e no sistema de compras, observando prazos mínimos legais.",
@@ -648,7 +648,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-06.02.01.02",
-   "Subprocesso": "SP-06.02.01",
+   "Vinculo_Pai": "SP-06.02.01",
    "Ordem": 2,
    "Nome": "Conduzir a sessão e julgar propostas",
    "Descricao": "Operar a fase de lances, julgar propostas, habilitar o vencedor e registrar a ata.",
@@ -663,7 +663,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-04.01.01.01",
-   "Subprocesso": "SP-04.01.01",
+   "Vinculo_Pai": "SP-04.01.01",
    "Ordem": 1,
    "Nome": "Programar a distribuição hídrica",
    "Descricao": "Elaborar a programação semanal de distribuição conforme demanda dos lotes e disponibilidade hídrica.",
@@ -678,7 +678,7 @@ window.PAINEL_DADOS = {
   },
   {
    "Codigo": "A-04.01.01.02",
-   "Subprocesso": "SP-04.01.01",
+   "Vinculo_Pai": "SP-04.01.01",
    "Ordem": 2,
    "Nome": "Operar e registrar a distribuição",
    "Descricao": "Operar comportas e bombas conforme programação e registrar volumes por ponto de entrega.",
@@ -689,6 +689,36 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício)",
    "Prazo_Padrao": "Diário",
    "Base_Normativa": null,
+   "Imagem_Bizagi": null
+  },
+  {
+   "Codigo": "A-06.03.01",
+   "Vinculo_Pai": "P-06.03",
+   "Ordem": 1,
+   "Nome": "Designar fiscais e gestor do contrato",
+   "Descricao": "Formalizar a designação do fiscal técnico, do fiscal administrativo e do gestor do contrato, com ciência dos designados.",
+   "Objetivo": "Garantir que a fiscalização comece com responsabilidades formalmente atribuídas.",
+   "Responsavel_Ator": "AA/GLC",
+   "Entradas": "Contrato assinado; Minuta de portaria de designação",
+   "Saidas": "Portaria de designação publicada",
+   "Sistemas": "SEI",
+   "Prazo_Padrao": "5 dias úteis",
+   "Base_Normativa": "Lei nº 14.133/2021, art. 117",
+   "Imagem_Bizagi": null
+  },
+  {
+   "Codigo": "A-06.03.02",
+   "Vinculo_Pai": "P-06.03",
+   "Ordem": 2,
+   "Nome": "Registrar medição e atestar a execução",
+   "Descricao": "Conferir o objeto entregue no período, registrar a medição e atestar a nota fiscal para pagamento.",
+   "Objetivo": "Liberar o pagamento apenas do que foi efetivamente entregue e conferido.",
+   "Responsavel_Ator": "Fiscal técnico do contrato",
+   "Entradas": "Relatório de execução; Nota fiscal",
+   "Saidas": "Medição registrada; Nota fiscal atestada",
+   "Sistemas": "SEI",
+   "Prazo_Padrao": "10 dias úteis",
+   "Base_Normativa": "Lei nº 14.133/2021, art. 140",
    "Imagem_Bizagi": null
   }
  ],
@@ -831,6 +861,48 @@ window.PAINEL_DADOS = {
    "Sistema": "SIG-Irrigação (fictício)",
    "Duracao_Estimada": "1 dia",
    "Observacoes": null,
+   "Imagem_Bizagi": null
+  },
+  {
+   "Codigo": "T-06.03.02.01",
+   "Atividade": "A-06.03.02",
+   "Ordem": 1,
+   "Nome": "Conferir o objeto entregue",
+   "Descricao": "Verificar quantidade, qualidade e conformidade da entrega com o Termo de Referência.",
+   "Objetivo": "Confirmar que a entrega corresponde ao que foi contratado.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Fiscal técnico do contrato",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "1 dia",
+   "Observacoes": null,
+   "Imagem_Bizagi": null
+  },
+  {
+   "Codigo": "T-06.03.02.02",
+   "Atividade": "A-06.03.02",
+   "Ordem": 2,
+   "Nome": "Registrar a medição no processo",
+   "Descricao": "Lançar a medição do período no processo do contrato, anexando relatórios e evidências.",
+   "Objetivo": "Deixar a medição registrada e rastreável no processo do contrato.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Fiscal técnico do contrato",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": null,
+   "Imagem_Bizagi": null
+  },
+  {
+   "Codigo": "T-06.03.02.03",
+   "Atividade": "A-06.03.02",
+   "Ordem": 3,
+   "Nome": "Atestar a nota fiscal",
+   "Descricao": "Atestar a nota fiscal depois da conferência e encaminhá-la para pagamento.",
+   "Objetivo": "Autorizar o pagamento com base na conferência registrada.",
+   "Tipo_Tarefa": "Manual",
+   "Responsavel": "Gestor do contrato",
+   "Sistema": "SEI",
+   "Duracao_Estimada": "0,5 dia",
+   "Observacoes": "O prazo de pagamento conta a partir do ateste.",
    "Imagem_Bizagi": null
   }
  ],

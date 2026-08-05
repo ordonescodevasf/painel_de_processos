@@ -6,6 +6,12 @@ fonte de dados do Painel de Processos (GitHub Pages).
 Estrutura (alinhada ao BPM CBOK 4.0 e ao PMBOK):
   LEIA-ME | Macroprocessos | Processos | Subprocessos | Atividades |
   Documentos | Riscos | Indicadores | Listas
+
+ATENÇÃO — este script RECRIA a planilha de exemplo do zero (dados fictícios).
+Se a planilha em data/ já tem conteúdo real ou colunas acrescentadas depois
+(por exemplo "Objetivo" em Atividades e Tarefas), NÃO rode este script: use
+scripts/atualizar_planilha.py, que altera a planilha existente no lugar,
+preservando dados, colunas extras, formatação e validações.
 """
 import datetime as dt
 import os
@@ -94,7 +100,7 @@ listas = {
     ],
     "Prioridade": ["Alta", "Média", "Baixa"],
     "Complexidade": ["Alta", "Média", "Baixa"],
-    "Sim_Nao": ["Sim", "Não"],
+    "Sim_Nao": ["Sim", "Não", "Não se aplica"],
     "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso", "Atividade", "Tarefa"],
     "Tipo_Tarefa": ["Manual", "Automatizada", "Regra de negócio"],
     "Tipo_Documento": [
@@ -254,6 +260,9 @@ cabecalho(pr,
     [10, 14, 34, 44, 40, 16, 24, 24, 10, 12, 14, 10, 30, 13, 13, 13,
      30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13])
 S, N = "Sim", "Não"
+# Marco que não se aplica ao processo — ex.: M3 "Subprocessos modelados" num
+# processo que se decompõe direto em atividades, sem nível de subprocesso.
+NA = "Não se aplica"
 procs = [
     ["P-06.01", "MP-06", "Planejamento da Contratação",
      "Da identificação da necessidade (DFD) até a aprovação do ETP, TR e pesquisa de preços que instruem o certame.",
@@ -301,7 +310,9 @@ procs = [
      "SEI; Compras.gov.br",
      "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
      "59500.000789/2026-33", "",
-     S, S, N, N, N, N, N, N, N, N,
+     # M3 (Subprocessos modelados) não se aplica: este processo não tem
+     # subprocessos — as atividades penduram direto nele (ver aba Atividades).
+     S, S, NA, N, N, N, N, N, N, N,
      "Concluir modelagem AS-IS das medições e pagamentos.", "",
      D(2026, 7, 20)],
     ["P-04.01", "MP-04", "Operação e Manutenção de Perímetros Irrigados",
@@ -440,7 +451,10 @@ sp.freeze_panes = "D2"
 # ----------------------------------------------------------------------------
 at = wb.create_sheet("Atividades")
 cabecalho(at,
-    ["Codigo", "Subprocesso", "Ordem", "Nome", "Descricao",
+    # Vinculo_Pai (era "Subprocesso"): aceita o código de um SUBPROCESSO
+    # (SP-...) ou de um PROCESSO (P-...). O painel identifica pelo prefixo do
+    # código e monta ficha, breadcrumb e navegação sem o nível que não existe.
+    ["Codigo", "Vinculo_Pai", "Ordem", "Nome", "Descricao",
      "Responsavel_Ator", "Entradas", "Saidas", "Sistemas",
      "Prazo_Padrao", "Base_Normativa", "Imagem_Bizagi"],
     [16, 13, 7, 36, 46, 24, 38, 38, 24, 14, 30, 44])
@@ -484,6 +498,21 @@ ativs = [
      "Comparar cada preço coletado à mediana da amostra e excluir, com justificativa registrada, os valores inexequíveis ou excessivos.",
      "Equipe de planejamento da contratação", "Amostra de preços coletados",
      "Amostra tratada; Justificativa de exclusão", "Planilha padrão", "1 dia útil", "IN SEGES nº 65/2021, art. 6º, §3º", ""],
+    # ── Processo SEM subprocessos: atividades ligadas DIRETO ao processo ──
+    # Vinculo_Pai aqui é um PROCESSO (P-06.03), não um subprocesso. Acontece
+    # quando o processo não precisa de decomposição intermediária — o CBOK 4.0
+    # não obriga o nível subprocesso ("Levels Vary in Number and Name"). As
+    # tarefas continuam penduradas na atividade, como sempre.
+    ["A-06.03.01", "P-06.03", 1, "Designar fiscais e gestor do contrato",
+     "Formalizar a designação do fiscal técnico, do fiscal administrativo e do gestor do contrato, com ciência dos designados.",
+     "AA/GLC", "Contrato assinado; Minuta de portaria de designação",
+     "Portaria de designação publicada", "SEI", "5 dias úteis",
+     "Lei nº 14.133/2021, art. 117", ""],
+    ["A-06.03.02", "P-06.03", 2, "Registrar medição e atestar a execução",
+     "Conferir o objeto entregue no período, registrar a medição e atestar a nota fiscal para pagamento.",
+     "Fiscal técnico do contrato", "Relatório de execução; Nota fiscal",
+     "Medição registrada; Nota fiscal atestada", "SEI", "10 dias úteis",
+     "Lei nº 14.133/2021, art. 140", ""],
     ["A-06.02.01.01", "SP-06.02.01", 1, "Publicar o edital",
      "Divulgar o edital no PNCP e no sistema de compras, observando prazos mínimos legais.",
      "Agente de contratação", "Edital aprovado; Parecer jurídico",
@@ -726,6 +755,18 @@ tarefas = [
     ["T-06.01.03.01.04", "A-06.01.03.01", 4, "Aplicar tratamento estatístico",
      "Calcular média/mediana, excluir valores inexequíveis ou excessivos e justificar o método.",
      "Regra de negócio", "Equipe de planejamento", "Planilha padrão", "0,5 dia", ""],
+    # Tarefas de uma atividade que pende DIRETO do processo (P-06.03, sem
+    # subprocessos) — o nível tarefa não muda em nada nesse caso.
+    ["T-06.03.02.01", "A-06.03.02", 1, "Conferir o objeto entregue",
+     "Verificar quantidade, qualidade e conformidade da entrega com o Termo de Referência.",
+     "Manual", "Fiscal técnico do contrato", "SEI", "1 dia", ""],
+    ["T-06.03.02.02", "A-06.03.02", 2, "Registrar a medição no processo",
+     "Lançar a medição do período no processo do contrato, anexando relatórios e evidências.",
+     "Manual", "Fiscal técnico do contrato", "SEI", "0,5 dia", ""],
+    ["T-06.03.02.03", "A-06.03.02", 3, "Atestar a nota fiscal",
+     "Atestar a nota fiscal depois da conferência e encaminhá-la para pagamento.",
+     "Manual", "Gestor do contrato", "SEI", "0,5 dia",
+     "O prazo de pagamento conta a partir do ateste."],
     ["T-06.02.01.01.01", "A-06.02.01.01", 1, "Cadastrar o edital no Compras.gov.br",
      "Inserir o edital aprovado, anexos e cronograma do certame no sistema.",
      "Manual", "Agente de contratação", "Compras.gov.br", "0,5 dia", ""],
@@ -819,7 +860,8 @@ linha(8, "2. Fallback", "Opcionalmente, gere js/dados.js com o script scripts/pl
       "(usado quando o site é aberto sem servidor/offline).")
 linha(9, "3. Vínculos", "Hierarquia (CBOK 4.0): Macroprocesso → Processo de negócio (aba Processos) → "
       "Subprocesso → Atividade → Tarefa. Os relacionamentos usam os CÓDIGOS: "
-      "Processos→Macroprocesso, Subprocessos→Processo (ou Subprocessos→outro Subprocesso, quando aninhado), Atividades→Subprocesso, Tarefas→Atividade; "
+      "Processos→Macroprocesso; Subprocessos→Vinculo_Pai (Processo P-... ou outro Subprocesso SP-..., quando aninhado); "
+      "Atividades→Vinculo_Pai (Subprocesso SP-... OU Processo P-..., quando o processo não tem subprocessos); Tarefas→Atividade; "
       "Documentos/Riscos/Indicadores usam Vinculo_Nivel + Vinculo_Codigo.")
 
 titulo(11, "Convenções de preenchimento")
@@ -844,7 +886,7 @@ abas_desc = [
     ("Macroprocessos", "1º nível da cadeia de valor (CBOK: processos primários/finalísticos, de suporte e gerenciais)."),
     ("Processos", "2º nível — processos de negócio, com ficha completa: SIPOC (fornecedores, entradas, saídas, beneficiários), status e marcos do mapeamento (M1–M10), fase do ciclo BPM e dados do projeto."),
     ("Subprocessos", "3º nível (CBOK): subprocessos do processo de negócio. Vinculo_Pai aceita o código de um Processo (P-...) OU de OUTRO subprocesso (SP-...) — o CBOK não fixa a profundidade da decomposição, então um subprocesso pode conter outro subprocesso, tantos níveis quanto o processo exigir."),
-    ("Atividades", "4º nível (CBOK), com entradas, saídas, ator, sistemas e prazos."),
+    ("Atividades", "4º nível (CBOK), com entradas, saídas, ator, sistemas e prazos. Vinculo_Pai aceita o código de um Subprocesso (SP-...) OU de um Processo (P-...): processo que não tem subprocesso se decompõe direto em atividades, e estas em tarefas. Nesse caso, marque M3 (Subprocessos modelados) como \"Não se aplica\" na aba Processos."),
     ("Tarefas", "5º e último nível (CBOK): menor unidade de trabalho de uma atividade — manual, automatizada ou regra de negócio."),
     ("Documentos", "Repositório: POPs, manuais, atas, diagramas BPMN (Bizagi), relatórios — vinculados a qualquer nível."),
     ("Riscos", "Riscos vinculados a qualquer nível; nível = Probabilidade × Impacto (matriz 5×5)."),
