@@ -207,6 +207,18 @@
       vinc: { docs: {}, riscos: {}, inds: {} } };
     idx.ativsPorSub = idx.ativsPorPai;   // nome antigo do índice, mantido por compatibilidade
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
+    // Codificação exibida dos macroprocessos, por tipo: gerencial = MG,
+    // de suporte = MS, finalístico = MF, numerada de 1 em diante DENTRO de
+    // cada tipo (MG-01, MG-02, MF-01…) — a contagem recomeça a cada tipo.
+    // O código da planilha (MP-xx) segue sendo a chave de vínculo de
+    // processos, documentos, riscos e indicadores: só a exibição muda.
+    var seqCat = {};
+    dd.macros.forEach(function (m) {
+      var pre = m._cat === 'gerencial' ? 'MG' : m._cat === 'suporte' ? 'MS'
+        : m._cat === 'finalistico' ? 'MF' : 'MP';
+      seqCat[pre] = (seqCat[pre] || 0) + 1;
+      m._cod = pre + '-' + ('0' + seqCat[pre]).slice(-2);
+    });
     dd.macros.forEach(function (m) { idx.mp[m.Codigo] = m; });
     dd.procs.sort(function (a, b) { return String(a.Codigo).localeCompare(String(b.Codigo)); });
     dd.procs.forEach(function (p) {
@@ -348,24 +360,58 @@
           : '<span class="atual" aria-current="page">' + esc(t.rotulo) + '</span>');
       }).join('') + '</nav>';
   }
-  var MARCOS_ROTULOS = ['Reunião de contextualização', 'Processos modelados',
-    'Subprocessos modelados', 'AS-IS modelado', 'AS-IS validado', 'Procedimento elaborado',
-    'Procedimento aprovado', 'TO-BE elaborado', 'TO-BE aprovado', 'Publicado no repositório'];
-  var MARCOS_CAMPOS = ['M1_Reuniao_Contextualizacao', 'M2_Macro_Processo_Modelados', 'M3_Subprocessos_Modelados',
-    'M4_ASIS_Modelado', 'M5_ASIS_Validado', 'M6_Procedimento_Validado', 'M7_Procedimento_Aprovado',
-    'M8_TOBE_Elaborado', 'M9_TOBE_Validado', 'M10_Publicado_Repositorio'];
-  var MARCOS_DESCRICOES = [
-    'Primeira reunião com a área para apresentar a metodologia, entender o contexto do processo e coletar o formulário de levantamento.',
-    'Oficinas de modelagem do macroprocesso e do processo em BPMN, com a equipe de mapeamento e a área.',
-    'Oficinas de modelagem dos subprocessos — podendo aprofundar vários níveis (subprocesso dentro de subprocesso) — inclusive identificando subprocessos ainda não mapeados.',
-    'O conjunto de diagramas AS-IS (macroprocesso, processo, subprocessos e atividades) está consolidado.',
-    'O dono do processo validou formalmente o AS-IS como retrato fiel da realidade atual.',
-    'O procedimento operacional padrão (POP) foi redigido e revisado tecnicamente pela equipe de mapeamento (CBOK 4.0) e encaminhado para validação do dono do processo.',
-    'O POP foi aprovado pela Diretoria Executiva (DEX) — pronto para orientar a execução do processo.',
-    'O redesenho (TO-BE) do processo foi elaborado, com melhorias, riscos residuais e indicadores propostos.',
-    'O dono do processo validou o TO-BE, que foi aprovado pela Diretoria Executiva (DEX).',
-    'O processo, seus diagramas e o POP foram publicados no repositório institucional — mapeamento concluído.'
+  /* ── Marcos do mapeamento (M1–M10) ──
+     Nesta versão: "Reunião de contextualização" virou "Conhecer o processo";
+     "Procedimento elaborado" saiu; "Processo publicado" (antes "Publicado no
+     repositório") subiu para logo depois de "Procedimento aprovado"; e
+     "Processo transformado" entrou como marco final.
+     Cada marco lê a PRIMEIRA coluna existente da sua lista `campos` — o
+     primeiro nome é o desta versão, os seguintes são os nomes antigos na
+     planilha, mantidos para que planilhas ainda não regeradas continuem
+     funcionando sem ajuste. */
+  var MARCOS = [
+    { rot: 'Conhecer o processo', campos: ['M1_Conhecer_Processo', 'M1_Reuniao_Contextualizacao'],
+      desc: 'Primeira reunião com a área para conhecer o processo: apresentar a metodologia, entender o contexto e coletar o formulário de levantamento.' },
+    { rot: 'Processos modelados', campos: ['M2_Macro_Processo_Modelados'],
+      desc: 'Oficinas de modelagem do macroprocesso e do processo em BPMN, com a equipe de mapeamento e a área.' },
+    { rot: 'Subprocessos modelados', campos: ['M3_Subprocessos_Modelados'],
+      desc: 'Oficinas de modelagem dos subprocessos — podendo aprofundar vários níveis (subprocesso dentro de subprocesso) — inclusive identificando subprocessos ainda não mapeados.' },
+    { rot: 'AS-IS modelado', campos: ['M4_ASIS_Modelado'],
+      desc: 'O conjunto de diagramas AS-IS (macroprocesso, processo, subprocessos e atividades) está consolidado.' },
+    { rot: 'AS-IS validado', campos: ['M5_ASIS_Validado'],
+      desc: 'O dono do processo validou formalmente o AS-IS como retrato fiel da realidade atual.' },
+    { rot: 'Procedimento aprovado', campos: ['M6_Procedimento_Aprovado', 'M7_Procedimento_Aprovado'],
+      desc: 'O procedimento operacional padrão (POP) foi aprovado pela Diretoria Executiva (DEX) — pronto para orientar a execução do processo.' },
+    { rot: 'Processo publicado', campos: ['M7_Processo_Publicado', 'M10_Publicado_Repositorio'],
+      desc: 'O processo, seus diagramas e o POP foram publicados no repositório institucional, disponíveis para consulta de toda a Companhia.' },
+    { rot: 'TO-BE elaborado', campos: ['M8_TOBE_Elaborado'],
+      desc: 'O redesenho (TO-BE) do processo foi elaborado, com melhorias, riscos residuais e indicadores propostos.' },
+    { rot: 'TO-BE aprovado', campos: ['M9_TOBE_Aprovado', 'M9_TOBE_Validado'],
+      desc: 'O dono do processo validou o TO-BE, que foi aprovado pela Diretoria Executiva (DEX).' },
+    { rot: 'Processo transformado', campos: ['M10_Processo_Transformado'],
+      desc: 'O redesenho aprovado foi implantado: o processo passou a ser executado na forma TO-BE, com os ganhos acompanhados pelos indicadores.' }
   ];
+  var MARCOS_ROTULOS = MARCOS.map(function (m) { return m.rot; });
+  var MARCOS_CAMPOS = MARCOS.map(function (m) { return m.campos[0]; });
+  var MARCOS_DESCRICOES = MARCOS.map(function (m) { return m.desc; });
+  // Valor do marco i no processo p — primeira coluna preenchida da lista.
+  function valMarco(p, i) {
+    var cs = (MARCOS[i] || {}).campos || [];
+    for (var k = 0; k < cs.length; k++) {
+      var v = p[cs[k]];
+      if (v != null && String(v).trim() !== '') return v;
+    }
+    return '';
+  }
+  // Marco atual = o mais avançado já concluído (1 a 10; 0 = nenhum ainda).
+  function marcoAtual(p) {
+    var at = 0;
+    for (var i = 0; i < MARCOS.length; i++) if (simNao(valMarco(p, i))) at = i + 1;
+    return at;
+  }
+  function marcoRotulo(n) {
+    return n ? 'M' + n + ' - ' + MARCOS_ROTULOS[n - 1] : 'Nenhum marco concluído';
+  }
   // Estado de um marco: concluído, "não se aplica" ou pendente. O terceiro
   // estado existe para casos legítimos como o M3 (Subprocessos modelados) num
   // processo que não tem subprocessos — sem ele, o marco ficaria eternamente
@@ -377,8 +423,8 @@
     return '';
   }
   function marcosHtml(p) {
-    return '<ul class="marcos">' + MARCOS_CAMPOS.map(function (c, i) {
-      var est = marcoEstado(p[c]);
+    return '<ul class="marcos">' + MARCOS.map(function (mk, i) {
+      var est = marcoEstado(valMarco(p, i));
       var ic = est === 'feito' ? 'fa-check-circle' : est === 'na' ? 'fa-minus-circle' : 'fa-circle';
       return '<li class="' + est + '" title="' + esc(MARCOS_DESCRICOES[i] + (est === 'na' ? ' — Não se aplica a este processo.' : '')) + '"><span>' + esc(MARCOS_ROTULOS[i]) +
         '</span><i class="fas ' + ic + '" aria-hidden="true"></i></li>';
@@ -698,7 +744,7 @@
       itens.map(function (m) {
         return '<li><a href="#/mp/' + encodeURIComponent(m.Codigo) + '">' +
           '<span class="cv-ico"><i class="fas ' + (MP_ICONES[m.Codigo] || 'fa-diagram-project') + '" aria-hidden="true"></i></span>' +
-          '<span class="cv-tx"><span class="cod">' + esc(m.Codigo) + '</span><span class="nome">' + esc(m.Nome) +
+          '<span class="cv-tx"><span class="cod">' + esc(m._cod || m.Codigo) + '</span><span class="nome">' + esc(m.Nome) +
           '</span><span class="cv-meta">' + statsMacro(m.Codigo) + '</span></span></a></li>';
       }).join('') + '</ul></div>';
   }
@@ -720,13 +766,13 @@
       '</section>' +
       '<div class="kpi-grid">' +
       '<div class="kpi" title="Total de macroprocessos na cadeia de valor institucional (gerenciais, finalísticos e de suporte)."><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
-      '<div class="kpi" title="Total de processos mapeados na carteira."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">na carteira atual</span></div>' +
+      '<div class="kpi" title="Total de processos identificados no portfólio de processos da Companhia."><span class="num">' + procs.length + '</span><span class="lbl">Processos identificados</span><span class="sub">no portfólio atual</span></div>' +
       '<div class="kpi ok" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos."><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
-      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos da carteira."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento da carteira</span></div>' +
+      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos do portfólio."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento do portfólio</span></div>' +
       '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="margin-top:calc(var(--sp2) * -1);margin-bottom:var(--sp3);font-size:var(--fs-sm);max-width:74ch">' + txResp(
+      '<p class="pp-muted" style="margin-top:calc(var(--sp2) * -1);margin-bottom:var(--sp3);font-size:var(--fs-sm);text-wrap:pretty">' + txResp(
         'Consulte a hierarquia completa, do macroprocesso à atividade.',
         'Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN, documentos, riscos e indicadores.',
         'Consulte a hierarquia completa — do macroprocesso à atividade — com fichas, diagramas BPMN (Bizagi), documentos, riscos, indicadores e o registro rastreável de cada mapeamento realizado.') + '</p>' +
@@ -741,13 +787,13 @@
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
-  var filtroCat = { macro: '', status: '', q: '' };
+  var filtroCat = { macro: '', status: '', marco: '', q: '' };
   function cardProcesso(p) {
     return '<a class="proc-card" href="#/p/' + encodeURIComponent(p.Codigo) + '">' +
       '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(p.Codigo) + '</span>' +
       '<div class="nome">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
-      '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' + esc(p.Area_Responsavel || '') +
-      (p.Fase_Ciclo_BPM ? ' · ' + esc(p.Fase_Ciclo_BPM) : '') + '</div>' +
+      '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' +
+      [p.Area_Responsavel || '', marcoRotulo(marcoAtual(p))].filter(Boolean).map(esc).join(' · ') + '</div>' +
       '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
   }
   function renderCatalogo() {
@@ -755,6 +801,9 @@
     var lista = DADOS.procs.filter(function (p) {
       if (filtroCat.macro && p.Macroprocesso !== filtroCat.macro) return false;
       if (filtroCat.status && slug(p.Status_Mapeamento) !== filtroCat.status) return false;
+      // filtro por marco: mostra os processos que estão NAQUELE marco (o
+      // marco mais avançado que já concluíram), de M1 a M10.
+      if (filtroCat.marco && String(marcoAtual(p)) !== filtroCat.marco) return false;
       if (filtroCat.q) {
         var q = filtroCat.q.toLowerCase();
         if ((p.Codigo + ' ' + p.Nome + ' ' + (p.Descricao || '')).toLowerCase().indexOf(q) < 0) return false;
@@ -762,25 +811,32 @@
       return true;
     });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Portfólio de processos</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-filtros" role="search">' +
       '<label class="sr-only" for="fMacro">Filtrar por macroprocesso</label>' +
       '<select id="fMacro"><option value="">Todos os macroprocessos</option>' +
       DADOS.macros.map(function (m) {
-        return '<option value="' + esc(m.Codigo) + '"' + (filtroCat.macro === m.Codigo ? ' selected' : '') + '>' + esc(m.Codigo + ' — ' + m.Nome) + '</option>';
+        return '<option value="' + esc(m.Codigo) + '"' + (filtroCat.macro === m.Codigo ? ' selected' : '') + '>' + esc((m._cod || m.Codigo) + ' — ' + m.Nome) + '</option>';
       }).join('') + '</select>' +
       '<label class="sr-only" for="fStatus">Filtrar por status</label>' +
       '<select id="fStatus"><option value="">Todos os status</option>' +
       ['Não iniciado', 'Em andamento', 'Concluído', 'Suspenso'].map(function (s) {
         return '<option value="' + slug(s) + '"' + (filtroCat.status === slug(s) ? ' selected' : '') + '>' + s + '</option>';
       }).join('') + '</select>' +
-      '<label class="sr-only" for="fBusca">Buscar no catálogo</label>' +
+      '<label class="sr-only" for="fMarco">Filtrar por marco do mapeamento</label>' +
+      '<select id="fMarco"><option value="">Todos os marcos</option>' +
+      MARCOS_ROTULOS.map(function (r, i) {
+        var v = String(i + 1);
+        return '<option value="' + v + '"' + (filtroCat.marco === v ? ' selected' : '') + '>M' + v + ' - ' + esc(r) + '</option>';
+      }).join('') + '</select>' +
+      '<label class="sr-only" for="fBusca">Buscar no portfólio</label>' +
       '<input type="search" id="fBusca" placeholder="Buscar por código ou nome…" value="' + esc(filtroCat.q) + '">' +
       '<span class="pp-muted" style="font-size:var(--fs-sm)">' + lista.length + ' de ' + DADOS.procs.length + ' processos</span></div>' +
       (lista.length ? '<div class="proc-grid">' + lista.map(cardProcesso).join('') + '</div>'
         : '<p class="pp-vazio">Nenhum processo corresponde aos filtros. Limpe os filtros para ver todos.</p>');
     $('#fMacro').onchange = function () { filtroCat.macro = this.value; renderCatalogo(); };
     $('#fStatus').onchange = function () { filtroCat.status = this.value; renderCatalogo(); };
+    $('#fMarco').onchange = function () { filtroCat.marco = this.value; renderCatalogo(); };
     $('#fBusca').oninput = function () { filtroCat.q = this.value; renderCatalogo(); var n = $('#fBusca'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
   }
 
@@ -795,16 +851,15 @@
   }
   function renderDetalhe(tipo, cod) {
     var el = $('#viewDetalhe');
-    var CORES = { gerencial: 'var(--pp-gerencial)', finalistico: 'var(--pp-finalistico)', suporte: 'var(--pp-suporte)' };
     if (tipo === 'mp') {
       var m = IDX.mp[cod];
       if (!m) { el.innerHTML = naoEncontrado('Macroprocesso', cod); return; }
       var filhos = IDX.procsPorMacro[cod] || [];
       var media = filhos.length ? Math.round(filhos.reduce(function (s, p) { return s + p.Percentual; }, 0) / filhos.length) : 0;
       el.innerHTML =
-        breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }, { rotulo: m.Codigo + ' — ' + m.Nome }]) +
-        '<section class="ficha-hero" style="background:' + (CORES[m._cat] || 'var(--cv-navy)') + '">' +
-        '<span class="eyebrow">Macroprocesso ' + esc(m.Categoria) + '</span><h2>' + esc(m.Codigo) + ' — ' + esc(m.Nome) + '</h2>' +
+        breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }, { rotulo: (m._cod || m.Codigo) + ' — ' + m.Nome }]) +
+        '<section class="ficha-hero nv-mp cat-' + esc(m._cat || '') + '">' +
+        '<span class="eyebrow">Macroprocesso ' + esc(m.Categoria) + '</span><h2>' + esc(m._cod || m.Codigo) + ' — ' + esc(m.Nome) + '</h2>' +
         '<div class="meta">' + tagCat(m.Categoria) + '<span>' + filhos.length + ' processos vinculados</span><span>· mapeamento atual em ' + media + '%</span></div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
@@ -840,9 +895,9 @@
       var totalTarefas = contarTarefasRecursivo(cod);
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
-          .concat(mp ? [{ rotulo: mp.Codigo, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : [])
+          .concat(mp ? [{ rotulo: mp._cod || mp.Codigo, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : [])
           .concat([{ rotulo: p.Codigo + ' — ' + p.Nome }])) +
-        '<section class="ficha-hero" style="background:var(--cv-navy)">' +
+        '<section class="ficha-hero nv-p">' +
         '<span class="eyebrow">Processo' + (mp ? ' · ' + esc(mp.Categoria) : '') + '</span>' +
         '<h2>' + esc(p.Codigo) + ' — ' + esc(p.Nome) + '</h2>' +
         '<div class="meta">' + tagStatus(p.Status_Mapeamento) +
@@ -877,7 +932,7 @@
           : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.')) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
-        cardHierarquia(mp ? [{ tipo: 'mp', codigo: mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
+        cardHierarquia(mp ? [{ tipo: 'mp', codigo: mp._cod || mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos vinculados</h3>' +
         (subs.length ? subs.map(function (s) {
           return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(s.Codigo) + '</span>' +
@@ -908,7 +963,7 @@
           .concat(pp ? [{ rotulo: pp.Codigo, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
           .concat(cadeiaSp.map(function (sp2) { return { rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
           .concat([{ rotulo: s.Codigo + ' — ' + s.Nome }])) +
-        '<section class="ficha-hero" style="background:var(--cv-blue)">' +
+        '<section class="ficha-hero nv-sp">' +
         '<span class="eyebrow">Subprocesso' + (paiEhSub ? ' de ' + esc(paiDireto.Nome) + ' (subprocesso)' : pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
         '<h2>' + esc(s.Codigo) + ' — ' + esc(s.Nome) + '</h2>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
@@ -963,11 +1018,11 @@
     var tf3 = IDX.tarefasPorAtiv[cod] || [];
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
-        .concat(mp2 ? [{ rotulo: mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
+        .concat(mp2 ? [{ rotulo: mp2._cod || mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
         .concat(p2 ? [{ rotulo: p2.Codigo, href: '#/p/' + encodeURIComponent(p2.Codigo) }] : [])
         .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
         .concat([{ rotulo: a.Codigo }])) +
-      '<section class="ficha-hero" style="background:var(--pp-verde)">' +
+      '<section class="ficha-hero nv-a">' +
       '<span class="eyebrow">Atividade' + (sp2 ? ' do subprocesso ' + esc(sp2.Nome) : p2 ? ' do processo ' + esc(p2.Nome) : '') + '</span>' +
       '<h2>' + esc(a.Codigo) + ' — ' + esc(a.Nome) + '</h2>' +
       '<div class="meta">' + (a.Responsavel_Ator ? '<span><i class="fas fa-user" aria-hidden="true"></i> ' + esc(a.Responsavel_Ator) + '</span>' : '') +
@@ -989,7 +1044,7 @@
         }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       '</div><aside>' +
       cardHierarquia(
-        (mp2 ? [{ tipo: 'mp', codigo: mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
+        (mp2 ? [{ tipo: 'mp', codigo: mp2._cod || mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
         .concat(p2 ? [{ tipo: 'p', codigo: p2.Codigo, nome: p2.Nome, href: '#/p/' + encodeURIComponent(p2.Codigo) }] : [])
         .concat(cadeiaSp2.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
       ) +
@@ -1015,7 +1070,7 @@
         .concat(cadeiaSp3.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
         .concat(a3 ? [{ rotulo: a3.Codigo, href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
         .concat([{ rotulo: t.Codigo }])) +
-      '<section class="ficha-hero" style="background:var(--cv-navy)">' +
+      '<section class="ficha-hero nv-t">' +
       '<span class="eyebrow">Tarefa' + (a3 ? ' da atividade ' + esc(a3.Nome) : '') + '</span>' +
       '<h2>' + esc(t.Codigo) + ' — ' + esc(t.Nome) + '</h2>' +
       '<div class="meta">' + (t.Tipo_Tarefa ? '<span><i class="fas fa-gear" aria-hidden="true"></i> ' + esc(t.Tipo_Tarefa) + '</span>' : '') +
@@ -1261,7 +1316,7 @@
     var criticos = riscosAb.filter(function (r) { return r._classe === 'Alto' || r._classe === 'Extremo'; });
     // marcos agregados (funil)
     var funil = MARCOS_ROTULOS.map(function (rot, i) {
-      return { rotulo: 'M' + (i + 1) + ' · ' + rot, valor: procs.filter(function (p) { return simNao(p[MARCOS_CAMPOS[i]]); }).length };
+      return { rotulo: 'M' + (i + 1) + ' · ' + rot, valor: procs.filter(function (p) { return simNao(valMarco(p, i)); }).length };
     });
     // evolução por mês (conclusões acumuladas)
     var meses = {};
@@ -1279,18 +1334,18 @@
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>Dashboard gerencial</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="kpi-grid" style="margin-top:0">' +
-      '<div class="kpi" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total da carteira."><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
-      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos da carteira."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
-      '<div class="kpi" title="Total de processos mapeados na carteira."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">mapeados na carteira</span></div>' +
-      '<div class="kpi" title="Total de subprocessos mapeados na carteira (inclusive os aninhados, subprocesso dentro de subprocesso)."><span class="num">' + DADOS.subs.length + '</span><span class="lbl">Subprocessos</span><span class="sub">mapeados na carteira</span></div>' +
-      '<div class="kpi" title="Total de atividades mapeadas na carteira."><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades</span><span class="sub">mapeadas na carteira</span></div>' +
-      '<div class="kpi" title="Total de tarefas mapeadas na carteira (menor unidade de trabalho, CBOK 4.0)."><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas</span><span class="sub">mapeadas na carteira</span></div>' +
+      '<div class="kpi" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total do portfólio."><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
+      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos do portfólio."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
+      '<div class="kpi" title="Total de processos mapeados no portfólio."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">mapeados no portfólio</span></div>' +
+      '<div class="kpi" title="Total de subprocessos mapeados no portfólio (inclusive os aninhados, subprocesso dentro de subprocesso)."><span class="num">' + DADOS.subs.length + '</span><span class="lbl">Subprocessos</span><span class="sub">mapeados no portfólio</span></div>' +
+      '<div class="kpi" title="Total de atividades mapeadas no portfólio."><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades</span><span class="sub">mapeadas no portfólio</span></div>' +
+      '<div class="kpi" title="Total de tarefas mapeadas no portfólio (menor unidade de trabalho, CBOK 4.0)."><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas</span><span class="sub">mapeadas no portfólio</span></div>' +
       '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
       '</div>' +
       '<div class="graf-grid">' +
-      grafGauge('Avanço médio geral da carteira', media, 100, [
+      grafGauge('Avanço médio geral do portfólio', media, 100, [
         { ate: 40, cor: '#c5170b' }, { ate: 70, cor: '#8a6d00' }, { ate: 100, cor: '#137436' }],
-        'Percentual médio de avanço do mapeamento entre todos os processos da carteira. As faixas de cor indicam o estágio geral: vermelho abaixo de 40%, âmbar entre 40% e 70%, verde a partir de 70%.') +
+        'Percentual médio de avanço do mapeamento entre todos os processos do portfólio. As faixas de cor indicam o estágio geral: vermelho abaixo de 40%, âmbar entre 40% e 70%, verde a partir de 70%.') +
       grafDonut('Situação do mapeamento', [
         { rotulo: 'Concluído', valor: concl, cor: '#137436' },
         { rotulo: 'Em andamento', valor: andam, cor: '#8a6d00' },
@@ -1303,7 +1358,7 @@
       }), 'Distribuição dos processos mapeados entre os três tipos de macroprocesso do CBOK 4.0: gerencial, finalístico e de suporte.') +
       grafBarras('Avanço por macroprocesso (%) — clique para abrir', DADOS.macros.map(function (m) {
         var ps = IDX.procsPorMacro[m.Codigo] || [];
-        return { rotulo: m.Codigo + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8', href: '#/mp/' + encodeURIComponent(m.Codigo),
+        return { rotulo: (m._cod || m.Codigo) + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca8', href: '#/mp/' + encodeURIComponent(m.Codigo),
           valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
       }), '%', 100, 'Percentual médio de avanço dos processos de cada macroprocesso. A linha tracejada marca a meta de 100%; clique em uma barra para abrir a ficha do macroprocesso.') +
       grafBubble('Priorização: avanço × riscos abertos por processo — clique para abrir', procs.map(function (p) {
@@ -1313,7 +1368,7 @@
           rotulo: p.Codigo + ' — ' + p.Nome, cor: p.Percentual < 40 && rp.length >= 1 ? '#c5170b' : (CAT_COR[(IDX.mp[p.Macroprocesso] || {})._cat] || '#005ca8'),
           href: '#/p/' + encodeURIComponent(p.Codigo) };
       }), 'Avanço do mapeamento (%)', 'Riscos abertos', 'Cada bolha é um processo: posição horizontal = avanço do mapeamento, posição vertical = riscos abertos, tamanho = atividades mapeadas. Bolhas vermelhas (avanço baixo e algum risco aberto) merecem atenção prioritária; clique para abrir a ficha.') +
-      grafFunil('Marcos concluídos na carteira (M1 → M10)', funil, 'Quantidade de processos que já concluíram cada marco do mapeamento, do M1 ao M10. Como os marcos são sequenciais, o número tende a diminuir da primeira para a última etapa.') +
+      grafFunil('Marcos concluídos no portfólio (M1 → M10)', funil, 'Quantidade de processos que já concluíram cada marco do mapeamento, do M1 ao M10. Como os marcos são sequenciais, o número tende a diminuir da primeira para a última etapa.') +
       grafLinha('Processos publicados (acumulado)', linha, 'Quantidade acumulada de processos concluídos, por mês de conclusão. Cada ponto soma os concluídos até aquele mês; passe o mouse sobre um ponto para ver o mês e o total acumulado.') +
       grafHeat('Riscos abertos por probabilidade × impacto', heatArr, 'Quantidade de riscos abertos por combinação de probabilidade e impacto (escala 1 a 5). Células mais à direita e mais acima concentram os riscos mais graves.') +
       grafBarras('Riscos abertos por categoria', (function () {
@@ -1535,7 +1590,7 @@
       return '<div class="pp-card"><h3>' + titulo + ' (' + itens.length + ')</h3>' + itens.map(fmt).join('') + '</div>';
     }
     var r = {
-      mp: DADOS.macros.filter(function (m) { return bate(m.Codigo) || bate(m.Nome) || bate(m.Descricao); }),
+      mp: DADOS.macros.filter(function (m) { return bate(m.Codigo) || bate(m._cod) || bate(m.Nome) || bate(m.Descricao); }),
       p: DADOS.procs.filter(function (p) { return bate(p.Codigo) || bate(p.Nome) || bate(p.Descricao); }),
       sp: DADOS.subs.filter(function (s) { return bate(s.Codigo) || bate(s.Nome) || bate(s.Descricao); }),
       a: DADOS.ativs.filter(function (a) { return bate(a.Codigo) || bate(a.Nome) || bate(a.Descricao); }),
@@ -1554,7 +1609,7 @@
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Busca' }]) +
       '<div class="pp-sec-h" style="margin-top:0"><h2>Resultados para “' + esc(q) + '”</h2><div class="linha" aria-hidden="true"></div></div>' +
       (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pela lista de <a href="#/catalogo">processos</a>.</p>') +
-      grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m.Codigo, m.Nome, esc(m.Categoria)); }) +
+      grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m._cod || m.Codigo, m.Nome, esc(m.Categoria)); }) +
       grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), p.Codigo, p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
       grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), s.Codigo, s.Nome, ''); }) +
       grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), a.Codigo, a.Nome, esc(a.Responsavel_Ator || '')); }) +

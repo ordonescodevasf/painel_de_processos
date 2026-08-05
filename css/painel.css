@@ -15,6 +15,23 @@
   --pp-lime:var(--cv-lime,#89bd2b);
   --pp-verde:var(--cv-green,#007d4e);
   --pp-ok:#168821; --pp-warn:#B38C00; --pp-erro:#E52207; --pp-info:#155BCB;
+  /* ── Gradientes institucionais ──
+     Montados só com tokens oficiais do Fundamento Cor do gov.br DS
+     (escalas Blue Warm Vivid e Green Cool Vivid). Nenhuma cor nova: cada
+     parada é um degrau da paleta, e as duas pontas de cada gradiente
+     mantêm contraste AA (>=4,5:1) com texto branco.
+     Hierarquia por profundidade: macroprocesso (por tipo) -> processo ->
+     subprocesso -> atividade clareiam na escala azul; tarefa usa o verde
+     institucional, o nível de execução. */
+  --gr-institucional:linear-gradient(135deg,var(--blue-warm-vivid-90) 0%,var(--blue-warm-vivid-80) 55%,var(--blue-warm-vivid-70) 100%);
+  --gr-gerencial:linear-gradient(100deg,var(--blue-warm-vivid-90) 0%,var(--blue-warm-vivid-80) 100%);
+  --gr-finalistico:linear-gradient(100deg,var(--blue-warm-vivid-70) 0%,var(--blue-warm-vivid-60) 100%);
+  --gr-suporte:linear-gradient(100deg,var(--green-cool-vivid-70) 0%,var(--green-cool-vivid-50) 100%);
+  --gr-processo:linear-gradient(100deg,var(--blue-warm-vivid-80) 0%,var(--blue-warm-vivid-70) 100%);
+  --gr-subprocesso:linear-gradient(100deg,var(--blue-warm-vivid-70) 0%,var(--blue-warm-vivid-60) 100%);
+  --gr-atividade:linear-gradient(100deg,var(--blue-warm-vivid-60) 0%,var(--blue-warm-vivid-50) 100%);
+  --gr-tarefa:linear-gradient(100deg,var(--green-cool-vivid-70) 0%,var(--green-cool-vivid-50) 100%);
+  --gr-superficie:linear-gradient(180deg,var(--blue-warm-vivid-5) 0%,var(--gray-2) 62%);
 }
 
 /* ── layout base das abas ── */
@@ -64,10 +81,11 @@
 .pp-vazio{color:var(--gray-60);font-style:italic;font-size:var(--fs-base);}
 
 /* ── HERO ── */
-/* Fundo sólido (sem gradiente e sem trama): o Fundamento de Superfície do
-   gov.br DS reserva imagem/ilustração para conteúdo editorial, vazio e erro —
-   o chrome de interface usa cor plana da paleta institucional. */
-.pp-hero{background:var(--cv-navy,#222b54);
+/* Gradiente institucional (--gr-institucional): três degraus da escala
+   Blue Warm Vivid oficial do gov.br DS, sem trama e sem imagem — o
+   Fundamento de Superfície reserva ilustração para conteúdo editorial,
+   estado vazio e erro. */
+.pp-hero{background:var(--gr-institucional);
   color:var(--pure-0);border-radius:var(--r-md);padding:var(--sp6) var(--sp5);
   position:relative;overflow:hidden;}
 .pp-hero .eyebrow{font:700 var(--fs-sm)/1 var(--font);letter-spacing:.14em;
@@ -97,13 +115,13 @@ body.contraste-alto .kpi{background:#000;border-color:var(--gold-vivid-20,#ffbe2
 body.contraste-alto .kpi .num{color:#fff;}
 
 /* ── CADEIA DE VALOR (layout oficial Codevasf, repaginada) ── */
-.cadeia{background:var(--gray-2,#f8f8f8);border:1px solid var(--d-bd);
+.cadeia{background:var(--gr-superficie);border:1px solid var(--d-bd);
   border-radius:12px;padding:var(--sp3);display:grid;gap:var(--sp2);box-shadow:var(--sh-sm);
   grid-template-columns:minmax(min(175px, 100%), 1fr) minmax(0,4.4fr) minmax(min(175px, 100%), 1fr);
   grid-template-areas:"missao centro proposito" "suporte suporte suporte" "valores valores valores";}
 @media(max-width:991.98px){.cadeia{grid-template-columns:1fr;
   grid-template-areas:"missao" "centro" "proposito" "suporte" "valores";}}
-.cv-aside{background:var(--cv-navy,#222b54);color:var(--pure-0);
+.cv-aside{background:var(--gr-institucional);color:var(--pure-0);
   border-radius:var(--r-md);padding:var(--sp3);font-size:var(--fs-base);
   display:flex;flex-direction:column;gap:var(--sp1);}
 .cv-aside h3{font:700 var(--fs-base)/1.2 var(--font);text-transform:uppercase;
@@ -121,9 +139,9 @@ body.contraste-alto .kpi .num{color:#fff;}
   display:flex;align-items:center;gap:10px;}
 .cv-bloco > .cv-titulo .cv-qtd{margin-left:auto;background:rgba(255,255,255,.22);
   border-radius:999px;min-width:26px;text-align:center;padding:0 8px;font-size:var(--fs-sm);}
-.cv-bloco.cat-gerencial > .cv-titulo{background:var(--pp-gerencial);}
-.cv-bloco.cat-finalistico > .cv-titulo{background:var(--pp-finalistico);}
-.cv-bloco.cat-suporte > .cv-titulo{background:var(--pp-suporte);}
+.cv-bloco.cat-gerencial > .cv-titulo{background:var(--gr-gerencial);}
+.cv-bloco.cat-finalistico > .cv-titulo{background:var(--gr-finalistico);}
+.cv-bloco.cat-suporte > .cv-titulo{background:var(--gr-suporte);}
 .cv-bloco ul{list-style:none;margin:0;padding:0;display:grid;gap:1px;background:var(--gray-10);
   grid-template-columns:repeat(auto-fit,minmax(min(215px, 100%), 1fr));}
 .cv-bloco li{background:var(--pure-0);}
@@ -146,7 +164,7 @@ body.contraste-alto .kpi .num{color:#fff;}
 .cv-bloco .cod{font:600 10px/1.4 var(--noto-mono,monospace);color:var(--gray-60);}
 .cv-bloco .nome{font:600 var(--fs-base)/1.3 var(--font);color:var(--cv-navy);}
 .cv-bloco .cv-meta{font-size:11px;color:var(--gray-60);margin-top:2px;}
-.cv-valores{grid-area:valores;background:var(--cv-navy,#222b54);
+.cv-valores{grid-area:valores;background:var(--gr-institucional);
   color:var(--pure-0);border-radius:var(--r-md);padding:var(--sp2) var(--sp3);
   display:flex;flex-wrap:wrap;align-items:center;gap:6px var(--sp2);
   font-size:var(--fs-sm);min-width:0;max-width:100%;}
@@ -176,7 +194,20 @@ body.contraste-alto .cv-aside,body.contraste-alto .cv-valores{background:#000;
 .pp-breadcrumb .atual{font-weight:600;color:var(--gray-80);}
 
 /* ── FICHA (cabeçalho de nível + cartões) ── */
-.ficha-hero{color:var(--pure-0);border-radius:var(--r-md);padding:var(--sp4) var(--sp4);}
+.ficha-hero{color:var(--pure-0);border-radius:var(--r-md);padding:var(--sp4) var(--sp4);
+  background:var(--gr-institucional);}
+/* Fundo de cada nível da hierarquia — só gradientes da paleta oficial
+   (ver --gr-* no topo). Em classe, e não em style inline, para que o modo
+   alto contraste consiga sobrepor. */
+.ficha-hero.nv-mp{background:var(--gr-institucional);}
+.ficha-hero.nv-mp.cat-gerencial{background:var(--gr-gerencial);}
+.ficha-hero.nv-mp.cat-finalistico{background:var(--gr-finalistico);}
+.ficha-hero.nv-mp.cat-suporte{background:var(--gr-suporte);}
+.ficha-hero.nv-p{background:var(--gr-processo);}
+.ficha-hero.nv-sp{background:var(--gr-subprocesso);}
+.ficha-hero.nv-a{background:var(--gr-atividade);}
+.ficha-hero.nv-t{background:var(--gr-tarefa);}
+body.contraste-alto .ficha-hero{background:#000;border:1px solid var(--gold-vivid-20,#ffbe2e);}
 .ficha-hero .eyebrow{font:700 var(--fs-sm)/1 var(--font);letter-spacing:.12em;
   text-transform:uppercase;opacity:.85;}
 .ficha-hero h2{font:700 clamp(1.25rem,2.4vw,1.7rem)/1.25 var(--font);margin:var(--sp1) 0 var(--sp2);}
@@ -656,14 +687,17 @@ body.contraste-alto .graf svg text{fill:#fff !important;}
    diz o que é; a cor só reforça o agrupamento ao passar o olho rápido. ── */
 .ficha-dl > div[class*="campo-"]{border-left:3px solid transparent;
   padding:2px 0 2px 10px;border-radius:0 4px 4px 0;transition:background var(--dur-fast) var(--ease);}
-.ficha-dl > div.campo-desc{border-left-color:var(--cv-blue);background:rgba(0,92,168,.05);}
-.ficha-dl > div.campo-desc dt{color:var(--cv-blue);}
-.ficha-dl > div.campo-quem{border-left-color:var(--cv-navy);background:rgba(34,43,84,.05);}
-.ficha-dl > div.campo-quem dt{color:var(--cv-navy);}
-.ficha-dl > div.campo-valor{border-left-color:var(--pp-verde);background:rgba(0,125,78,.05);}
-.ficha-dl > div.campo-valor dt{color:var(--pp-verde);}
-.ficha-dl > div.campo-tecnico{border-left-color:#0a6b80;background:rgba(10,107,128,.05);}
-.ficha-dl > div.campo-tecnico dt{color:#0a6b80;}
+/* Tokens oficiais gov.br (Blue Warm Vivid 70/90, Green Cool Vivid 50,
+   Green Warm Vivid 50) — as cores anteriores #0a6b80 (petróleo) e
+   #005ca8/#007d4e (marca Codevasf) não pertenciam à paleta do DS. */
+.ficha-dl > div.campo-desc{border-left-color:var(--blue-warm-vivid-70);background:rgba(0,64,180,.05);}
+.ficha-dl > div.campo-desc dt{color:var(--blue-warm-vivid-70);}
+.ficha-dl > div.campo-quem{border-left-color:var(--blue-warm-vivid-90);background:rgba(7,29,65,.05);}
+.ficha-dl > div.campo-quem dt{color:var(--blue-warm-vivid-90);}
+.ficha-dl > div.campo-valor{border-left-color:var(--green-cool-vivid-50);background:rgba(22,136,33,.06);}
+.ficha-dl > div.campo-valor dt{color:var(--green-cool-vivid-50);}
+.ficha-dl > div.campo-tecnico{border-left-color:var(--green-warm-vivid-50);background:rgba(106,125,0,.06);}
+.ficha-dl > div.campo-tecnico dt{color:var(--green-warm-vivid-50);}
 .ficha-dl > div.campo-tempo{border-left-color:#8a6d00;background:rgba(138,109,0,.05);}
 .ficha-dl > div.campo-tempo dt{color:#8a6d00;}
 body.contraste-alto .ficha-dl > div[class*="campo-"]{background:transparent;border-left-color:var(--gold-vivid-20,#ffbe2e);}

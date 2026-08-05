@@ -367,6 +367,7 @@ window.PAINEL_DADOS = {
    "M8_TOBE_Elaborado": "Sim",
    "M9_TOBE_Validado": "Sim",
    "M10_Publicado_Repositorio": "Sim",
+   "M10_Processo_Transformado": "Sim",
    "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
    "Pendencia": null
   },
@@ -1085,7 +1086,7 @@ window.PAINEL_DADOS = {
    "Data": "2026-05-18",
    "Situacao": "Vigente",
    "Link": "https://exemplo.codevasf.gov.br/repositorio/checklist-p0601.pdf",
-   "Observacoes": "Exemplo — checklist ainda não padronizado para os demais processos da carteira."
+   "Observacoes": "Exemplo — checklist ainda não padronizado para os demais processos do portfólio."
   }
  ],
  "Riscos": [

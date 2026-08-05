@@ -959,12 +959,17 @@
     .BackToTop-module{position:fixed;right:24px;bottom:24px;z-index:var(--z-layer-3);}
     #btnBackToTop{box-shadow:var(--sh-md);}
     #btnBackToTop[hidden]{display:none;}
-    .report-error-btn{position:fixed;left:24px;bottom:24px;z-index:var(--z-layer-3);
-      box-shadow:var(--sh-md);}
+    /* .br-button na frente do seletor de propósito: .br-button.primary
+       (specificidade 0-2-0) define position:relative para o efeito de
+       pressionado, e vinha vencendo o position:fixed de .report-error-btn
+       (0-1-0) — o botão caía no fluxo, no fim do <body>, deixando de
+       flutuar e criando uma faixa clara logo abaixo do rodapé. */
+    .br-button.report-error-btn{position:fixed;left:24px;bottom:24px;
+      z-index:var(--z-layer-3);box-shadow:var(--sh-md);}
     @media(max-width:575px){
       /* Em telas pequenas os dois botões ficam empilhados na mesma borda,
          para não disputar espaço com o conteúdo nem um com o outro. */
-      .report-error-btn{left:auto;right:24px;bottom:84px;}
+      .br-button.report-error-btn{left:auto;right:24px;bottom:84px;}
     }
     .report-error-shot{margin-top:var(--sp3);padding:var(--sp2);background:var(--gray-2);
       border-radius:var(--r-sm);text-align:center;}

@@ -200,10 +200,10 @@ sozinho no modo alto contraste.
 Os marcos passaram de 9 para **10 etapas**, começando pela reunião de
 contextualização (antes era o 3º passo):
 
-`M1` Reunião de contextualização · `M2` Macroprocesso e processo modelados ·
-`M3` Subprocessos modelados · `M4` AS-IS modelado · `M5` AS-IS validado ·
-`M6` Procedimento validado · `M7` Procedimento aprovado · `M8` TO-BE
-elaborado · `M9` TO-BE validado · `M10` Publicado no repositório.
+`M1` Conhecer o processo · `M2` Processos modelados · `M3` Subprocessos
+modelados · `M4` AS-IS modelado · `M5` AS-IS validado · `M6` Procedimento
+aprovado · `M7` Processo publicado · `M8` TO-BE elaborado · `M9` TO-BE
+aprovado · `M10` Processo transformado.
 
 M2 e M3 representam as diversas oficinas de modelagem entre a contextualização
 e o AS-IS consolidado — desenhando macroprocesso, processo e subprocessos
