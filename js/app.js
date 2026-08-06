@@ -1173,7 +1173,11 @@
   }
   /* ── TELA: metodologia ────────────────────────────────────────────── */
   /* ── GRÁFICOS (SVG puro, sem dependências; cores do DS gov.br) ────── */
-  var PAL = ['#222b54', '#005ca8', '#007d4e', '#155bcb', '#74c9ea', '#89bd2b', '#8a6d00', '#c5170b'];
+  // Paleta categórica dos gráficos. #74c9ea (1,86:1) e #89bd2b (2,24:1)
+  // não alcançavam os 3:1 exigidos para elemento gráfico sobre o card
+  // branco: trocados por Cyan Vivid 60 (#00687d, 6,41:1) e Green Warm
+  // Vivid 50 (#6a7d00, 4,62:1) — degraus oficiais da paleta gov.br.
+  var PAL = ['#222b54', '#005ca8', '#007d4e', '#155bcb', '#00687d', '#6a7d00', '#8a6d00', '#c5170b'];
   function svgWrap(titulo, conteudo, vb, altura, legenda) {
     return '<figure class="graf"><figcaption>' + esc(titulo) +
       (legenda ? ' <i class="fas fa-circle-info graf-info" tabindex="0" data-tooltip-text="' + esc(legenda) + '" aria-label="O que este gráfico mostra e como lê-lo"></i>' : '') + '</figcaption>' +
@@ -1349,7 +1353,7 @@
       grafDonut('Situação do mapeamento', [
         { rotulo: 'Concluído', valor: concl, cor: '#137436' },
         { rotulo: 'Em andamento', valor: andam, cor: '#8a6d00' },
-        { rotulo: 'Não iniciado', valor: porStatus['Não iniciado'] || 0, cor: '#9e9e9e' },
+        { rotulo: 'Não iniciado', valor: porStatus['Não iniciado'] || 0, cor: '#757575' },
         { rotulo: 'Suspenso', valor: porStatus['Suspenso'] || 0, cor: '#c5170b' }],
         'Quantidade de processos em cada status de mapeamento. O tamanho de cada fatia é proporcional ao número de processos; passe o mouse sobre uma fatia para ver o total e o percentual.') +
       grafDonut('Processos por tipo (CBOK)', ['gerencial', 'finalistico', 'suporte'].map(function (c) {

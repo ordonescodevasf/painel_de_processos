@@ -387,6 +387,61 @@ compacta e clicável, com ícone e cor por tipo. Substituiu os cards de
 nível") — mesma informação, mas consolidada, mais rápida de escanear e sem
 precisar subir um nível de cada vez para chegar ao topo da cadeia.
 
+## Revisão da paleta de cores (gov.br DS)
+
+Auditoria de **todas** as cores dos arquivos `css/govbr-ds.css`, `css/painel.css`
+e `js/app.js` contra a Paleta do Design System gov.br (Fundamentos Visuais >
+Cores) e contra o mínimo de contraste AA da WCAG 2.1 (4,5:1 para texto normal,
+3:1 para texto grande e elemento gráfico), que é o nível de conformidade
+adotado pelo DS.
+
+**Tokens do DS corrigidos**
+
+| Token | Antes | Depois | Motivo |
+| --- | --- | --- | --- |
+| `--gray-70` | `#4a4a4a` | `#555555` | valor publicado na família Gray |
+| `--gray-30` | *não existia* | `#adadad` | era usado em 4 regras sem estar declarado |
+| `--blue-warm-20` | literal `#c5d4eb` ×6 | token | Cor Interativa oficial para fundo escuro |
+| `.br-switch --on` | `#538ff2` | `--blue-warm-vivid-70` | hex fora da paleta |
+| `.br-switch.inverted` | `#cfe0fb` | `--blue-warm-vivid-10` | hex fora da paleta |
+| `--focus` | *não existia* | alias de `--focus-color` | referenciado em 3 regras |
+| `--noto-mono` | *não existia* | alias de `--font-mono` | referenciado em 3 regras |
+
+Acrescentados os degraus oficiais que faltavam (`--gray-1/3/4`, `--pure-100`,
+`--cyan-vivid-60`, `--orange-warm-vivid-50`) e as **cores de estado** do DS
+(`--interactive`, `--danger`, `--warning`, `--success`, `--info`) — `--danger`
+e `--success` já eram usados no CSS sem existir.
+
+**Reprovações de contraste corrigidas**
+
+| Onde | Antes | Depois |
+| --- | --- | --- |
+| Fase "Evoluir" da jornada | `#c45a00` — 4,37:1 | `--orange-warm-vivid-50` `#cf4900` — 4,56:1 |
+| Fatia "Não iniciado" do donut | `#9e9e9e` — 2,68:1 | `--gray-50` `#757575` — 4,61:1 |
+| Série ciano dos gráficos | `#74c9ea` — 1,86:1 | Cyan Vivid 60 `#00687d` — 6,41:1 |
+| Série lima dos gráficos | `#89bd2b` — 2,24:1 | Green Warm Vivid 50 `#6a7d00` — 4,62:1 |
+| Acento de hover da cadeia (finalístico) | `--pp-cyan` — 1,86:1 | `--cv-blue` — 6,78:1 |
+| Acento de hover da cadeia (suporte) | `--pp-lime` — 2,24:1 | `--cv-green` — 5,19:1 |
+
+**Mantido de propósito**
+
+- **Marca Codevasf** (`--cv-blue`, `--cv-green`, `--cv-navy`, `--cv-cyan`,
+  `--cv-lime`) e a assinatura gov.br do rodapé — identidade institucional, fora
+  do escopo da paleta do DS. `--pp-cyan` e `--pp-lime` seguem declarados, agora
+  com nota de que servem só a uso decorativo.
+- **`--blue-warm-vivid-70: #0040b4`** — antecipação deliberada da v4.0 do DS
+  (o valor em produção hoje é `#1351b4`).
+- **Gradientes** — todos já usavam exclusivamente degraus oficiais da mesma
+  família (`blue-warm-vivid` 90→70, `green-cool-vivid` 70→50, `gray-2`), então
+  foram preservados: são o principal recurso de hierarquia visual das fichas e
+  da hero, e nenhum deles reprova em contraste.
+- **Tinturas próprias que passam em AA** — `#8a6d00`, `#137436`, `#c5170b`,
+  `#0a6b80`, `#fff5d2`, `#e3f5e1`, `#fdeceb`, `.bg-lime`, `.bg-orange`, células
+  da matriz de risco e `#31406f`. Não estão na paleta oficial, mas todas
+  cumprem o contraste exigido na posição em que aparecem. Podem ser migradas
+  para os degraus oficiais mais próximos numa próxima rodada, se quiser
+  aderência total.
+
 ## Ajustes que você provavelmente vai querer fazer
 
 Quase tudo se edita **na planilha** (inclusive equipe do NUGEP, glossário, FAQ e

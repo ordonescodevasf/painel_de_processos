@@ -11,6 +11,9 @@
   --pp-gerencial:var(--cv-navy,#222b54);
   --pp-finalistico:var(--cv-blue,#005ca8);
   --pp-suporte:var(--cv-green,#007d4e);
+  /* --pp-cyan e --pp-lime: tons claros da marca Codevasf. Reservados a
+     uso DECORATIVO (fundos, faixas) — como texto ou elemento gráfico
+     sobre branco ficam em 1,86:1 e 2,24:1, abaixo do mínimo do DS. */
   --pp-cyan:var(--cv-cyan,#74c9ea);
   --pp-lime:var(--cv-lime,#89bd2b);
   --pp-verde:var(--cv-green,#007d4e);
@@ -151,8 +154,12 @@ body.contraste-alto .kpi .num{color:#fff;}
   transform var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease);}
 .cv-bloco a:hover{z-index:1;box-shadow:var(--sh-card-hover);}
 .cv-bloco.cat-gerencial a:hover{background:#f1f3f9;border-left-color:var(--pp-gerencial);}
-.cv-bloco.cat-finalistico a:hover{background:#edf7fd;border-left-color:var(--pp-cyan);}
-.cv-bloco.cat-suporte a:hover{background:#f0f8ef;border-left-color:var(--pp-lime);}
+/* Acentos de hover: --pp-cyan (1,86:1) e --pp-lime (2,24:1) não alcançam
+   os 3:1 exigidos para elemento gráfico sobre o próprio fundo de hover.
+   Trocados pela cor institucional da categoria — mesma identidade
+   Codevasf, contraste 6,78:1 (azul) e 5,19:1 (verde). */
+.cv-bloco.cat-finalistico a:hover{background:#edf7fd;border-left-color:var(--cv-blue);}
+.cv-bloco.cat-suporte a:hover{background:#f0f8ef;border-left-color:var(--cv-green);}
 .cv-bloco a:hover{transform:translateY(-1px) scale(1.01);}
 .cv-bloco a:focus-visible{outline:4px solid var(--focus,#da680b);outline-offset:-4px;}
 .cv-ico{flex:0 0 34px;width:34px;height:34px;border-radius:50%;display:inline-flex;
@@ -514,7 +521,10 @@ body.contraste-alto .repo-card,body.contraste-alto .repo-oficial-card{background
   font:700 var(--fs-sm)/1 var(--font);color:var(--gray-40);}
 .jornada-fases .jf{border-radius:999px;padding:5px 14px;color:var(--pure-0);}
 .jf-descobrir{background:#155BCB;}.jf-definir{background:#0c326f;}
-.jf-desenvolver{background:var(--pp-verde);}.jf-entregar{background:#8a6d00;}.jf-evoluir{background:#c45a00;}
+.jf-desenvolver{background:var(--pp-verde);}.jf-entregar{background:#8a6d00;}
+/* #c45a00 com texto branco dava 4,37:1 (reprova AA). Orange Warm Vivid 50
+   (#cf4900), degrau oficial de matiz praticamente idêntica: 4,56:1. */
+.jf-evoluir{background:var(--orange-warm-vivid-50);}
 .jornada{list-style:none;margin:0;padding:0 0 0 var(--sp3);
   border-left:3px solid var(--blue-warm-vivid-30,#a8c0e8);
   display:flex;flex-direction:column;gap:var(--sp3);}
@@ -527,7 +537,7 @@ body.contraste-alto .repo-card,body.contraste-alto .repo-oficial-card{background
 .jornada-etapa.fase-definir::before{background:#0c326f;}
 .jornada-etapa.fase-desenvolver::before{background:var(--pp-verde);}
 .jornada-etapa.fase-entregar::before{background:#8a6d00;}
-.jornada-etapa.fase-evoluir::before{background:#c45a00;}
+.jornada-etapa.fase-evoluir::before{background:var(--orange-warm-vivid-50);}
 .je-topo{display:flex;align-items:flex-start;gap:var(--sp2);}
 .je-num{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:var(--cv-navy);
   color:var(--pure-0);display:inline-flex;align-items:center;justify-content:center;

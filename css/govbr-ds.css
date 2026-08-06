@@ -28,6 +28,10 @@
       --blue-warm-vivid-60:#155bcb;
       --blue-warm-vivid-50:#2670e8; --blue-warm-vivid-30:#81aefc;
       --blue-warm-vivid-10:#d4e5ff; --blue-warm-vivid-5:#edf5ff;
+      /* Blue Warm 20 — Cor Interativa oficial para FUNDO ESCURO
+         (Função Interação > Fundo Escuro). Estava repetida como literal
+         #c5d4eb em 6 regras do rodapé; tokenizada aqui. */
+      --blue-warm-20:#c5d4eb;
       --green-cool-vivid-70:#154c21; --green-cool-vivid-50:#168821;
       --green-cool-vivid-5:#e3f5e1; --green-cool-vivid-10:#b7f5bd;
       /* green-warm-vivid-50: confirmado pelo CSS computado real (#6a7d00),
@@ -41,14 +45,30 @@
          também contra o CSS computado real da página. */
       --red-vivid-50:#e52207; --red-vivid-10:#fde0db;
       --yellow-vivid-20:#ffcd07; --yellow-vivid-5:#fff5c2;
-      /* --gray-70 corrigido para #4A4A4A — valor real gov.br DS v4
-         (figma/color.json); o valor anterior (#555) era uma aproximação. */
-      --gray-90:#1b1b1b; --gray-80:#333; --gray-70:#4a4a4a; --gray-60:#636363;
-      --gray-50:#757575; --gray-40:#888;
-      --gray-20:#ccc; --gray-10:#e6e6e6; --gray-5:#f0f0f0; --gray-2:#f8f8f8;
-      --pure-0:#ffffff; --gold-vivid-20:#ffbe2e;
+      /* Família Gray — valores oficiais da Paleta do Design System
+         (Fundamentos Visuais > Cores > Gray). --gray-70 voltou para
+         #555555, o valor publicado na paleta oficial; a versão anterior
+         usava #4a4a4a, aproximação sem respaldo na tabela de cores.
+         --gray-30 (#adadad) estava sendo REFERENCIADO em 4 regras sem
+         nunca ter sido declarado — as bordas que dependiam dele caíam
+         para currentColor. Declarado agora com o valor oficial. */
+      --gray-90:#1b1b1b; --gray-80:#333333; --gray-70:#555555; --gray-60:#636363;
+      --gray-50:#757575; --gray-40:#888888; --gray-30:#adadad;
+      --gray-20:#cccccc; --gray-10:#e6e6e6; --gray-5:#f0f0f0; --gray-4:#f3f3f3;
+      --gray-3:#f6f6f6; --gray-2:#f8f8f8; --gray-1:#fcfcfc;
+      --pure-0:#ffffff; --pure-100:#000000; --gold-vivid-20:#ffbe2e;
+      /* Cyan Vivid 60 e Orange Warm Vivid 50: degraus oficiais adotados
+         para substituir dois valores que reprovavam no contraste mínimo
+         (ver notas em painel.css e js/app.js). */
+      --cyan-vivid-60:#00687d; --orange-warm-vivid-50:#cf4900;
       --background:var(--pure-0); --color:var(--gray-80);
+      /* Cores de estado do DS (Utilitários CSS de Cores > Cores de estado):
+         interactive · danger · warning · success · info. --danger e
+         --success já eram usados no CSS sem existir; agora apontam para os
+         tokens oficiais de Feedback. */
       --interactive:var(--blue-warm-vivid-70);
+      --danger:var(--red-vivid-50); --warning:var(--yellow-vivid-20);
+      --success:var(--green-cool-vivid-50); --info:var(--blue-warm-vivid-60);
       /* DS spacing — Escala Layout ($spacer:8px), conforme Fundamento Espaçamento gov.br DS.
          Mapeamento: --sp-half=--spacing-scale-half(4px), --sp1=--spacing-scale-base(8px),
          --sp2=-2x(16px), --sp3=-3x(24px), --sp4=-4x(32px), --sp5=-5x(40px),
@@ -61,13 +81,16 @@
       /* DS typography — Noto Sans (substitui Rawline a partir da v4.0.0) */
       --font:'Noto Sans',Arial,sans-serif;
       --font-mono:'Noto Sans Mono','Courier New',monospace;
+      /* --noto-mono era referenciado em 3 regras de painel.css sem existir:
+         o código caía no monospace do sistema. Alias para --font-mono. */
+      --noto-mono:var(--font-mono);
       --fs-sm:12px; --fs-base:14px; --fs-md:16px;
       --fs-lg:20px; --fs-xl:24px; --fs-xxl:32px;
       /* DS focus ring — tokenizado nas mesmas variáveis usadas pelo mixin
          `focus` do guia de Codificação Sass do gov.br DS (--focus-color,
          --focus-offset, --focus-style, --focus-width), em vez de valores
          soltos repetidos em cada seletor */
-      --focus-color:#da680b; --focus-offset:2px; --focus-style:dashed; --focus-width:4px;
+      --focus-color:#da680b; --focus:var(--focus-color); --focus-offset:2px; --focus-style:dashed; --focus-width:4px;
       --focus-offset-field:1px; --focus-style-field:solid; --focus-width-field:2px;
       /* DS shadows — valores compilados de --br-elevation-shadow-style-level{1,4}
          (govbr-ds/core v4.0.0-next.11, dist/core.css compilado).
@@ -1664,7 +1687,7 @@
        painel; aproximei por interpolação entre -30 e -50 já existentes
        — vale confirmar o hex oficial exato depois. ── */
     .br-switch{--switch-h:24px;--switch-w:40px;--switch-toggle:16px;
-      --on:#538ff2;--off:var(--gray-20);
+      --on:var(--blue-warm-vivid-70);--off:var(--gray-20);
       display:inline-flex;min-height:var(--switch-h);}
     .br-switch input{opacity:0;position:absolute;}
     .br-switch input + label{align-items:center;color:var(--gray-80);cursor:pointer;
@@ -1689,7 +1712,7 @@
     /* Variante escura: usada na barra de acessibilidade (fundo
        --blue-warm-vivid-90) — mesma cor de texto já usada pelo botão
        VLibras vizinho, para consistência visual. */
-    .br-switch.inverted input + label{color:#cfe0fb;}
+    .br-switch.inverted input + label{color:var(--blue-warm-vivid-10);}
 
     /* ── SELECT (br-select) — combobox completo: Componente Input
        (obrigatório) + Componente Button (obrigatório, toggle com ícone
@@ -2043,7 +2066,7 @@
     ══════════════════════════════════════════════════════════ */
     .br-footer{max-width:100%;margin:var(--sp6) 0 0;padding:var(--sp4) var(--sp4) var(--sp5);
       background:#0040b4;
-      display:flex;flex-direction:column;gap:var(--sp4);font-size:11px;color:#c5d4eb;}
+      display:flex;flex-direction:column;gap:var(--sp4);font-size:11px;color:var(--blue-warm-20);}
     .br-footer .footer-top,.br-footer .footer-secondary,.br-footer .footer-legal{
       max-width:1440px;margin:0 auto;width:100%;}
 
@@ -2062,10 +2085,10 @@
     .fs-header{display:flex;align-items:center;justify-content:space-between;width:100%;
       background:none;border:0;cursor:pointer;padding:12px 0;text-align:left;color:var(--pure-0);}
     .fs-header .fs-cat{font:600 11.66px/1.3 var(--font);text-transform:uppercase;letter-spacing:.4px;color:var(--pure-0);}
-    .fs-header i{color:#c5d4eb;font-size:13px;}
+    .fs-header i{color:var(--blue-warm-20);font-size:13px;}
     .fs-items{display:flex;flex-direction:column;gap:11px;padding:0 0 var(--sp3);}
     .fs-items[hidden]{display:none;}
-    .fs-items a{color:#c5d4eb;text-decoration:none;font-size:13px;
+    .fs-items a{color:var(--blue-warm-20);text-decoration:none;font-size:13px;
       transition:color var(--dur-fast) var(--ease);}
     .fs-items a:hover,.fs-items a:focus{color:var(--pure-0);}
     @media(min-width:769px){
@@ -2103,15 +2126,15 @@
        da unidade responsável e licença de uso, em --pure-0. ── */
     .footer-legal{display:flex;flex-direction:column;align-items:center;gap:10px;
       text-align:center;padding-top:var(--sp3);border-top:1px solid rgba(255,255,255,.15);}
-    .footer-org{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#c5d4eb;}
+    .footer-org{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--blue-warm-20);}
     .footer-org .fo-top{font:700 10px/1.3 var(--font);text-transform:uppercase;letter-spacing:.4px;color:var(--pure-0);}
     .footer-org .fo-mid{font-size:11px;color:var(--pure-0);}
-    .footer-org .fo-unit{font-size:11px;color:#c5d4eb;}
+    .footer-org .fo-unit{font-size:11px;color:var(--blue-warm-20);}
     .footer-contact{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;align-items:center;}
-    .footer-contact a{color:#c5d4eb;text-decoration:none;font-size:11px;
+    .footer-contact a{color:var(--blue-warm-20);text-decoration:none;font-size:11px;
       display:inline-flex;align-items:center;gap:6px;transition:color var(--dur-fast) var(--ease);}
     .footer-contact a:hover,.footer-contact a:focus{color:var(--pure-0);}
-    .footer-contact a i{color:#c5d4eb;width:12px;text-align:center;}
+    .footer-contact a i{color:var(--blue-warm-20);width:12px;text-align:center;}
     .footer-license{font:500 11.66px/1.5 var(--font);color:var(--pure-0);margin:4px 0 0;}
     .gf-tag{display:inline-flex;align-items:center;gap:6px;
       font:700 10px/1 var(--font);letter-spacing:.4px;color:var(--pure-0);
