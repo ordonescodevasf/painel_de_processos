@@ -61,6 +61,19 @@
          para substituir dois valores que reprovavam no contraste mínimo
          (ver notas em painel.css e js/app.js). */
       --cyan-vivid-60:#00687d; --orange-warm-vivid-50:#cf4900;
+      /* Degraus oficiais acrescentados para o sistema de cores por camada
+         da hierarquia — uma FAMÍLIA DE MATIZ por camada, em vez de tons do
+         mesmo azul. Todos são valores publicados na Paleta do Design
+         System (Fundamentos Visuais > Cores). */
+      --cyan-vivid-50:#0081a1; --cyan-vivid-30:#00bde3; --cyan-vivid-5:#e5faff;
+      --indigo-vivid-60:#4a50c4; --indigo-vivid-40:#8289ff; --indigo-vivid-5:#f0f0ff;
+      --orange-vivid-70:#5f3617; --orange-vivid-60:#8c471c; --orange-vivid-50:#c05600;
+      --orange-vivid-20:#ffbc78; --orange-vivid-10:#fce2c5; --orange-vivid-5:#fdf5e6;
+      --yellow-vivid-70:#5c4809; --yellow-vivid-60:#776017; --yellow-vivid-50:#947100;
+      --yellow-vivid-40:#b38c00; --yellow-vivid-10:#fee685;
+      --green-cool-vivid-60:#216e1f; --green-cool-vivid-40:#00a91c;
+      --mint-vivid-50:#008659; --red-vivid-60:#b50909; --red-vivid-70:#8b0a03;
+      --blue-warm-vivid-40:#5992ed; --blue-warm-vivid-20:#adcdff;
       --background:var(--pure-0); --color:var(--gray-80);
       /* Cores de estado do DS (Utilitários CSS de Cores > Cores de estado):
          interactive · danger · warning · success · info. --danger e
@@ -1210,9 +1223,78 @@
     .br-pagination .pagination-information .per-page,
     .br-pagination .pagination-information .total{font-weight:700;color:var(--gray-80);}
     .br-pagination .pagination-arrows{display:flex;align-items:center;gap:var(--sp1);margin-left:auto;}
+    /* margin:0 é essencial: o <hr> traz "margin:0.5em auto" do navegador, e
+       duas margens auto dentro do flex comem toda a folga da linha — as Setas
+       de Navegação eram empurradas para uma segunda linha. */
     .br-pagination .vertical-sep{display:none;border:0;border-left:1px solid var(--gray-10);
-      height:20px;width:0;align-self:center;}
+      height:20px;width:0;margin:0;align-self:center;flex:0 0 auto;}
     @media(min-width:576px){.br-pagination .vertical-sep{display:block;}}
+    /* Módulo 2 (Identificadores de Páginas) e Módulo 3 (Botão Reticências).
+       Ambos usam o Botão Circular do DS: 32px, raio total, cor interativa;
+       a página atual inverte fundo/texto e carrega aria-current="page". */
+    .br-pagination .pagination-pages{display:flex;align-items:center;gap:2px;
+      list-style:none;margin:0;padding:0;}
+    .br-pagination .page{min-width:32px;height:32px;padding:0 6px;border:0;
+      border-radius:var(--r-pill,999px);background:transparent;
+      color:var(--blue-warm-vivid-70);font:600 13px/1 var(--font);cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;}
+    .br-pagination .page:hover{background:var(--blue-warm-vivid-5);}
+    .br-pagination .page[aria-current="page"]{background:var(--blue-warm-vivid-70);
+      color:var(--pure-0);}
+    .br-pagination .page.ellipsis{color:var(--gray-60);cursor:default;background:transparent;}
+    .br-pagination .pagination-arrows .br-button.circle{width:32px;height:32px;}
+    .br-pagination select{height:32px;}
+    @media(max-width:575.98px){
+      .br-pagination .pagination-pages{order:3;width:100%;justify-content:center;}
+      .br-pagination .pagination-arrows{margin-left:0;}
+    }
+
+    /* ── ACCORDION (br-accordion) — Componentes > Accordion, gov.br DS ──
+       Estrutura oficial: .br-accordion > .item (com .header button, .icon e
+       .title) seguido da .content correspondente. Atributos: active (item
+       aberto), single (um item por vez), negative (fundo escuro). O ícone
+       alterna angle-down / angle-up pelo script, como manda a documentação.
+       Portado do CSS publicado do componente, com os tokens deste projeto no
+       lugar das variáveis --color-secondary-04 / --spacing-scale-*. ── */
+    .br-accordion{background:var(--pure-0);border-top:1px solid var(--gray-20);}
+    .br-accordion .item{border-bottom:1px solid var(--gray-20);display:flex;flex-direction:column;}
+    .br-accordion .item[active]{border-bottom:0;}
+    .br-accordion .item[active] .header{font-weight:600;}
+    .br-accordion .item[active] + .content{border-bottom:1px solid var(--gray-20);display:block;}
+    .br-accordion .header{background:transparent;border:0;color:var(--interactive);
+      display:flex;align-items:center;font:400 var(--fs-lg,16px)/1.4 var(--font);
+      justify-content:space-between;outline:none;padding:var(--sp3) 0;text-align:left;
+      text-decoration:none;width:100%;cursor:pointer;}
+    .br-accordion .header .icon{margin:0 var(--sp3) 0 var(--sp2);flex-shrink:0;}
+    .br-accordion .header .title{flex:1;margin:0;}
+    .br-accordion .header:focus{outline:none;}
+    .br-accordion .header:focus-visible{outline:2px solid var(--focus-color);
+      outline-offset:var(--focus-offset);}
+    /* hover: sobreposição da própria cor interativa a 16% (token --hover do
+       DS), e não uma cor nova — vale para o positivo e para o negativo. */
+    .br-accordion .header:not(:disabled):hover{background-image:linear-gradient(
+      rgba(0,64,180,.16),rgba(0,64,180,.16));}
+    .br-accordion .content{color:var(--gray-80);display:none;font-size:var(--fs-base);
+      margin:0 var(--sp2);padding:var(--sp2) var(--sp6) var(--sp3);line-height:1.6;}
+    .br-accordion .content > *:last-child{margin-bottom:0;}
+    /* Accordion Negativo — sobre fundo escuro o texto passa a branco e a cor
+       interativa vira a de fundo escuro (Blue Warm 20), como define o DS. */
+    .br-accordion[negative]{background:var(--blue-warm-vivid-90);
+      border-top-color:rgba(255,255,255,.24);}
+    .br-accordion[negative] .item,
+    .br-accordion[negative] .item[active] + .content{border-bottom-color:rgba(255,255,255,.24);}
+    .br-accordion[negative] .header{color:var(--blue-warm-20);}
+    .br-accordion[negative] .item[active] .header{color:var(--pure-0);}
+    .br-accordion[negative] .content{color:var(--pure-0);}
+    .br-accordion[negative] .header:not(:disabled):hover{background-image:linear-gradient(
+      rgba(255,255,255,.16),rgba(255,255,255,.16));}
+    .br-accordion[negative] .header:focus-visible{outline-color:var(--gold-vivid-20);}
+    body.contraste-alto .br-accordion{background:#000;border-top-color:var(--gold-vivid-20);}
+    body.contraste-alto .br-accordion .item,
+    body.contraste-alto .br-accordion .item[active] + .content{border-bottom-color:var(--gold-vivid-20);}
+    body.contraste-alto .br-accordion .header,
+    body.contraste-alto .br-accordion .content{color:#fff;}
+    @media(prefers-reduced-motion:reduce){.br-accordion .header{transition:none;}}
 
     /* ── HERO ── */
     .hero{background:linear-gradient(135deg,var(--blue-warm-vivid-5) 0%,var(--green-cool-vivid-5) 100%);

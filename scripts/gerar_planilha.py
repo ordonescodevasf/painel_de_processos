@@ -39,6 +39,105 @@ AL_WRAP = Alignment(vertical="top", wrap_text=True)
 AL_TOP = Alignment(vertical="top")
 AL_CENTER = Alignment(horizontal="center", vertical="top")
 
+# ── Colunas novas das fichas (dados fictícios, como o resto do arquivo) ──
+# "Unidades_Corresponsaveis" entra nas cinco abas da hierarquia e "Executor"
+# (um cargo) só em Atividades. Ficam em tabelas à parte, indexadas pelo
+# código, para não obrigar a mexer em cada literal de linha.
+CORRESP_MP = {
+    "MP-01": "AR/GDT; AI/GOM",
+    "MP-02": "AI/GOM; AR/GRB",
+    "MP-03": "AR/GRB; AA/GLC",
+    "MP-04": "AA/GLC; AG/GGP",
+    "MP-05": "AG/GGP; AT/GTI",
+    "MP-06": "AT/GTI; AE/GPE",
+    "MP-07": "AE/GPE; AE/GAG",
+    "MP-08": "AE/GAG; AR/GDT",
+}
+
+CORRESP_PR = {
+    "P-06.01": "AE/GAG; AR/GDT",
+    "P-06.02": "AR/GDT; AI/GOM",
+    "P-06.03": "AI/GOM; AR/GRB",
+    "P-04.01": "AR/GRB; AA/GLC",
+    "P-05.01": "AA/GLC; AG/GGP",
+    "P-01.01": "AG/GGP; AT/GTI",
+    "P-07.01": "AT/GTI; AE/GPE",
+}
+
+CORRESP_SP = {
+    "SP-06.01.01": "AI/GOM",
+    "SP-06.01.02": "AR/GRB",
+    "SP-06.01.03": "AG/GGP",
+    "SP-06.01.03.01": "AG/GGP",
+    "SP-06.02.01": "AT/GTI",
+    "SP-04.01.01": "AE/GPE",
+}
+
+CORRESP_AT = {
+    "A-06.01.01.01": "AR/GRB",
+    "A-06.01.01.02": "AA/GLC",
+    "A-06.01.01.03": "AG/GGP",
+    "A-06.01.01.04": "AT/GTI",
+    "A-06.01.02.01": "AE/GPE",
+    "A-06.01.02.02": "AE/GAG",
+    "A-06.01.03.01": "AR/GDT",
+    "A-06.01.03.02": "AI/GOM",
+    "A-06.01.03.01.01": "AR/GRB",
+    "A-06.02.01.01": "AA/GLC",
+    "A-06.02.01.02": "AG/GGP",
+    "A-04.01.01.01": "AT/GTI",
+    "A-04.01.01.02": "AE/GPE",
+    "A-06.03.01": "AE/GAG",
+    "A-06.03.02": "AR/GDT",
+}
+
+CORRESP_TF = {
+    "T-06.01.01.01.01": "AA/GLC",
+    "T-06.01.01.01.02": "AG/GGP",
+    "T-06.01.01.01.03": "AT/GTI",
+    "T-06.01.03.01.01": "AE/GPE",
+    "T-06.01.03.01.02": "AE/GAG",
+    "T-06.01.03.01.03": "AR/GDT",
+    "T-06.01.03.01.04": "AI/GOM",
+    "T-06.02.01.01.01": "AR/GRB",
+    "T-06.02.01.01.02": "AA/GLC",
+    "T-04.01.01.01.01": "AG/GGP",
+    "T-06.03.02.01": "AT/GTI",
+    "T-06.03.02.02": "AE/GPE",
+    "T-06.03.02.03": "AE/GAG",
+}
+
+EXECUTOR_AT = {
+    "A-06.01.01.01": "Analista em Desenvolvimento Regional",
+    "A-06.01.01.02": "Técnico em Desenvolvimento Regional",
+    "A-06.01.01.03": "Assistente em Desenvolvimento Regional",
+    "A-06.01.01.04": "Analista em Desenvolvimento Regional",
+    "A-06.01.02.01": "Técnico em Desenvolvimento Regional",
+    "A-06.01.02.02": "Assistente em Desenvolvimento Regional",
+    "A-06.01.03.01": "Analista em Desenvolvimento Regional",
+    "A-06.01.03.02": "Técnico em Desenvolvimento Regional",
+    "A-06.01.03.01.01": "Assistente em Desenvolvimento Regional",
+    "A-06.02.01.01": "Analista em Desenvolvimento Regional",
+    "A-06.02.01.02": "Técnico em Desenvolvimento Regional",
+    "A-04.01.01.01": "Assistente em Desenvolvimento Regional",
+    "A-04.01.01.02": "Analista em Desenvolvimento Regional",
+    "A-06.03.01": "Técnico em Desenvolvimento Regional",
+    "A-06.03.02": "Assistente em Desenvolvimento Regional",
+}
+
+
+def com_colunas(linhas, base, *mapas):
+    """Completa cada linha até `base` colunas — as listas de dados são
+    propositalmente ragged — e anexa, na ordem, o valor de cada mapa,
+    resolvido pelo código da 1ª coluna."""
+    for ln in linhas:
+        while len(ln) < base:
+            ln.append("")
+        for mapa in mapas:
+            ln.append(mapa.get(ln[0], ""))
+    return linhas
+
+
 D = dt.date  # atalho
 
 
@@ -104,7 +203,7 @@ listas = {
     "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso", "Atividade", "Tarefa"],
     "Tipo_Tarefa": ["Manual", "Automatizada", "Regra de negócio"],
     "Tipo_Documento": [
-        "Procedimento Operacional (POP)", "Manual", "Norma interna",
+        "Procedimento (PRO)", "Manual", "Norma interna",
         "Formulário/Modelo", "Ata de reunião", "Diagrama BPMN", "Checklist",
         "Relatório", "Plano", "Outro",
     ],
@@ -152,8 +251,9 @@ cabecalho(mp,
     ["Codigo", "Nome", "Categoria", "Ordem", "Descricao", "Objetivo",
      "Unidade_Responsavel", "Dono_Processo", "Entregas",
      "Clientes_Beneficiarios", "Partes_Interessadas", "Sistemas",
-     "Normativos_Aplicaveis", "Imagem_Bizagi", "Observacoes"],
-    [9, 34, 12, 7, 46, 46, 16, 26, 40, 34, 34, 30, 40, 30, 26])
+     "Normativos_Aplicaveis", "Imagem_Bizagi", "Observacoes",
+     "Unidades_Corresponsaveis"],
+    [9, 34, 12, 7, 46, 46, 16, 26, 40, 34, 34, 30, 40, 30, 26, 30])
 macros = [
     ["MP-01", "Gestão Estratégica e Governança", "Gerencial", 1,
      "Formulação, desdobramento e monitoramento da estratégia corporativa, da governança e do desempenho institucional.",
@@ -237,7 +337,8 @@ macros = [
      "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
      "", ""],
 ]
-escreve(mp, macros, wrap_cols={5, 6, 9, 10, 11, 12, 13, 15}, center_cols={3, 4})
+com_colunas(macros, 15, CORRESP_MP)
+escreve(mp, macros, wrap_cols={5, 6, 9, 10, 11, 12, 13, 15, 16}, center_cols={3, 4})
 mp.freeze_panes = "C2"
 dv(mp, "C", ref("Categoria_Macroprocesso"))
 
@@ -256,9 +357,9 @@ cabecalho(pr,
      "M3_Subprocessos_Modelados", "M4_ASIS_Modelado", "M5_ASIS_Validado",
      "M6_Procedimento_Validado", "M7_Procedimento_Aprovado", "M8_TOBE_Elaborado",
      "M9_TOBE_Validado", "M10_Publicado_Repositorio", "Proxima_Acao", "Pendencia",
-     "Ultima_Atualizacao"],
+     "Ultima_Atualizacao", "Unidades_Corresponsaveis"],
     [10, 14, 34, 44, 40, 16, 24, 24, 10, 12, 14, 10, 30, 13, 13, 13,
-     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13])
+     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13, 30])
 S, N = "Sim", "Não"
 # Marco que não se aplica ao processo — ex.: M3 "Subprocessos modelados" num
 # processo que se decompõe direto em atividades, sem nível de subprocesso.
@@ -278,7 +379,7 @@ procs = [
      "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
      "59500.000123/2026-11", "https://fluxosti.codevasf.gov.br/incidentes/",
      S, S, S, S, S, S, S, S, S, S,
-     "Monitorar indicadores do processo e revisar POP em 12 meses.", "",
+     "Monitorar indicadores do processo e revisar o PRO em 12 meses.", "",
      D(2026, 7, 10)],
     ["P-06.02", "MP-06", "Seleção do Fornecedor",
      "Da divulgação do edital à homologação do resultado, incluindo sessão pública, julgamento e recursos.",
@@ -380,6 +481,7 @@ procs = [
      "Aguardando priorização no ciclo 2027.", "",
      D(2026, 6, 15)],
 ]
+com_colunas(procs, 37, CORRESP_PR)
 escreve(pr, procs,
         wrap_cols={4, 5, 17, 18, 19, 20, 21, 22, 35, 36},
         center_cols={9, 10, 11, 12} | set(range(25, 35)),
@@ -396,8 +498,9 @@ for k in range(25, 35):
 sp = wb.create_sheet("Subprocessos")
 cabecalho(sp,
     ["Codigo", "Vinculo_Pai", "Ordem", "Nome", "Descricao", "Objetivo",
-     "Unidade_Responsavel", "Dono", "Entradas", "Saidas", "Sistemas", "Imagem_Bizagi"],
-    [16, 16, 7, 34, 46, 40, 16, 24, 40, 40, 28, 30])
+     "Unidade_Responsavel", "Dono", "Entradas", "Saidas", "Sistemas", "Imagem_Bizagi",
+     "Unidades_Corresponsaveis"],
+    [16, 16, 7, 34, 46, 40, 16, 24, 40, 40, 28, 30, 30])
 subs = [
     ["SP-06.01.01", "P-06.01", 1, "Estudo Técnico Preliminar (ETP)",
      "Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.",
@@ -443,7 +546,8 @@ subs = [
      "Programação hídrica executada; Registros de volume", "SIG-Irrigação (fictício)",
      ""],
 ]
-escreve(sp, subs, wrap_cols={5, 6, 9, 10, 11}, center_cols={3})
+com_colunas(subs, 12, CORRESP_SP)
+escreve(sp, subs, wrap_cols={5, 6, 9, 10, 11, 13}, center_cols={3})
 sp.freeze_panes = "D2"
 
 # ----------------------------------------------------------------------------
@@ -456,8 +560,9 @@ cabecalho(at,
     # código e monta ficha, breadcrumb e navegação sem o nível que não existe.
     ["Codigo", "Vinculo_Pai", "Ordem", "Nome", "Descricao",
      "Responsavel_Ator", "Entradas", "Saidas", "Sistemas",
-     "Prazo_Padrao", "Base_Normativa", "Imagem_Bizagi"],
-    [16, 13, 7, 36, 46, 24, 38, 38, 24, 14, 30, 44])
+     "Prazo_Padrao", "Base_Normativa", "Imagem_Bizagi",
+     "Executor", "Unidades_Corresponsaveis"],
+    [16, 13, 7, 36, 46, 24, 38, 38, 24, 14, 30, 44, 30, 30])
 ativs = [
     ["A-06.01.01.01", "SP-06.01.01", 1, "Formalizar a necessidade (DFD)",
      "Registrar o Documento de Formalização da Demanda com justificativa, quantitativos e alinhamento ao PCA.",
@@ -532,7 +637,8 @@ ativs = [
      "Equipe de operação do perímetro", "Programação semanal",
      "Volumes registrados; Ocorrências", "SIG-Irrigação (fictício)", "Diário", ""],
 ]
-escreve(at, ativs, wrap_cols={5, 7, 8, 9, 11}, center_cols={3})
+com_colunas(ativs, 12, EXECUTOR_AT, CORRESP_AT)
+escreve(at, ativs, wrap_cols={5, 7, 8, 9, 11, 13, 14}, center_cols={3})
 at.freeze_panes = "D2"
 
 # ----------------------------------------------------------------------------
@@ -544,8 +650,8 @@ cabecalho(dc,
      "Versao", "Data", "Situacao", "Link", "Observacoes"],
     [10, 15, 14, 26, 52, 8, 12, 14, 44, 30])
 docs = [
-    ["DOC-001", "Processo", "P-06.01", "Procedimento Operacional (POP)",
-     "POP 06.01 — Planejamento da Contratação", "2.0", D(2026, 5, 18), "Vigente",
+    ["DOC-001", "Processo", "P-06.01", "Procedimento (PRO)",
+     "PRO 06.01 — Planejamento da Contratação", "2.0", D(2026, 5, 18), "Vigente",
      "https://exemplo.codevasf.gov.br/repositorio/pop-06-01.pdf",
      "Publicado após validação do TO-BE."],
     ["DOC-002", "Processo", "P-06.01", "Diagrama BPMN",
@@ -563,7 +669,7 @@ docs = [
     ["DOC-006", "Subprocesso", "SP-06.01.01", "Formulário/Modelo",
      "Modelo de DFD — Documento de Formalização da Demanda", "3.1", D(2026, 2, 10),
      "Vigente", "https://exemplo.codevasf.gov.br/modelos/dfd.docx", ""],
-    ["DOC-007", "Subprocesso", "SP-06.01.03", "Procedimento Operacional (POP)",
+    ["DOC-007", "Subprocesso", "SP-06.01.03", "Procedimento (PRO)",
      "Roteiro de pesquisa de preços (IN SEGES nº 65/2021)", "1.2", D(2026, 4, 27),
      "Vigente", "https://exemplo.codevasf.gov.br/repositorio/roteiro-precos.pdf", ""],
     ["DOC-008", "Macroprocesso", "MP-06", "Norma interna",
@@ -629,7 +735,7 @@ riscos = [
     ["R-004", "Subprocesso", "SP-06.01.01",
      "Conhecimento concentrado em um único empregado (pessoa-chave) na elaboração de ETP.",
      "Pessoas", 4, 3, None, None, "Mitigar",
-     "Publicar POP, treinar substitutos e revezar a equipe de planejamento.",
+     "Publicar o PRO, treinar substitutos e revezar a equipe de planejamento.",
      "Patrícia Ramos", "Em tratamento"],
     ["R-005", "Processo", "P-04.01",
      "Indisponibilidade hídrica comprometendo a programação de distribuição.",
@@ -644,7 +750,7 @@ riscos = [
     ["R-007", "Macroprocesso", "MP-06",
      "Alterações normativas frequentes exigindo atualização contínua de procedimentos.",
      "Legal/Conformidade", 4, 2, None, None, "Mitigar",
-     "Monitoramento normativo mensal (resenha) e revisão programada dos POPs.",
+     "Monitoramento normativo mensal (resenha) e revisão programada dos PROs.",
      "Bruna Souza", "Em tratamento"],
     ["R-008", "Atividade", "A-06.01.03.01",
      "Uso de fontes de preço não admitidas pela IN SEGES nº 65/2021.",
@@ -731,8 +837,9 @@ dv(ind, "K", ref("Periodicidade"))
 tf = wb.create_sheet("Tarefas")
 cabecalho(tf,
     ["Codigo", "Atividade", "Ordem", "Nome", "Descricao", "Tipo_Tarefa",
-     "Responsavel", "Sistema", "Duracao_Estimada", "Observacoes", "Imagem_Bizagi"],
-    [20, 16, 7, 38, 46, 16, 24, 22, 14, 28, 44])
+     "Responsavel", "Sistema", "Duracao_Estimada", "Observacoes", "Imagem_Bizagi",
+     "Unidades_Corresponsaveis"],
+    [20, 16, 7, 38, 46, 16, 24, 22, 14, 28, 44, 30])
 tarefas = [
     ["T-06.01.01.01.01", "A-06.01.01.01", 1, "Reunir informações da demanda",
      "Levantar justificativa, quantitativos preliminares e alinhamento ao PCA junto ao gestor da área.",
@@ -777,7 +884,8 @@ tarefas = [
      "Compilar os pedidos de água dos irrigantes por setor hidráulico para a programação.",
      "Manual", "Equipe de operação", "SIG-Irrigação (fictício)", "1 dia", ""],
 ]
-escreve(tf, tarefas, wrap_cols={5, 10}, center_cols={3, 6, 9})
+com_colunas(tarefas, 11, CORRESP_TF)
+escreve(tf, tarefas, wrap_cols={5, 10, 12}, center_cols={3, 6, 9})
 tf.freeze_panes = "D2"
 dv(tf, "F", ref("Tipo_Tarefa"))
 
@@ -888,7 +996,7 @@ abas_desc = [
     ("Subprocessos", "3º nível (CBOK): subprocessos do processo de negócio. Vinculo_Pai aceita o código de um Processo (P-...) OU de OUTRO subprocesso (SP-...) — o CBOK não fixa a profundidade da decomposição, então um subprocesso pode conter outro subprocesso, tantos níveis quanto o processo exigir."),
     ("Atividades", "4º nível (CBOK), com entradas, saídas, ator, sistemas e prazos. Vinculo_Pai aceita o código de um Subprocesso (SP-...) OU de um Processo (P-...): processo que não tem subprocesso se decompõe direto em atividades, e estas em tarefas. Nesse caso, marque M3 (Subprocessos modelados) como \"Não se aplica\" na aba Processos."),
     ("Tarefas", "5º e último nível (CBOK): menor unidade de trabalho de uma atividade — manual, automatizada ou regra de negócio."),
-    ("Documentos", "Repositório: POPs, manuais, atas, diagramas BPMN (Bizagi), relatórios — vinculados a qualquer nível."),
+    ("Documentos", "Repositório: Procedimentos (PRO), manuais, atas, diagramas BPMN (Bizagi), relatórios — vinculados a qualquer nível."),
     ("Riscos", "Riscos vinculados a qualquer nível; nível = Probabilidade × Impacto (matriz 5×5)."),
     ("Indicadores", "Indicadores de desempenho por nível, com meta, resultado e situação calculada."),
     ("Jornada", "Etapas da jornada de mapeamento (Descobrir → Evoluir), exibidas na aba Repositório do painel."),

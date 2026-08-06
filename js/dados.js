@@ -19,7 +19,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "e-Codevasf; SEI; Painéis de BI",
    "Normativos_Aplicaveis": "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AR/GDT; AI/GOM"
   },
   {
    "Codigo": "MP-02",
@@ -36,7 +37,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; Sistema de gestão de riscos",
    "Normativos_Aplicaveis": "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AI/GOM; AR/GRB"
   },
   {
    "Codigo": "MP-03",
@@ -53,7 +55,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "TransfereGov; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Portarias de transferências voluntárias",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AR/GRB; AA/GLC"
   },
   {
    "Codigo": "MP-04",
@@ -70,7 +73,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício); SEI",
    "Normativos_Aplicaveis": "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AA/GLC; AG/GGP"
   },
   {
    "Codigo": "MP-05",
@@ -87,7 +91,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; GeoPortal (fictício)",
    "Normativos_Aplicaveis": "Legislação ambiental aplicável",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AG/GGP; AT/GTI"
   },
   {
    "Codigo": "MP-06",
@@ -104,7 +109,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; SEI",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Imagem_Bizagi": null,
-   "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento."
+   "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento.",
+   "Unidades_Corresponsaveis": "AT/GTI; AE/GPE"
   },
   {
    "Codigo": "MP-07",
@@ -121,7 +127,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIGEP (fictício); SEI",
    "Normativos_Aplicaveis": "CLT; Normas internas de pessoal",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AE/GPE; AE/GAG"
   },
   {
    "Codigo": "MP-08",
@@ -138,7 +145,8 @@ window.PAINEL_DADOS = {
    "Sistemas": "e-Codevasf; Service Desk",
    "Normativos_Aplicaveis": "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Unidades_Corresponsaveis": "AE/GAG; AR/GDT"
   }
  ],
  "Processos": [
@@ -177,8 +185,9 @@ window.PAINEL_DADOS = {
    "M8_TOBE_Elaborado": "Sim",
    "M9_TOBE_Validado": "Sim",
    "M10_Publicado_Repositorio": "Sim",
-   "Proxima_Acao": "Monitorar indicadores do processo e revisar POP em 12 meses.",
-   "Pendencia": null
+   "Proxima_Acao": "Monitorar indicadores do processo e revisar o PRO em 12 meses.",
+   "Pendencia": null,
+   "Unidades_Corresponsaveis": "AE/GAG; AR/GDT"
   },
   {
    "Codigo": "P-06.02",
@@ -216,7 +225,8 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Validar AS-IS com o dono do processo (reunião marcada).",
-   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos."
+   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos.",
+   "Unidades_Corresponsaveis": "AR/GDT; AI/GOM"
   },
   {
    "Codigo": "P-06.03",
@@ -254,7 +264,8 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Concluir modelagem AS-IS das medições e pagamentos.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Unidades_Corresponsaveis": "AI/GOM; AR/GRB"
   },
   {
    "Codigo": "P-04.01",
@@ -292,7 +303,8 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Agendar oficina de validação do AS-IS com o distrito.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Unidades_Corresponsaveis": "AR/GRB; AA/GLC"
   },
   {
    "Codigo": "P-05.01",
@@ -330,7 +342,8 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Enviar formulário de levantamento à área (previsto ago/2026).",
-   "Pendencia": null
+   "Pendencia": null,
+   "Unidades_Corresponsaveis": "AA/GLC; AG/GGP"
   },
   {
    "Codigo": "P-01.01",
@@ -369,7 +382,8 @@ window.PAINEL_DADOS = {
    "M10_Publicado_Repositorio": "Sim",
    "M10_Processo_Transformado": "Sim",
    "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
-   "Pendencia": null
+   "Pendencia": null,
+   "Unidades_Corresponsaveis": "AG/GGP; AT/GTI"
   },
   {
    "Codigo": "P-07.01",
@@ -407,7 +421,8 @@ window.PAINEL_DADOS = {
    "M9_TOBE_Validado": "Não",
    "M10_Publicado_Repositorio": "Não",
    "Proxima_Acao": "Aguardando priorização no ciclo 2027.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Unidades_Corresponsaveis": "AT/GTI; AE/GPE"
   }
  ],
  "Subprocessos": [
@@ -423,7 +438,8 @@ window.PAINEL_DADOS = {
    "Entradas": "DFD; Levantamento de soluções de mercado",
    "Saidas": "ETP aprovado no SEI",
    "Sistemas": "SEI; Compras.gov.br",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AI/GOM"
   },
   {
    "Codigo": "SP-06.01.02",
@@ -437,7 +453,8 @@ window.PAINEL_DADOS = {
    "Entradas": "ETP aprovado; Modelos padronizados de TR",
    "Saidas": "TR aprovado e validado juridicamente",
    "Sistemas": "SEI",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AR/GRB"
   },
   {
    "Codigo": "SP-06.01.03",
@@ -451,7 +468,8 @@ window.PAINEL_DADOS = {
    "Entradas": "TR validado; Fontes de preços admitidas",
    "Saidas": "Relatório de pesquisa de preços; Mapa comparativo",
    "Sistemas": "Painel de Preços; PNCP; SEI",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "SP-06.01.03.01",
@@ -465,7 +483,8 @@ window.PAINEL_DADOS = {
    "Entradas": "Amostra de preços coletados na pesquisa",
    "Saidas": "Valores discrepantes identificados e justificados",
    "Sistemas": "Planilha padrão; SEI",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "SP-06.02.01",
@@ -479,7 +498,8 @@ window.PAINEL_DADOS = {
    "Entradas": "Edital publicado; Propostas dos licitantes",
    "Saidas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AT/GTI"
   },
   {
    "Codigo": "SP-04.01.01",
@@ -493,7 +513,8 @@ window.PAINEL_DADOS = {
    "Entradas": "Outorga de uso; Demanda de irrigação",
    "Saidas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AE/GPE"
   }
  ],
  "Atividades": [
@@ -510,7 +531,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "5 dias úteis",
    "Base_Normativa": "NI-027/2024 (fictícia)",
-   "Imagem_Bizagi": "https://placehold.co/960x420/155bcb/ffffff?text=Diagrama+BPMN+A-06.01.01.01"
+   "Imagem_Bizagi": "https://placehold.co/960x420/155bcb/ffffff?text=Diagrama+BPMN+A-06.01.01.01",
+   "Executor": "Analista em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AR/GRB"
   },
   {
    "Codigo": "A-06.01.01.02",
@@ -525,7 +548,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "PNCP; Compras.gov.br",
    "Prazo_Padrao": "10 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 18",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Técnico em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AA/GLC"
   },
   {
    "Codigo": "A-06.01.01.03",
@@ -540,7 +565,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "5 dias úteis",
    "Base_Normativa": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Assistente em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "A-06.01.01.04",
@@ -555,7 +582,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI; Compras.gov.br",
    "Prazo_Padrao": "7 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 18",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Analista em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AT/GTI"
   },
   {
    "Codigo": "A-06.01.02.01",
@@ -570,7 +599,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "10 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 6º, XXIII",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Técnico em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AE/GPE"
   },
   {
    "Codigo": "A-06.01.02.02",
@@ -585,7 +616,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "15 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 53",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Assistente em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AE/GAG"
   },
   {
    "Codigo": "A-06.01.03.01",
@@ -600,7 +633,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "Painel de Preços; PNCP",
    "Prazo_Padrao": "10 dias úteis",
    "Base_Normativa": "IN SEGES nº 65/2021",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Analista em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AR/GDT"
   },
   {
    "Codigo": "A-06.01.03.02",
@@ -615,7 +650,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "3 dias úteis",
    "Base_Normativa": "IN SEGES nº 65/2021, art. 6º",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Técnico em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AI/GOM"
   },
   {
    "Codigo": "A-06.01.03.01.01",
@@ -630,7 +667,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "Planilha padrão",
    "Prazo_Padrao": "1 dia útil",
    "Base_Normativa": "IN SEGES nº 65/2021, art. 6º, §3º",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Assistente em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AR/GRB"
   },
   {
    "Codigo": "A-06.02.01.01",
@@ -645,7 +684,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "Compras.gov.br; PNCP",
    "Prazo_Padrao": "2 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 54",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Analista em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AA/GLC"
   },
   {
    "Codigo": "A-06.02.01.02",
@@ -660,7 +701,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "Compras.gov.br",
    "Prazo_Padrao": "Conforme edital",
    "Base_Normativa": "Lei nº 14.133/2021",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Técnico em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "A-04.01.01.01",
@@ -675,7 +718,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício)",
    "Prazo_Padrao": "Semanal",
    "Base_Normativa": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Assistente em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AT/GTI"
   },
   {
    "Codigo": "A-04.01.01.02",
@@ -690,7 +735,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SIG-Irrigação (fictício)",
    "Prazo_Padrao": "Diário",
    "Base_Normativa": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Analista em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AE/GPE"
   },
   {
    "Codigo": "A-06.03.01",
@@ -705,7 +752,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "5 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 117",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Técnico em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AE/GAG"
   },
   {
    "Codigo": "A-06.03.02",
@@ -720,7 +769,9 @@ window.PAINEL_DADOS = {
    "Sistemas": "SEI",
    "Prazo_Padrao": "10 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 140",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Executor": "Assistente em Desenvolvimento Regional",
+   "Unidades_Corresponsaveis": "AR/GDT"
   }
  ],
  "Tarefas": [
@@ -736,7 +787,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AA/GLC"
   },
   {
    "Codigo": "T-06.01.01.01.02",
@@ -750,7 +802,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": "Modelo DOC-006/DOC-012.",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "T-06.01.01.01.03",
@@ -764,7 +817,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "1 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AT/GTI"
   },
   {
    "Codigo": "T-06.01.03.01.01",
@@ -778,7 +832,8 @@ window.PAINEL_DADOS = {
    "Sistema": "Painel de Preços",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AE/GPE"
   },
   {
    "Codigo": "T-06.01.03.01.02",
@@ -792,7 +847,8 @@ window.PAINEL_DADOS = {
    "Sistema": "PNCP",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AE/GAG"
   },
   {
    "Codigo": "T-06.01.03.01.03",
@@ -806,7 +862,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "3 dias",
    "Observacoes": "Mínimo de 3 fontes (IN 65/2021).",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AR/GDT"
   },
   {
    "Codigo": "T-06.01.03.01.04",
@@ -820,7 +877,8 @@ window.PAINEL_DADOS = {
    "Sistema": "Planilha padrão",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AI/GOM"
   },
   {
    "Codigo": "T-06.02.01.01.01",
@@ -834,7 +892,8 @@ window.PAINEL_DADOS = {
    "Sistema": "Compras.gov.br",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AR/GRB"
   },
   {
    "Codigo": "T-06.02.01.01.02",
@@ -848,7 +907,8 @@ window.PAINEL_DADOS = {
    "Sistema": "PNCP",
    "Duracao_Estimada": "Imediato",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AA/GLC"
   },
   {
    "Codigo": "T-04.01.01.01.01",
@@ -862,7 +922,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SIG-Irrigação (fictício)",
    "Duracao_Estimada": "1 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "T-06.03.02.01",
@@ -876,7 +937,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "1 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AT/GTI"
   },
   {
    "Codigo": "T-06.03.02.02",
@@ -890,7 +952,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AE/GPE"
   },
   {
    "Codigo": "T-06.03.02.03",
@@ -904,7 +967,8 @@ window.PAINEL_DADOS = {
    "Sistema": "SEI",
    "Duracao_Estimada": "0,5 dia",
    "Observacoes": "O prazo de pagamento conta a partir do ateste.",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Unidades_Corresponsaveis": "AE/GAG"
   }
  ],
  "Documentos": [
@@ -912,8 +976,8 @@ window.PAINEL_DADOS = {
    "ID": "DOC-001",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Procedimento Operacional (POP)",
-   "Titulo": "POP 06.01 — Planejamento da Contratação",
+   "Tipo_Documento": "Procedimento (PRO)",
+   "Titulo": "PRO 06.01 — Planejamento da Contratação",
    "Versao": "2.0",
    "Data": "2026-05-18",
    "Situacao": "Vigente",
@@ -984,7 +1048,7 @@ window.PAINEL_DADOS = {
    "ID": "DOC-007",
    "Vinculo_Nivel": "Subprocesso;Subprocesso",
    "Vinculo_Codigo": "SP-06.01.03;SP-06.01.03.01",
-   "Tipo_Documento": "Procedimento Operacional (POP)",
+   "Tipo_Documento": "Procedimento (PRO)",
    "Titulo": "Roteiro de pesquisa de preços (IN SEGES nº 65/2021)",
    "Versao": "1.2",
    "Data": "2026-04-27",
@@ -1146,7 +1210,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Publicar POP, treinar substitutos e revezar a equipe de planejamento.",
+   "Controles_Tratamento": "Publicar o PRO, treinar substitutos e revezar a equipe de planejamento.",
    "Responsavel": "Patrícia Ramos",
    "Status": "Em tratamento"
   },
@@ -1191,7 +1255,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 8,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Monitoramento normativo mensal (resenha) e revisão programada dos POPs.",
+   "Controles_Tratamento": "Monitoramento normativo mensal (resenha) e revisão programada dos PROs.",
    "Responsavel": "Bruna Souza",
    "Status": "Em tratamento"
   },

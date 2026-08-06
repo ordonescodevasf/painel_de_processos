@@ -207,8 +207,8 @@ aprovado · `M10` Processo transformado.
 
 M2 e M3 representam as diversas oficinas de modelagem entre a contextualização
 e o AS-IS consolidado — desenhando macroprocesso, processo e subprocessos
-(inclusive descobrindo subprocessos ainda não mapeados). M6/M7 tratam do POP
-(Procedimento Operacional Padrão, CBOK 4.0): primeiro validado tecnicamente
+(inclusive descobrindo subprocessos ainda não mapeados). M6/M7 tratam do PRO
+(Procedimento, CBOK 4.0): primeiro validado tecnicamente
 pela equipe, depois aprovado pela autoridade competente. Cada marco tem um
 tooltip explicando o que significa — passe o cursor sobre ele na ficha do
 processo ou na aba Repositório. Na planilha, as colunas viraram
@@ -267,7 +267,7 @@ corretamente em qualquer profundidade. Veja o exemplo já incluído:
 - **Tradução**: termos em inglês soltos traduzidos ("process owner", os
   parênteses do SIPOC etc.) — mantidas as siglas técnicas usadas assim
   mesmo na redação oficial brasileira de BPM (SIPOC, BPMN, CBOK, PMBOK,
-  AS-IS, TO-BE, KPI, POP).
+  AS-IS, TO-BE, KPI, PRO).
 
 ## Diagrama via iframe (Bizagi Web Publish) — modo único
 
@@ -386,6 +386,70 @@ compacta e clicável, com ícone e cor por tipo. Substituiu os cards de
 "pai" avulsos que existiam antes (um card por nível, repetindo "suba um
 nível") — mesma informação, mas consolidada, mais rápida de escanear e sem
 precisar subir um nível de cada vez para chegar ao topo da cadeia.
+
+## Sistema de cores por camada
+
+Cada camada da hierarquia recebe uma **família de matiz diferente** da paleta
+oficial do gov.br DS — antes eram cinco tons do mesmo azul, indistinguíveis
+lado a lado. Todas passam em AA (>=4,5:1) com texto branco por cima.
+
+| Camada | Sigla | Família oficial | Cor | Gradiente da ficha |
+| --- | --- | --- | --- | --- |
+| Macroprocesso gerencial | MG | Blue Warm Vivid 80 | `#0C326F` azul | `#071D41 → #0040B4` |
+| Macroprocesso finalístico | MF | Green Cool Vivid 50 | `#168821` verde | `#154C21 → #168821` |
+| Macroprocesso de suporte | MS | Orange Vivid 50 | `#C05600` laranja | `#8C471C → #C05600` |
+| Processo | PP | Cyan Vivid 50 | `#0081A1` turquesa | `#00687D → #0081A1` |
+| Subprocesso | SP | Indigo Vivid 60 | `#4A50C4` índigo | `#373C93 → #4A50C4` |
+| Atividade | AT | Yellow Vivid 60 | `#776017` bronze | `#5C4809 → #776017` |
+| Tarefa | TR | Gray 80 | `#333333` grafite | `#1B1B1B → #555555` |
+
+Os gradientes foram mantidos: cada um percorre **dois degraus da mesma
+família**, o escuro no início e o cheio no fim — a matiz não muda no meio do
+caminho, então a profundidade não custa a identidade da camada. Uma única
+parada não é degrau publicado, `#373C93` (o Indigo Vivid 60 escurecido 25%),
+porque a família índigo do DS não publica degrau abaixo do 60.
+
+A mesma paleta vale para a cadeia de valor, o card "Navegar para", as tags e
+os gráficos do dashboard: a série categórica passou a ser
+`#0C326F · #168821 · #C05600 · #0081A1 · #4A50C4 · #776017 · #555555 · #B50909`,
+matizes diferentes entre si em vez de quatro azuis.
+
+**Siglas** — todas com duas letras, para que o nível se leia no próprio
+código: `MG`/`MF`/`MS` (macroprocessos, por tipo), `PP` (processo), `SP`
+(subprocesso), `AT` (atividade), `TR` (tarefa). O código da planilha
+(`MP-`, `P-`, `A-`, `T-`) continua sendo a chave de vínculo — só a exibição
+muda, então nenhuma planilha precisa ser regerada.
+
+## Paginação (br-pagination)
+
+Toda lista com mais de um item ganhou o componente Pagination do gov.br, com
+os seis módulos — os cinco opcionais além das setas obrigatórias:
+
+| ID | Módulo | Referência |
+| --- | --- | --- |
+| 1 | Setas de Navegação | Button (circular) |
+| 2 | Identificadores de Páginas | Button |
+| 3 | Botão Reticências | Button |
+| 4 | Módulo de Exibição | Select |
+| 5 | Módulo de Informação | Tipografia |
+| 6 | Módulo de Atalho | Select |
+
+Aplicado ao catálogo de processos, documentos, riscos, indicadores,
+repositório, glossário e FAQ.
+
+## Campos das fichas
+
+- `Unidade responsável` e `Gerência responsável` viraram **Unidade Orgânica
+  responsável** em todas as fichas.
+- Novo campo **Unidades orgânicas corresponsáveis** (coluna
+  `Unidades_Corresponsaveis`) em macroprocesso, processo, subprocesso,
+  atividade e tarefa.
+- Novo campo **Executor** na atividade (coluna `Executor`), preenchido com um
+  cargo — ex.: "Analista em Desenvolvimento Regional".
+- Saíram os campos `Dono do processo`, `Dono do macroprocesso` e `Dono`, e o
+  `Responsável` da ficha da tarefa.
+- `Procedimento Operacional Padrão (POP)` passou a **Procedimento (PRO)** em
+  toda a base.
 
 ## Revisão da paleta de cores (gov.br DS)
 

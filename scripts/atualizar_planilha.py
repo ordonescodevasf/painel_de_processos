@@ -18,7 +18,13 @@ O que faz:
      para marcar, por exemplo, M3 "Subprocessos modelados" num processo que
      não tem subprocessos.
   3. Aba LEIA-ME: atualiza o texto das regras de vínculo.
-  4. Com --exemplo: insere um exemplo completo de processo sem subprocessos
+  4. Acrescenta as colunas novas das fichas, se ainda não existirem, e
+     preenche os valores de demonstração: "Unidades_Corresponsaveis" em
+     Macroprocessos, Processos, Subprocessos, Atividades e Tarefas, e
+     "Executor" (um cargo) em Atividades.
+  5. Troca "Procedimento Operacional Padrão (POP)" por "Procedimento (PRO)"
+     em todas as abas.
+  6. Com --exemplo: insere um exemplo completo de processo sem subprocessos
      (P-06.03) — 2 atividades ligadas direto ao processo, 3 tarefas de uma
      delas, e M3 marcado como "Não se aplica".
 
@@ -43,6 +49,110 @@ BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 XLSX = os.path.join(BASE, "data", "painel-processos-dados.xlsx")
 
 NAO_SE_APLICA = "Não se aplica"
+
+CORRESPONSAVEIS = {
+  "Macroprocessos": {
+      "MP-01": "AR/GDT; AI/GOM",
+      "MP-02": "AI/GOM; AR/GRB",
+      "MP-03": "AR/GRB; AA/GLC",
+      "MP-04": "AA/GLC; AG/GGP",
+      "MP-05": "AG/GGP; AT/GTI",
+      "MP-06": "AT/GTI; AE/GPE",
+      "MP-07": "AE/GPE; AE/GAG",
+      "MP-08": "AE/GAG; AR/GDT",
+  },
+  "Processos": {
+      "P-06.01": "AE/GAG; AR/GDT",
+      "P-06.02": "AR/GDT; AI/GOM",
+      "P-06.03": "AI/GOM; AR/GRB",
+      "P-04.01": "AR/GRB; AA/GLC",
+      "P-05.01": "AA/GLC; AG/GGP",
+      "P-01.01": "AG/GGP; AT/GTI",
+      "P-07.01": "AT/GTI; AE/GPE",
+  },
+  "Subprocessos": {
+      "SP-06.01.01": "AI/GOM",
+      "SP-06.01.02": "AR/GRB",
+      "SP-06.01.03": "AG/GGP",
+      "SP-06.01.03.01": "AG/GGP",
+      "SP-06.02.01": "AT/GTI",
+      "SP-04.01.01": "AE/GPE",
+  },
+  "Atividades": {
+      "A-06.01.01.01": "AR/GRB",
+      "A-06.01.01.02": "AA/GLC",
+      "A-06.01.01.03": "AG/GGP",
+      "A-06.01.01.04": "AT/GTI",
+      "A-06.01.02.01": "AE/GPE",
+      "A-06.01.02.02": "AE/GAG",
+      "A-06.01.03.01": "AR/GDT",
+      "A-06.01.03.02": "AI/GOM",
+      "A-06.01.03.01.01": "AR/GRB",
+      "A-06.02.01.01": "AA/GLC",
+      "A-06.02.01.02": "AG/GGP",
+      "A-04.01.01.01": "AT/GTI",
+      "A-04.01.01.02": "AE/GPE",
+      "A-06.03.01": "AE/GAG",
+      "A-06.03.02": "AR/GDT",
+  },
+  "Tarefas": {
+      "T-06.01.01.01.01": "AA/GLC",
+      "T-06.01.01.01.02": "AG/GGP",
+      "T-06.01.01.01.03": "AT/GTI",
+      "T-06.01.03.01.01": "AE/GPE",
+      "T-06.01.03.01.02": "AE/GAG",
+      "T-06.01.03.01.03": "AR/GDT",
+      "T-06.01.03.01.04": "AI/GOM",
+      "T-06.02.01.01.01": "AR/GRB",
+      "T-06.02.01.01.02": "AA/GLC",
+      "T-04.01.01.01.01": "AG/GGP",
+      "T-06.03.02.01": "AT/GTI",
+      "T-06.03.02.02": "AE/GPE",
+      "T-06.03.02.03": "AE/GAG",
+  },
+}
+
+EXECUTORES = {
+    "A-06.01.01.01": "Analista em Desenvolvimento Regional",
+    "A-06.01.01.02": "Técnico em Desenvolvimento Regional",
+    "A-06.01.01.03": "Assistente em Desenvolvimento Regional",
+    "A-06.01.01.04": "Analista em Desenvolvimento Regional",
+    "A-06.01.02.01": "Técnico em Desenvolvimento Regional",
+    "A-06.01.02.02": "Assistente em Desenvolvimento Regional",
+    "A-06.01.03.01": "Analista em Desenvolvimento Regional",
+    "A-06.01.03.02": "Técnico em Desenvolvimento Regional",
+    "A-06.01.03.01.01": "Assistente em Desenvolvimento Regional",
+    "A-06.02.01.01": "Analista em Desenvolvimento Regional",
+    "A-06.02.01.02": "Técnico em Desenvolvimento Regional",
+    "A-04.01.01.01": "Assistente em Desenvolvimento Regional",
+    "A-04.01.01.02": "Analista em Desenvolvimento Regional",
+    "A-06.03.01": "Técnico em Desenvolvimento Regional",
+    "A-06.03.02": "Assistente em Desenvolvimento Regional",
+}
+
+# Colunas novas por aba, na ordem em que entram à direita do cabeçalho atual.
+COLUNAS_NOVAS = {
+    "Macroprocessos": ["Unidades_Corresponsaveis"],
+    "Processos": ["Unidades_Corresponsaveis"],
+    "Subprocessos": ["Unidades_Corresponsaveis"],
+    "Atividades": ["Executor", "Unidades_Corresponsaveis"],
+    "Tarefas": ["Unidades_Corresponsaveis"],
+}
+
+# "Procedimento Operacional Padrão (POP)" passou a "Procedimento (PRO)" —
+# a troca roda em todas as abas, em qualquer célula de texto.
+TROCAS_PRO = [
+    ("Procedimento Operacional Padrão (POP)", "Procedimento (PRO)"),
+    ("Procedimento Operacional (POP)", "Procedimento (PRO)"),
+    ("Procedimento Operacional Padrão", "Procedimento (PRO)"),
+    ("POP 06.01", "PRO 06.01"),
+    ("POP 06.03", "PRO 06.03"),
+    ("revisar POP em", "revisar o PRO em"),
+    ("Publicar POP,", "Publicar o PRO,"),
+    ("dos POPs", "dos PROs"),
+    ("POPs", "PROs"),
+]
+
 
 ATIVIDADES_EXEMPLO = [
     {
@@ -163,6 +273,46 @@ def acrescenta_linha(ws, valores):
     return r
 
 
+def acrescenta_colunas(ws, nomes):
+    """Cria à direita as colunas que ainda não existem, herdando o estilo do
+    cabeçalho vizinho. Devolve a lista das que foram criadas."""
+    cols = cols_por_cabecalho(ws)
+    criadas = []
+    j = max(cols.values()) if cols else 0
+    for nome in nomes:
+        if nome in cols:
+            continue
+        j += 1
+        c = ws.cell(row=1, column=j, value=nome)
+        if j > 1:
+            copia_estilo(c, ws.cell(row=1, column=j - 1))
+        largura = 30
+        ws.column_dimensions[get_column_letter(j)].width = largura
+        criadas.append(nome)
+    return criadas
+
+
+def preenche_coluna(ws, nome, valores):
+    """Preenche a coluna `nome` linha a linha, casando pelo código da 1ª
+    coluna. Não sobrescreve célula que já tenha conteúdo."""
+    cols = cols_por_cabecalho(ws)
+    if nome not in cols:
+        return 0
+    j = cols[nome]
+    escritas = 0
+    for r in range(2, ws.max_row + 1):
+        cod = str(ws.cell(row=r, column=1).value or "").strip()
+        if not cod or cod not in valores:
+            continue
+        alvo = ws.cell(row=r, column=j)
+        if alvo.value not in (None, ""):
+            continue
+        alvo.value = valores[cod]
+        copia_estilo(alvo, ws.cell(row=r, column=max(1, j - 1)))
+        escritas += 1
+    return escritas
+
+
 def existe_codigo(ws, codigo):
     for r in range(2, ws.max_row + 1):
         if str(ws.cell(row=r, column=1).value or "").strip() == codigo:
@@ -270,7 +420,40 @@ def main():
     else:
         print("3. AVISO: aba LEIA-ME não encontrada.")
 
-    # 4. Exemplo de processo sem subprocessos
+    # 4. Colunas novas das fichas + valores de demonstração
+    criadas, preenchidas = [], 0
+    for aba, nomes in COLUNAS_NOVAS.items():
+        if aba not in wb.sheetnames:
+            print(f"4. AVISO: aba {aba} não encontrada.")
+            continue
+        ws = wb[aba]
+        novas = acrescenta_colunas(ws, nomes)
+        criadas += [f"{aba}.{n}" for n in novas]
+        for nome in nomes:
+            valores = EXECUTORES if nome == "Executor" else CORRESPONSAVEIS.get(aba, {})
+            preenchidas += preenche_coluna(ws, nome, valores)
+    if criadas or preenchidas:
+        mudou.append(f"{len(criadas)} coluna(s) nova(s), {preenchidas} célula(s) preenchida(s)")
+    print(f"4. Colunas das fichas: {len(criadas)} criada(s), {preenchidas} célula(s) preenchida(s).")
+
+    # 5. POP → Procedimento (PRO), em todas as abas
+    trocas_pro = 0
+    for ws in wb.worksheets:
+        for linha in ws.iter_rows():
+            for c in linha:
+                if not isinstance(c.value, str):
+                    continue
+                novo = c.value
+                for de, para in TROCAS_PRO:
+                    novo = novo.replace(de, para)
+                if novo != c.value:
+                    c.value = novo
+                    trocas_pro += 1
+    if trocas_pro:
+        mudou.append(f"POP → Procedimento (PRO) em {trocas_pro} célula(s)")
+    print(f"5. Procedimento (PRO): {trocas_pro} célula(s) atualizada(s).")
+
+    # 6. Exemplo de processo sem subprocessos
     if com_exemplo:
         at = wb["Atividades"] if "Atividades" in wb.sheetnames else None
         tf = wb["Tarefas"] if "Tarefas" in wb.sheetnames else None
@@ -278,14 +461,14 @@ def main():
         if at is not None:
             for reg in ATIVIDADES_EXEMPLO:
                 if existe_codigo(at, reg["Codigo"]):
-                    print(f'4. {reg["Codigo"]} já existe — não inserido.')
+                    print(f'6. {reg["Codigo"]} já existe — não inserido.')
                     continue
                 acrescenta_linha(at, reg)
                 novas += 1
         if tf is not None:
             for reg in TAREFAS_EXEMPLO:
                 if existe_codigo(tf, reg["Codigo"]):
-                    print(f'4. {reg["Codigo"]} já existe — não inserido.')
+                    print(f'6. {reg["Codigo"]} já existe — não inserido.')
                     continue
                 acrescenta_linha(tf, reg)
                 novas += 1
@@ -298,13 +481,13 @@ def main():
                 for r in range(2, pr.max_row + 1):
                     if str(pr.cell(row=r, column=1).value or "").strip() == "P-06.03":
                         pr.cell(row=r, column=j, value=NAO_SE_APLICA)
-                        print(f'4. P-06.03: M3 marcado como "{NAO_SE_APLICA}".')
+                        print(f'6. P-06.03: M3 marcado como "{NAO_SE_APLICA}".')
                         break
         if novas:
             mudou.append(f"{novas} linha(s) de exemplo (P-06.03 sem subprocessos)")
-        print(f"4. Exemplo: {novas} linha(s) inserida(s).")
+        print(f"6. Exemplo: {novas} linha(s) inserida(s).")
     else:
-        print("4. Exemplo não inserido (rode com --exemplo se quiser o caso demonstrativo).")
+        print("6. Exemplo não inserido (rode com --exemplo se quiser o caso demonstrativo).")
 
     if not mudou:
         print("\nNada mudou — a planilha já estava atualizada.")

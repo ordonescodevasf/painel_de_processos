@@ -69,6 +69,60 @@
     if (!ev.target.closest('.dd-target')) closeAllDropdowns(null);
   });
 
+  /* ── ACCORDION (br-accordion) — Componentes > Accordion, gov.br DS ──
+     Porte da classe BRAccordion publicada: alterna o atributo `active` do
+     item clicado e troca o ícone angle-down/angle-up. Com o atributo
+     `single` na raiz, abrir um item fecha os demais; sem ele, vários podem
+     ficar abertos ao mesmo tempo (comportamento padrão). aria-expanded
+     acompanha o estado, para o leitor de tela. ── */
+  function BRAccordion(nome, componente) {
+    this.name = nome;
+    this.component = componente;
+    this._setBehavior();
+  }
+  BRAccordion.prototype._setBehavior = function () {
+    var self = this;
+    Array.prototype.forEach.call(this.component.querySelectorAll('button.header'), function (botao) {
+      botao.addEventListener('click', function (ev) {
+        self._collapse(ev);
+        self._changeIcon();
+      });
+    });
+  };
+  BRAccordion.prototype._collapse = function (ev) {
+    var unico = this.component.hasAttribute('single');
+    var alvo = ev.currentTarget.parentNode;
+    Array.prototype.forEach.call(this.component.querySelectorAll('.item'), function (item) {
+      if (item === alvo) {
+        if (item.hasAttribute('active')) item.removeAttribute('active');
+        else item.setAttribute('active', '');
+      } else if (unico && item.hasAttribute('active')) {
+        item.removeAttribute('active');
+      }
+    });
+  };
+  BRAccordion.prototype._changeIcon = function () {
+    Array.prototype.forEach.call(this.component.querySelectorAll('.item'), function (item) {
+      var aberto = item.hasAttribute('active');
+      Array.prototype.forEach.call(item.querySelectorAll('.icon'), function (ic) {
+        var i = ic.children[0];
+        if (!i) return;
+        i.classList.toggle('fa-angle-up', aberto);
+        i.classList.toggle('fa-angle-down', !aberto);
+      });
+      var h = item.querySelector('button.header');
+      if (h) h.setAttribute('aria-expanded', String(aberto));
+    });
+  };
+  // Instancia todos os accordions ainda não ligados dentro de `escopo`.
+  function iniciarAccordions(escopo) {
+    var raiz = escopo || d;
+    Array.prototype.forEach.call(raiz.querySelectorAll('.br-accordion'), function (el) {
+      if (el.__brAccordion) return;
+      el.__brAccordion = new BRAccordion('br-accordion', el);
+    });
+  }
+
   /* ── COLLAPSE (data-toggle="collapse" data-target="id") ──────────── */
   d.addEventListener('click', function (ev) {
     var btn = ev.target.closest('[data-toggle="collapse"]');
@@ -493,6 +547,7 @@
 
   /* ── API mínima para o app preencher o menu de seções ────────────── */
   window.PPUI = {
+    iniciarAccordions: iniciarAccordions,
     setMenuSections: function (itens) {
       var ul = $('#sectionMenuList');
       if (!ul) return;
