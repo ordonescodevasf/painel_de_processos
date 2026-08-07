@@ -229,6 +229,22 @@
        fica visível mesmo em foco, pois não é um destino de navegação. */
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
       overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+    /* ── LINKS ── o texto linkado se distingue pela cor de interatividade,
+       não pelo sublinhado. O sublinhado fica reservado ao hover de links
+       em meio a texto corrido — onde a cor sozinha não basta para
+       separar o link do parágrafo. Links que já têm superfície própria
+       (botão, item de lista, ícone de rede social, card) nunca sublinham:
+       a própria superfície já é o destaque. ── */
+    a{color:var(--interactive);text-decoration:none;}
+    a:hover,a:focus-visible{color:var(--blue-warm-vivid-80);}
+    a.br-button,a.br-item,a.br-sign-in,a.br-card,a.repo-oficial-card,
+    a.cv-bloco-link,.br-button,.br-item,.br-sign-in,
+    .footer-social-icons a,.menu-footer-social nav a,.br-skiplink a,
+    .gloss-abc a,.chip{text-decoration:none;}
+    a.br-button:hover,a.br-item:hover,a.br-sign-in:hover,
+    a.repo-oficial-card:hover,.footer-social-icons a:hover,
+    .menu-footer-social nav a:hover{text-decoration:none;}
+
     /* ── SKIP LINK (br-skiplink) ── Anatomia: 1 Superfície (obrigatória),
        2 Item (obrigatório), 3 Tag (opcional, com o número do accesskey),
        4 Rótulo (obrigatório). Tipo simples (um item por vez, largura fixa
@@ -622,12 +638,11 @@
     }
     .header-bottom-wrap .header-search.active{display:flex;}
     .header-bottom-wrap .header-search .br-input{flex:1;position:relative;display:flex;align-items:center;}
-    .header-bottom-wrap .header-search .br-input label{position:absolute;left:-9999px;}
+    .header-bottom-wrap .header-search .br-input label{position:absolute;width:1px;height:1px;
+      padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
     .header-bottom-wrap .header-search .br-input input{
-      width:100%;height:40px;border:1px solid var(--gray-40);border-radius:var(--r-sm);
-      background:var(--pure-0);padding:0 44px 0 var(--sp2);font:400 13px var(--font);
+      width:100%;padding-right:44px;
     }
-    .header-bottom-wrap .header-search .br-input input:focus{border-color:var(--interactive);background:var(--blue-warm-vivid-5);outline:none;}
     .header-bottom-wrap .header-search .br-input .br-button{position:absolute;right:4px;top:50%;transform:translateY(-50%);}
     @media(min-width:576px){
       /* Breakpoint alinhado ao "Comportamento 3 (Busca)" do gov.br DS citado
@@ -805,10 +820,15 @@
        o CSS oficial usa 50vw, pensado para uma central de notificações
        de portal inteiro; nesta central, menor e objetiva, 50vw ficaria
        desproporcional. ── */
-    .has-badge{position:relative;}
-    .notif-badge{position:absolute;top:0;right:0;min-width:15px;height:15px;
-      padding:0 3px;border-radius:50%;background:var(--red-vivid-50);color:var(--pure-0);
-      font:700 9px/15px var(--font);text-align:center;}
+    .has-badge{position:relative;overflow:visible;}
+    /* O contador estoura levemente a borda do acionador (padrão da
+       central de notificações), então precisa de folga: nenhum ancestral
+       pode recortar, e o próprio acionador não pode ser overflow:hidden. */
+    .has-badge > .br-button{overflow:visible;}
+    .notif-badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;
+      padding:0 4px;border-radius:100em;background:var(--red-vivid-50);color:var(--pure-0);
+      font:700 10px/16px var(--font);text-align:center;
+      border:2px solid var(--pure-0);box-sizing:content-box;pointer-events:none;}
     .br-notification{width:380px;max-width:90vw;max-height:min(480px,calc(100vh - 96px));overflow:hidden;
       display:flex;flex-direction:column;box-shadow:var(--sh-md);}
     /* Tag de Status do item (Componente Tag, tipo status): indicador
@@ -1541,18 +1561,60 @@
         pointer-events:none;z-index:1;
       }
       .tab-item button{padding:12px 10px;}
+      /* Grid de 4 colunas: densidade alta e ícone empilhado sobre o rótulo. */
+      .tab-nav{--tab-padding:10px;}
+      .tab-item button > .name > .d-flex{flex-direction:column;align-items:center;gap:2px;}
     }
-    .tab-nav ul{display:flex;align-items:center;gap:2px;list-style:none;margin:0;padding:0;}
-    .tab-item{display:flex;}
+    /* ── TAB (br-tab) ── Anatomia: 1 Item da Tab (obrigatório, com estado
+       ativo e interativo), 2 Rótulo (opcional), 3 Superfície (obrigatória,
+       estende até o limite da tela mesmo com poucos itens), 4 Rótulo
+       Contador (opcional), 5 Ícone (opcional), 6 Divider na base
+       (obrigatório). Densidades: alta 8px, padrão 16px e baixa 24px de
+       padding vertical; horizontal sempre 24px. ── */
+    .br-tab,.tab-nav{--tab-padding:var(--sp3);--tab-small:var(--sp1);
+      --tab-medium:var(--sp2);--tab-large:var(--sp3);--tab-size:var(--tab-medium);}
+    .br-tab.small,.tab-nav.small{--tab-size:var(--tab-small);}
+    .br-tab.medium,.tab-nav.medium{--tab-size:var(--tab-medium);}
+    .br-tab.large,.tab-nav.large{--tab-size:var(--tab-large);}
+    .tab-nav ul{display:flex;align-items:stretch;gap:2px;list-style:none;margin:0;padding:0;
+      width:100%;border-bottom:1px solid var(--gray-20);}
+    .tab-item{display:flex;align-items:center;justify-content:center;position:relative;white-space:nowrap;}
     .tab-item button{display:inline-flex;align-items:center;gap:7px;
-      padding:12px 14px;background:none;border:none;cursor:pointer;
+      padding:var(--tab-size) var(--tab-padding);background:none;border:none;cursor:pointer;
       font:600 12px/1 var(--font);color:var(--gray-70);
-      border-bottom:var(--w-lg) solid transparent;
+      border-bottom:var(--w-lg) solid transparent;text-align:center;
       transition:color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease);white-space:nowrap;margin-bottom:-1px;}
-    .tab-item button:hover{color:var(--cv-blue);}
+    .tab-item button:hover:not(:disabled){color:var(--cv-blue);background:var(--blue-warm-vivid-5);}
+    .tab-item button:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:-4px;}
+    .tab-item button:disabled{opacity:var(--op-lg);cursor:not-allowed;}
+    .tab-item.active button,.tab-item.is-active button,
     .tab-item button[aria-selected="true"]{color:var(--cv-blue);border-bottom-color:var(--cv-blue);}
+    /* Ícone (item 5): horizontal por padrão; empilha sobre o rótulo na
+       grid de 4 colunas, como manda a responsividade interna. */
+    .tab-item .icon{display:inline-flex;align-items:center;justify-content:center;}
+    /* Rótulo Contador (item 4): abaixo do item, dentro da superfície —
+       data-counter reserva a altura para que a linha não "pule" quando os
+       contadores aparecem depois de uma busca. */
     .tab-count{background:var(--interactive);color:var(--pure-0);
       font-size:10px;font-weight:800;padding:2px 7px;border-radius:var(--r-pill);}
+    .tab-item .results{position:absolute;top:100%;display:flex;justify-content:center;
+      margin-top:var(--sp1);font:500 12px/1 var(--font);color:var(--gray-80);}
+    .tab-item.active .results,.tab-item.is-active .results{color:var(--blue-warm-vivid-80);font-weight:600;}
+    .br-tab[data-counter="true"] .tab-nav ul{margin-bottom:calc(var(--sp2) + 12px + var(--sp1));}
+    /* Versão para fundo escuro. */
+    .br-tab.inverted .tab-item button,.br-tab.dark-mode .tab-item button{color:var(--pure-0);}
+    .br-tab.inverted .tab-nav ul,.br-tab.dark-mode .tab-nav ul{border-bottom-color:rgba(255,255,255,.3);}
+    .br-tab.inverted .tab-item.active button,.br-tab.dark-mode .tab-item.active button,
+    .br-tab.inverted .tab-item button[aria-selected="true"],
+    .br-tab.dark-mode .tab-item button[aria-selected="true"]{color:var(--pure-0);border-bottom-color:var(--pure-0);}
+    .br-tab.inverted .tab-item .results,.br-tab.dark-mode .tab-item .results{color:var(--pure-0);}
+    .br-tab.inverted .tab-item button:hover:not(:disabled),
+    .br-tab.dark-mode .tab-item button:hover:not(:disabled){background:rgba(255,255,255,.16);color:var(--pure-0);}
+    /* Painel: só o ativo aparece. */
+    .br-tab > .tab-content > .tab-panel{display:none;}
+    .br-tab > .tab-content > .tab-panel.active,
+    .br-tab > .tab-content > .tab-panel.is-active{display:block;}
     /* Rótulos curtos das abas principais (#navigation): em telas estreitas,
        "Análise do Levantamento" e "Acompanhamento de Projetos" raramente
        cabem inteiros sem exigir rolagem horizontal pouco perceptível pelo
@@ -1586,18 +1648,10 @@
     @media(max-width:575.98px){
       .tab-bar-actions{width:100%;justify-content:flex-start;}
     }
-    /* Sino de Alertas operacionais: removido da versão mobile a pedido —
-       além de disputar espaço com as abas em telas estreitas, o painel
-       (com o dropdown corrigido para abrir por cima de tudo, ver .dd-target
-       acima) ainda ficava apertado demais para essa ação secundária no
-       celular. Continua disponível normalmente no desktop. Duas regras
-       redundantes de propósito: :has() cobre o wrapper inteiro (sem sobrar
-       um espaço vazio do dropdown-wrap) em navegadores que suportam;
-       display:none direto no botão garante que ele suma mesmo sem :has(). */
-    @media(max-width:991.98px){
-      .tab-bar-actions .dropdown-wrap:has(#btnNotifications){display:none;}
-      #btnNotifications{display:none;}
-    }
+    /* Sino de Alertas operacionais: ficava oculto no mobile porque disputava
+       espaço com as abas. Agora que mora na barra de ações da página (linha
+       própria, ao lado de Compartilhar e Imprimir), o espaço deixou de ser
+       um problema — o acionador vale em qualquer largura. */
 
 
     /* ── PANELS (tab-content > tab-panel, conforme Como Usar) ── */
@@ -2066,7 +2120,87 @@
     .bg-gray{background:var(--gray-5);color:var(--gray-70);border-color:var(--gray-10);}
     .bg-orange{background:#fdeee7;color:#9a3412;border-color:#f8d3c2;}
 
-    /* ── TABLE ── */
+    /* ── TABLE (br-table) ── Anatomia: 1 Barra de Título (opcional, com
+       ícones de ação utilitária), 2 Barra Contextual (opcional, aparece
+       sob a barra de título quando há linhas selecionadas), 3 Header
+       (obrigatório), 4 Linhas (obrigatório), 5 Barra de Paginação
+       (opcional), 6 Colunas (obrigatório). Densidades: alta 8px, padrão
+       16px e baixa 24px de padding vertical nas linhas. ── */
+    .br-table{--table-padding:var(--sp3);--table-row-small:var(--sp1);
+      --table-row-medium:var(--sp2);--table-row-large:var(--sp3);
+      --table-row-size:var(--table-row-medium);
+      background:var(--pure-0);}
+    .br-table.small{--table-row-size:var(--table-row-small);}
+    .br-table.medium{--table-row-size:var(--table-row-medium);}
+    .br-table.large{--table-row-size:var(--table-row-large);}
+    /* Barra de Título (item 1) — título à esquerda, ícones de ação à
+       direita; acima de 4 ações, menu flutuante no botão ellipsis-v. */
+    .br-table .table-header{position:relative;}
+    .br-table .table-header.show .top-bar{opacity:0;pointer-events:none;}
+    .br-table .top-bar{display:flex;align-items:center;gap:var(--sp1);
+      padding:var(--sp1) var(--sp2) var(--sp1) var(--table-padding);}
+    .br-table .top-bar .table-title{flex-grow:1;color:var(--gray-80);
+      font:600 var(--fs-md)/1.3 var(--font);
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .br-table .top-bar .actions-trigger{position:relative;white-space:nowrap;}
+    .br-table .top-bar .actions-trigger .br-list{position:absolute;top:calc(100% + 4px);
+      right:0;left:auto;min-width:180px;background:var(--pure-0);box-shadow:var(--sh-md);
+      border-radius:var(--r-sm);padding:4px 0;z-index:3500;}
+    .br-table .top-bar .actions-trigger .br-list[hidden]{display:none;}
+    .br-table .top-bar .actions-trigger .br-item{display:block;width:100%;border:0;
+      background:none;text-align:left;cursor:pointer;padding:8px 14px;
+      font:400 var(--fs-sm)/1.4 var(--font);color:var(--gray-80);}
+    .br-table .top-bar .actions-trigger .br-item:hover{background:var(--blue-warm-vivid-5);}
+    /* Busca (Comportamento 6): o campo cobre a barra de título e traz
+       botão fechar ao lado. */
+    .br-table .search-bar{display:none;align-items:center;gap:var(--sp2);
+      position:absolute;inset:0;padding-left:var(--table-padding);padding-right:var(--sp2);
+      background:var(--pure-0);}
+    .br-table .search-bar.show{display:flex;}
+    .br-table .search-bar .br-input{flex:1;margin:0;position:relative;}
+    .br-table .search-bar .br-input label{position:absolute;width:1px;height:1px;
+      padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+    .br-table .search-bar .br-input input{margin:0;padding-right:40px;}
+    .br-table .search-bar .br-input .br-button{position:absolute;right:4px;top:50%;
+      transform:translateY(-50%);}
+    /* Barra Contextual (item 2) — fundo de interatividade, contagem de
+       itens selecionados e ações contextuais. */
+    .br-table .selected-bar{display:none;align-items:center;gap:var(--sp2);
+      background:var(--blue-warm-vivid-70);color:var(--pure-0);
+      padding:var(--sp1) var(--sp2);}
+    .br-table .selected-bar.show{display:flex;}
+    .br-table .selected-bar .info{display:flex;align-items:center;gap:4px;
+      flex-grow:1;white-space:nowrap;font:500 var(--fs-sm)/1.2 var(--font);}
+    .br-table .selected-bar .br-button{color:var(--pure-0);border-color:transparent;}
+    .br-table .selected-bar .br-button:hover{background:rgba(255,255,255,.16);}
+    /* Ordenação (Comportamento 9): célula interativa com ícone sort e
+       estado ordenado destacado. */
+    .br-table th .sort-btn{display:inline-flex;align-items:center;gap:6px;
+      background:none;border:0;padding:0;cursor:pointer;color:inherit;font:inherit;
+      text-transform:inherit;letter-spacing:inherit;}
+    .br-table th .sort-btn i{opacity:.45;font-size:11px;}
+    .br-table th .sort-btn:hover i{opacity:1;}
+    .br-table th[aria-sort="ascending"],.br-table th[aria-sort="descending"]{
+      color:var(--blue-warm-vivid-80);background:var(--blue-warm-vivid-5);}
+    .br-table th[aria-sort="ascending"] .sort-btn i,
+    .br-table th[aria-sort="descending"] .sort-btn i{opacity:1;}
+    /* Colunas utilitárias de seleção e expansão (item 4 — Linhas). */
+    .br-table .column-collapse{width:40px;background:var(--gray-2);}
+    .br-table .column-checkbox{width:24px;}
+    .br-table tr.is-selected td{background:var(--blue-warm-vivid-10);}
+    .br-table tr.collapse td{background:var(--gray-2);
+      box-shadow:inset 0 1px 6px rgba(0,0,0,.08);font-size:var(--fs-sm);}
+    .br-table.no-hover tr:hover td{background:none;}
+    /* Barra de Paginação (item 5). */
+    .br-table .table-footer{padding:var(--sp1) var(--sp2) var(--sp1) var(--table-padding);}
+    .br-table .table-footer .br-pagination{margin-top:0;}
+    /* Versão para fundo escuro. */
+    .br-table.inverted,.br-table.dark-mode{background:var(--blue-warm-vivid-90);color:var(--pure-0);}
+    .br-table.inverted .top-bar .table-title,.br-table.dark-mode .top-bar .table-title{color:var(--pure-0);}
+    .br-table.inverted th,.br-table.dark-mode th{background:var(--blue-warm-vivid-90);color:var(--blue-warm-20);}
+    .br-table.inverted td,.br-table.dark-mode td{color:var(--pure-0);border-bottom-color:rgba(255,255,255,.15);}
+
+    /* ── TABLE — estrutura básica ── */
     /* Truncamento de texto (Padrão: Content Overflow > Informações
        Complementares > Truncamento): aplicar text-overflow:ellipsis
        direto no <td> é inconsistente entre navegadores por causa do
@@ -2080,10 +2214,10 @@
     .tbl-wrap,.responsive{overflow-x:auto;}
     .br-table table{width:100%;border-collapse:collapse;font:400 12px/1.4 var(--font);min-width:900px;}
     .br-table caption{opacity:0;position:absolute;z-index:-1;}
-    .br-table th{padding:12px;text-align:left;border-bottom:2px solid var(--gray-10);
+    .br-table th{padding:var(--table-row-size,12px) var(--table-padding,12px);text-align:left;border-bottom:2px solid var(--gray-10);
       font:700 10px/1 var(--font);text-transform:uppercase;letter-spacing:1.5px;color:var(--blue-warm-vivid-70);white-space:nowrap;
       background:var(--gray-5);}
-    .br-table td{padding:12px;border-bottom:1px solid var(--gray-5);vertical-align:middle;color:var(--gray-80);}
+    .br-table td{padding:var(--table-row-size,12px) var(--table-padding,12px);border-bottom:1px solid var(--gray-5);vertical-align:middle;color:var(--gray-80);}
     /* Visualização de Dados: "Número: Direita... ID's... devem ser
        alinhados à esquerda" — Avanço (%) é a única coluna de número
        simples nas tabelas do painel; ID fica de fora da regra por
@@ -2480,6 +2614,10 @@
     .detail-step-wrap{margin-bottom:var(--sp4);padding-bottom:var(--sp3);
       border-bottom:1px solid var(--gray-10);}
     .br-step{--step-size:32px;display:flex;padding:var(--sp1) 0;}
+    /* Densidades oficiais: alta 24px, média 32px (padrão), baixa 40px. */
+    .br-step.small{--step-size:24px;}
+    .br-step.medium{--step-size:32px;}
+    .br-step.large{--step-size:40px;}
     .br-step .step-progress{display:flex;flex-grow:1;}
     .br-step .step-progress-btn{align-items:center;background:transparent;border:0;
       display:flex;flex-grow:1;flex-direction:column;justify-content:flex-start;
@@ -2515,6 +2653,87 @@
     .br-step .step-progress-btn:disabled[active] .step-info{color:var(--blue-warm-vivid-80);font-weight:700;}
     .br-step .step-progress-btn:disabled[active]::after{background-color:var(--blue-warm-vivid-70);}
 
+    /* Etapa ativa e concluída no fluxo interativo (sem disabled). */
+    .br-step .step-progress-btn[active]::before{background:var(--blue-warm-vivid-70);
+      border-color:var(--blue-warm-vivid-70);color:var(--pure-0);}
+    .br-step .step-progress-btn[active] .step-info{color:var(--blue-warm-vivid-80);font-weight:700;}
+    .br-step .step-progress-btn.is-done::before{background:var(--blue-warm-vivid-70);
+      border-color:var(--blue-warm-vivid-70);color:var(--pure-0);content:'';}
+    .br-step .step-progress-btn:not(:disabled){cursor:pointer;}
+    .br-step .step-progress-btn:not(:disabled):hover::before{background:var(--blue-warm-vivid-5);}
+    .br-step .step-progress-btn:not(:disabled)[active]:hover::before{background:var(--blue-warm-vivid-80);}
+    .br-step .step-progress-btn:focus-visible{
+      outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:var(--focus-offset-field);border-radius:var(--r-sm);}
+
+    /* Posição do rótulo (data-label). Sem o atributo, o rótulo fica
+       abaixo do indicador (bottom). */
+    .br-step[data-label="top"] .step-progress-btn{flex-direction:column-reverse;
+      justify-content:flex-end;}
+    .br-step[data-label="top"] .step-info{margin:0 0 var(--sp1);}
+    .br-step[data-label="top"] .step-icon{top:auto;bottom:0;}
+    .br-step[data-label="left"] .step-progress-btn,
+    .br-step[data-label="right"] .step-progress-btn{flex-direction:row;align-items:center;
+      min-height:var(--step-size);gap:var(--sp1);}
+    .br-step[data-label="left"] .step-progress-btn{flex-direction:row-reverse;}
+    .br-step[data-label="left"] .step-info,
+    .br-step[data-label="right"] .step-info{margin:0;text-align:left;white-space:nowrap;}
+    .br-step[data-label="left"] .step-progress-btn::before,
+    .br-step[data-label="right"] .step-progress-btn::before{margin:0;flex:0 0 auto;}
+    .br-step[data-label="left"] .step-icon,
+    .br-step[data-label="right"] .step-icon{top:50%;transform:translateY(-50%);}
+    .br-step[data-label="right"] .step-icon{left:0;right:auto;}
+    .br-step[data-label="left"] .step-icon{right:0;left:auto;}
+
+    /* Tipo Void: indicador sem numeração — só o círculo de progresso. */
+    .br-step[data-type="void"] .step-progress-btn::before{content:'';}
+
+    /* Alerta (data-alert): sinalização de estado sobre o indicador, com o
+       ponto .step-alert nas cores semânticas de feedback. */
+    .br-step .step-alert{position:absolute;top:0;right:calc(50% - var(--step-size) * 0.5 - 3px);
+      width:10px;height:10px;border-radius:50%;z-index:5;
+      border:2px solid var(--pure-0);background:var(--gray-40);}
+    .br-step .step-progress-btn[data-alert="success"] .step-alert{background:var(--green-cool-vivid-50);}
+    .br-step .step-progress-btn[data-alert="info"] .step-alert{background:var(--blue-warm-vivid-70);}
+    .br-step .step-progress-btn[data-alert="danger"] .step-alert{background:var(--red-vivid-50);}
+    .br-step .step-progress-btn[data-alert="warning"] .step-alert{background:var(--yellow-vivid-20);}
+
+    /* Orientação vertical: a trilha vira coluna e o conector, uma linha
+       vertical entre os indicadores. */
+    .br-step.vertical .step-progress{flex-direction:column;}
+    .br-step.vertical .step-progress-btn{flex-direction:row;align-items:center;
+      justify-content:flex-start;min-height:calc(var(--step-size) + var(--sp2));
+      gap:var(--sp2);}
+    .br-step.vertical .step-progress-btn::before{margin:0;flex:0 0 auto;}
+    .br-step.vertical .step-progress-btn::after{height:auto;width:1px;
+      left:calc(var(--step-size) * 0.5);right:auto;top:0;bottom:0;}
+    .br-step.vertical .step-progress-btn:first-child::after{top:50%;left:calc(var(--step-size) * 0.5);}
+    .br-step.vertical .step-progress-btn:last-child::after{bottom:50%;right:auto;}
+    .br-step.vertical .step-info{margin:0;text-align:left;}
+    .br-step.vertical[data-label="left"] .step-progress-btn{flex-direction:row-reverse;
+      justify-content:flex-end;}
+    .br-step.vertical[data-label="left"] .step-info{text-align:right;}
+    .br-step.vertical .step-icon{top:50%;transform:translateY(-50%);left:0;}
+    .br-step.vertical .step-alert{top:0;right:auto;left:calc(var(--step-size) - 6px);}
+
+    /* Rolagem horizontal (data-scroll): fluxos com muitas etapas cabem em
+       telas estreitas sem quebrar a trilha. */
+    .br-step[data-scroll]{overflow-x:auto;overflow-y:hidden;max-width:100%;min-width:0;}
+    .br-step[data-scroll] .step-progress{min-width:max-content;}
+    .br-step[data-scroll] .step-progress-btn{min-width:112px;}
+    .br-step[data-scroll] .step-info{white-space:normal;padding:0 var(--sp1);}
+
+    /* Versão para fundo escuro. */
+    .br-step.inverted .step-progress-btn::before,
+    .br-step.dark-mode .step-progress-btn::before{background:transparent;
+      border-color:var(--pure-0);color:var(--pure-0);}
+    .br-step.inverted .step-progress-btn::after,
+    .br-step.dark-mode .step-progress-btn::after{background-color:var(--pure-0);}
+    .br-step.inverted .step-info,.br-step.dark-mode .step-info{color:var(--pure-0);}
+    .br-step.inverted .step-progress-btn[active]::before,
+    .br-step.dark-mode .step-progress-btn[active]::before{background:var(--pure-0);
+      color:var(--blue-warm-vivid-80);}
+
     /* ── SWITCH (br-switch) — substitui o antigo botão "Alto contraste"
        (toggle button com aria-pressed gerenciado à mão) pelo componente
        real: <input type="checkbox" role="switch">, cujo estado
@@ -2529,7 +2748,11 @@
        — vale confirmar o hex oficial exato depois. ── */
     .br-switch{--switch-h:24px;--switch-w:40px;--switch-toggle:16px;
       --on:var(--blue-warm-vivid-70);--off:var(--gray-20);
-      display:inline-flex;min-height:var(--switch-h);}
+      display:inline-flex;align-items:center;min-height:var(--switch-h);}
+    /* Densidades oficiais: alta (small), média (padrão) e baixa (large). */
+    .br-switch.small{--switch-h:16px;--switch-w:28px;--switch-toggle:10px;}
+    .br-switch.medium{--switch-h:24px;--switch-w:40px;--switch-toggle:16px;}
+    .br-switch.large{--switch-h:32px;--switch-w:52px;--switch-toggle:22px;}
     .br-switch input{opacity:0;position:absolute;}
     .br-switch input + label{align-items:center;color:var(--gray-80);cursor:pointer;
       display:inline-flex;font:400 13px/1.3 var(--font);margin:0;position:relative;}
@@ -2539,6 +2762,16 @@
       height:var(--switch-toggle);position:absolute;
       transition:all var(--dur-moderate-1) var(--ease-elastic-out);width:var(--switch-toggle);}
     .br-switch input:checked + label::after{background-color:var(--on);}
+    /* Alinhamento padrão: rótulo à esquerda da chave. */
+    .br-switch input + label{padding-right:calc(var(--sp2) + var(--switch-w));}
+    .br-switch input + label::before{right:0;}
+    .br-switch input + label::after{right:calc(var(--switch-w) - var(--switch-toggle) - 4px);}
+    .br-switch input:checked + label::after{right:4px;}
+    /* Rótulo à direita da chave. */
+    .br-switch.right input + label{padding-right:0;}
+    .br-switch.right input + label::before{right:auto;}
+    .br-switch.right input + label::after{right:auto;}
+    .br-switch.right input:checked + label::after{right:auto;}
     .br-switch.right input + label{padding-left:calc(var(--sp2) + var(--switch-w));}
     .br-switch.right input + label::before{left:0;}
     .br-switch.right input + label::after{left:4px;}
@@ -2547,6 +2780,24 @@
       content:"\f00d";display:inline-flex;font-family:"Font Awesome 6 Free","Font Awesome 5 Free";
       font-size:9px;font-weight:900;justify-content:center;}
     .br-switch.icon input:checked + label::after{content:"\f00c";}
+    /* Rótulo acima da chave. */
+    .br-switch.top{align-items:flex-start;}
+    .br-switch.top input + label{flex-direction:column;align-items:flex-start;gap:var(--sp1);
+      padding:0 0 calc(var(--sp1) + var(--switch-h));}
+    .br-switch.top input + label::before{bottom:0;left:0;right:auto;top:auto;}
+    .br-switch.top input + label::after{bottom:4px;left:4px;right:auto;top:auto;}
+    .br-switch.top input:checked + label::after{
+      left:calc(var(--switch-w) - var(--switch-toggle) - 4px);right:auto;}
+    /* Rótulo de estado (switch-data): texto que acompanha a chave e troca
+       conforme ligado/desligado, via data-enabled e data-disabled. */
+    .br-switch .switch-data{margin-left:var(--sp1);color:var(--gray-70);
+      font:400 var(--fs-sm)/1.3 var(--font);white-space:nowrap;}
+    .br-switch .switch-data::after{content:attr(data-disabled);}
+    .br-switch input:checked ~ .switch-data::after{content:attr(data-enabled);}
+    .br-switch input:checked ~ .switch-data{color:var(--blue-warm-vivid-70);font-weight:600;}
+    /* Estado desativado. */
+    .br-switch input:disabled + label{cursor:not-allowed;opacity:var(--op-lg);}
+    .br-switch input:disabled ~ .switch-data{opacity:var(--op-lg);}
     .br-switch input:focus-visible + label::before{
       border-color:var(--focus-color)!important;
       box-shadow:0 0 0 var(--focus-width-field) var(--focus-color);outline:none;}

@@ -78,9 +78,14 @@
    botões inclicáveis assim que o usuário rolava um pouco (bug real:
    testes automatizados não veem isso, pois não fazem layout/paint de
    verdade — só checam presença no DOM). ── */
-.pp-acoes-pagina{max-width:1200px;margin:0 auto;padding:6px var(--sp3);
+.pp-acoes-pagina{max-width:1200px;margin:0 auto;padding:8px var(--sp3);
   border-top:1px solid var(--gray-10);
-  display:flex;justify-content:flex-end;gap:6px;}
+  display:flex;align-items:center;justify-content:flex-end;gap:6px;overflow:visible;}
+/* A superfície flutuante da central de alertas fica ancorada à direita do
+   sino, dentro da barra de seções. */
+.pp-acoes-pagina .dropdown-wrap{position:relative;display:inline-flex;}
+.pp-acoes-pagina .dropdown-wrap .dd-target{position:absolute;top:calc(100% + 6px);
+  left:auto;right:0;z-index:3600;}
 @media(min-width:1600px){.pp-acoes-pagina{max-width:1560px;}}
 .pp-acoes-pagina .br-button.circle{color:var(--gray-60);border-color:var(--gray-20);}
 .pp-acoes-pagina .br-button.circle:hover{color:var(--cv-blue);border-color:var(--cv-blue);}
@@ -256,6 +261,11 @@ body.contraste-alto .ficha-hero{background:#000;border:1px solid var(--gold-vivi
 body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
 .ficha-grid{display:grid;gap:var(--sp3);grid-template-columns:minmax(0,2fr) minmax(min(260px, 100%), 1fr);
   align-items:start;margin-top:var(--sp3);}
+/* Itens de grade nascem com min-width:auto, o que deixa um filho de
+   largura max-content (o Step com data-scroll) esticar a coluna e, por
+   consequência, a página. min-width:0 devolve o limite e faz a rolagem
+   acontecer dentro do próprio componente. */
+.ficha-grid > *{min-width:0;}
 @media(max-width:991.98px){.ficha-grid{grid-template-columns:1fr;}}
 .ficha-dl{display:grid;gap:var(--sp2) var(--sp4);grid-template-columns:repeat(auto-fit,minmax(min(230px, 100%), 1fr));
   font-size:var(--fs-base);margin:0;}

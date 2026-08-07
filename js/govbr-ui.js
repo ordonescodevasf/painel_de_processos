@@ -1098,6 +1098,26 @@
     });
   };
 
+  /* ── TAB — navegação por teclado exigida pelo componente: setas
+     esquerda/direita percorrem as abas, Home/End saltam para a primeira
+     e a última. Enter e Space já são nativos do <button>. ── */
+  d.addEventListener('keydown', function (ev) {
+    var b = ev.target.closest && ev.target.closest('.tab-nav [role="tab"], .tab-nav .tab-item button');
+    if (!b) return;
+    var nav = b.closest('.tab-nav');
+    var abas = $all('.tab-item button:not(:disabled)', nav);
+    var i = abas.indexOf(b);
+    if (i < 0) return;
+    var alvo = -1;
+    if (ev.key === 'ArrowRight') alvo = (i + 1) % abas.length;
+    else if (ev.key === 'ArrowLeft') alvo = (i - 1 + abas.length) % abas.length;
+    else if (ev.key === 'Home') alvo = 0;
+    else if (ev.key === 'End') alvo = abas.length - 1;
+    if (alvo < 0) return;
+    ev.preventDefault();
+    abas[alvo].focus();
+  });
+
   /* ── SKIP LINK — a diretriz pede que a tecla Esc recolha o componente:
      tira o foco do item, o que devolve o item para fora da viewport. ── */
   d.addEventListener('keydown', function (ev) {

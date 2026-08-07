@@ -487,13 +487,34 @@
     if (/^n(ã|a)o\s*se\s*aplica$/i.test(s) || /^n\/?a$/i.test(s)) return 'na';
     return '';
   }
+  /* Marcos do mapeamento pelo Componente Step (tipo complexo, indicador
+     numérico, orientação horizontal com data-scroll): a jornada tem ordem
+     lógica linear, que é exatamente o caso de uso do componente. Os
+     indicadores não são interativos (o painel só informa o progresso),
+     por isso vêm com disabled; a etapa atual é o primeiro marco ainda
+     pendente e "não se aplica" recebe alerta em cor de atenção. */
   function marcosHtml(p) {
-    return '<ul class="marcos">' + MARCOS.map(function (mk, i) {
-      var est = marcoEstado(valMarco(p, i));
-      var ic = est === 'feito' ? 'fa-check-circle' : est === 'na' ? 'fa-minus-circle' : 'fa-circle';
-      return '<li class="' + est + '" title="' + esc(MARCOS_DESCRICOES[i] + (est === 'na' ? ' — Não se aplica a este processo.' : '')) + '"><span>' + esc(MARCOS_ROTULOS[i]) +
-        '</span><i class="fas ' + ic + '" aria-hidden="true"></i></li>';
-    }).join('') + '</ul>';
+    var est = MARCOS.map(function (mk, i) { return marcoEstado(valMarco(p, i)); });
+    var atual = -1;
+    for (var k = 0; k < est.length; k++) { if (est[k] === '') { atual = k; break; } }
+    var total = MARCOS.length;
+    return '<nav class="br-step" data-label="bottom" data-scroll="data-scroll" role="none">' +
+      '<div class="step-progress" role="listbox" aria-orientation="horizontal" aria-label="Marcos do mapeamento">' +
+      MARCOS.map(function (mk, i) {
+        var e = est[i], feito = e === 'feito', na = e === 'na', ativo = i === atual;
+        var rotulo = 'M' + (i + 1) + ' — ' + MARCOS_ROTULOS[i] +
+          (feito ? ' (concluído)' : na ? ' (não se aplica)' : ativo ? ' (em andamento)' : ' (pendente)');
+        return '<button class="step-progress-btn' + (feito ? ' is-done' : '') + '" type="button" role="option"' +
+          ' step-num="' + (i + 1) + '" aria-posinset="' + (i + 1) + '" aria-setsize="' + total + '"' +
+          ' aria-selected="' + (ativo ? 'true' : 'false') + '"' + (ativo ? ' active' : '') + ' disabled' +
+          (na ? ' data-alert="warning"' : '') +
+          ' aria-label="' + esc(rotulo) + '" title="' + esc(MARCOS_DESCRICOES[i] + (na ? ' — Não se aplica a este processo.' : '')) + '">' +
+          '<span class="step-info">' + esc(MARCOS_ROTULOS[i]) + '</span>' +
+          (feito ? '<i class="step-icon fas fa-check" aria-hidden="true"></i>' : '') +
+          (na ? '<span class="step-alert"></span>' : '') +
+          '</button>';
+      }).join('') +
+      '</div></nav>';
   }
   // Sobe a cadeia de um subprocesso até achar seu Processo — como o CBOK permite
   // subprocesso dentro de subprocesso (profundidade variável), o "pai" de um
@@ -907,6 +928,17 @@
       console.error(e);
     });
   };
+  // Exporta uma matriz de linhas como CSV (BOM + ponto e vírgula, para
+   // abrir direto no Excel em pt-BR).
+  function baixarCsv(nome, matriz) {
+    var txt = matriz.map(function (l) {
+      return l.map(function (c) { return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; }).join(';');
+    }).join('\r\n');
+    var blob = new Blob(['\ufeff' + txt], { type: 'text/csv;charset=utf-8' });
+    var a = d.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = nome;
+    d.body.appendChild(a); a.click(); a.remove();
+  }
   function ligarAcoesCabecalho() {
     var exp = $('#actExportCsv');
     if (exp) exp.onclick = function () {
@@ -1513,35 +1545,178 @@
   }
 
   /* ── TELAS: documentos · riscos · indicadores · diário ────────────── */
-  var filtroDoc = { tipo: '', q: '' };
+  var filtroDoc = { tipo: '', q: '', busca: '', ordem: '', dir: '', dens: 'medium', sel: {} };
+  // Campo de busca no padrão Input do DS: rótulo visível, ícone
+  // ilustrativo search à esquerda e input dentro do input-group.
+  function buscaCampoHtml(id, rotulo, placeholder, valor) {
+    return '<div class="br-input has-icon">' +
+      '<label for="' + id + '">' + esc(rotulo) + '</label>' +
+      '<div class="input-group"><div class="input-icon"><i class="fas fa-search" aria-hidden="true"></i></div>' +
+      '<input type="search" id="' + id + '" placeholder="' + esc(placeholder) + '" value="' + esc(valor) + '"></div></div>';
+  }
+  // Colunas ordenáveis da tabela de documentos (Comportamento 9:
+   // Ordenação — um parâmetro por vez, sem ordenação → crescente →
+   // decrescente).
+  var COLS_DOC = [
+    { k: 'ID', r: 'ID' }, { k: 'Titulo', r: 'Documento' },
+    { k: 'Vinculo_Codigo', r: 'Vinculado a' }, { k: 'Data', r: 'Data' },
+    { k: 'Situacao', r: 'Situação' }
+  ];
   function renderDocumentos() {
     var el = $('#viewDocumentos');
     var tipos = {};
     DADOS.docs.forEach(function (x) { if (x.Tipo_Documento) tipos[x.Tipo_Documento] = 1; });
+    var bq = filtroDoc.busca.toLowerCase();
     var lista = DADOS.docs.filter(function (x) {
       if (filtroDoc.tipo && x.Tipo_Documento !== filtroDoc.tipo) return false;
       if (filtroDoc.q && (x.ID + ' ' + x.Titulo).toLowerCase().indexOf(filtroDoc.q.toLowerCase()) < 0) return false;
+      // Busca da barra de título: percorre todas as colunas exibidas.
+      if (bq && COLS_DOC.map(function (c) { return x[c.k] || ''; }).join(' ').toLowerCase().indexOf(bq) < 0) return false;
       return true;
     });
+    if (filtroDoc.ordem) {
+      var sinal = filtroDoc.dir === 'desc' ? -1 : 1;
+      lista = lista.slice().sort(function (a, b) {
+        return sinal * String(a[filtroDoc.ordem] || '').localeCompare(String(b[filtroDoc.ordem] || ''), 'pt-BR', { numeric: true });
+      });
+    }
+    var pagina = pagFatia('docs', lista, 5);
+    var nSel = pagina.filter(function (x) { return filtroDoc.sel[x.ID]; }).length;
+    var todosSel = pagina.length > 0 && nSel === pagina.length;
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>Repositório de documentos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-filtros"><label class="sr-only" for="fTipoDoc">Tipo de documento</label>' +
-      '<select id="fTipoDoc"><option value="">Todos os tipos</option>' +
-      Object.keys(tipos).sort().map(function (t) { return '<option' + (filtroDoc.tipo === t ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select>' +
-      '<label class="sr-only" for="fBuscaDoc">Buscar documento</label>' +
-      '<input type="search" id="fBuscaDoc" placeholder="Buscar por título…" value="' + esc(filtroDoc.q) + '">' +
+      '<section class="pp-filtros-painel" role="search" aria-label="Filtros do repositório de documentos">' +
+      '<div class="filtros-campos">' +
+      selectHtml({ chave: 'tipoDoc', id: 'fTipoDoc', rotulo: 'Tipo de documento',
+        placeholder: 'Todos os tipos', selecionados: filtroDoc.tipo ? [filtroDoc.tipo] : [],
+        opcoes: Object.keys(tipos).sort().map(function (t) { return { v: t, r: t }; }) }) +
+      buscaCampoHtml('fBuscaDoc', 'Buscar documento', 'Título do documento', filtroDoc.q) +
+      '</div></section>' +
+      '<div class="br-table ' + esc(filtroDoc.dens) + '" id="tabelaDocs" data-search="data-search" data-selection="data-selection" data-collapse="data-collapse">' +
+      /* Barra de Título (item 1): título + ações utilitárias. Acima de 4
+         ações a spec pede menu flutuante — densidade vai no ellipsis-v. */
+      '<div class="table-header">' +
+      '<div class="top-bar">' +
+      '<div class="table-title">Documentos publicados</div>' +
+      '<div class="actions-trigger text-nowrap">' +
+      '<button class="br-button circle small" type="button" id="docsDensBtn" title="Ver mais opções" data-toggle="dropdown" data-target="docsDensMenu" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button>' +
+      '<div class="br-list dd-target" id="docsDensMenu" role="menu" aria-labelledby="docsDensBtn" hidden>' +
+      [['small', 'Densidade alta'], ['medium', 'Densidade média'], ['large', 'Densidade baixa']].map(function (o, i) {
+        return (i ? '<span class="br-divider" role="presentation"></span>' : '') +
+          '<button class="br-item" type="button" role="menuitem" data-density="' + o[0] + '"' +
+          (filtroDoc.dens === o[0] ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
+      }).join('') + '</div></div>' +
+      '<div class="search-trigger"><button class="br-button circle small" type="button" id="docsSearchBtn" data-toggle="search" aria-label="Abrir busca" aria-controls="docsSearchInput" aria-expanded="false"><i class="fas fa-search" aria-hidden="true"></i></button></div>' +
       '</div>' +
-      '<div class="pp-card"><div class="pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th><th>Documento</th><th>Vinculado a</th><th>Data</th><th>Situação</th></tr></thead><tbody>' +
-      (lista.length ? pagFatia('docs', lista, 5).map(function (x) {
+      /* Busca (Comportamento 6): cobre a barra de título enquanto ativa. */
+      '<div class="search-bar' + (filtroDoc.busca ? ' show' : '') + '">' +
+      '<div class="br-input"><label for="docsSearchInput">Buscar na tabela</label>' +
+      '<input id="docsSearchInput" type="search" placeholder="Buscar na tabela" value="' + esc(filtroDoc.busca) + '">' +
+      '<button class="br-button circle small" type="button" aria-label="Buscar"><i class="fas fa-search" aria-hidden="true"></i></button></div>' +
+      '<button class="br-button circle small" type="button" data-dismiss="search" aria-label="Fechar busca"><i class="fas fa-times" aria-hidden="true"></i></button>' +
+      '</div>' +
+      /* Barra Contextual (item 2): surge sob a barra de título ao
+         selecionar linhas, com contagem e ações contextuais. */
+      '<div class="selected-bar' + (nSel ? ' show' : '') + '">' +
+      '<div class="info"><span class="count">' + nSel + '</span><span class="text">' + (nSel === 1 ? 'item selecionado' : 'itens selecionados') + '</span></div>' +
+      '<button class="br-button circle small" type="button" id="docsSelExport" aria-label="Exportar seleção em CSV" title="Exportar seleção em CSV"><i class="fas fa-file-csv" aria-hidden="true"></i></button>' +
+      '<button class="br-button circle small" type="button" id="docsSelClear" aria-label="Limpar seleção" title="Limpar seleção"><i class="fas fa-times" aria-hidden="true"></i></button>' +
+      '</div></div>' +
+      '<div class="responsive"><table><caption>Documentos publicados</caption><thead><tr>' +
+      '<td class="column-collapse" aria-hidden="true"></td>' +
+      '<th class="column-checkbox" scope="col"><div class="br-checkbox hidden-label">' +
+      '<input id="docsCheckAll" name="docsCheckAll" type="checkbox" aria-label="Selecionar tudo"' + (todosSel ? ' checked' : '') + '>' +
+      '<label for="docsCheckAll">Selecionar todas as linhas</label></div></th>' +
+      COLS_DOC.map(function (c) {
+        var dir = filtroDoc.ordem === c.k ? filtroDoc.dir : '';
+        var ic = dir === 'asc' ? 'fa-sort-up' : dir === 'desc' ? 'fa-sort-down' : 'fa-sort';
+        return '<th scope="col"' + (dir ? ' aria-sort="' + (dir === 'asc' ? 'ascending' : 'descending') + '"' : '') + '>' +
+          '<button type="button" class="sort-btn" data-sort="' + c.k + '" aria-label="Ordenar por ' + esc(c.r) + '">' +
+          esc(c.r) + '<i class="fas ' + ic + '" aria-hidden="true"></i></button></th>';
+      }).join('') + '</tr></thead><tbody>' +
+      (pagina.length ? pagina.map(function (x, i) {
         var tit = x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '<span class="sr-only"> (abre em nova aba)</span></a>' : esc(x.Titulo);
-        return '<tr><td class="cod">' + esc(x.ID) + '</td><td><strong>' + tit + '</strong><div class="pp-muted" style="font-size:var(--fs-sm)">' +
+        var cid = 'doc-col-' + i, chk = 'doc-chk-' + i, marcada = !!filtroDoc.sel[x.ID];
+        return '<tr' + (marcada ? ' class="is-selected"' : '') + '>' +
+          '<td class="column-collapse"><button class="br-button circle small" type="button" data-toggle="collapse" data-target="' + cid + '" aria-expanded="false" aria-controls="' + cid + '" aria-label="Expandir ou retrair ' + esc(x.Titulo) + '"><i class="fas fa-chevron-down" aria-hidden="true"></i></button></td>' +
+          '<td><div class="br-checkbox hidden-label"><input id="' + chk + '" name="' + chk + '" type="checkbox" data-doc="' + esc(x.ID) + '" aria-label="Selecionar ' + esc(x.Titulo) + '"' + (marcada ? ' checked' : '') + '><label for="' + chk + '">Selecionar linha</label></div></td>' +
+          '<td class="cod" data-th="ID">' + esc(x.ID) + '</td>' +
+          '<td data-th="Documento"><strong>' + tit + '</strong><div class="pp-muted" style="font-size:var(--fs-sm)">' +
           esc(x.Tipo_Documento || '') + (x.Versao ? ' · v' + esc(x.Versao) : '') + '</div></td>' +
-          '<td>' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td><td>' + fmtData(x.Data) + '</td><td>' + esc(x.Situacao || '—') + '</td></tr>';
-      }).join('') : '<tr><td colspan="5" class="pp-vazio">Nenhum documento corresponde aos filtros.</td></tr>') +
-      '</tbody></table></div>' + paginacaoHtml('docs', lista.length, 'documentos') + '</div>';
+          '<td data-th="Vinculado a">' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' +
+          '<td data-th="Data">' + fmtData(x.Data) + '</td>' +
+          '<td data-th="Situação">' + esc(x.Situacao || '—') + '</td></tr>' +
+          '<tr class="collapse"><td id="' + cid + '" colspan="7" hidden>' +
+          '<div class="br-list" role="list">' +
+          '<div class="br-item" role="listitem"><strong>Tipo:</strong> ' + esc(x.Tipo_Documento || '—') + '</div>' +
+          '<div class="br-item" role="listitem"><strong>Versão:</strong> ' + esc(x.Versao || '—') + '</div>' +
+          '<div class="br-item" role="listitem"><strong>Situação:</strong> ' + esc(x.Situacao || '—') + '</div>' +
+          '</div></td></tr>';
+      }).join('') : '<tr><td colspan="7" class="pp-vazio">Nenhum documento corresponde aos filtros.</td></tr>') +
+      '</tbody></table></div>' +
+      '<div class="table-footer">' + paginacaoHtml('docs', lista.length, 'documentos') + '</div></div>';
     ligarPaginacao(el, renderDocumentos);
-    $('#fTipoDoc').onchange = function () { filtroDoc.tipo = this.value; renderDocumentos(); };
-    $('#fBuscaDoc').oninput = function () { filtroDoc.q = this.value; renderDocumentos(); var n = $('#fBuscaDoc'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+    window.BRSelectInit(el, function (chave, valores) {
+      filtroDoc.tipo = valores[0] || '';
+      PAG.docs.pag = 1;
+      renderDocumentos();
+    });
+    $('#fBuscaDoc').oninput = function () { filtroDoc.q = this.value; PAG.docs.pag = 1; renderDocumentos(); var n = $('#fBuscaDoc'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+
+    /* Comportamentos do Componente Table: densidade, busca na barra de
+       título, ordenação por coluna, seleção de linhas com barra contextual
+       e expansão de linha. */
+    var tabela = $('#tabelaDocs', el);
+    $all('[data-density]', tabela).forEach(function (b) {
+      b.onclick = function () { filtroDoc.dens = b.getAttribute('data-density'); renderDocumentos(); };
+    });
+    var cabec = tabela.querySelector('.table-header');
+    var barraBusca = tabela.querySelector('.search-bar');
+    var campoBusca = $('#docsSearchInput', tabela);
+    function abrirBusca(v) {
+      barraBusca.classList.toggle('show', v);
+      cabec.classList.toggle('show', v);
+      $('#docsSearchBtn', tabela).setAttribute('aria-expanded', String(v));
+      if (v) campoBusca.focus();
+    }
+    if (filtroDoc.busca) { cabec.classList.add('show'); campoBusca.focus(); campoBusca.setSelectionRange(campoBusca.value.length, campoBusca.value.length); }
+    $('#docsSearchBtn', tabela).onclick = function () { abrirBusca(true); };
+    tabela.querySelector('[data-dismiss="search"]').onclick = function () {
+      filtroDoc.busca = ''; PAG.docs.pag = 1; renderDocumentos();
+    };
+    campoBusca.oninput = function () { filtroDoc.busca = this.value; PAG.docs.pag = 1; renderDocumentos(); };
+    campoBusca.onkeydown = function (ev) { if (ev.key === 'Escape') { filtroDoc.busca = ''; PAG.docs.pag = 1; renderDocumentos(); } };
+    $all('.sort-btn', tabela).forEach(function (b) {
+      b.onclick = function () {
+        var c = b.getAttribute('data-sort');
+        if (filtroDoc.ordem !== c) { filtroDoc.ordem = c; filtroDoc.dir = 'asc'; }
+        else if (filtroDoc.dir === 'asc') filtroDoc.dir = 'desc';
+        else { filtroDoc.ordem = ''; filtroDoc.dir = ''; }
+        renderDocumentos();
+      };
+    });
+    $all('input[data-doc]', tabela).forEach(function (c) {
+      c.onchange = function () { filtroDoc.sel[c.getAttribute('data-doc')] = c.checked; renderDocumentos(); };
+    });
+    $('#docsCheckAll', tabela).onchange = function () {
+      var on = this.checked;
+      pagina.forEach(function (x) { filtroDoc.sel[x.ID] = on; });
+      renderDocumentos();
+    };
+    var limparSel = $('#docsSelClear', tabela);
+    if (limparSel) limparSel.onclick = function () { filtroDoc.sel = {}; renderDocumentos(); };
+    var exportSel = $('#docsSelExport', tabela);
+    if (exportSel) exportSel.onclick = function () {
+      var linhas = lista.filter(function (x) { return filtroDoc.sel[x.ID]; });
+      baixarCsv('documentos-selecionados.csv',
+        [COLS_DOC.map(function (c) { return c.r; })].concat(linhas.map(function (x) {
+          return COLS_DOC.map(function (c) { return String(x[c.k] == null ? '' : x[c.k]); });
+        })));
+    };
+    // A expansão de linha fica a cargo do listener global de
+    // data-toggle="collapse" (govbr-ui.js), que já alterna hidden,
+    // aria-expanded e o ícone chevron — um handler local aqui dispararia
+    // junto e reverteria o estado no mesmo clique.
   }
   function renderRiscos() {
     var el = $('#viewRiscos');
@@ -1882,11 +2057,16 @@
           '</li>';
       }).join('') + '</ol></section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Instrumentos, modelos e ferramentas</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-filtros">' +
-      '<select id="repoCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option>' + cats.map(function (c) { return '<option' + (filtroRepo.cat === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select>' +
-      '<select id="repoFase" aria-label="Filtrar por fase do ciclo"><option value="">Todas as fases do ciclo</option>' + fases.map(function (c) { return '<option' + (filtroRepo.fase === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select>' +
-      '<input type="search" id="repoQ" placeholder="Buscar no repositório…" value="' + esc(filtroRepo.q) + '" aria-label="Buscar no repositório">' +
-      '</div>' +
+      '<section class="pp-filtros-painel" role="search" aria-label="Filtros de instrumentos, modelos e ferramentas">' +
+      '<div class="filtros-campos">' +
+      selectHtml({ chave: 'repoCat', id: 'repoCat', rotulo: 'Categoria',
+        placeholder: 'Todas as categorias', selecionados: filtroRepo.cat ? [filtroRepo.cat] : [],
+        opcoes: cats.map(function (c) { return { v: c, r: c }; }) }) +
+      selectHtml({ chave: 'repoFase', id: 'repoFase', rotulo: 'Fase do ciclo',
+        placeholder: 'Todas as fases', selecionados: filtroRepo.fase ? [filtroRepo.fase] : [],
+        opcoes: fases.map(function (c) { return { v: c, r: c }; }) }) +
+      buscaCampoHtml('repoQ', 'Buscar no repositório', 'Título, código ou descrição', filtroRepo.q) +
+      '</div></section>' +
       (lista.length ? '<div class="repo-grid">' + pagFatia('repo', lista, 6).map(cardRepo).join('') + '</div>' +
         paginacaoHtml('repo', lista.length, 'itens', [6, 12, 24, 48]) : '<p class="pp-vazio">Nenhum item com esses filtros.</p>') + '</section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Metodologia em resumo</h2><div class="linha" aria-hidden="true"></div></div>' +
@@ -1902,10 +2082,14 @@
       '</div></div>' +
       '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div><div class="close"><button class="br-button circle small" type="button" aria-label="Fechar a mensagem"><i class="fas fa-times" aria-hidden="true"></i></button></div></div></section>';
     ligarPaginacao(el, renderRepositorio);
-    var f1 = $('#repoCat'), f2 = $('#repoFase'), f3 = $('#repoQ');
-    if (f1) f1.onchange = function () { filtroRepo.cat = this.value; renderRepositorio(); };
-    if (f2) f2.onchange = function () { filtroRepo.fase = this.value; renderRepositorio(); };
-    if (f3) f3.oninput = function () { filtroRepo.q = this.value; renderRepositorio(); var n = $('#repoQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+    window.BRSelectInit(el, function (chave, valores) {
+      if (chave === 'repoCat') filtroRepo.cat = valores[0] || '';
+      else filtroRepo.fase = valores[0] || '';
+      PAG.repo.pag = 1;
+      renderRepositorio();
+    });
+    var f3 = $('#repoQ');
+    if (f3) f3.oninput = function () { filtroRepo.q = this.value; PAG.repo.pag = 1; renderRepositorio(); var n = $('#repoQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
   }
 
   /* ── TELA: NUGEP ──────────────────────────────────────────────────── */
@@ -1966,11 +2150,20 @@
     pagina.forEach(function (t) { var L = String(t.Termo || '').charAt(0).toUpperCase(); (porLetra[L] = porLetra[L] || []).push(t); });
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>Glossário de Gestão de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-filtros"><input type="search" id="glossQ" placeholder="Buscar termo, sigla ou conceito (ex.: SIPOC, KPI, raia)…" value="' + esc(filtroGloss.q) + '" aria-label="Buscar termo" style="flex:1;min-width:230px">' +
-      '<select id="glossCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias (' + todos.length + ')</option>' +
-      cats.map(function (c) { var n = todos.filter(function (t) { return t.Categoria === c; }).length; return '<option value="' + esc(c) + '"' + (filtroGloss.cat === c ? ' selected' : '') + '>' + esc(c) + ' (' + n + ')</option>'; }).join('') + '</select></div>' +
+      '<section class="pp-filtros-painel" role="search" aria-label="Filtros do glossário">' +
+      '<div class="filtros-campos">' +
+      buscaCampoHtml('glossQ', 'Buscar termo', 'Termo, sigla ou conceito (ex.: SIPOC, KPI, raia)', filtroGloss.q) +
+      selectHtml({ chave: 'glossCat', id: 'glossCat', rotulo: 'Categoria',
+        placeholder: 'Todas as categorias (' + todos.length + ')', selecionados: filtroGloss.cat ? [filtroGloss.cat] : [],
+        opcoes: cats.map(function (c) {
+          var n = todos.filter(function (t) { return t.Categoria === c; }).length;
+          return { v: c, r: c + ' (' + n + ')' };
+        }) }) +
+      '</div>' +
+      '<span class="br-divider" role="presentation"></span>' +
       '<div class="gloss-abc" role="group" aria-label="Filtrar por letra"><button type="button" class="' + (filtroGloss.letra ? '' : 'ativo') + '" data-letra="">Todos</button>' +
       abc.map(function (L) { return '<button type="button" data-letra="' + L + '" class="' + (filtroGloss.letra === L ? 'ativo' : '') + '"' + (letrasDisp[L] ? '' : ' disabled') + '>' + L + '</button>'; }).join('') + '</div>' +
+      '</section>' +
       (lista.length ? Object.keys(porLetra).sort().map(function (L) {
         return '<h3 class="gloss-letra">' + L + '</h3><div class="gloss-grid">' + porLetra[L].map(function (t) {
           return '<article class="gloss-card"><div class="gloss-topo"><h4>' + esc(t.Termo) + '</h4><span class="gloss-cat">' + esc(t.Categoria || '') + '</span></div>' +
@@ -1982,9 +2175,13 @@
       }).join('') : '<p class="pp-vazio">Nenhum termo encontrado com esses filtros.</p>') +
       paginacaoHtml('gloss', lista.length, 'termos', [12, 24, 48, 96]);
     ligarPaginacao(el, renderGlossario);
-    var q = $('#glossQ'), c = $('#glossCat');
-    if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; renderGlossario(); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
-    if (c) c.onchange = function () { filtroGloss.cat = this.value; renderGlossario(); };
+    window.BRSelectInit(el, function (chave, valores) {
+      filtroGloss.cat = valores[0] || '';
+      PAG.gloss.pag = 1;
+      renderGlossario();
+    });
+    var q = $('#glossQ');
+    if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; PAG.gloss.pag = 1; renderGlossario(); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
     $all('.gloss-abc button', el).forEach(function (b) { b.onclick = function () { filtroGloss.letra = b.getAttribute('data-letra'); renderGlossario(); }; });
     $all('.gloss-rel', el).forEach(function (b) { b.onclick = function () { filtroGloss.q = b.getAttribute('data-termo'); filtroGloss.letra = ''; filtroGloss.cat = ''; renderGlossario(); }; });
   }
