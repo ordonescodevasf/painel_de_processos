@@ -364,15 +364,67 @@
     if (!pares.length) return '<span class="pp-vazio">—</span>';
     return '<div class="vinculo-lista">' + pares.map(function (par) { return linkVinculo(par[0], par[1]); }).join('') + '</div>';
   }
+  /* ── BREADCRUMB (br-breadcrumb, gov.br DS) ────────────────────────────
+     Anatomia completa: 1 Botão (Home, terciário circular), 2 Separador
+     (chevron-right decorativo), 3 Link (cada ancestral), 4 Título da
+     página atual (texto comum, aria-current="page", não é link).
+     Elementos opcionais também implementados: Truncamento a partir de 5
+     itens, com Botão Terciário folder-plus abrindo os links intermediários
+     em list dropdown, e tooltip (title) nos rótulos que podem truncar. */
   function breadcrumb(trilha) {   // [{rotulo, href?}]
-    return '<nav class="pp-breadcrumb" aria-label="Você está em">' +
-      trilha.map(function (t, i) {
-        var sep = i ? '<i class="fas fa-chevron-right" aria-hidden="true"></i>' : '';
-        return sep + (t.href
-          ? '<a href="' + t.href + '">' + esc(t.rotulo) + '</a>'
-          : '<span class="atual" aria-current="page">' + esc(t.rotulo) + '</span>');
+    var itens = trilha.slice();
+    var home = itens.shift() || { href: '#/' };
+    var atual = itens.pop() || home;
+    var oculto = [];
+    // Nunca truncamos o Home, a última ancestral nem o título atual.
+    if (itens.length + 2 > 5) {
+      oculto = itens.slice(0, itens.length - 1);
+      itens = itens.slice(-1);
+    }
+    var sep = '<i class="icon fas fa-chevron-right" aria-hidden="true"></i>';
+    var html = '<nav class="br-breadcrumb" aria-label="Breadcrumbs">' +
+      '<ol class="crumb-list" role="list">' +
+      '<li class="crumb home"><a class="br-button circle" href="' + (home.href || '#/') +
+      '" aria-label="Página inicial" title="Página inicial"><span class="sr-only">Página inicial</span>' +
+      '<i class="fas fa-home" aria-hidden="true"></i></a></li>';
+    if (oculto.length) {
+      html += '<li class="crumb menu-mobil">' + sep +
+        '<button class="br-button circle" type="button" data-crumb-menu aria-expanded="false"' +
+        ' aria-label="Abrir menu flutuante" title="Abrir menu flutuante">' +
+        '<span class="sr-only">Botão Menu</span><i class="fas fa-folder-plus" aria-hidden="true"></i>' +
+        '</button></li>';
+    }
+    html += itens.map(function (t) {
+      return '<li class="crumb">' + sep + (t.href
+        ? '<a href="' + t.href + '" title="' + esc(t.rotulo) + '">' + esc(t.rotulo) + '</a>'
+        : '<span title="' + esc(t.rotulo) + '">' + esc(t.rotulo) + '</span>') + '</li>';
+    }).join('');
+    html += '<li class="crumb" data-active="active">' + sep +
+      '<span tabindex="0" aria-current="page" title="' + esc(atual.rotulo) + '">' +
+      esc(atual.rotulo) + '</span></li></ol>';
+    if (oculto.length) {
+      html += '<nav class="br-card" aria-label="Níveis anteriores" hidden>' + oculto.map(function (t) {
+        return '<div class="br-item"><a href="' + (t.href || '#/') + '" title="' + esc(t.rotulo) + '">' +
+          esc(t.rotulo) + '</a></div>';
       }).join('') + '</nav>';
+    }
+    return html + '</nav>';
   }
+  // Menu flutuante do truncamento: alterna folder-plus/folder-minus.
+  document.addEventListener('click', function (ev) {
+    var bt = ev.target.closest ? ev.target.closest('[data-crumb-menu]') : null;
+    document.querySelectorAll('.br-breadcrumb > .br-card').forEach(function (card) {
+      var dono = card.parentNode.querySelector('[data-crumb-menu]');
+      var abrir = bt && dono === bt && card.hasAttribute('hidden');
+      if (abrir) { card.removeAttribute('hidden'); } else { card.setAttribute('hidden', 'hidden'); }
+      if (dono) {
+        dono.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+        dono.setAttribute('aria-label', abrir ? 'Fechar menu flutuante' : 'Abrir menu flutuante');
+        var ico = dono.querySelector('i');
+        if (ico) ico.className = 'fas ' + (abrir ? 'fa-folder-minus' : 'fa-folder-plus');
+      }
+    });
+  });
   /* ── Marcos do mapeamento (M1–M10) ──
      Nesta versão: "Reunião de contextualização" virou "Conhecer o processo";
      "Procedimento elaborado" saiu; "Processo publicado" (antes "Publicado no
@@ -650,15 +702,36 @@
     return lista.slice((e.pag - 1) * e.porPag, e.pag * e.porPag);
   }
   // Janela de páginas: primeira, última, a atual e as vizinhas; o resto
-  // vira reticências (módulo 3). Nunca passa de 7 identificadores.
+  // vira Botão Reticências (módulo 3), que abre em dropdown as páginas
+  // ocultas — por isso cada lacuna carrega a lista que representa.
   function pagJanela(atual, total) {
-    if (total <= 7) { var t = []; for (var i = 1; i <= total; i++) t.push(i); return t; }
-    var s = [1];
-    if (atual > 3) s.push('…');
-    for (var k = Math.max(2, atual - 1); k <= Math.min(total - 1, atual + 1); k++) s.push(k);
-    if (atual < total - 2) s.push('…');
-    s.push(total);
-    return s;
+    var t = [], i;
+    if (total <= 7) { for (i = 1; i <= total; i++) t.push(i); return t; }
+    function faixa(a, b) { var r = []; for (var k = a; k <= b; k++) r.push(k); return r; }
+    var ini = Math.max(2, atual - 1), fim = Math.min(total - 1, atual + 1);
+    t.push(1);
+    if (ini > 2) t.push({ ocultas: faixa(2, ini - 1) });
+    for (i = ini; i <= fim; i++) t.push(i);
+    if (fim < total - 1) t.push({ ocultas: faixa(fim + 1, total - 1) });
+    t.push(total);
+    return t;
+  }
+  // Módulos de opção (Exibir e Página) usam o Select personalizado do DS:
+  // campo em densidade alta sem contorno + lista de opções em br-radio.
+  function pagSelectHtml(id, rotulo, ops, valor, marca) {
+    return '<div class="br-select" data-pag-select><div class="br-input">' +
+      '<label for="' + id + '">' + rotulo + '</label>' +
+      '<input id="' + id + '" type="text" readonly value="' + valor + '" ' + marca +
+      ' role="combobox" aria-expanded="false" aria-controls="' + id + '-lista">' +
+      '<button class="br-button" type="button" tabindex="-1" data-trigger aria-label="Exibir lista">' +
+      '<i class="fas fa-angle-down" aria-hidden="true"></i></button></div>' +
+      '<div class="br-list" id="' + id + '-lista" role="listbox" tabindex="0">' +
+      ops.map(function (n) {
+        var oid = id + '-' + n, sel = n === valor;
+        return '<div class="br-item' + (sel ? ' selected' : '') + '" tabindex="-1" role="option" aria-selected="' +
+          sel + '"><div class="br-radio"><input id="' + oid + '" type="radio" name="' + id + '-op" value="' + n + '"' +
+          (sel ? ' checked' : '') + '><label for="' + oid + '">' + n + '</label></div></div>';
+      }).join('') + '</div></div>';
   }
   function paginacaoHtml(chave, total, rotulo, opcoes) {
     if (total <= 1) return '';
@@ -666,29 +739,36 @@
     var de = (e.pag - 1) * e.porPag + 1, ate = Math.min(total, e.pag * e.porPag);
     var ops = opcoes || [5, 10, 20, 50];
     var pgs = pagJanela(e.pag, tot).map(function (n) {
-      if (n === '…') return '<li><span class="page ellipsis" aria-hidden="true">…</span></li>';
-      return '<li><button type="button" class="page" data-pag-ir="' + n + '"' +
+      if (typeof n === 'object') {
+        return '<li class="pagination-ellipsis"><button type="button" class="br-button circle" data-pag-reticencias' +
+          ' aria-expanded="false" aria-haspopup="true" aria-label="Abrir ou fechar a lista de páginas ocultas">' +
+          '<i class="fas fa-ellipsis-h" aria-hidden="true"></i></button><div class="br-list" role="menu" hidden>' +
+          n.ocultas.map(function (p) {
+            return '<button type="button" class="br-item" role="menuitem" data-pag-ir="' + p +
+              '" aria-label="Ir para a página ' + p + '">' + p + '</button>';
+          }).join('') + '</div></li>';
+      }
+      return '<li><button type="button" class="page" data-pag-ir="' + n + '" aria-label="Ir para a página ' + n + '"' +
         (n === e.pag ? ' aria-current="page"' : '') + '>' + n + '</button></li>';
     }).join('');
-    return '<nav class="br-pagination" data-pag="' + esc(chave) + '" aria-label="Paginação — ' + esc(rotulo) + '">' +
-      '<div class="pagination-per-page"><label for="pag-' + esc(chave) + '-exibir">Exibir</label>' +
-      '<select id="pag-' + esc(chave) + '-exibir" data-pag-por>' +
-      ops.map(function (n) { return '<option value="' + n + '"' + (n === e.porPag ? ' selected' : '') + '>' + n + '</option>'; }).join('') +
-      '</select></div>' +
+    return '<nav class="br-pagination" data-pag="' + esc(chave) + '" aria-label="Paginação — ' + esc(rotulo) + '"' +
+      ' data-total="' + tot + '" data-current="' + e.pag + '" data-per-page="' + e.porPag + '">' +
+      '<div class="pagination-per-page">' +
+      pagSelectHtml('pag-' + esc(chave) + '-exibir', 'Exibir', ops, e.porPag, 'data-pag-por') + '</div>' +
       '<hr class="vertical-sep">' +
       '<span class="pagination-information"><span class="current">' + de + '–' + ate +
       '</span> de <span class="total">' + total + '</span> ' + esc(rotulo) + '</span>' +
       '<ul class="pagination-pages">' + pgs + '</ul>' +
       '<hr class="vertical-sep">' +
-      '<div class="pagination-go-to-page"><label for="pag-' + esc(chave) + '-ir">Página</label>' +
-      '<select id="pag-' + esc(chave) + '-ir" data-pag-atalho>' +
-      (function () { var o = ''; for (var i = 1; i <= tot; i++) o += '<option value="' + i + '"' + (i === e.pag ? ' selected' : '') + '>' + i + '</option>'; return o; })() +
-      '</select></div>' +
+      '<div class="pagination-go-to-page">' +
+      pagSelectHtml('pag-' + esc(chave) + '-ir', 'Página',
+        (function () { var o = []; for (var i = 1; i <= tot; i++) o.push(i); return o; })(), e.pag, 'data-pag-atalho') +
+      '</div>' +
       '<div class="pagination-arrows">' +
-      '<button type="button" class="br-button circle" data-pag-passo="-1"' + (e.pag === 1 ? ' disabled' : '') +
-      ' aria-label="Página anterior"><i class="fas fa-angle-left" aria-hidden="true"></i></button>' +
-      '<button type="button" class="br-button circle" data-pag-passo="1"' + (e.pag === tot ? ' disabled' : '') +
-      ' aria-label="Próxima página"><i class="fas fa-angle-right" aria-hidden="true"></i></button>' +
+      '<button type="button" class="br-button circle" data-previous-page data-pag-passo="-1"' + (e.pag === 1 ? ' disabled' : '') +
+      ' aria-label="Voltar página"><i class="fas fa-angle-left" aria-hidden="true"></i></button>' +
+      '<button type="button" class="br-button circle" data-next-page data-pag-passo="1"' + (e.pag === tot ? ' disabled' : '') +
+      ' aria-label="Página seguinte"><i class="fas fa-angle-right" aria-hidden="true"></i></button>' +
       '</div></nav>';
   }
   // Liga os seis módulos de todas as paginações dentro de um container.
@@ -704,9 +784,43 @@
         b.onclick = function () { vai(e.pag + (+b.getAttribute('data-pag-passo'))); };
       });
       var sel = nav.querySelector('[data-pag-por]');
-      if (sel) sel.onchange = function () { e.porPag = +this.value; e.pag = 1; redesenhar(); };
       var atalho = nav.querySelector('[data-pag-atalho]');
-      if (atalho) atalho.onchange = function () { vai(+this.value); };
+      // Select personalizado: abre/fecha a lista, aplica a opção escolhida
+      // e fecha com Esc (recomendação de acessibilidade do componente).
+      $all('[data-pag-select]', nav).forEach(function (bs) {
+        var campo = bs.querySelector('input[type="text"]');
+        var lista = bs.querySelector('.br-list');
+        function abrir(v) {
+          if (v) lista.setAttribute('expanded', ''); else lista.removeAttribute('expanded');
+          campo.setAttribute('aria-expanded', String(!!v));
+        }
+        bs.querySelector('[data-trigger]').onclick = function () { abrir(!lista.hasAttribute('expanded')); };
+        campo.onclick = function () { abrir(!lista.hasAttribute('expanded')); };
+        campo.onkeydown = function (ev) {
+          if (ev.key === 'Escape') abrir(false);
+          if (ev.key === 'ArrowDown') { abrir(true); ev.preventDefault(); }
+        };
+        lista.onkeydown = function (ev) { if (ev.key === 'Escape') { abrir(false); campo.focus(); } };
+        $all('.br-radio input', lista).forEach(function (r) {
+          r.onchange = function () {
+            abrir(false);
+            if (campo === sel) { e.porPag = +r.value; e.pag = 1; redesenhar(); }
+            else if (campo === atalho) { vai(+r.value); }
+          };
+        });
+      });
+      // Botão Reticências: dropdown com as páginas ocultas.
+      $all('[data-pag-reticencias]', nav).forEach(function (b) {
+        var lista = b.nextElementSibling;
+        b.onclick = function () {
+          var aberto = !lista.hidden;
+          $all('.pagination-ellipsis .br-list', nav).forEach(function (l) { l.hidden = true; });
+          $all('[data-pag-reticencias]', nav).forEach(function (o) { o.setAttribute('aria-expanded', 'false'); });
+          lista.hidden = aberto;
+          b.setAttribute('aria-expanded', String(!aberto));
+        };
+        lista.onkeydown = function (ev) { if (ev.key === 'Escape') { lista.hidden = true; b.setAttribute('aria-expanded', 'false'); b.focus(); } };
+      });
     });
   }
 
@@ -876,10 +990,6 @@
       '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="margin-top:calc(var(--sp2) * -1);margin-bottom:var(--sp3);font-size:var(--fs-sm);text-wrap:pretty">' + txResp(
-        'Clique em um macroprocesso para abrir a ficha e navegar até os processos, subprocessos, atividades e tarefas.',
-        'Consulte a hierarquia completa — do macroprocesso à tarefa — com fichas, diagramas BPMN, documentos, riscos e indicadores. Clique em um macroprocesso para abrir a ficha e navegar até os processos, subprocessos, atividades e tarefas.',
-        'Consulte a hierarquia completa — do macroprocesso à tarefa — com fichas, diagramas BPMN (Bizagi), documentos, riscos e indicadores de cada mapeamento realizado. Clique em um macroprocesso para abrir a ficha e navegar até os processos, subprocessos, atividades e tarefas.') + '</p>' +
       '<div class="cadeia">' +
       '<aside class="cv-aside cv-missao"><h3><i class="fas fa-flag" aria-hidden="true"></i> Missão</h3><p>' + esc(INSTITUCIONAL.missao) + '</p><h3><i class="fas fa-eye" aria-hidden="true"></i> Visão</h3><p>' + esc(INSTITUCIONAL.visao) + '</p></aside>' +
       '<div class="cv-centro">' + blocoCadeia('Macroprocessos Gerenciais', 'cat-gerencial', 'fa-compass', ger) +
@@ -891,7 +1001,142 @@
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
-  var filtroCat = { macro: '', status: '', marco: '', q: '' };
+  var filtroCat = { macro: [], status: [], marco: '', q: '', de: '', ate: '', ordem: 'codigo' };
+  /* ── SELECT (br-select) ── Anatomia: 1 Input (obrigatório), 2 Button
+     terciário de abrir/fechar (obrigatório), 3 List de itens (obrigatório),
+     4 Modos de seleção (obrigatório — no múltiplo: total, intermediária e
+     sem seleção), 5 Ícone search (opcional). O tipo simples usa br-radio;
+     o tipo múltiplo usa br-checkbox e ganha o item destacado
+     "Selecionar todos". ── */
+  function selectHtml(cfg) {
+    var id = cfg.id, multi = !!cfg.multiplo;
+    var sel = cfg.selecionados || [];
+    var itens = cfg.opcoes.map(function (o, i) {
+      var oid = id + '-op' + i, marcado = sel.indexOf(o.v) >= 0;
+      var campo = multi
+        ? '<div class="br-checkbox"><input id="' + oid + '" name="' + id + '-item" type="checkbox" value="' + esc(o.v) + '"' +
+          (marcado ? ' checked' : '') + '><label for="' + oid + '">' + esc(o.r) + '</label></div>'
+        : '<div class="br-radio"><input id="' + oid + '" name="' + id + '-item" type="radio" value="' + esc(o.v) + '"' +
+          (marcado ? ' checked' : '') + '><label for="' + oid + '">' + esc(o.r) + '</label></div>';
+      return '<div class="br-item' + (marcado ? ' selected' : '') + '" tabindex="-1" role="option" aria-selected="' + marcado + '">' + campo + '</div>';
+    }).join('');
+    var todos = '';
+    if (multi) {
+      var tudo = cfg.opcoes.length > 0 && sel.length === cfg.opcoes.length;
+      todos = '<div class="br-item highlighted" data-all="data-all" tabindex="-1" role="option" aria-selected="' + tudo + '">' +
+        '<div class="br-checkbox"><input id="' + id + '-all" name="' + id + '-all" type="checkbox"' + (tudo ? ' checked' : '') + '>' +
+        '<label for="' + id + '-all">' + (tudo ? 'Desselecionar todos' : 'Selecionar todos') + '</label></div></div>';
+    }
+    return '<div class="br-select"' + (multi ? ' multiple="multiple"' : '') + ' data-select="' + esc(cfg.chave) + '">' +
+      '<div class="br-input has-icon"><label for="' + id + '">' + esc(cfg.rotulo) + '</label>' +
+      '<div class="input-group"><div class="input-icon"><i class="fas fa-search" aria-hidden="true"></i></div>' +
+      '<input id="' + id + '" type="text" placeholder="' + esc(cfg.placeholder || '') + '" autocomplete="off"' +
+      ' role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="' + id + '-list"' +
+      (multi ? ' aria-multiselectable="true"' : '') + '></div>' +
+      '<button class="br-button" type="button" data-trigger="data-trigger" tabindex="-1" aria-label="Exibir lista"' +
+      ' aria-controls="' + id + '-list" aria-expanded="false"><i class="fas fa-angle-down" aria-hidden="true"></i></button></div>' +
+      '<div class="br-list" id="' + id + '-list" role="listbox" tabindex="-1" aria-label="Lista de opções">' +
+      todos + itens + '</div></div>';
+  }
+  /* Ordenação do portfólio (Componente Radio): escolha mutuamente
+     exclusiva, por isso caixa de opção e não caixa de seleção. O grupo usa
+     fieldset + legend para o leitor de tela identificar o propósito do
+     agrupamento, com uma opção marcada por padrão (checked). */
+  var ORDENS = [
+    { v: 'codigo', r: 'Código' },
+    { v: 'nome', r: 'Nome (A–Z)' },
+    { v: 'prazo', r: 'Prazo mais próximo' },
+    { v: 'avanco', r: 'Maior avanço' }
+  ];
+  function ordenarCat(lista) {
+    var c = lista.slice();
+    if (filtroCat.ordem === 'nome') c.sort(function (a, b) { return String(a.Nome).localeCompare(String(b.Nome), 'pt-BR'); });
+    else if (filtroCat.ordem === 'prazo') c.sort(function (a, b) {
+      return String(a.Prazo_Previsto || '9999').localeCompare(String(b.Prazo_Previsto || '9999'));
+    });
+    else if (filtroCat.ordem === 'avanco') c.sort(function (a, b) { return pctNorm(b.Percentual) - pctNorm(a.Percentual); });
+    else c.sort(function (a, b) { return String(a.Codigo).localeCompare(String(b.Codigo), 'pt-BR', { numeric: true }); });
+    return c;
+  }
+  function filtroOrdemHtml() {
+    return '<fieldset class="radio-group" id="fOrdemGroup">' +
+      '<legend class="label">Ordenar por</legend>' +
+      '<p class="help-text" id="fOrdemAjuda">Vale para os cartões e para a paginação abaixo.</p>' +
+      '<div class="radio-inline">' +
+      ORDENS.map(function (o) {
+        return '<div class="br-radio small"><input id="fOrdem-' + o.v + '" type="radio" name="fOrdem" value="' + o.v + '"' +
+          (filtroCat.ordem === o.v ? ' checked' : '') + ' aria-describedby="fOrdemAjuda">' +
+          '<label for="fOrdem-' + o.v + '">' + esc(o.r) + '</label></div>';
+      }).join('') +
+      '</div></fieldset>';
+  }
+  var STATUS_MAPEAMENTO = ['Não iniciado', 'Em andamento', 'Concluído', 'Suspenso'];
+  /* Lista de opções de status (Componente Checkbox): o filtro admite
+     mais de um status ao mesmo tempo — caso de uso do checkbox, e não
+     do select, que só aceitava um. Traz a anatomia completa: cabeçalho
+     (rótulo + informações adicionais), lista de opções com checkbox
+     "pai" (estado intermediário quando a seleção é parcial) e mensagem
+     de feedback contextual. Status sem nenhum processo no portfólio
+     aparecem desabilitados. */
+  // Conversões entre o formato do datepicker (dd/mm/aaaa) e o ISO usado
+  // nos dados da planilha
+  function isoBr(txt) {
+    var m = /^\s*(\d{2})\/(\d{2})\/(\d{4})/.exec(String(txt || ''));
+    return m ? m[3] + '-' + m[2] + '-' + m[1] : '';
+  }
+  function brIso(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ''));
+    return m ? m[3] + '/' + m[2] + '/' + m[1] : '';
+  }
+  function periodoTexto() {
+    if (!filtroCat.de && !filtroCat.ate) return '';
+    return brIso(filtroCat.de) + (filtroCat.ate ? ' até ' + brIso(filtroCat.ate) : '');
+  }
+  function filtroStatusHtml(base) {
+    var contagem = {};
+    STATUS_MAPEAMENTO.forEach(function (s) { contagem[slug(s)] = 0; });
+    base.forEach(function (p) {
+      var k = slug(p.Status_Mapeamento);
+      if (k in contagem) contagem[k] += 1;
+    });
+    var disponiveis = STATUS_MAPEAMENTO.filter(function (s) { return contagem[slug(s)] > 0; });
+    var marcados = filtroCat.status.length;
+    var todos = marcados > 0 && marcados === disponiveis.length;
+    return '<div class="checkbox-group" id="fStatusGroup">' +
+      '<p class="label" id="fStatusLabel">Status do mapeamento</p>' +
+      '<p class="text-down-01">Selecione um ou mais status. Sem seleção, o portfólio mostra todos.</p>' +
+      '<ul class="checkbox-list horizontal" role="group" aria-labelledby="fStatusLabel">' +
+      '<li><div class="br-checkbox"><input id="fStatus-todos" name="fStatus-todos" type="checkbox" data-parent="status"' +
+      (todos ? ' checked' : '') + (marcados && !todos ? ' indeterminate' : '') + '>' +
+      '<label for="fStatus-todos">Todos os status</label></div></li>' +
+      STATUS_MAPEAMENTO.map(function (s) {
+        var v = slug(s), n = contagem[v], off = n === 0;
+        return '<li><div class="br-checkbox' + (off ? ' disabled' : '') + '">' +
+          '<input id="fStatus-' + v + '" name="fStatus-' + v + '" type="checkbox" value="' + v + '" data-child="status"' +
+          (filtroCat.status.indexOf(v) >= 0 ? ' checked' : '') + (off ? ' disabled' : '') + '>' +
+          '<label for="fStatus-' + v + '">' + esc(s) + ' (' + n + ')</label></div></li>';
+      }).join('') + '</ul></div>';
+  }
+  function ligarFiltroStatus(el, aoMudar) {
+    var grupo = el.querySelector('#fStatusGroup');
+    if (!grupo) return;
+    var pai = grupo.querySelector('input[data-parent]');
+    var filhos = Array.prototype.slice.call(grupo.querySelectorAll('input[data-child]'));
+    var ativos = filhos.filter(function (c) { return !c.disabled; });
+    // estado intermediário: alguns filhos marcados, mas não todos
+    var marcados = ativos.filter(function (c) { return c.checked; }).length;
+    pai.indeterminate = marcados > 0 && marcados < ativos.length;
+    pai.onchange = function () {
+      filtroCat.status = pai.checked ? ativos.map(function (c) { return c.value; }) : [];
+      aoMudar();
+    };
+    filhos.forEach(function (c) {
+      c.onchange = function () {
+        filtroCat.status = ativos.filter(function (x) { return x.checked; }).map(function (x) { return x.value; });
+        aoMudar();
+      };
+    });
+  }
   function cardProcesso(p) {
     return '<a class="proc-card" href="#/p/' + encodeURIComponent(p.Codigo) + '">' +
       '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(codDisp(p.Codigo)) + '</span>' +
@@ -900,50 +1145,113 @@
       [p.Area_Responsavel || '', marcoRotulo(marcoAtual(p))].filter(Boolean).map(esc).join(' · ') + '</div>' +
       '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
   }
-  function renderCatalogo() {
-    var el = $('#viewCatalogo');
-    var lista = DADOS.procs.filter(function (p) {
-      if (filtroCat.macro && p.Macroprocesso !== filtroCat.macro) return false;
-      if (filtroCat.status && slug(p.Status_Mapeamento) !== filtroCat.status) return false;
+  function catFiltrada() {
+    return DADOS.procs.filter(function (p) {
+      if (filtroCat.macro.length && filtroCat.macro.indexOf(p.Macroprocesso) < 0) return false;
+      if (filtroCat.status.length && filtroCat.status.indexOf(slug(p.Status_Mapeamento)) < 0) return false;
       // filtro por marco: mostra os processos que estão NAQUELE marco (o
       // marco mais avançado que já concluíram), de M1 a M10.
       if (filtroCat.marco && String(marcoAtual(p)) !== filtroCat.marco) return false;
+      if (filtroCat.de || filtroCat.ate) {
+        var pz = p.Prazo_Previsto || '';
+        if (!pz) return false;
+        if (filtroCat.de && pz < filtroCat.de) return false;
+        if (filtroCat.ate && pz > filtroCat.ate) return false;
+      }
       if (filtroCat.q) {
         var q = filtroCat.q.toLowerCase();
         if ((p.Codigo + ' ' + p.Nome + ' ' + (p.Descricao || '')).toLowerCase().indexOf(q) < 0) return false;
       }
       return true;
     });
-    el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Portfólio de processos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-filtros" role="search">' +
-      '<label class="sr-only" for="fMacro">Filtrar por macroprocesso</label>' +
-      '<select id="fMacro"><option value="">Todos os macroprocessos</option>' +
-      DADOS.macros.map(function (m) {
-        return '<option value="' + esc(m.Codigo) + '"' + (filtroCat.macro === m.Codigo ? ' selected' : '') + '>' + esc((m._cod || m.Codigo) + ' — ' + m.Nome) + '</option>';
-      }).join('') + '</select>' +
-      '<label class="sr-only" for="fStatus">Filtrar por status</label>' +
-      '<select id="fStatus"><option value="">Todos os status</option>' +
-      ['Não iniciado', 'Em andamento', 'Concluído', 'Suspenso'].map(function (s) {
-        return '<option value="' + slug(s) + '"' + (filtroCat.status === slug(s) ? ' selected' : '') + '>' + s + '</option>';
-      }).join('') + '</select>' +
-      '<label class="sr-only" for="fMarco">Filtrar por marco do mapeamento</label>' +
-      '<select id="fMarco"><option value="">Todos os marcos</option>' +
-      MARCOS_ROTULOS.map(function (r, i) {
-        var v = String(i + 1);
-        return '<option value="' + v + '"' + (filtroCat.marco === v ? ' selected' : '') + '>M' + v + ' - ' + esc(r) + '</option>';
-      }).join('') + '</select>' +
-      '<label class="sr-only" for="fBusca">Buscar no portfólio</label>' +
-      '<input type="search" id="fBusca" placeholder="Buscar por código ou nome…" value="' + esc(filtroCat.q) + '">' +
-      '<span class="pp-muted" style="font-size:var(--fs-sm)">' + lista.length + ' de ' + DADOS.procs.length + ' processos</span></div>' +
-      (lista.length ? '<div class="proc-grid">' + pagFatia('catalogo', lista, 6).map(cardProcesso).join('') + '</div>' +
+  }
+  // Resultados (feedback + grade + paginação) redesenhados isoladamente,
+  // para que a lista aberta de um select múltiplo continue aberta enquanto
+  // o usuário marca várias opções em tempo real.
+  function catResultadosHtml(lista) {
+    return (!lista.length && filtroCat.status.length ? '<span class="feedback warning" role="alert"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i>Nenhum processo com os status selecionados.</span>' : '') +
+      (lista.length ? '<div class="proc-grid">' + pagFatia('catalogo', ordenarCat(lista), 6).map(cardProcesso).join('') + '</div>' +
         paginacaoHtml('catalogo', lista.length, 'processos', [6, 12, 24, 48])
         : '<p class="pp-vazio">Nenhum processo corresponde aos filtros. Limpe os filtros para ver todos.</p>');
-    ligarPaginacao(el, renderCatalogo);
-    $('#fMacro').onchange = function () { filtroCat.macro = this.value; renderCatalogo(); };
-    $('#fStatus').onchange = function () { filtroCat.status = this.value; renderCatalogo(); };
-    $('#fMarco').onchange = function () { filtroCat.marco = this.value; renderCatalogo(); };
-    $('#fBusca').oninput = function () { filtroCat.q = this.value; renderCatalogo(); var n = $('#fBusca'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+  }
+  function renderResultados() {
+    var box = $('#catResultados');
+    if (!box) return renderCatalogo();
+    box.innerHTML = catResultadosHtml(catFiltrada());
+    ligarPaginacao(box, renderResultados);
+    // O rodapé do painel vive fora de #catResultados; a visibilidade do
+    // botão "Limpar filtros" acompanha cada mudança de filtro.
+    var rodape = $('#fRodapeFiltros');
+    if (rodape) rodape.hidden = !catTemFiltro();
+  }
+  // Algum filtro ativo? Controla a exibição do botão "Limpar filtros".
+  function catTemFiltro() {
+    return !!(filtroCat.macro.length || filtroCat.status.length || filtroCat.marco ||
+      filtroCat.q || filtroCat.de || filtroCat.ate);
+  }
+  function renderCatalogo() {
+    var el = $('#viewCatalogo');
+    var lista = catFiltrada();
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h2>Portfólio de processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      /* Painel único de filtros: uma linha de campos (Select, Select,
+         DateTimePicker, Input de busca) e, após um Divider, as opções de
+         recorte (Checkbox de status) e de ordenação (Radio). */
+      '<section class="pp-filtros-painel" role="search" aria-label="Filtros do portfólio">' +
+      '<div class="filtros-campos">' +
+      selectHtml({ chave: 'macro', id: 'fMacro', rotulo: 'Macroprocesso', multiplo: true,
+        placeholder: 'Todos os macroprocessos', selecionados: filtroCat.macro,
+        opcoes: DADOS.macros.map(function (m) { return { v: m.Codigo, r: (m._cod || m.Codigo) + ' — ' + m.Nome }; }) }) +
+      selectHtml({ chave: 'marco', id: 'fMarco', rotulo: 'Marco do mapeamento',
+        placeholder: 'Todos os marcos', selecionados: filtroCat.marco ? [filtroCat.marco] : [],
+        opcoes: MARCOS_ROTULOS.map(function (r, i) { return { v: String(i + 1), r: 'M' + (i + 1) + ' - ' + r }; }) }) +
+      '<div class="br-datetimepicker" data-mode="range" data-type="text">' +
+      '<div class="br-input has-icon">' +
+      '<label for="fPrazo">Prazo previsto entre</label>' +
+      '<input id="fPrazo" type="text" placeholder="dd/mm/aaaa até dd/mm/aaaa" value="' + esc(periodoTexto()) + '" data-input>' +
+      '<button class="br-button circle small" type="button" id="fPrazoBtn" aria-label="Abrir calendário"><i class="fas fa-calendar-alt" aria-hidden="true"></i></button>' +
+      '</div></div>' +
+      '<div class="br-input has-icon">' +
+      '<label for="fBusca">Buscar no portfólio</label>' +
+      '<div class="input-group"><div class="input-icon"><i class="fas fa-search" aria-hidden="true"></i></div>' +
+      '<input type="search" id="fBusca" placeholder="Código ou nome do processo" value="' + esc(filtroCat.q) + '">' +
+      '</div></div>' +
+      '</div>' +
+      '<span class="br-divider" role="presentation"></span>' +
+      '<div class="filtros-opcoes">' + filtroStatusHtml(DADOS.procs) + filtroOrdemHtml() + '</div>' +
+      '<div class="filtros-rodape" id="fRodapeFiltros"' +
+      (catTemFiltro() ? '' : ' hidden') + '><button class="br-button secondary small" type="button" id="fLimparTudo"><i class="fas fa-rotate-left" aria-hidden="true"></i> Limpar filtros</button></div>' +
+      '</section>' +
+      '<div id="catResultados">' + catResultadosHtml(lista) + '</div>';
+    ligarPaginacao(el, renderResultados);
+    ligarFiltroStatus(el, renderResultados);
+    if (window.PPDateTimePicker) window.PPDateTimePicker.init(el);
+    var prazo = $('#fPrazo');
+    if (prazo) prazo.onchange = function () {
+      var partes = String(this.value || '').split(' até ');
+      filtroCat.de = isoBr(partes[0]);
+      filtroCat.ate = isoBr(partes[1]);
+      renderCatalogo();
+    };
+    var limpar = $('#fLimparTudo');
+    if (limpar) limpar.onclick = function () {
+      filtroCat.macro = []; filtroCat.status = []; filtroCat.marco = '';
+      filtroCat.q = ''; filtroCat.de = ''; filtroCat.ate = '';
+      PAG.catalogo.pag = 1;
+      renderCatalogo();
+    };
+    // Instancia o comportamento do Select nos dois filtros; o retorno de
+    // chamada recebe os valores selecionados (evento onChange).
+    window.BRSelectInit(el, function (chave, valores) {
+      if (chave === 'macro') filtroCat.macro = valores;
+      else filtroCat.marco = valores[0] || '';
+      PAG.catalogo.pag = 1;
+      renderResultados();
+    });
+    $all('#fOrdemGroup input[type="radio"]').forEach(function (r) {
+      r.onchange = function () { filtroCat.ordem = this.value; PAG.catalogo.pag = 1; renderResultados(); };
+    });
+    $('#fBusca').oninput = function () { filtroCat.q = this.value; PAG.catalogo.pag = 1; renderResultados(); };
   }
 
   /* ── TELA: detalhe (mp | p | sp | a) ──────────────────────────────── */
@@ -1217,7 +1525,6 @@
     });
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>Repositório de documentos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Procedimentos (PRO), manuais, atas, diagramas BPMN e relatórios produzidos no mapeamento, vinculados de forma rastreável a macroprocessos, processos, subprocessos e atividades.</p>' +
       '<div class="pp-filtros"><label class="sr-only" for="fTipoDoc">Tipo de documento</label>' +
       '<select id="fTipoDoc"><option value="">Todos os tipos</option>' +
       Object.keys(tipos).sort().map(function (t) { return '<option' + (filtroDoc.tipo === t ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select>' +
@@ -1255,7 +1562,6 @@
     for (var pr = 1; pr <= 5; pr++) celulas += '<div class="cab">' + pr + '</div>';
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>Radar de riscos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Riscos identificados durante o mapeamento, vinculados ao nível em que foram observados. Nível = Probabilidade × Impacto (matriz 5×5).</p>' +
       '<div class="pp-card"><h3><i class="fas fa-border-all" aria-hidden="true"></i> Matriz 5×5 (Impacto ↑ × Probabilidade →)</h3>' +
       '<div class="matriz" role="img" aria-label="Matriz de riscos cinco por cinco">' + celulas + '</div>' +
       '<div class="matriz-legenda">' + ['Baixo', 'Moderado', 'Alto', 'Extremo'].map(function (c) { return tagNivel(c); }).join('') +
@@ -1594,7 +1900,7 @@
       '<span class="mc-trilho" aria-hidden="true"></span>' +
       '<span class="mc-nota">atividades contínuas — atravessam do M1 ao M10 e seguem depois da publicação</span>' +
       '</div></div>' +
-      '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div></div></section>';
+      '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div><div class="close"><button class="br-button circle small" type="button" aria-label="Fechar a mensagem"><i class="fas fa-times" aria-hidden="true"></i></button></div></div></section>';
     ligarPaginacao(el, renderRepositorio);
     var f1 = $('#repoCat'), f2 = $('#repoFase'), f3 = $('#repoQ');
     if (f1) f1.onchange = function () { filtroRepo.cat = this.value; renderRepositorio(); };
@@ -1619,10 +1925,10 @@
     var P = DADOS.params || {};
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h2>NUGEP — Núcleo de Gestão Normativa e de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<p class="pp-muted" style="max-width:64rem;margin-bottom:var(--sp3)">Equipe multidisciplinar formada por integrantes de diferentes unidades da Codevasf, responsável pela condução do mapeamento, modelagem e melhoria contínua dos processos institucionais.</p>' +
       (DADOS.nugep.length ? '<div class="nugep-grid">' + DADOS.nugep.map(function (m) {
         var meusProcs = processosDoNugep(m.Nome);
-        return '<article class="nugep-card"><span class="nugep-avatar" aria-hidden="true">' + esc(iniciais(m.Nome)) + '</span>' +
+        return '<article class="nugep-card"><span class="br-avatar" title="' + esc(m.Nome) + '">' +
+          '<span class="content">' + esc(iniciais(m.Nome)) + '</span></span>' +
           '<h4>' + esc(m.Nome) + '</h4>' +
           '<p class="nugep-unid"><span class="nugep-sigla">' + esc(m.Unidade_Sigla || '') + '</span></p>' +
           '<div class="nugep-contato">' +
@@ -1775,23 +2081,66 @@
     if ((c = $('#cntGlossario'))) c.textContent = DADOS.glossario.length;
     if ((c = $('#cntFaq'))) c.textContent = DADOS.faq.length;
     ligarAcoesCabecalho();
+    montarNotificacoes();
     if (window.PPUI) PPUI.setMenuSections([
-      { rotulo: 'Início · Cadeia de Valor', href: '#/', icone: 'fa-house' },
-      { rotulo: 'Catálogo de processos', href: '#/catalogo', icone: 'fa-layer-group' },
+      { rotulo: 'Início · Cadeia de Valor', href: '#/', icone: 'fa-house', meta: DADOS.macros.length + ' macro' },
+      { rotulo: 'Catálogo de processos', href: '#/catalogo', icone: 'fa-layer-group', meta: DADOS.procs.length },
       { rotulo: 'Dashboard gerencial', href: '#/dashboard', icone: 'fa-chart-pie' },
       { rotulo: 'Repositório de materiais', href: '#/repositorio', icone: 'fa-toolbox' },
-      { rotulo: 'Documentos', href: '#/documentos', icone: 'fa-folder-open' },
-      { rotulo: 'Radar de riscos', href: '#/riscos', icone: 'fa-shield-halved' },
-      { rotulo: 'Indicadores', href: '#/indicadores', icone: 'fa-chart-line' },
+      { rotulo: 'Documentos', href: '#/documentos', icone: 'fa-folder-open', meta: DADOS.docs.length },
+      { rotulo: 'Radar de riscos', href: '#/riscos', icone: 'fa-shield-halved', meta: DADOS.riscos.length },
+      { rotulo: 'Indicadores', href: '#/indicadores', icone: 'fa-chart-line', meta: DADOS.inds.length },
       { rotulo: 'NUGEP', href: '#/nugep', icone: 'fa-people-group' },
-      { rotulo: 'Glossário', href: '#/glossario', icone: 'fa-spell-check' },
-      { rotulo: 'Perguntas frequentes', href: '#/faq', icone: 'fa-circle-question' }
+      { rotulo: 'Glossário', href: '#/glossario', icone: 'fa-spell-check', meta: DADOS.glossario.length },
+      { rotulo: 'Perguntas frequentes', href: '#/faq', icone: 'fa-circle-question', meta: DADOS.faq.length }
     ]);
     rota();
   }
+  /* ── NOTIFICATION — central de alertas operacionais montada a partir
+     dos dados reais: riscos críticos abertos e prazos vencidos ou
+     próximos. Cada item traz tag de status, título, informação
+     cronológica e conteúdo, separados por divider. ── */
+  function montarNotificacoes() {
+    var painelR = $('#notifPanelRiscos'), painelP = $('#notifPanelPrazos');
+    if (!painelR || !painelP) return;
+    var hoje = new Date().toISOString().slice(0, 10);
+    var riscos = (DADOS.riscos || []).filter(function (r) {
+      return (r._classe === 'Alto' || r._classe === 'Extremo') && !/encerrad/i.test(String(r.Status || ''));
+    });
+    var prazos = (DADOS.procs || []).filter(function (p) {
+      return p.Prazo_Previsto && p.Prazo_Previsto < hoje && p._status !== 'concluido';
+    });
+    function item(tag, titulo, quando, texto, href) {
+      return '<a class="br-item" href="' + href + '">' +
+        '<span class="br-tag status small ' + tag + '" aria-hidden="true"></span>' +
+        '<span class="text-bold">' + esc(titulo) + '</span>' +
+        '<span class="text-medium">' + esc(quando) + '</span>' +
+        '<span class="item-sub">' + esc(texto) + '</span></a>' +
+        '<span class="br-divider" role="presentation"></span>';
+    }
+    painelR.innerHTML = riscos.length ? riscos.map(function (r) {
+      return item('danger', r.Descricao_Risco || 'Risco crítico',
+        'Nível ' + r._classe + ' · P×I ' + r._nivel,
+        esc(r.ID) + ' · ' + (r.Status || 'Aberto'),
+        '#/riscos');
+    }).join('') : '<div class="empty-state"><i class="fas fa-circle-check" aria-hidden="true"></i>Nenhum risco crítico aberto.</div>';
+    painelP.innerHTML = prazos.length ? prazos.map(function (p) {
+      return item('warning', p.Nome, 'Prazo em ' + fmtData(p.Prazo_Previsto),
+        codDisp(p.Codigo) + ' · ' + (p.Status_Mapeamento || '') + ' · ' + pctNorm(p.Percentual) + '%',
+        '#/p/' + encodeURIComponent(p.Codigo));
+    }).join('') : '<div class="empty-state"><i class="fas fa-circle-check" aria-hidden="true"></i>Nenhum mapeamento com prazo vencido.</div>';
+    var total = riscos.length + prazos.length;
+    var cR = $('#notifCountRiscos'), cP = $('#notifCountPrazos'), badge = $('#notifBadge');
+    if (cR) cR.textContent = riscos.length;
+    if (cP) cP.textContent = prazos.length;
+    if (badge) { badge.textContent = total; badge.hidden = total === 0; }
+  }
+
   function iniciar() {
     var v = $('#viewInicio');
-    if (v) v.innerHTML = '<div class="pp-loading"><i class="fas fa-circle-notch" aria-hidden="true"></i> Carregando dados do painel…</div>';
+    if (v) v.innerHTML = '<div class="pp-loading">' +
+      '<div class="br-loading medium" role="progressbar" aria-label="Carregando dados do painel"></div>' +
+      '<p class="loading-label" role="status" aria-live="polite">Carregando dados do painel…</p></div>';
     carregarDados().then(posCarga).catch(function (e) {
       console.error(e);
       if (v) v.innerHTML = '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Não foi possível carregar os dados.</span> <span class="message-body">Verifique se data/painel-processos-dados.xlsx está publicado (ou gere js/dados.js com scripts/planilha_para_js.py). Detalhe: ' + esc(e.message) + '</span></div></div>';

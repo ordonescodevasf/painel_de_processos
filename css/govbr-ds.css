@@ -123,7 +123,7 @@
          CIMA do conteúdo abaixo, não para baixo. */
       --sh-level4-up:0 -12px 16px 0 rgba(0,0,0,.2);
       /* Aliases curtos para retrocompatibilidade */
-      --sh-sm:var(--sh-level1); --sh-md:var(--sh-level4);
+      --sh-sm:var(--sh-level1); --sh-md:var(--sh-level4); --sh-lg:var(--sh-level4);
       /* --sh-card: sombra de nível 1 mais sutil que --sh-sm, usada
          especificamente nos 23 cards de conteúdo permanente do painel
          (.br-card). Mantém o valor visual já estabelecido em todas as
@@ -229,16 +229,36 @@
        fica visível mesmo em foco, pois não é um destino de navegação. */
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
       overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-    .br-skiplink a{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
-    .br-skiplink a:focus{position:fixed;top:0;left:0;width:auto;min-height:var(--sp7);
-      padding:var(--sp1) var(--sp4);z-index:var(--z-layer-4);background:var(--pure-0);
-      color:var(--blue-warm-vivid-70);font:700 var(--fs-md)/1.2 var(--font);
-      box-shadow:var(--sh-md);
-      text-decoration:none;border-bottom-right-radius:var(--r-md);
-      display:inline-flex;align-items:center;gap:8px;}
+    /* ── SKIP LINK (br-skiplink) ── Anatomia: 1 Superfície (obrigatória),
+       2 Item (obrigatório), 3 Tag (opcional, com o número do accesskey),
+       4 Rótulo (obrigatório). Tipo simples (um item por vez, largura fixa
+       de 300px, rótulo com a notação 1/4) e tipo composto (.full, todos
+       os itens ao mesmo tempo). Oculto acima da viewport, desliza para
+       top:0 ao receber foco; Esc recolhe. ── */
+    .br-skiplink{--skiplink-margin:var(--sp2);--skiplink-min-width:300px;
+      --skiplink-duration:150ms;--skiplink-timing:ease-out;
+      display:inline-flex;flex-direction:column;position:fixed;top:0;
+      left:var(--skiplink-margin);z-index:var(--z-layer-4);}
+    .br-skiplink a{align-items:center;gap:8px;background:var(--pure-0);
+      box-shadow:var(--sh-lg);
+      display:inline-flex;min-width:var(--skiplink-min-width);
+      min-height:var(--sp7);padding:var(--sp1) var(--sp2);
+      position:absolute;top:-100vh;white-space:nowrap;width:auto;
+      color:var(--blue-warm-vivid-70);font:600 var(--fs-md)/1.2 var(--font);
+      text-decoration:none;
+      transition:top var(--skiplink-duration) var(--skiplink-timing);}
+    .br-skiplink a:focus,.br-skiplink a:focus-visible{top:0;}
+    .br-skiplink a:hover{background:var(--blue-warm-vivid-5);}
     .br-skiplink .br-tag{background:var(--blue-warm-vivid-70);color:var(--pure-0);
       font-size:11px;font-weight:700;border-radius:var(--r-sm);padding:1px 7px;
       border:none;display:inline-flex;align-items:center;}
+    /* Tipo composto: a superfície inteira desliza e os itens ficam lado a
+       lado, cada um com largura própria. */
+    .br-skiplink.full{flex-direction:row;top:-100vh;
+      box-shadow:var(--sh-lg);
+      transition:top var(--skiplink-duration) var(--skiplink-timing);}
+    .br-skiplink.full a{position:relative;top:0;min-width:0;box-shadow:none;}
+    .br-skiplink.full:focus-within{top:0;}
 
     /* ── FOCO DE TECLADO — anel oficial govbr-ds/core v4
        (--br-state-focus-color-main:#da680b / border-style-main-high:
@@ -320,7 +340,7 @@
     body.contraste-alto .footer-social-title{color:var(--gold-vivid-20);}
     body.contraste-alto .footer-social-icons .br-button.circle{background:#000;border:1px solid var(--gold-vivid-20);color:var(--gold-vivid-20);}
     body.contraste-alto .footer-social-icons .br-button.circle:hover,body.contraste-alto .footer-social-icons .br-button.circle:focus-visible{background:var(--gold-vivid-20);color:#000;}
-    body.contraste-alto .footer-legal{border-top-color:rgba(255,190,46,.3);}
+    body.contraste-alto .br-footer > .br-divider{--divider-color:var(--gold-vivid-20);opacity:1;}
     body.contraste-alto .footer-org .fo-top{color:var(--gold-vivid-20);}
     body.contraste-alto .footer-org .fo-mid{color:#fff;}
     body.contraste-alto .footer-org .fo-unit{color:#ffe9a8;}
@@ -544,6 +564,9 @@
        separada acima do header). Sem o modificador "inverted": aqui o
        fundo é claro (var(--background)), não a faixa escura de antes. ── */
     .br-header .header-actions .br-switch{flex-shrink:0;}
+    /* Containers documentados do bloco de autenticação (Anatomia 8 e 9) */
+    .br-header .header-actions .header-login{display:flex;align-items:center;flex-shrink:0;}
+    .br-header .header-actions .header-sign-in{display:flex;align-items:center;}
     /* ══════════════════════════════════════════════════════════
        MOBILE/TABLET (≤991.98px) — header-top compacto, 1 linha só
        ══════════════════════════════════════════════════════════
@@ -678,6 +701,40 @@
     .br-button.primary:hover{filter:brightness(.88);}
     .br-button.primary:active{transform:scale(.97);box-shadow:var(--elevation-1);}
     .br-button:disabled{background:var(--gray-40);cursor:not-allowed;opacity:var(--op-lg);}
+    /* ── Componente Button completo (gov.br DS) ────────────────────────────
+       Anatomia: Ícone (opcional), Rótulo (obrigatório, semi-bold, sem
+       caixa-alta) e Superfície (obrigatória; terciária = opacidade 0%).
+       Aqui completamos o que faltava: as trêss densidades, o comportamento
+       Bloco (com as variantes por breakpoint), a ênfase secundária conforme
+       os tokens de cor da spec, os estados Ativado/Carregando e a versão
+       para fundo escuro (dark-mode). Dimensões: 48/40/32px (24px xsmall). */
+    .br-button{--button-size:40px;height:var(--button-size);
+      padding:0 var(--sp3);font-weight:600;justify-content:center;
+      position:relative;overflow:hidden;vertical-align:middle;text-align:center;
+      background:transparent;color:var(--interactive);}
+    .br-button i{margin:0;}
+    .br-button.large{--button-size:48px;}
+    .br-button.small{--button-size:32px;}
+    .br-button.xsmall{--button-size:24px;padding:0 var(--sp2);}
+    .br-button.block{width:100%;}
+    @media(min-width:576px){.br-button.block-sm{width:100%;}.br-button.auto-sm{width:auto;}}
+    @media(min-width:992px){.br-button.block-md{width:100%;}.br-button.auto-md{width:auto;}}
+    @media(min-width:1280px){.br-button.block-lg{width:100%;}.br-button.auto-lg{width:auto;}}
+    @media(min-width:1600px){.br-button.block-xl{width:100%;}.br-button.auto-xl{width:auto;}}
+    /* Estado Ativado: o botão permanece "marcado" dentro de um conjunto. */
+    .br-button.active{background:var(--blue-warm-vivid-10);color:var(--blue-warm-vivid-70);}
+    /* Estado Progresso: todo o conteúdo é substituído pelo Loading. */
+    .br-button.loading{color:transparent!important;cursor:progress;}
+    .br-button.loading::before{content:'';position:absolute;top:50%;left:50%;
+      width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+      border:2px solid var(--interactive);border-top-color:transparent;
+      animation:spinAround 1.3s linear infinite;}
+    .br-button.loading.primary::before{border-color:var(--pure-0);border-top-color:transparent;}
+    /* Fundo escuro (Fundamento Cor — ênfases em superfície escura). */
+    .br-button.dark-mode{color:var(--blue-warm-vivid-20);}
+    .br-button.dark-mode.primary{background:var(--blue-warm-vivid-20);color:var(--blue-warm-vivid-90);}
+    .br-button.dark-mode.secondary{background:var(--blue-warm-vivid-90);
+      border:1px solid var(--blue-warm-vivid-20);color:var(--blue-warm-vivid-20);}
     /* variante circle + small, usada como acionador de dropdown (botão "⋮")
        Padrão oficial gov.br: botão circular sem ênfase (nem primary nem
        secondary) é transparente por padrão — só o ícone, sem nenhuma bola
@@ -752,8 +809,17 @@
     .notif-badge{position:absolute;top:0;right:0;min-width:15px;height:15px;
       padding:0 3px;border-radius:50%;background:var(--red-vivid-50);color:var(--pure-0);
       font:700 9px/15px var(--font);text-align:center;}
-    .br-notification{width:380px;max-width:90vw;max-height:480px;overflow:hidden;
+    .br-notification{width:380px;max-width:90vw;max-height:min(480px,calc(100vh - 96px));overflow:hidden;
       display:flex;flex-direction:column;box-shadow:var(--sh-md);}
+    /* Tag de Status do item (Componente Tag, tipo status): indicador
+       circular sólido que marca o alerta como não lido — sem texto. */
+    .br-notification .br-tag.status{width:8px;height:8px;min-width:0;padding:0;
+      border-radius:50%;}
+    .br-notification .br-tag.status.danger{background:var(--red-vivid-50);}
+    .br-notification .br-tag.status.warning{background:var(--yellow-vivid-20);}
+    /* Superfície flutuante ancorada à direita do acionador, para não
+       ultrapassar a borda da tela em resoluções menores. */
+    .dropdown-wrap .dd-target.br-notification{left:auto;right:0;}
     .br-notification .notification-header{display:flex;align-items:center;
       justify-content:space-between;gap:var(--sp2);
       padding:var(--sp2) var(--sp3);border-bottom:1px solid var(--gray-10);flex-shrink:0;}
@@ -817,6 +883,20 @@
       background:rgba(0,0,0,.4);
       display:flex;align-items:center;justify-content:center;padding:var(--sp3);}
     .br-scrim.foco[hidden]{display:none;}
+    /* Tipo Legibilidade — sobreposição (overlay) para dar contraste ao
+       texto sobre uma superfície qualquer. Cor #000000, opacidade 64% da
+       spec; .scrim-text posiciona o texto na base do elemento. */
+    .br-scrim.legibilidade{position:relative;display:block;}
+    .br-scrim.legibilidade .scrim-text{position:absolute;bottom:0;left:0;width:100%;
+      background:rgba(0,0,0,.64);color:var(--pure-0);
+      padding:var(--sp3) var(--sp1h,12px);font-size:var(--fs-sm);line-height:1.4;}
+    /* Tipo Inibição — simula o estado desativado de uma área inteira:
+       impede a interação com o que está embaixo, com a cor de fundo
+       predominante do elemento a 64%. */
+    .br-scrim.inibicao{position:relative;}
+    .br-scrim.inibicao::before{content:"";position:absolute;inset:0;
+      background:var(--scrim-inibicao-bg,var(--pure-0));opacity:.64;
+      z-index:var(--z-layer-1);pointer-events:auto;}
     /* .br-modal é a própria superfície (Anatomia item 1) — não um wrapper.
        Tamanhos oficiais (Códigos > CSS): xsmall 220px, small 300px,
        medium 500px (padrão), large 640px, auto. Sombra: o CSS oficial
@@ -869,20 +949,24 @@
        uma opacidade dedicada, --surface-opacity-md, sem valor exato
        documentado; 40% do Foco fica razoavelmente próximo). ── */
     .br-onboarding{background:var(--pure-0);border-radius:var(--r-lg);
-      box-shadow:var(--sh-md);width:100%;max-width:380px;
+      box-shadow:var(--sh-md);width:100%;max-width:420px;
       display:flex;flex-direction:column;overflow:hidden;}
-    .ob-carousel .carousel-stage{overflow:hidden;position:relative;}
-    .ob-page{display:none;padding:var(--sp5) var(--sp4) var(--sp3);text-align:center;}
-    .ob-page.active{display:block;}
+    /* O tour usa o componente Carousel completo (palco + botões de
+       navegação + botões de reprodução + indicador de páginas). Palco
+       híbrido horizontal (data-stage="hibw"): botões de navegação
+       internos — o modal é estreito e não comporta botões externos — e
+       indicador de páginas externo, abaixo do palco. */
+    .br-carousel.ob-carousel{--carousel-min-height:430px;height:430px;}
+    .ob-page .carousel-content{flex-direction:column;flex-wrap:nowrap;
+      justify-content:flex-start;overflow-y:auto;
+      padding:var(--sp4) var(--sp5) var(--sp2);text-align:center;}
     .ob-illus{width:64px;height:64px;margin:0 auto var(--sp3);border-radius:50%;
       background:linear-gradient(135deg,var(--blue-warm-vivid-5),var(--green-cool-vivid-5));
       display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--blue-warm-vivid-70);}
     .ob-title{margin:0 0 var(--sp2);font:700 18px/1.3 var(--font);color:var(--gray-80);}
     .ob-text{margin:0 0 var(--sp3);font-size:13px;line-height:1.6;color:var(--gray-70);text-align:left;}
     .ob-page .br-button{margin-top:var(--sp1);}
-    .ob-nav{display:flex;align-items:center;justify-content:center;gap:var(--sp3);
-      padding:0 var(--sp4) var(--sp3);}
-    .ob-step{font:700 12px/1 var(--font);color:var(--gray-70);min-width:72px;text-align:center;}
+    .ob-step{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
     .ob-foot{display:flex;align-items:center;justify-content:center;gap:var(--sp2);
       padding:var(--sp2) var(--sp4);border-top:1px solid var(--gray-10);
       background:var(--gray-2);flex-wrap:wrap;}
@@ -959,35 +1043,390 @@
     .br-breadcrumb .crumb .crumb-link:hover,
     .br-breadcrumb .crumb .crumb-link:focus-visible{text-decoration:underline;}
     .br-breadcrumb .crumb[data-active="active"] span{color:var(--gray-80);font-weight:700;}
-    .br-button.secondary{background:var(--gray-2);color:var(--gray-80);border:var(--w-sm) solid var(--gray-20);}
-    .br-button.secondary:hover{background:var(--gray-5);}
+    /* Uso como trilha de navegação real (fichas de macroprocesso, processo,
+       subprocesso, atividade e tarefa): os itens ancestrais são <a>, o Botão
+       Home é interativo e leva à tela inicial, e o Título da página atual é
+       texto comum focável com aria-current="page". Inclui os elementos
+       opcionais do componente: Truncamento (Comportamento 2) com Botão
+       Terciário folder-plus e menu flutuante em list dropdown (br-card +
+       br-item), além de tooltip nativo via title nos rótulos longos. */
+    .br-breadcrumb{position:relative;}
+    .br-breadcrumb .crumb a{color:var(--blue-warm-vivid-70);text-decoration:none;
+      text-transform:uppercase;letter-spacing:.3px;max-width:180px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap;}
+    .br-breadcrumb .crumb a:hover,
+    .br-breadcrumb .crumb a:focus-visible{text-decoration:underline;}
+    .br-breadcrumb .crumb.home .br-button{border-radius:50%;display:inline-flex;
+      align-items:center;justify-content:center;text-decoration:none;}
+    .br-breadcrumb .crumb.menu-mobil .br-button{width:22px;height:22px;border:none;
+      border-radius:50%;background:var(--blue-warm-vivid-5);color:var(--blue-warm-vivid-70);
+      cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
+    .br-breadcrumb .crumb.menu-mobil .br-button:hover{background:var(--blue-warm-vivid-10);}
+    .br-breadcrumb .crumb.d-none{display:none;}
+    .br-breadcrumb > .br-card{position:absolute;top:calc(100% - var(--sp2));
+      left:var(--sp5);min-width:220px;max-width:320px;padding:4px 0;
+      background:var(--pure-0);border-radius:var(--r-sm);box-shadow:var(--sh-md);
+      z-index:var(--z-layer-2);}
+    .br-breadcrumb > .br-card[hidden]{display:none;}
+    .br-breadcrumb > .br-card .br-item{padding:0;}
+    .br-breadcrumb > .br-card .br-item:not(:last-child){border-bottom:1px solid var(--gray-10);}
+    .br-breadcrumb > .br-card .br-item a{display:block;max-width:none;padding:var(--sp1) var(--sp2);}
+    .br-button.secondary{background:var(--pure-0);color:var(--blue-warm-vivid-70);
+      border:var(--w-sm) solid var(--blue-warm-vivid-70);}
+    .br-button.secondary:hover{background:var(--blue-warm-vivid-5);}
     /* Detalhes do serviço no modal: lista de campo/valor */
     .detail-row{display:grid;grid-template-columns:160px 1fr;gap:var(--sp2);
       padding:8px 0;border-bottom:1px solid var(--gray-5);}
     .detail-row:last-child{border-bottom:none;}
-    /* ── COOKIEBAR (simplificado), conforme Componente gov.br DS ──
-       Faixa fixa na base da tela, sombra voltada para cima (--surface-
-       shadow-xl-up no documento oficial; aproximamos com --sh-level4
-       invertido), botão primário mais à direita (maior ênfase),
-       conforme especificação de alinhamento "Botão primário e
-       secundário: --spacing-horizontal-right". */
-    .br-cookiebar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-layer-4);
-      background:var(--pure-0);border-top:1px solid var(--gray-10);
-      box-shadow:var(--sh-level4-up);
-      display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp3);
-      padding:var(--sp3) var(--sp4);}
+    /* ── DIVIDER (br-divider) — Componente gov.br DS 3.7.0. Item único e
+       obrigatório da anatomia: a borda de uma superfície formando uma
+       linha reta. Propriedades adicionais implementadas: vertical,
+       dashed, espessuras sm/md/lg (--surface-width-sm/md/lg), variante
+       com conteúdo no meio e versão para fundo escuro (--pure-0 em vez
+       de --gray-20). Também vale para <hr>, a tag semântica recomendada
+       pelo documento de acessibilidade — e como elemento decorativo, é
+       ignorado por leitores de tela. Espaçamento padrão do horizontal:
+       --spacing-scale-2x acima/abaixo; do vertical, à esquerda/direita. */
+    .br-divider,hr{--divider-size:var(--w-sm);--divider-color:var(--gray-20);
+      border-color:var(--divider-color);border-style:solid;border-width:0;
+      border-top-width:var(--divider-size);display:block;}
+    hr{margin:var(--sp2) 0;}
+    .br-divider.vertical,hr.vertical{align-self:stretch;
+      border-right-width:var(--divider-size);border-top-width:0;}
+    .br-divider.dashed,hr.dashed{border-style:dashed;}
+    .br-divider.sm,hr.sm{--divider-size:var(--w-sm);}
+    .br-divider.md,hr.md{--divider-size:var(--w-md);}
+    .br-divider.lg,hr.lg{--divider-size:var(--w-lg);}
+    .br-divider.inverted,.br-divider.dark-mode,hr.inverted,hr.dark-mode{--divider-color:var(--pure-0);}
+    /* Divider com conteúdo no meio (ex.: um rótulo entre duas linhas) */
+    .br-divider.content,hr.content{align-items:center;border:0;display:flex;
+      justify-content:center;}
+    .br-divider.content::before,.br-divider.content::after,
+    hr.content::before,hr.content::after{content:"";flex:1;
+      border-color:var(--divider-color);border-style:solid;border-width:0;
+      border-top-width:var(--divider-size);}
+    .br-divider.dashed.content::before,.br-divider.dashed.content::after,
+    hr.dashed.content::before,hr.dashed.content::after{border-style:dashed;}
+    .br-divider.content::before,hr.content::before{margin-right:var(--sp1);}
+    .br-divider.content::after,hr.content::after{margin-left:var(--sp1);}
+    .br-divider.vertical.content,hr.vertical.content{flex-direction:column;}
+    .br-divider.vertical.content::before,.br-divider.vertical.content::after,
+    hr.vertical.content::before,hr.vertical.content::after{
+      border-right-width:var(--divider-size);border-top-width:0;margin:0;}
+    /* Utilitários de espaçamento usados com o divider (Utilitários CSS) */
+    .br-divider.my-3,hr.my-3{margin-top:var(--sp2);margin-bottom:var(--sp2);}
+    .br-divider.mx-3,hr.mx-3{margin-left:var(--sp2);margin-right:var(--sp2);}
+    /* ── ITEM (br-item) e LIST (br-list) — Componentes gov.br DS 3.7.0.
+       Até aqui o painel usava as classes br-list/br-item apenas dentro
+       de outros componentes (dropdowns do cabeçalho, central de
+       notificações, menu do breadcrumb), cada um com estilo próprio;
+       agora existe a base do componente, que esses usos especializam.
+
+       ITEM — anatomia: (1) superfície, (2) área de conteúdo e (3)
+       divider opcional na borda inferior. Estados ativo, selecionado e
+       desativado; comportamentos hover, elemento interativo, seleção
+       (checkbox/radio) e expansão.
+       LIST — anatomia: (1) header opcional (título + ações), (2) item
+       obrigatório, (3) rótulo de agrupamento, (4) divider e (5)
+       superfície. Tipos vertical e horizontal, densidades alta (padrão),
+       média (py-3) e baixa (py-4), e agrupamento por rótulo, separador
+       ou expansão. ── */
+    .br-item{--item-padding-x:var(--sp2);--item-padding-y:var(--sp1);
+      background:transparent;border:0;color:var(--gray-80);display:block;
+      padding:var(--item-padding-y) var(--item-padding-x);text-align:left;width:100%;
+      font-size:var(--fs-base);}
+    .br-item.divider{border-bottom:1px solid var(--gray-20);}
+    /* Área de conteúdo com as três regiões sugeridas: suporte visual,
+       área principal e suporte complementar */
+    .br-item > .content{display:flex;align-items:center;gap:var(--sp2);}
+    .br-item > .content > .flex-fill{flex:1;}
+    .br-item .item-main{flex:1;min-width:0;}
+    .br-item .item-support{flex-shrink:0;color:var(--gray-70);font-size:var(--fs-sm);}
+    .br-item .item-title{font-weight:600;}
+    .br-item .item-sub{color:var(--gray-70);font-size:var(--fs-sm);}
+    /* Comportamentos: item interativo (hover em toda a superfície) e
+       item com elementos interativos (só eles reagem) */
+    .br-item[data-toggle]{cursor:pointer;}
+    .br-item[data-toggle]:not(:disabled):not([disabled]):hover,
+    a.br-item:not([disabled]):hover,button.br-item:not(:disabled):hover{background-color:var(--gray-2);}
+    .br-item:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+      outline-offset:calc(var(--focus-width-field) * -1);}
+    /* Estados */
+    .br-item.selected{background-color:var(--blue-warm-vivid-5);}
+    .br-item.active{background-color:var(--blue-warm-vivid-70);color:var(--pure-0);}
+    .br-item[disabled],.br-item.disabled{opacity:var(--op-lg);cursor:not-allowed;pointer-events:none;}
+    .br-item.inverted,.br-item.dark-mode{color:var(--pure-0);}
+    /* Seleção: checkbox/radio ocupam a superfície inteira do item */
+    .br-item > .br-checkbox:not(.hidden-label),.br-item > .br-radio:not(.hidden-label){
+      margin:calc(var(--item-padding-y) * -1) calc(var(--item-padding-x) * -1);}
+    .br-item > .br-checkbox:not(.hidden-label) input + label,
+    .br-item > .br-radio:not(.hidden-label) input + label{
+      padding:var(--item-padding-y) var(--item-padding-x) var(--item-padding-y)
+        calc(var(--item-padding-x) + var(--sp1) + 24px);width:100%;}
+    .br-item > .br-checkbox:not(.hidden-label) input + label::before,
+    .br-item > .br-radio:not(.hidden-label) input + label::before{left:var(--item-padding-x);
+      top:var(--item-padding-y);}
+    .br-item > .br-checkbox:not(.hidden-label) input:checked + label::after{
+      left:calc(var(--item-padding-x) + 9px);top:calc(var(--item-padding-y) + 4px);}
+    /* LIST — superfície e header (título + área de ações) */
+    .br-list{background-color:var(--pure-0);}
+    .br-list > .header{display:flex;align-items:center;justify-content:space-between;
+      gap:var(--sp2);padding:var(--sp1) var(--sp2);
+      font:700 var(--fs-base)/1.4 var(--font);color:var(--gray-80);}
+    /* O t\u00edtulo mant\u00e9m a formata\u00e7\u00e3o de cada uso especializado (dropdowns
+       do cabe\u00e7alho, central de notifica\u00e7\u00f5es), por isso n\u00e3o \u00e9 redefinido aqui. */
+    .br-list .br-item{width:100%;text-align:left;}
+    /* Densidades: alta (padrão), média (py-3) e baixa (py-4) */
+    .br-item.py-3{--item-padding-y:var(--sp2);}
+    .br-item.py-4{--item-padding-y:var(--sp3);}
+    /* Rótulo de agrupamento */
+    .br-list .br-item.list-label{font:600 var(--fs-sm)/1.4 var(--font);color:var(--gray-80);
+      text-transform:uppercase;letter-spacing:.5px;}
+    /* Expansão: sublista com transição e ícone que gira */
+    .br-list .br-list{overflow:hidden;transition:max-height var(--dur-moderate-2) var(--ease-in-out);}
+    .br-list .br-list[hidden]{display:none;}
+    .br-list .br-item[aria-expanded="true"] .fa-angle-down,
+    .br-list .br-item[aria-expanded="true"] .fa-chevron-down{transform:rotate(180deg);}
+    /* Tipo horizontal: itens lado a lado, dividers verticais entre eles */
+    .br-list.horizontal{display:flex;flex-wrap:wrap;}
+    .br-list.horizontal > .header{width:100%;}
+    .br-list.horizontal > .br-item,.br-list.horizontal > .group{flex:1;min-height:56px;width:auto;}
+    .br-list.horizontal > .br-item + .br-divider,
+    .br-list.horizontal > .group + .br-divider{border-top-width:0;border-right-width:var(--w-sm);width:1px;}
+    .br-list.horizontal > .header + .br-divider{width:100%;}
+    /* ── COOKIEBAR (br-cookiebar) — Componente gov.br DS 3.7.0 nas duas
+       etapas previstas: cookieBar default (faixa fixa na base, com
+       texto informativo e área de ação) e cookieBar aberto (expande
+       cobrindo a tela, com conteúdo introdutório, principal e
+       complementar). Sombra voltada para cima (--surface-shadow-xl-up
+       no documento oficial; aproximada com --sh-level4 invertido) e
+       botões alinhados à direita, conforme Especificações. ── */
+    .br-cookiebar{position:fixed;left:0;right:0;bottom:0;top:0;z-index:var(--z-layer-4);
+      display:flex;flex-direction:column;justify-content:flex-end;
+      color:var(--gray-80);font-size:var(--fs-base);outline:none;}
+    .br-cookiebar.default{top:unset;}
     .br-cookiebar.d-none{display:none;}
-    .cn-text{flex:1 1 480px;font-size:13px;line-height:1.6;color:var(--gray-80);}
-    .cn-actions{display:flex;gap:10px;flex-shrink:0;margin-left:auto;}
-    .cn-details{flex-basis:100%;border-top:1px solid var(--gray-5);
-      padding-top:var(--sp2);margin-top:var(--sp-half);}
-    .cn-details[hidden]{display:none;}
-    .cn-details ul{margin:0;padding-left:var(--sp3);font-size:12px;color:var(--gray-70);line-height:1.7;}
+    /* Resets de escopo: .br-modal/.br-modal-body/.br-list já têm estilo
+       próprio no painel (modal centrado de 500px, lista suspensa do
+       header); dentro do cookiebar são apenas áreas de conteúdo. */
+    .br-cookiebar .br-modal{position:static;width:100%;max-width:none;min-width:0;
+      border-radius:0;margin:0;animation:none;
+      background:var(--pure-0);box-shadow:var(--sh-level4-up);
+      border-top:1px solid var(--gray-10);display:flex;flex-direction:column;
+      max-height:100%;overflow:hidden;}
+    .br-cookiebar .br-modal-body{position:static;flex:none;margin:0;padding:0;
+      max-height:none;overflow:visible;font-size:var(--fs-base);}
+    .br-cookiebar .br-list{position:static;display:block;background:none;border:0;
+      box-shadow:none;min-width:0;max-height:none;overflow:visible;padding:0;}
+    .br-cookiebar .br-modal-header{position:static;padding:0;border:0;}
+    .br-cookiebar .br-modal-header .close{position:static;}
+    .br-cookiebar .wrapper{display:flex;flex-direction:column;overflow-y:auto;
+      padding:var(--sp3) var(--sp4) 0;}
+    /* Etapa default: só o texto informativo e a área de ação */
+    .br-cookiebar.default .entry-content,
+    .br-cookiebar.default .main-content,
+    .br-cookiebar.default .complementary-content{display:none;}
+    .br-cookiebar.default .info-text{display:block;}
+    .br-cookiebar.default .wrapper{overflow-y:unset;padding-bottom:var(--sp2);}
+    .br-cookiebar .info-text{display:none;line-height:1.6;max-width:80ch;}
+    /* B. Conteúdo introdutório */
+    .br-cookiebar .entry-content{display:flex;flex-wrap:wrap;align-items:flex-start;
+      gap:var(--sp2);padding-bottom:var(--sp2);}
+    .br-cookiebar .br-modal-title{flex:1 1 320px;margin:0;
+      font:400 var(--fs-xl)/1.3 var(--font);color:var(--gray-80);}
+    .br-cookiebar .last-update{flex-basis:100%;order:2;font-size:var(--fs-base);
+      font-weight:600;color:var(--gray-70);margin:0;}
+    .br-cookiebar .entry-text{flex-basis:100%;order:3;margin:0;line-height:1.6;
+      color:var(--gray-70);max-width:90ch;}
+    .br-cookiebar .close{margin-left:auto;}
+    /* C. Conteúdo principal — classes de cookies */
+    .br-cookiebar .main-content{padding-bottom:var(--sp3);}
+    .br-cookiebar .cookie-groups-title{font:700 var(--fs-md)/1.3 var(--font);
+      color:var(--gray-80);margin:var(--sp3) 0 var(--sp2);}
+    .br-cookiebar .select-all-bar{display:flex;align-items:center;justify-content:space-between;
+      gap:var(--sp2);flex-wrap:wrap;padding-bottom:var(--sp2);border-bottom:1px solid var(--gray-10);}
+    .br-cookiebar .cookies-checked{font-size:var(--fs-sm);color:var(--gray-70);font-weight:600;}
+    .br-cookiebar .group-info{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp1) var(--sp2);
+      padding:var(--sp2) 0;border-bottom:1px solid var(--gray-10);}
+    .br-cookiebar .group-name{font:700 var(--fs-base)/1.4 var(--font);color:var(--blue-warm-vivid-70);
+      background:none;border:0;padding:0;cursor:pointer;text-align:left;}
+    .br-cookiebar .group-size{color:var(--gray-70);font-weight:500;}
+    .br-cookiebar .group-description{flex-basis:100%;margin:0;font-size:var(--fs-sm);
+      line-height:1.6;color:var(--gray-70);}
+    .br-cookiebar .group-actions{display:flex;align-items:center;gap:var(--sp2);margin-left:auto;}
+    /* Lista de cookies estritamente necessários: área inteira que o
+       usuário não pode alterar, por isso recebe Scrim Inibição — "utilize
+       o scrim de inibição sobre opções que ainda não podem ser obtidas
+       pelo usuário". A cor sai do fundo predominante do bloco. */
+    .br-cookiebar .cookie-list.br-scrim.inibicao{--scrim-inibicao-bg:var(--pure-0);}
+    .br-cookiebar .always-active{color:var(--green-cool-vivid-50);font-weight:600;
+      font-size:var(--fs-base);}
+    .br-cookiebar .cookie-list{display:none;padding:var(--sp2) 0 var(--sp2) var(--sp3);
+      gap:var(--sp2);flex-direction:column;}
+    .br-cookiebar .group-block.open .cookie-list{display:flex;}
+    .br-cookiebar .cookie-info .br-card{padding:var(--sp2);}
+    .br-cookiebar .cookie-head{display:flex;align-items:center;justify-content:space-between;
+      gap:var(--sp2);flex-wrap:wrap;margin-bottom:var(--sp1);}
+    .br-cookiebar .cookie-term{font-weight:600;color:var(--gray-80);}
+    .br-cookiebar .cookie-props{display:grid;grid-template-columns:130px 1fr;gap:4px var(--sp2);
+      margin:0;font-size:var(--fs-sm);}
+    .br-cookiebar .cookie-props dt{font-weight:600;color:var(--gray-80);}
+    .br-cookiebar .cookie-props dd{margin:0;color:var(--gray-70);}
+    .br-cookiebar .br-message{margin:var(--sp1) 0;}
+    .br-cookiebar .d-none{display:none!important;}
+    .br-cookiebar .notes{margin-top:var(--sp3);}
+    .br-cookiebar .notes h3{font:700 var(--fs-md)/1.3 var(--font);color:var(--gray-80);
+      margin:0 0 var(--sp2);}
+    .br-cookiebar .notes dt{font-weight:600;color:var(--gray-80);font-size:var(--fs-base);}
+    .br-cookiebar .notes dd{margin:0 0 var(--sp2);color:var(--gray-70);font-size:var(--fs-sm);line-height:1.6;}
+    /* D. Conteúdo complementar (opcional) — links para mais informações */
+    .br-cookiebar .complementary-content{display:flex;flex-wrap:wrap;gap:var(--sp1) var(--sp3);
+      padding:var(--sp2) 0;border-top:1px solid var(--gray-10);font-size:var(--fs-sm);}
+    /* E. Área de ação */
+    .br-cookiebar .actions{display:flex;justify-content:flex-end;align-items:center;
+      gap:var(--sp3);flex-wrap:wrap;padding:var(--sp3) var(--sp4);}
+    .br-cookiebar:not(.default) .actions{border-top:1px solid var(--gray-10);}
     @media(max-width:575px){
-      .br-cookiebar{flex-direction:column;align-items:stretch;}
-      .cn-actions{margin-left:0;flex-direction:column;}
-      .cn-actions .br-button{width:100%;justify-content:center;}
+      .br-cookiebar{font-size:var(--fs-sm);}
+      .br-cookiebar .actions{flex-direction:column-reverse;align-items:stretch;gap:var(--sp2);}
+      .br-cookiebar .actions .br-button{width:100%;justify-content:center;}
+      .br-cookiebar .cookie-props{grid-template-columns:1fr;}
+      .br-cookiebar .br-modal-title{font-size:var(--fs-lg);}
     }
+    /* ── DATETIMEPICKER (br-datetimepicker) — Componente gov.br DS 3.7.0.
+       Anatomia: (1) campo de entrada, (2) mês/ano e navegação, (3) dias
+       da semana, (4) dia atual em destaque, (5) dia selecionado, (6)
+       hover, (7) card, (8) seletor de horas, (9) dias do mês anterior/
+       posterior, (10) datas inicial e final, (11) intervalo em destaque
+       e (12) dias desabilitados. Card de 304px (144×116 no timepicker
+       isolado), dia de 24px e cores da tabela de Especificações. ── */
+    .br-datetimepicker{--dtp-day-size:24px;--dtp-padding:var(--sp2);--dtp-arrows:32px;
+      position:relative;}
+    .br-datetimepicker .br-input{position:relative;}
+    .br-datetimepicker .br-input.has-icon input{padding-right:var(--sp5);}
+    .br-datetimepicker .br-input.has-icon .br-button{position:absolute;right:2px;bottom:2px;
+      color:var(--blue-warm-vivid-70);}
+    .br-datetimepicker .dtp-calendar{position:absolute;z-index:var(--z-layer-2);
+      top:calc(100% + 4px);left:0;width:304px;background:var(--pure-0);
+      border-radius:var(--r-sm);box-shadow:var(--sh-md);padding:var(--dtp-padding);}
+    .br-datetimepicker .dtp-calendar[hidden]{display:none;}
+    .br-datetimepicker[data-type="time"] .dtp-calendar{width:144px;}
+    .br-datetimepicker .dtp-months{display:flex;align-items:center;gap:4px;margin-bottom:var(--sp1);}
+    .br-datetimepicker .dtp-month-select{flex:1;border:0;background:transparent;
+      color:var(--blue-warm-vivid-70);font:600 var(--fs-base)/1.4 var(--font);
+      padding:2px 4px;border-radius:var(--r-sm);cursor:pointer;}
+    .br-datetimepicker .dtp-year{width:64px;border:1px solid var(--gray-20);border-radius:var(--r-sm);
+      color:var(--gray-80);font:600 var(--fs-sm)/1.4 var(--font);padding:2px var(--sp1);}
+    .br-datetimepicker .dtp-weekdays,.br-datetimepicker .dtp-days{
+      display:grid;grid-template-columns:repeat(7,1fr);}
+    .br-datetimepicker .dtp-weekdays span{text-align:center;color:var(--gray-70);
+      font:500 var(--fs-sm)/2 var(--font);}
+    .br-datetimepicker .dtp-day{width:var(--dtp-day-size);height:var(--dtp-day-size);
+      margin:4px auto;border:0;border-radius:50%;background:transparent;cursor:pointer;
+      color:var(--blue-warm-vivid-70);font:600 var(--fs-base)/1 var(--font);
+      transition:background-color var(--dur-vfast) var(--ease);}
+    .br-datetimepicker .dtp-day:hover:not(:disabled){background:var(--blue-warm-vivid-5);}
+    .br-datetimepicker .dtp-day.other-month{opacity:.6;font-weight:500;}
+    .br-datetimepicker .dtp-day.today{background:var(--orange-vivid-5);color:var(--red-vivid-50);}
+    .br-datetimepicker .dtp-day.in-range{background:var(--blue-warm-vivid-10);border-radius:0;color:var(--gray-80);}
+    .br-datetimepicker .dtp-day.selected{background:var(--blue-warm-vivid-70);color:var(--pure-0);}
+    .br-datetimepicker .dtp-day:disabled{color:var(--gray-20);opacity:.45;cursor:not-allowed;}
+    /* 8. Seletor de horas (formato 24h) */
+    .br-datetimepicker .dtp-time{display:flex;justify-content:center;align-items:center;
+      gap:var(--sp1);border-top:1px solid var(--gray-10);margin-top:var(--sp1);padding-top:var(--sp1);}
+    .br-datetimepicker[data-type="time"] .dtp-time{border-top:0;margin:0;padding:0;height:100px;}
+    .br-datetimepicker .dtp-num{display:flex;flex-direction:column;align-items:center;}
+    .br-datetimepicker .dtp-num input{width:56px;text-align:center;border:1px solid var(--gray-20);
+      border-radius:var(--r-sm);color:var(--gray-80);font:500 var(--fs-base)/1 var(--font);padding:4px;}
+    .br-datetimepicker .dtp-num .br-button{width:var(--dtp-arrows);height:var(--dtp-arrows);
+      color:var(--blue-warm-vivid-70);}
+    .br-datetimepicker .dtp-sep{font-weight:600;color:var(--gray-80);}
+    .br-datetimepicker input[disabled]{cursor:not-allowed;}
+    .br-datetimepicker.inverted .br-input label,.br-datetimepicker.dark-mode .br-input label{color:var(--pure-0);}
+    /* Lista de seções do menu: aplica a anatomia do Item (suporte visual,
+       área principal e suporte complementar) sobre a base do componente. */
+    #sectionMenuList{list-style:none;margin:0;padding:0;}
+    #sectionMenuList .br-item > .content{display:flex;align-items:center;gap:var(--sp2);}
+    #sectionMenuList .item-visual{flex-shrink:0;width:16px;text-align:center;color:var(--gray-40);}
+    #sectionMenuList .item-main{flex:1;min-width:0;}
+    #sectionMenuList .item-support{flex-shrink:0;color:var(--gray-70);font-size:var(--fs-sm);
+      font-weight:600;}
+    #sectionMenuList .br-item.selected .item-visual,
+    #sectionMenuList .br-item.selected .item-main{color:var(--blue-warm-vivid-70);font-weight:600;}
+    #sectionMenuList .br-divider{margin:0;}
+    /* ── LOADING (br-loading) — Componente gov.br DS 3.7.0 nos dois tipos:
+       indeterminado (círculo dinâmico contínuo, tamanhos pequeno 24px e
+       padrão 44px, com rótulo opcional) e determinado (84px, círculo
+       base + círculo dinâmico progressivo + rótulo percentual, com botão
+       cancelar opcional). As superfícies 200×180 e 240×200 e o scrim de
+       foco são obrigatórios quando o carregamento bloqueia a tela. ── */
+    .br-loading{--loading-size:24px;--loading-diameter:84px;--loading-stroke:5px;
+      --loading-color:var(--blue-warm-vivid-70);
+      position:relative;display:inline-block;
+      height:var(--loading-size);width:var(--loading-size);}
+    .br-loading::before{content:"";display:block;position:absolute;
+      height:var(--loading-size);width:var(--loading-size);
+      top:calc(50% - var(--loading-size) * .5);left:calc(50% - var(--loading-size) * .5);
+      border:2px solid var(--loading-color);border-right-color:transparent;border-radius:50%;
+      animation:spinAround 1.3s infinite linear;}
+    .br-loading.medium{--loading-size:44px;}
+    .br-loading.medium::before{border-width:4px;}
+    @keyframes spinAround{from{transform:rotate(0);}to{transform:rotate(359deg);}}
+    @media (prefers-reduced-motion:reduce){.br-loading::before{animation-duration:3s;}}
+    /* Tipo determinado: o círculo base é o fundo cinza, o progressivo é
+       desenhado por conic-gradient e o rótulo percentual vem do
+       próprio atributo data-progress. */
+    .br-loading[data-progress]{--loading-size:var(--loading-diameter);
+      background:conic-gradient(var(--loading-color) calc(var(--loading-percent, 0) * 1%),
+        var(--gray-20) 0);border-radius:50%;}
+    .br-loading[data-progress]::before{content:none;}
+    /* A marcação oficial traz .br-loading-mask/.br-loading-fill como
+       filhos; aqui o círculo progressivo é desenhado pelo próprio
+       container (conic-gradient), então esses filhos apenas não
+       interferem. A porcentagem vem do atributo data-progress, lido
+       pelo script que alimenta --loading-percent. */
+    .br-loading[data-progress] .br-loading-mask,
+    .br-loading[data-progress] .br-loading-fill{display:none;}
+    .br-loading[data-progress]::after{
+      content:attr(data-progress) "%";position:absolute;
+      inset:var(--loading-stroke);border-radius:50%;background:var(--pure-0);
+      color:var(--loading-color);font:600 var(--fs-lg)/1 var(--font);
+      display:flex;align-items:center;justify-content:center;}
+    /* Rótulo, superfície e botão cancelar */
+    .loading-label{margin-top:var(--sp2);font:500 var(--fs-base)/1.4 var(--font);
+      color:var(--gray-80);text-align:center;}
+    .loading-surface{display:flex;flex-direction:column;align-items:center;
+      justify-content:center;background:var(--pure-0);border-radius:var(--r-sm);
+      box-shadow:var(--sh-md);width:200px;height:180px;padding:var(--sp3);}
+    .loading-surface.determined{width:240px;height:200px;}
+    .loading-surface .br-button{margin-top:var(--sp3h,var(--sp3));}
+    /* Carregamento no corpo da página */
+    .pp-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:var(--sp2);padding:var(--sp5);color:var(--gray-70);font-size:var(--fs-base);}
+    /* ── MAGIC BUTTON (br-magic-button) — Componente gov.br DS 3.7.0:
+       superfície de apoio (moldura clara com sombra) + superfície interna
+       na paleta highlight + rótulo ou ícone. Densidades alta (small),
+       média (padrão) e baixa (large); formatos pílula e redondo. Existe
+       um único magic button no painel, conforme a regra de exclusividade
+       do componente. ── */
+    .br-magic-button{--magic-size:44px;--magic-support-size:64px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background-color:var(--gray-5);border-radius:100em;box-shadow:var(--sh-md);
+      height:var(--magic-support-size);
+      padding:calc((var(--magic-support-size) - var(--magic-size)) * .5);}
+    .br-magic-button.small{--magic-size:36px;--magic-support-size:56px;}
+    .br-magic-button.medium{--magic-size:44px;--magic-support-size:64px;}
+    .br-magic-button.large{--magic-size:52px;--magic-support-size:72px;}
+    .br-magic-button .br-button{height:var(--magic-size);min-height:var(--magic-size);
+      border-radius:100em;border:none;
+      background-color:var(--green-cool-vivid-50);color:var(--pure-0);
+      font:600 var(--fs-md)/1 var(--font);padding:0 var(--sp3);}
+    .br-magic-button .br-button.circle{width:var(--magic-size);padding:0;}
+    .br-magic-button .br-button i{font-size:20px;}
+    .br-magic-button .br-button:hover{background-color:var(--green-cool-vivid-60,#2e7d32);}
+    .br-magic-button .br-button:active{background-color:var(--green-cool-vivid-70,#276c2a);}
+    .br-magic-button .br-button:focus-visible{outline:var(--focus-width) var(--focus-style) var(--focus-color);
+      outline-offset:calc((var(--magic-support-size) - var(--magic-size)) * .5 + 4px);}
     /* ── Voltar ao topo + Reportar erro: botões flutuantes fixos nos
        cantos inferiores, replicando o padrão visual oficial (círculo
        primary grande). z-layer-3 — abaixo dos scrims/modais (layer-4),
@@ -1011,7 +1450,10 @@
       border-radius:var(--r-sm);text-align:center;}
     .report-error-shot-status{font-size:13px;color:var(--gray-70);margin:0 0 var(--sp1);}
     .report-error-shot img{max-width:100%;max-height:220px;border:1px solid var(--gray-10);
-      border-radius:var(--r-sm);display:block;margin:0 auto var(--sp2);}
+      border-radius:var(--r-sm);display:block;margin:0 auto;}
+    .report-error-shot-figure{display:inline-block;max-width:100%;margin-bottom:var(--sp2);
+      overflow:hidden;border-radius:var(--r-sm);}
+    .report-error-shot-figure[hidden]{display:none;}
     .report-error-shot [hidden]{display:none;}
     .detail-row dt{font-weight:700;color:var(--gray-70);font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
     .detail-row dd{margin:0;color:var(--gray-80);}
@@ -1159,7 +1601,11 @@
 
 
     /* ── PANELS (tab-content > tab-panel, conforme Como Usar) ── */
-    .tab-content .tab-panel{display:none;position:relative;z-index:var(--z-layer-0);}
+    /* position:relative serve de âncora para conteúdos posicionados dentro
+       do painel; sem z-index, para não criar um contexto de empilhamento
+       que prenderia dropdowns (select, reticências) abaixo dos botões
+       flutuantes da página. */
+    .tab-content .tab-panel{display:none;position:relative;}
     .tab-content .tab-panel.active{display:block;}
     /* max-width:1440px: decisão consciente de projeto — o DS define .container-lg
        com 1200px (desktop) e 1520px (TV), mas o Fundamento Grid autoriza adaptações
@@ -1203,6 +1649,27 @@
     .card-title{margin:0;font:700 15px/1.3 var(--font);color:var(--gray-80);}
     .card-sub{font:400 var(--fs-sm)/1.5 var(--font);color:var(--gray-70);margin-top:var(--sp-half);}
     .card-bd{padding:var(--sp2) var(--sp3) var(--sp3);}
+    /* ── Componente Card completo (gov.br DS) ──────────────────────────────
+       Anatomia: Superfície (obrigatória — fundo --pure-0 e sombra) e Área
+       (obrigatória). As três áreas nomeadas da spec (títulos, conteúdo e
+       ações) ganham aqui as classes oficiais card-header/card-content/
+       card-footer, com o padding único --card-padding (16px), além das
+       propriedades adicionais hover, h-fixed e do estado desativado. */
+    .br-card{--card-padding:var(--sp2);--card-height-fixed:250px;}
+    .br-card .card-content{padding:var(--card-padding);}
+    .br-card .card-content > *:last-child{margin-bottom:0;}
+    .br-card .card-header{padding:var(--card-padding) var(--card-padding) 0;}
+    .br-card .card-footer{padding:0 var(--card-padding) var(--card-padding);}
+    .br-card.h-fixed .card-content{max-height:var(--card-height-fixed);overflow-y:auto;}
+    .br-card.h-fixed .card-content::-webkit-scrollbar{height:var(--sp1);width:var(--sp1);}
+    .br-card.h-fixed .card-content::-webkit-scrollbar-track{background:var(--gray-10);}
+    .br-card.h-fixed .card-content::-webkit-scrollbar-thumb{background:var(--gray-30);}
+    .br-card.h-fixed .card-content:hover::-webkit-scrollbar-thumb{background:var(--gray-40);}
+    .br-card.h-fixed .card-footer{padding-top:var(--card-padding);}
+    .br-card.hover:hover{background-image:linear-gradient(rgba(0,0,0,.04),rgba(0,0,0,.04));}
+    .br-card.disabled,.br-card[aria-disabled="true"]{background:var(--gray-5);color:var(--gray-60);
+      box-shadow:none;pointer-events:none;}
+    .br-card.disabled *,.br-card[aria-disabled="true"] *{color:inherit;}
 
     /* ── PAGINATION (br-pagination), Tipo Contextual — integrada às
        tabelas do Catálogo de serviços e do Controle_PTD. Só as Setas de
@@ -1210,7 +1677,12 @@
        opcionais de Exibição, Informação e Atalho — agora com o
        componente Select oficial completo (ver bloco SELECT abaixo). ── */
     .br-pagination{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp2);
-      font-size:13px;color:var(--gray-80);}
+      --pagination-size:32px;
+      font-size:13px;color:var(--gray-80);margin-top:var(--sp4);}
+    /* Densidades oficiais: alta 24px, média 32px (padrão), baixa 40px. */
+    .br-pagination.small{--pagination-size:24px;}
+    .br-pagination.medium{--pagination-size:32px;}
+    .br-pagination.large{--pagination-size:40px;}
     .br-card .table-footer .br-pagination{padding:var(--sp2) var(--sp3) var(--sp3);
       border-top:1px solid var(--gray-10);margin-top:0;}
     .br-pagination .pagination-per-page,
@@ -1234,7 +1706,7 @@
        a página atual inverte fundo/texto e carrega aria-current="page". */
     .br-pagination .pagination-pages{display:flex;align-items:center;gap:2px;
       list-style:none;margin:0;padding:0;}
-    .br-pagination .page{min-width:32px;height:32px;padding:0 6px;border:0;
+    .br-pagination .page{min-width:var(--pagination-size);height:var(--pagination-size);padding:0 6px;border:0;
       border-radius:var(--r-pill,999px);background:transparent;
       color:var(--blue-warm-vivid-70);font:600 13px/1 var(--font);cursor:pointer;
       display:inline-flex;align-items:center;justify-content:center;}
@@ -1242,8 +1714,28 @@
     .br-pagination .page[aria-current="page"]{background:var(--blue-warm-vivid-70);
       color:var(--pure-0);}
     .br-pagination .page.ellipsis{color:var(--gray-60);cursor:default;background:transparent;}
-    .br-pagination .pagination-arrows .br-button.circle{width:32px;height:32px;}
-    .br-pagination select{height:32px;}
+    /* Botão Reticências (módulo 3): abre em dropdown as páginas ocultas,
+       com barra de rolagem a partir de 4 itens (max-height oficial). */
+    .br-pagination .pagination-ellipsis{position:relative;display:flex;}
+    .br-pagination .pagination-ellipsis > .br-button.circle{width:var(--pagination-size);height:var(--pagination-size);}
+    .br-pagination .pagination-ellipsis .br-list{position:absolute;top:calc(100% + 4px);left:50%;
+      transform:translateX(-50%);background:var(--pure-0);box-shadow:var(--sh-md);
+      border-radius:var(--r-sm);padding:4px 0;min-width:4em;max-height:220px;overflow-y:auto;
+      z-index:3500;display:flex;flex-direction:column;}
+    .br-pagination .pagination-ellipsis .br-list[hidden]{display:none;}
+    .br-pagination .pagination-ellipsis .br-item{border:0;background:none;cursor:pointer;
+      padding:6px 14px;font:400 13px/1.4 var(--font);color:var(--blue-warm-vivid-70);text-align:center;}
+    .br-pagination .pagination-ellipsis .br-item:hover{background:var(--blue-warm-vivid-5);}
+    /* Módulos de opção com o Select do DS: campo sem contorno até receber
+       foco, largura fixa e texto à direita, como no CSS oficial. */
+    .br-pagination .br-select{min-width:0;display:inline-block;}
+    .br-pagination .br-select .br-input{display:flex;align-items:center;gap:6px;}
+    .br-pagination .br-select .br-input > .br-button{bottom:auto;top:2px;}
+    .br-pagination .br-select .br-input input{width:88px;text-align:right;
+      height:var(--pagination-size);}
+    .br-pagination .br-select .br-input input:not(:focus){border-color:transparent;}
+    .br-pagination .br-select .br-list{left:auto;right:0;min-width:5em;width:auto;max-height:220px;}
+    .br-pagination .pagination-arrows .br-button.circle{width:var(--pagination-size);height:var(--pagination-size);}
     @media(max-width:575.98px){
       .br-pagination .pagination-pages{order:3;width:100%;justify-content:center;}
       .br-pagination .pagination-arrows{margin-left:0;}
@@ -1447,40 +1939,123 @@
     .ins-txt{font-size:13px;color:var(--gray-80);line-height:1.6;}
     .ins-txt strong{color:var(--cv-blue);}
     .insights-col{display:flex;flex-direction:column;gap:12px;}
-    /* ── CAROUSEL (br-carousel), conforme Componente gov.br DS.
-       Estilo genérico do componente, usado pelo carrossel de depoimentos
-       (testimonial-section). Adaptação consciente: o padrão oficial usa
-       --carousel-min-height:400px (pensado para mídia/imagens); aqui a
-       altura é flexível ao conteúdo de texto. ── */
-    .br-carousel{display:flex;flex-wrap:wrap;align-items:center;position:relative;gap:4px;}
-    .br-carousel .carousel-button{flex-shrink:0;display:flex;align-items:center;}
+    /* ── CAROUSEL (br-carousel) — Componente gov.br DS 3.7.0, anatomia
+       completa: (1) palco — carousel-stage/carousel-page, obrigatório;
+       (2) botões de navegação — button circular terciário, obrigatórios;
+       (3) botões de reprodução — play/pause, opcionais, visíveis no
+       hover do palco; (4) indicador de páginas — componente Step nos
+       dois tipos previstos (simples e textual), obrigatório.
+       Propriedades adicionais implementadas: data-stage (out padrão,
+       in, hibw, hibh), data-circular e data-mobile-nav. ── */
+    .br-carousel{
+      --carousel-button-margin:var(--sp1);
+      --carousel-button-icon-size:16px;
+      --carousel-step-height:40px;
+      --carousel-full-size:100%;
+      --carousel-min-height:400px;
+      --carousel-button-fix-height:52px;
+      --carousel-button-fix-width:100px;
+      display:flex;position:relative;
+      width:var(--carousel-full-size);height:var(--carousel-full-size);
+      min-height:var(--carousel-min-height);}
+    /* 1. Palco */
+    .br-carousel .carousel-stage{display:block;overflow:hidden;position:relative;z-index:0;}
+    .br-carousel .carousel-page{position:absolute;top:0;left:var(--carousel-full-size);
+      width:var(--carousel-full-size);height:var(--carousel-full-size);
+      display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;overflow:hidden;
+      transition:all var(--dur-fast) var(--ease-in-out) 0s;}
+    .br-carousel .carousel-page[active]{left:0!important;opacity:1;visibility:visible;
+      height:var(--carousel-full-size);}
+    .br-carousel .carousel-content{display:flex;flex-wrap:wrap;align-items:center;
+      justify-content:center;width:var(--carousel-full-size);height:var(--carousel-full-size);}
+    .br-carousel .carousel-page[active]:focus-visible,
+    .br-carousel .carousel-page[active]:focus-within{
+      outline:var(--focus-width) var(--focus-style) var(--focus-color);
+      outline-offset:var(--focus-offset);}
+    /* 2. Botões de navegação — centralizados verticalmente no palco */
+    .br-carousel .carousel-button{position:absolute;right:0;left:unset;z-index:1;
+      display:flex;align-items:center;width:fit-content;
+      height:calc(var(--carousel-full-size) - var(--carousel-button-fix-height));}
+    .br-carousel .carousel-button:first-child{left:0;right:unset;}
+    .br-carousel .carousel-btn-prev,.br-carousel .carousel-btn-next{
+      margin:var(--carousel-button-margin);padding:0;}
+    .br-carousel .carousel-btn-prev i.fas,.br-carousel .carousel-btn-next i.fas{
+      font-size:var(--carousel-button-icon-size);}
     .br-carousel .carousel-btn-prev:disabled,.br-carousel .carousel-btn-next:disabled{
       opacity:var(--op-lg);cursor:not-allowed;}
-    .br-carousel .carousel-stage{flex:1;overflow:hidden;position:relative;min-height:64px;}
-    .br-carousel .carousel-page{display:none;}
-    .br-carousel .carousel-page[active]{display:block;
-      animation:carouselIn var(--dur-fast) var(--ease);}
-    @keyframes carouselIn{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
-    .carousel-step{display:flex;justify-content:center;gap:6px;margin-top:var(--sp2);
-      flex-basis:100%;order:3;}
-    .carousel-step .step-dot{box-sizing:content-box;width:8px;height:8px;border-radius:50%;border:none;
-      background-color:var(--gray-20);background-clip:content-box;cursor:pointer;
-      /* Área Mínima de Ação (Densidade): o ponto visual de 8px é uma
-         escolha estética válida, mas como superfície de clique fica
-         bem abaixo do mínimo de 24px. padding+margem negativa ampliam
-         a área clicável sem aumentar o ponto visualmente (background-
-         clip mantém a cor restrita à caixa de conteúdo original); valor
-         moderado (5px) para não sobrepor demais os pontos vizinhos,
-         que ficam a 6px de distância entre si. box-sizing:content-box é
-         obrigatório aqui — com o reset global (*{box-sizing:border-box}),
-         width:8px já incluiria o padding, deixando a content-box
-         negativa (8-5-5=-2px) e o fundo, recortado por background-clip,
-         desaparecia (visto isso só não quebrava no ponto ativo porque o
-         shorthand "background" abaixo resetava background-clip de volta
-         para border-box como efeito colateral). */
-      padding:5px;margin:-5px;
+    /* 3. Botões de reprodução — "invisíveis" no estado normal, revelados
+       ao passar o cursor sobre o carrossel (e sempre visíveis ao foco
+       por teclado, para não sumirem na navegação por Tab) */
+    .br-carousel .carousel-play{position:absolute;top:0;left:0;right:0;z-index:2;
+      display:flex;justify-content:center;padding-top:var(--sp1);
+      opacity:0;transition:opacity var(--dur-fast) var(--ease);}
+    .br-carousel:hover .carousel-play,
+    .br-carousel .carousel-play:focus-within{opacity:1;}
+    /* 4. Indicador de páginas */
+    .br-carousel .carousel-step{position:absolute;bottom:8px;width:var(--carousel-full-size);
+      height:var(--carousel-step-height);}
+    .br-carousel .carousel-step .br-step{justify-content:center;padding:0;}
+    /* Variantes do palco (data-stage) */
+    .br-carousel[data-stage="out"] .carousel-stage,.br-carousel .carousel-stage{
+      height:calc(var(--carousel-full-size) - var(--carousel-button-fix-height));
+      left:50px;width:calc(var(--carousel-full-size) - var(--carousel-button-fix-width));}
+    .br-carousel[data-stage="in"] .carousel-button,
+    .br-carousel[data-stage="hibh"] .carousel-button{height:var(--carousel-full-size);}
+    .br-carousel[data-stage="in"] .carousel-btn-prev,.br-carousel[data-stage="in"] .carousel-btn-next,
+    .br-carousel[data-stage="hibw"] .carousel-btn-prev,.br-carousel[data-stage="hibw"] .carousel-btn-next{
+      border-radius:0;height:var(--carousel-full-size);margin:0;padding:0 var(--sp1);}
+    .br-carousel[data-stage="in"] .carousel-stage{height:var(--carousel-full-size);
+      left:0;width:var(--carousel-full-size);}
+    .br-carousel[data-stage="hibh"] .carousel-stage{height:var(--carousel-full-size);
+      left:50px;width:calc(var(--carousel-full-size) - var(--carousel-button-fix-width));}
+    .br-carousel[data-stage="hibw"] .carousel-button{
+      height:calc(var(--carousel-full-size) - var(--carousel-button-fix-height));}
+    .br-carousel[data-stage="hibw"] .carousel-stage{
+      height:calc(var(--carousel-full-size) - var(--carousel-button-fix-height));
+      left:0;width:var(--carousel-full-size);}
+    /* Movimento: transição slide, easing ease-in-out, duração rápida —
+       desligada quando o usuário pede menos movimento */
+    @media (prefers-reduced-motion:reduce){
+      .br-carousel .carousel-page{transition:none;}}
+    /* Layout móvel: botões de navegação ocultos por padrão (a navegação
+       é por gesto/swipe), reexibidos com data-mobile-nav */
+    @media (max-width:991px){
+      .br-carousel{max-width:var(--carousel-full-size);width:var(--carousel-full-size);}
+      .br-carousel .carousel-button{
+        height:calc(var(--carousel-full-size) - var(--carousel-button-fix-height));}
+      .br-carousel .carousel-btn-prev,.br-carousel .carousel-btn-next{
+        border-radius:0;display:none;height:var(--carousel-full-size);margin:0;padding:0 var(--sp1);}
+      .br-carousel[data-mobile-nav] .carousel-btn-prev,
+      .br-carousel[data-mobile-nav] .carousel-btn-next{display:flex;}
+      .br-carousel .carousel-stage{
+        height:calc(var(--carousel-full-size) - var(--carousel-button-fix-height));
+        left:0;width:var(--carousel-full-size);}}
+    /* Indicador de páginas — tipo simples (pontos) e tipo textual
+       ("página atual / total"), variantes do componente Step usadas
+       exclusivamente pelo carrossel */
+    .br-step[data-type="simple"],.br-step[data-type="text"]{--step-size:auto;}
+    .br-step[data-type="simple"] .step-progress,
+    .br-step[data-type="text"] .step-progress{flex-grow:0;align-items:center;
+      justify-content:center;gap:6px;min-height:32px;background:transparent;}
+    .br-step[data-type="simple"] .step-progress-btn{flex-grow:0;min-height:0;cursor:pointer;
+      box-sizing:content-box;width:8px;height:8px;padding:5px;margin:0;border-radius:50%;
+      background-color:var(--gray-20);background-clip:content-box;
       transition:background-color var(--dur-fast) var(--ease);}
-    .carousel-step .step-dot[aria-selected="true"]{background-color:var(--cv-blue);}
+    .br-step[data-type="simple"] .step-progress-btn::before,
+    .br-step[data-type="simple"] .step-progress-btn::after{content:none;}
+    .br-step[data-type="simple"] .step-progress-btn[active]{background-color:var(--blue-warm-vivid-70);}
+    .br-step[data-type="simple"] .step-progress-btn:hover:not([active]){background-color:var(--gray-40);}
+    /* No tipo simples o rótulo de cada página existe só para leitores de
+       tela (o indicador é visualmente um ponto) */
+    .br-step[data-type="simple"] .step-info{position:absolute;width:1px;height:1px;
+      overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;}
+    .br-step[data-type="text"] .step-progress-btn{flex-grow:0;min-height:0;cursor:default;
+      margin:0;padding:0 2px;}
+    .br-step[data-type="text"] .step-progress-btn::before,
+    .br-step[data-type="text"] .step-progress-btn::after{content:none;}
+    .br-step[data-type="text"] .step-info{margin:0;font-size:var(--fs-sm);font-weight:700;
+      color:var(--gray-70);}
 
     /* ── BADGES ── */
     .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;
@@ -1551,6 +2126,46 @@
       display:flex;align-items:center;margin-left:var(--sp2);color:var(--gray-40);
       pointer-events:none;}
     .br-input .input-icon + input{padding-left:var(--sp5);}
+    /* Densidades (Comportamento 2): alta 32px, média 40px (padrão), baixa
+       48px e destaque 56px — alturas oficiais do componente. */
+    .br-input{--input-size:40px;--input-radius:var(--r-sm);}
+    .br-input input{height:var(--input-size);border-radius:var(--input-radius);}
+    .br-input.small{--input-size:32px;}
+    .br-input.medium{--input-size:40px;}
+    .br-input.large{--input-size:48px;}
+    /* Tipo destaque (input-highlight): fundo --gray-2, raio médio e mais
+       respiro interno — usado em campos de busca de maior ênfase. */
+    .br-input.input-highlight{--input-size:56px;--input-radius:var(--r-md);}
+    .br-input.input-highlight input{background:var(--gray-2);border-color:transparent;
+      padding-left:var(--sp3);padding-right:var(--sp3);font-size:var(--fs-base);}
+    .br-input.input-highlight .input-icon{margin-left:var(--sp3);}
+    .br-input.input-highlight .input-icon + input{padding-left:var(--sp7);}
+    /* Ação interna (item 4 da Anatomia): button circular terciário de
+       densidade alta, centralizado verticalmente à direita do campo. */
+    .br-input.input-button input,.br-input.has-icon input{padding-right:var(--sp5);}
+    .br-input.input-button,.br-input.has-icon{position:relative;}
+    .br-input.input-button > .br-button,.br-input.has-icon > .br-button{
+      position:absolute;right:var(--sp-half);bottom:calc((var(--input-size) - 32px) / 2);
+      width:32px;height:32px;border-radius:50%;padding:0;}
+    /* Rótulo lateral (input-inline): label à esquerda, alinhado ao centro
+       óptico do campo. */
+    .br-input.input-inline{display:flex;align-items:flex-start;gap:var(--sp1);}
+    .br-input.input-inline .input-label{margin-top:calc(var(--input-size) * .5 - 8px);}
+    .br-input.input-inline .input-label label{margin:0;white-space:nowrap;}
+    .br-input.input-inline .input-content{flex:1;position:relative;}
+    /* Estados de validação (sucesso, erro, alerta e informativo): borda de
+       2px na cor semântica, acompanhada da mensagem de feedback. */
+    .br-input.success input,.br-input[data-success] input{border:2px solid var(--success);}
+    .br-input.danger input,.br-input[data-danger] input{border:2px solid var(--danger);}
+    .br-input.warning input,.br-input[data-warning] input{border:2px solid var(--warning);}
+    .br-input.info input,.br-input[data-info] input{border:2px solid var(--info);}
+    .br-input .feedback{margin-top:var(--sp-half);}
+    /* Hover: cursor de texto e leve escurecimento; desabilitado: opacidade
+       reduzida e cursor bloqueado. */
+    .br-input input:not(:disabled):hover{cursor:text;background-color:var(--gray-2);}
+    .br-input input:disabled{opacity:var(--op-lg);cursor:not-allowed;background:var(--gray-2);}
+    .br-input.inverted label,.br-input.dark-mode label,
+    .br-input.inverted .input-helper,.br-input.dark-mode .input-helper{color:var(--pure-0);}
     /* Texto Auxiliar (item 7 da Anatomia): ajuda complementar ao label/placeholder. */
     .br-input .input-helper{margin:var(--sp1) 0 0;font-size:11px;line-height:1.4;color:var(--gray-70);}
     /* br-textarea — mesma anatomia do br-input (container + label + campo),
@@ -1567,12 +2182,92 @@
     .report-error-status.is-error{color:var(--danger);}
     .report-error-status.is-ok{color:var(--success);}
 
-    /* ── CHECKGROUP (data-parent/data-child), conforme Utilitários JS gov.br DS ── */
-    .br-checkbox{display:flex;align-items:center;gap:8px;}
-    .br-checkbox input[type="checkbox"]{
-      width:18px;height:18px;flex-shrink:0;accent-color:var(--interactive);cursor:pointer;margin:0;
-    }
-    .br-checkbox label{font:400 13px/1.4 var(--font);color:var(--gray-80);cursor:pointer;margin:0;}
+    /* ── CHECKBOX (br-checkbox) — Componente gov.br DS 3.7.0, anatomia
+       completa: (1) caixa de opção — container 24px, raio 4px, com
+       ícone de suporte visual interativo; (2) item de opção — caixa +
+       texto descritivo à direita; (3) cabeçalho de opções — rótulo e
+       informações adicionais (opcional); (4) lista de opções; (5)
+       mensagem de feedback contextual (opcional).
+       Técnica fiel ao CSS oficial: <input> transparente sobreposto e
+       <label> desenhando container (::before) e ícone (::after), em vez
+       do accent-color simplificado usado antes — é o que permite os
+       estados intermediário, válido e inválido. ── */
+    .br-checkbox{--checkbox-padding:var(--sp1);--checkbox-size:24px;
+      display:flex;position:relative;}
+    .br-checkbox + .br-checkbox{margin-top:var(--sp1);}
+    .br-checkbox input{margin:0;opacity:0;position:absolute;}
+    /* 2. Item de opção: texto descritivo sempre à direita da caixa */
+    .br-checkbox input + label{cursor:pointer;display:inline-block;margin-bottom:0;
+      min-height:var(--checkbox-size);min-width:var(--checkbox-size);
+      padding-left:calc(var(--sp1) + var(--checkbox-size));position:relative;
+      font:500 var(--fs-base)/1.5 var(--font);color:var(--gray-80);}
+    .br-checkbox input + label:empty{padding:0;}
+    /* 1. Caixa de opção */
+    .br-checkbox input + label::before{background:var(--pure-0);
+      border:1px solid var(--gray-20);border-radius:4px;content:"";
+      height:var(--checkbox-size);width:var(--checkbox-size);left:0;position:absolute;
+      transition:background-color var(--dur-vfast) var(--ease),
+        border-color var(--dur-vfast) var(--ease);}
+    /* Ícone de suporte visual interativo — estado selecionado (fa-check) */
+    .br-checkbox input:checked + label::after{border:solid var(--interactive);
+      border-width:0 3px 3px 0;content:"";height:12px;width:7px;
+      left:9px;top:4px;position:absolute;transform:rotate(45deg);}
+    /* Estado intermediário (fa-minus): caixa preenchida + traço branco */
+    .br-checkbox input[indeterminate] + label::before,
+    .br-checkbox input:indeterminate + label::before{
+      background:var(--interactive);border-color:var(--interactive);}
+    .br-checkbox input[indeterminate] + label::after,
+    .br-checkbox input:indeterminate + label::after,
+    .br-checkbox input:indeterminate:checked + label::after{
+      border:solid var(--pure-0);border-width:0 0 3px;content:"";position:absolute;
+      height:9px;width:12px;left:6px;top:2px;transform:none;}
+    /* Estado hover */
+    .br-checkbox input:hover:not(:disabled) + label::before{
+      border-color:var(--interactive);background-color:var(--blue-warm-vivid-5);}
+    .br-checkbox input:indeterminate:hover:not(:disabled) + label::before{
+      background-color:var(--blue-warm-vivid-80);border-color:var(--blue-warm-vivid-80);}
+    /* Estado foco */
+    .br-checkbox input:focus-visible + label::before{
+      border-color:var(--focus-color)!important;
+      box-shadow:0 0 0 var(--focus-width-field) var(--focus-color);outline:none;}
+    /* Estados inválido e válido */
+    .br-checkbox.invalid input + label::before,.br-checkbox[invalid] input + label::before{
+      border-color:var(--danger);}
+    .br-checkbox.valid input + label::before,.br-checkbox[valid] input + label::before{
+      border-color:var(--success);}
+    .br-checkbox.valid input:checked + label::after{border-color:var(--success);}
+    /* Estado desabilitado */
+    .br-checkbox.disabled input + label,.br-checkbox input:disabled + label{
+      cursor:not-allowed;opacity:var(--op-lg);}
+    .br-checkbox input:disabled + label *{pointer-events:none;}
+    /* Densidade compacta (caixa de 16px), para uso em tabelas e barras */
+    .br-checkbox.small{--checkbox-size:16px;}
+    .br-checkbox.small input + label{font-size:var(--fs-sm);}
+    .br-checkbox.small input:checked + label::after{height:8px;width:5px;left:6px;top:3px;
+      border-width:0 2px 2px 0;}
+    .br-checkbox.small input:indeterminate + label::after{height:6px;width:8px;left:4px;top:2px;
+      border-width:0 0 2px;}
+    /* 3. Cabeçalho de opções (rótulo + informações adicionais) */
+    .checkbox-group{padding-top:var(--sp1);}
+    .checkbox-group .label{margin:0;font:700 var(--fs-base)/1.5 var(--font);color:var(--gray-80);}
+    .checkbox-group .text-down-01{margin:0 0 var(--sp2);font:500 var(--fs-sm)/1.5 var(--font);
+      color:var(--gray-70);}
+    /* 4. Lista de opções — vertical (padrão) ou horizontal */
+    .checkbox-list{display:flex;flex-direction:column;gap:var(--sp1);margin:0;padding:0;list-style:none;}
+    .checkbox-list.horizontal{flex-direction:row;flex-wrap:wrap;gap:var(--sp1) var(--sp3);}
+    .checkbox-list.horizontal .br-checkbox + .br-checkbox{margin-top:0;}
+    .checkbox-list li{display:flex;}
+    /* 5. Mensagem de feedback contextual — tipo contextual do Componente
+       Message: superfície preenchida na cor semântica, texto em itálico e
+       ícone à esquerda; só o alerta mantém texto escuro, por contraste. */
+    .feedback{display:inline-flex;align-items:center;gap:6px;margin-top:var(--sp2);
+      padding:var(--sp-half);font:500 italic var(--fs-sm)/1.5 var(--font);
+      color:var(--pure-0);}
+    .feedback i{margin-top:0;}
+    .feedback.danger{background:var(--danger);}
+    .feedback.warning{background:var(--yellow-vivid-20);color:var(--gray-80);}
+    .feedback.success{background:var(--green-cool-vivid-50);}
+    .feedback.info{background:var(--info);}
     .checkgroup-wrap{border:1px solid var(--gray-20);border-radius:var(--r-sm);
       background:var(--pure-0);padding:10px 14px;max-height:160px;overflow-y:auto;}
     .cg-parent{padding-bottom:8px;border-bottom:1px solid var(--gray-10);margin-bottom:8px;
@@ -1593,10 +2288,8 @@
        clique para bem abaixo do mínimo de 24px exigido para interação
        por mouse), ele vira uma área de clique ampliada e só o TEXTO é
        escondido visualmente (text-indent), não a caixa do elemento. */
-    .br-checkbox.hidden-label{position:relative;}
-    .br-checkbox.hidden-label label{position:absolute;top:50%;left:0;
-      transform:translateY(-50%);width:24px;height:24px;margin:0;
-      cursor:pointer;overflow:hidden;text-indent:-9999px;white-space:nowrap;}
+    .br-checkbox.hidden-label input + label{padding-left:var(--checkbox-size);
+      width:var(--checkbox-size);overflow:hidden;text-indent:-10000px;white-space:nowrap;}
 
     /* ── TABLE: Barra de Título, Barra de Busca e Barra Contextual
        (Anatomia itens 1 e 2) — título + busca interna + seleção de
@@ -1672,38 +2365,104 @@
       box-shadow:0 0 0 var(--focus-width-field) var(--focus-color);outline:none;}
     .br-radio.valid input + label::before{border-color:var(--green-cool-vivid-50);}
     .br-radio.invalid input + label::before{border-color:var(--red-vivid-50);}
+    /* Agrupamento de caixas de opção (Componente Radio): fieldset sem
+       contorno, rótulo do grupo em .label e informações adicionais em
+       .help-text, conforme a anatomia oficial. */
+    fieldset.radio-group{border:0;margin:var(--sp3) 0;padding:0;}
+    fieldset.radio-group .label{font:700 12px/1.4 var(--font);color:var(--gray-80);
+      text-transform:uppercase;letter-spacing:.4px;margin:0;padding:0;}
+    fieldset.radio-group .help-text{font:400 12px/1.4 var(--font);color:var(--gray-60);
+      margin:2px 0 var(--sp1);}
+    fieldset.radio-group .radio-inline{display:flex;flex-wrap:wrap;gap:var(--sp1) var(--sp4);}
+    fieldset.radio-group .br-radio + .br-radio{margin-top:0;}
+
     .br-radio.disabled input + label,
     .br-radio input:disabled + label{cursor:not-allowed;opacity:var(--op-lg);}
+    /* Densidade compacta (small): a caixa cai para 20px e o bullet para
+       12px; padding do rótulo e posição do bullet acompanham os tokens. */
+    .br-radio.small{--radio-size:20px;--radio-bullet-size:12px;}
+    .br-radio.small input + label{line-height:1.4;min-height:var(--radio-size);}
+    .br-radio.small input:checked + label::after{border-width:4px;}
+    /* Caixa de opção sem texto descritivo (uso em células de tabela). */
+    .br-radio input + label:empty{padding:0;}
+    .br-radio input + label:empty::before{top:0;}
+    .br-radio input:checked + label:empty::after{top:var(--radio-bullet-position);}
+    .br-radio.dark-mode,.br-radio.dark-mode label,
+    .br-radio.inverted,.br-radio.inverted label{color:var(--pure-0);}
     .radio-list{padding:var(--sp1) 0;}
 
-    /* ── SIGN-IN (br-sign-in), Tipo Externo — "projetado para as demais
+    /* ── SIGN-IN (br-sign-in) ── Anatomia: 1 Ícone usuário (obrigatório,
+       à esquerda do rótulo), 2 Rótulo (obrigatório), 3 Imagem (opcional,
+       à direita do rótulo, max 20px), 4 Superfície (obrigatória).
+       Tipos: Interno (ícone + rótulo), Externo (rótulo + imagem/nome
+       institucional em black) e Icônico (.circle, só ícone).
+       Densidades: alta 32px (raio 16), padrão 40px (raio 20), baixa 48px
+       (raio 24) — todas satisfeitas por --button-radius:100em.
+       Aqui, em uso real, o tipo Externo: "projetado para as demais
        soluções que utilizam o acesso único gov.br para se autenticarem"
-       (é exatamente o caso aqui: o painel não tem sessão/login próprio,
-       isso é só um atalho de saída para a conta gov.br do usuário, sem
-       relação com nenhum recurso do painel). Tipo Externo não usa ícone
-       — a "Imagem" (item 3 da Anatomia) fica à direita do rótulo; sem
-       logo, o nome institucional substitui, em peso de fonte black. ── */
+       (o painel não tem sessão própria; o botão é atalho para a conta
+       gov.br). Sem logo, o nome institucional substitui a imagem, com
+       peso de fonte black. ── */
     .br-sign-in{--signin-small:32px;--signin-medium:40px;--signin-large:48px;
-      --signin-size:var(--signin-medium);
-      display:inline-flex;align-items:center;justify-content:center;
-      height:var(--signin-size);border-radius:100em;
-      padding:0 var(--sp3);background:var(--gray-2);color:var(--blue-warm-vivid-70);
-      font:600 var(--fs-base)/1 var(--font);white-space:nowrap;
+      --signin-size:var(--signin-medium);--signin-img:20px;
+      --signin-bg:var(--gray-2);
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      height:var(--signin-size);width:auto;border-radius:100em;overflow:hidden;
+      padding:0 var(--sp2);background:var(--signin-bg);color:var(--blue-warm-vivid-70);
+      font:600 var(--fs-base)/1 var(--font);white-space:nowrap;text-align:center;
+      vertical-align:middle;position:relative;
       text-decoration:none;cursor:pointer;border:none;
       transition:background var(--dur-fast) var(--ease);}
+    /* Densidades */
     .br-sign-in.small{--signin-size:var(--signin-small);}
+    .br-sign-in.medium{--signin-size:var(--signin-medium);}
     .br-sign-in.large{--signin-size:var(--signin-large);}
-    .br-sign-in img{max-height:20px;margin-left:var(--sp1);}
+    /* Tipo Icônico: variante circular, só ícone (exige aria-label). */
+    .br-sign-in.circle{border-radius:50%;padding:0;width:var(--signin-size);}
+    /* Imagem (item 3): assinatura institucional à direita do rótulo. */
+    .br-sign-in img{max-height:var(--signin-img);}
     .br-sign-in .text-black{font-weight:900;}
+    /* Comportamento Bloco: ocupa toda a largura disponível. */
+    .br-sign-in.block{width:100%;}
+    @media (min-width:576px){.br-sign-in.block-sm{width:100%;}.br-sign-in.auto-sm{width:auto;}}
+    @media (min-width:992px){.br-sign-in.block-md{width:100%;}.br-sign-in.auto-md{width:auto;}}
+    @media (min-width:1280px){.br-sign-in.block-lg{width:100%;}.br-sign-in.auto-lg{width:auto;}}
+    /* Ênfases — fundo claro */
     .br-sign-in.primary{background:var(--blue-warm-vivid-70);color:var(--gray-2);}
     .br-sign-in.primary .text-black{color:var(--gray-2);}
     .br-sign-in.primary:hover{background:var(--blue-warm-vivid-80);}
     .br-sign-in.secondary{background:var(--gray-2);color:var(--blue-warm-vivid-70);}
     .br-sign-in.secondary .text-black{color:var(--blue-warm-vivid-70);}
     .br-sign-in.secondary:hover{background:var(--gray-5);}
+    /* Ênfases — fundo escuro (inverted / dark-mode) */
+    .br-sign-in.inverted,.br-sign-in.dark-mode{--signin-bg:var(--blue-warm-vivid-90);
+      color:var(--blue-warm-20);}
+    .br-sign-in.inverted .text-black,.br-sign-in.dark-mode .text-black{color:var(--blue-warm-20);}
+    .br-sign-in.inverted.primary,.br-sign-in.dark-mode.primary{
+      background:var(--blue-warm-20);color:var(--blue-warm-vivid-90);}
+    .br-sign-in.inverted.primary .text-black,.br-sign-in.dark-mode.primary .text-black{
+      color:var(--blue-warm-vivid-90);}
+    .br-sign-in.inverted.primary:hover,.br-sign-in.dark-mode.primary:hover{background:var(--blue-warm-20);filter:brightness(1.04);}
+    .br-sign-in.inverted.secondary,.br-sign-in.dark-mode.secondary{
+      background:var(--blue-warm-vivid-90);color:var(--blue-warm-20);}
+    .br-sign-in.inverted.secondary:hover,.br-sign-in.dark-mode.secondary:hover{background:var(--blue-warm-vivid-80);}
+    /* Estados */
+    .br-sign-in:active{filter:brightness(.94);}
+    .br-sign-in:disabled,.br-sign-in[aria-disabled="true"]{cursor:not-allowed;opacity:var(--op-lg);}
+    .br-sign-in.loading{color:transparent !important;cursor:progress;}
+    .br-sign-in.loading::before{content:"";position:absolute;top:50%;left:50%;
+      width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+      border:2px solid currentColor;border-color:var(--blue-warm-vivid-70) var(--blue-warm-vivid-70) transparent;
+      animation:pp-spin .8s linear infinite;}
+    .br-sign-in.loading.primary::before{border-color:var(--gray-2) var(--gray-2) transparent;}
     .br-sign-in:focus-visible{
       outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
       outline-offset:var(--focus-offset-field);}
+    /* Em telas de toque a diretriz pede área mínima de 44px — a densidade
+       alta do cabeçalho cede lugar à baixa no mobile. */
+    @media (max-width:991.98px){
+      .br-header .br-sign-in.small{--signin-size:44px;}
+    }
 
     /* ── STEP (br-step), Tipo Complexo, Indicador numérico, orientação
        horizontal — jornada de um serviço pelas 4 etapas do fluxo do PTD
@@ -1805,18 +2564,33 @@
        Dentro do item do Select, o radio fica sem o círculo visível
        (content:none no ::before/::after, conforme CSS oficial) — é a
        linha inteira do item que assume o destaque de selecionado. ── */
-    .br-select{position:relative;display:inline-block;min-width:64px;max-width:400px;}
-    .br-select .br-input{margin-bottom:0;position:relative;display:flex;align-items:center;gap:6px;}
-    .br-select .br-input input{padding-right:36px;cursor:pointer;height:32px;
-      padding-top:5px;padding-bottom:5px;}
-    .br-select .br-input .br-button{position:absolute;right:2px;top:2px;
+    .br-select{position:relative;display:block;min-width:100px;max-width:400px;}
+    .br-select .br-input{margin-bottom:0;position:relative;display:block;}
+    .br-select .br-input > label{display:block;}
+    .br-select .br-input .input-group{width:100%;}
+    .br-select .br-input input{padding-right:36px;cursor:pointer;height:40px;
+      padding-top:5px;padding-bottom:5px;text-overflow:ellipsis;}
+    .br-select .br-input > .br-button{position:absolute;right:2px;bottom:6px;
       width:28px;height:28px;padding:0;border:0;background:none;color:var(--gray-70);
       display:flex;align-items:center;justify-content:center;cursor:pointer;
       border-radius:50%;}
-    .br-select .br-input .br-button:hover{background:var(--gray-5);}
+    .br-select .br-input > .br-button:hover{background:var(--gray-5);}
+    /* Item destacado "Selecionar todos" (Modos de seleção) e empty state
+       de busca sem resultado (Feedback após pesquisa). */
+    .br-select .br-item.highlighted{background:var(--gray-2);}
+    .br-select .br-item.highlighted label{font-weight:600;}
+    .br-select .br-item .br-checkbox{margin:0;}
+    .br-select .br-item .br-checkbox input + label{display:block;margin:0;
+      padding:9px 14px 9px 44px;min-height:0;font-weight:400;color:var(--gray-80);}
+    .br-select .br-item .br-checkbox input + label::before{left:14px;top:8px;}
+    .br-select .br-item .br-checkbox input:checked + label::after{left:19px;top:9px;}
+    .br-select .br-item.highlighted .br-checkbox input + label{font-weight:600;}
+    .br-select .br-item.not-found{padding:12px 14px;color:var(--gray-70);
+      font-size:var(--fs-sm);border-bottom:0;}
+    .br-select .br-item.not-found p{margin:0;}
     .br-select .br-list{position:absolute;top:calc(100% + 2px);left:0;right:0;
       background:var(--pure-0);box-shadow:var(--sh-md);border-radius:var(--r-sm);
-      max-height:404px;overflow:auto;z-index:var(--z-layer-2);display:none;
+      max-height:404px;overflow:auto;z-index:3500;display:none;
       padding:4px 0;min-width:5em;}
     .br-select .br-list[expanded]{display:block;}
     .br-select .br-item{display:block;padding:0;}
@@ -1828,7 +2602,8 @@
     .br-select .br-item .br-radio input + label::before,
     .br-select .br-item .br-radio input + label::after{content:none;}
     .br-select .br-item:hover .br-radio input + label{background:var(--gray-2);}
-    .br-select .br-item.selected .br-radio input + label{
+    .br-select .br-item.selected .br-radio input + label,
+    .br-select .br-item.selected .br-checkbox input + label{
       background:var(--blue-warm-vivid-5);color:var(--interactive);font-weight:700;}
     .br-select .br-item:focus{outline:none;}
     .br-select .br-item:focus-visible{
@@ -1856,11 +2631,19 @@
     .br-message .content{flex:1;min-width:0;}
     .br-message .message-title{font-weight:700;}
     .br-message .message-body{font-weight:400;}
+    /* Botão Fechar (Anatomia item 5): button terciário de densidade alta,
+       no topo à direita da superfície da mensagem. */
+    .br-message .close{flex-shrink:0;margin:var(--sp1) var(--sp1) 0 0;}
+    .br-message .close .br-button{color:inherit;}
+    .br-message.info .close .br-button{color:var(--blue-warm-vivid-60);}
+    .br-message.success .close .br-button{color:var(--green-cool-vivid-50);}
+    .br-message.danger .close .br-button{color:var(--red-vivid-50);}
+    .br-message.warning .close .br-button{color:var(--gray-80);}
     .br-message.info{background:var(--blue-warm-vivid-10);}
     .br-message.info .icon{color:var(--blue-warm-vivid-60);}
-    .br-message.danger{background:var(--red-vivid-10);display:none;}
+    .br-message.danger{background:var(--red-vivid-10);}
     .br-message.danger .icon{color:var(--red-vivid-50);}
-    .br-message.warning{background:var(--yellow-vivid-5);display:none;}
+    .br-message.warning{background:var(--yellow-vivid-5);}
     .br-message.warning .icon{color:var(--gray-80);}
     /* Estrutura de erro em 3 níveis (Template de Erro gov.br DS, adaptado a
        um alerta inline compacto em vez de página inteira): título principal
@@ -1889,7 +2672,10 @@
       flex-shrink:0;}
     .br-avatar .content img{height:var(--avatar-size);width:var(--avatar-size);
       vertical-align:inherit;object-fit:cover;}
+    .br-avatar .content{background-color:var(--blue-warm-vivid-10);color:var(--blue-warm-vivid-70);}
     .br-avatar.xs{--avatar-size:22px;--avatar-text-size:10px;}
+    .br-avatar.medium{--avatar-size:100px;--avatar-text-size:var(--fs-xl);}
+    .br-avatar.large{--avatar-size:160px;--avatar-text-size:var(--fs-xxl);}
     /* ── LOADING (gov.br DS) — variante Indeterminado, fiel ao loading.css
        oficial (anel via ::before, spinAround 1.3s linear, endpoint 359deg
        — não 360deg, para não "saltar" visualmente a cada loop).
@@ -2030,7 +2816,24 @@
        DOM com z-index negativo (causava o fundo acinzentado permanente
        na versão anterior). Câmada 3 de elevação (flutuante = sombra
        correspondente, conforme Comportamentos > Localização). ── */
-    .br-menu{--menu-zindex:var(--z-layer-3);}
+    .br-menu{--menu-zindex:var(--z-layer-3);
+      --menu-item-padding:var(--menu-item-medium);
+      --menu-item-small:var(--sp1);--menu-item-medium:var(--sp2);--menu-item-large:var(--sp3);
+      --menu-background-submenu:var(--gray-2);}
+    /* Densidades (Comportamentos > Densidade): alta, média (padrão) e baixa */
+    .br-menu.small{--menu-item-padding:var(--menu-item-small);}
+    .br-menu.medium{--menu-item-padding:var(--menu-item-medium);}
+    .br-menu.large{--menu-item-padding:var(--menu-item-large);}
+    /* Cabeçalho do menu (Anatomia item 3) + botão fechar (item 4): o padrão
+       recomenda oferecer as duas formas de fechamento — botão e clique
+       fora do painel. */
+    .br-menu .menu-header{display:flex;align-items:center;gap:var(--sp1);
+      flex-shrink:0;min-height:56px;padding:var(--sp1) var(--sp2);
+      border-bottom:1px solid var(--gray-10);background:var(--pure-0);}
+    .br-menu .menu-header .menu-title{flex:1;min-width:0;display:flex;align-items:center;
+      gap:var(--sp1);font:400 var(--fs-base)/1.3 var(--font);color:var(--gray-80);}
+    .br-menu .menu-header .menu-title img{max-height:40px;}
+    .br-menu .menu-header .menu-close .br-button{color:var(--blue-warm-vivid-70);}
     .br-menu .menu-container{display:none;}
     .br-menu.active .menu-container{display:flex;position:fixed;inset:0;
       z-index:var(--menu-zindex);}
@@ -2057,6 +2860,19 @@
        no menu-item — "Uso do Divider" do DS ("incluir manualmente a
        classe divider ao menu-item que esteja no primeiro nível"). */
     .br-menu .menu-item.divider{border-bottom:1px solid var(--gray-10);}
+    /* Itens de 2º nível (Anatomia item 6): indentação maior, fundo
+       diferenciado e sem divider, para contrastar com o 1º nível. */
+    .br-menu .menu-body ul ul{background:var(--menu-background-submenu);}
+    .br-menu .menu-body ul ul .menu-item{padding-left:var(--sp5);border-bottom:0;}
+    .br-menu .menu-item{padding-top:var(--menu-item-padding);padding-bottom:var(--menu-item-padding);}
+    /* Ícone Expandir/Retrair (item 7) e Acessar subitens (item 9) */
+    .br-menu .menu-item[aria-expanded="true"] > .support .fa-chevron-down{transform:rotate(180deg);}
+    /* Estados ativo e desabilitado (Comportamentos > Estados) */
+    .br-menu .menu-item.active{background-color:var(--blue-warm-vivid-70);color:var(--pure-0);
+      font-weight:600;}
+    .br-menu .menu-item.active .icon{color:var(--pure-0);}
+    .br-menu .menu-item[disabled],.br-menu .menu-item.disabled{opacity:var(--op-lg);
+      cursor:not-allowed;pointer-events:none;}
     /* #sectionMenuList ficou dentro do Componente Group (br-group__body)
        depois da reestruturação do menu — mas o .menu-item já tem seu
        próprio padding/divider (acima), então a regra genérica
@@ -2147,8 +2963,10 @@
        textos = --pure-0.
     ══════════════════════════════════════════════════════════ */
     .br-footer{max-width:100%;margin:var(--sp6) 0 0;padding:var(--sp4) var(--sp4) var(--sp5);
-      background:#0040b4;
+      background:#0040b4;border-top:1px solid var(--gray-20);
       display:flex;flex-direction:column;gap:var(--sp4);font-size:11px;color:var(--blue-warm-20);}
+    /* Variante documentada: sem o divider que separa o rodapé do conteúdo */
+    .br-footer.no-divider{border-top:none;}
     .br-footer .footer-top,.br-footer .footer-secondary,.br-footer .footer-legal{
       max-width:1440px;margin:0 auto;width:100%;}
 
@@ -2206,8 +3024,14 @@
        conforme especificação ("Texto Informações Legais: alinhamento
        centralizado"). Concentra identificação institucional, contato
        da unidade responsável e licença de uso, em --pure-0. ── */
+    /* Separadores do rodapé (Anatomia item 13): um divider entre o topo
+       do rodapé e o restante da página, outro separando "Logo + Mapa do
+       Site + Secundária" da Área de Informação Legal — este último é o
+       próprio componente Divider no markup (fundo escuro, --pure-0), por
+       isso a área legal não desenha mais uma borda própria. */
+    .br-footer > .br-divider{margin:0;opacity:.4;}
     .footer-legal{display:flex;flex-direction:column;align-items:center;gap:10px;
-      text-align:center;padding-top:var(--sp3);border-top:1px solid rgba(255,255,255,.15);}
+      text-align:center;padding-top:var(--sp3);}
     .footer-org{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--blue-warm-20);}
     .footer-org .fo-top{font:700 10px/1.3 var(--font);text-transform:uppercase;letter-spacing:.4px;color:var(--pure-0);}
     .footer-org .fo-mid{font-size:11px;color:var(--pure-0);}

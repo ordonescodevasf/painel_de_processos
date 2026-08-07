@@ -37,15 +37,16 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script defer src="js/dados.js"></script>
   <script defer src="js/govbr-ui.js"></script>
+  <script defer src="js/govbr-datetimepicker.js"></script>
   <script defer src="js/app.js"></script>
 </head>
 <body>
 
 <nav class="br-skiplink" aria-label="Acesso rápido" role="menubar">
-  <a class="br-item" href="#main" role="menuitem" accesskey="1">Ir para o conteúdo <span aria-hidden="true">(1/4)</span> <span aria-hidden="true" class="br-tag">1</span></a>
-  <a class="br-item" href="#navigation" role="menuitem" accesskey="2">Ir para a navegação <span aria-hidden="true">(2/4)</span> <span aria-hidden="true" class="br-tag">2</span></a>
-  <a class="br-item" id="skipToSearch" href="#headerSearchInput" role="menuitem" accesskey="3">Ir para a busca <span aria-hidden="true">(3/4)</span> <span aria-hidden="true" class="br-tag">3</span></a>
-  <a class="br-item" href="#footer" role="menuitem" accesskey="4">Ir para o rodapé <span aria-hidden="true">(4/4)</span> <span aria-hidden="true" class="br-tag">4</span></a>
+  <a class="br-item" href="#main" role="menuitem" accesskey="1">Ir para o conteúdo <span aria-hidden="true">(1/4)</span> <span aria-hidden="true" class="br-tag text ml-1">1</span></a>
+  <a class="br-item" href="#navigation" role="menuitem" accesskey="2">Ir para a navegação <span aria-hidden="true">(2/4)</span> <span aria-hidden="true" class="br-tag text ml-1">2</span></a>
+  <a class="br-item" id="skipToSearch" href="#headerSearchInput" role="menuitem" accesskey="3">Ir para a busca <span aria-hidden="true">(3/4)</span> <span aria-hidden="true" class="br-tag text ml-1">3</span></a>
+  <a class="br-item" href="#footer" role="menuitem" accesskey="4">Ir para o rodapé <span aria-hidden="true">(4/4)</span> <span aria-hidden="true" class="br-tag text ml-1">4</span></a>
 </nav>
 
 <!-- ══════════════════════════════════════════════
@@ -105,9 +106,22 @@
         <div class="dropdown-wrap header-links"><button class="br-button circle small" type="button" id="btnQuickLinks" data-toggle="dropdown" data-target="quickLinksMenu" aria-label="Abrir atalhos institucionais" aria-controls="quickLinksMenu" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button><div class="br-list dd-target" id="quickLinksMenu" role="group" aria-label="Atalhos institucionais" hidden><div class="header"><div class="title">Atalhos institucionais</div></div><span class="br-divider" aria-hidden="true"></span><div class="quick-links-item quick-links-group"><button type="button" class="br-item" data-toggle="collapse" data-target="institucionalSub" aria-controls="institucionalSub" aria-expanded="false">Institucional<i class="fas fa-chevron-down" aria-hidden="true" style="margin-left:auto"></i></button><div id="institucionalSub" class="quick-links-sub" hidden><a class="br-item" href="https://www.gov.br/pt-br/orgaos-do-governo" target="_blank" rel="noopener">Órgãos do Governo<span class="sr-only"> (abre em nova aba)</span></a><a class="br-item" href="https://www.gov.br/acessoainformacao/pt-br" target="_blank" rel="noopener">Acesso à Informação<span class="sr-only"> (abre em nova aba)</span></a><a class="br-item" href="http://www4.planalto.gov.br/legislacao" target="_blank" rel="noopener">Legislação<span class="sr-only"> (abre em nova aba)</span></a></div></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/governodigital/pt-br/acessibilidade-digital" target="_blank" rel="noopener">Acessibilidade<span class="sr-only"> (abre em nova aba)</span></a></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/secom/pt-br/acesso-a-informacao/comunicabr" target="_blank" rel="noopener">Comunica BR<span class="sr-only"> (abre em nova aba)</span></a></div><div class="quick-links-item"><a class="br-item" href="https://www.gov.br/pt-br/participacao-social" target="_blank" rel="noopener">Participe<span class="sr-only"> (abre em nova aba)</span></a></div></div></div>
         <span class="br-divider vertical" aria-hidden="true"></span>
         <div class="header-functions">
+          <!-- Central de notificações (Componente Notification): acionador
+               com badge, superfície flutuante com cabeçalho + botão
+               fechar, navegação por Tab e itens montados a partir dos
+               alertas operacionais reais do painel. -->
+          <div class="dropdown-wrap has-badge"><button class="br-button circle small" type="button" id="btnNotifications" data-toggle="dropdown" data-target="notifPanel" aria-label="Alertas operacionais" aria-controls="notifPanel" aria-expanded="false"><i class="fas fa-bell" aria-hidden="true"></i><span class="notif-badge" id="notifBadge" hidden>0</span></button><div class="br-notification dd-target" id="notifPanel" role="group" aria-label="Alertas operacionais" hidden><div class="notification-header"><span class="text-bold">Alertas operacionais</span><div class="close"><button class="br-button circle small" type="button" aria-label="Fechar alertas" data-dismiss="dropdown"><i class="fas fa-times" aria-hidden="true"></i></button></div></div><div class="notification-body"><div class="br-tab"><nav class="tab-nav" aria-label="Tipos de alerta"><ul role="tablist"><li class="tab-item active" role="presentation"><button type="button" role="tab" id="notifTabRiscos" aria-selected="true" aria-controls="notifPanelRiscos" data-panel="notifPanelRiscos"><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos <span class="tab-count" id="notifCountRiscos">0</span></button></li><li class="tab-item" role="presentation"><button type="button" role="tab" id="notifTabPrazos" aria-selected="false" aria-controls="notifPanelPrazos" data-panel="notifPanelPrazos"><i class="fas fa-calendar-day" aria-hidden="true"></i> Prazos <span class="tab-count" id="notifCountPrazos">0</span></button></li></ul></nav><div class="tab-content"><div class="tab-panel br-list active" id="notifPanelRiscos" role="tabpanel" aria-labelledby="notifTabRiscos"></div><div class="tab-panel br-list" id="notifPanelPrazos" role="tabpanel" aria-labelledby="notifTabPrazos" hidden></div></div></div></div></div></div>
           <div class="dropdown-wrap"><button class="br-button secondary small govbr-shortcuts-btn" type="button" id="btnHeaderFunctions" data-toggle="dropdown" data-target="headerFunctionsMenu" aria-label="Atalhos gov.br" aria-controls="headerFunctionsMenu" aria-expanded="false"><i class="fas fa-th" aria-hidden="true"></i> <span class="govbr-shortcuts-label">Atalhos gov.br</span></button><div class="br-list dd-target" id="headerFunctionsMenu" role="group" aria-label="Funcionalidades do painel" hidden><div class="header"><div class="title">Funcionalidades do painel</div></div><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="data/painel-processos-dados.xlsx" download><i class="fas fa-file-excel" aria-hidden="true"></i> Planilha de dados (modelo)</a><a class="br-item" href="#/repositorio"><i class="fas fa-toolbox" aria-hidden="true"></i> Repositório e metodologia</a><button type="button" class="br-item" id="btnRefresh" onclick="refreshAll()"><i class="fas fa-sync-alt" aria-hidden="true"></i> Atualizar</button><div class="br-item status-item" aria-live="polite"><i class="fas fa-broadcast-tower" aria-hidden="true"></i> Tempo real · <span id="syncChip">Aguardando…</span></div><button type="button" class="br-item" id="actExportCsv"><i class="fas fa-file-csv" aria-hidden="true"></i> Exportar CSV</button><button type="button" class="br-item" id="actCopyLink"><i class="fas fa-link" aria-hidden="true"></i> Copiar link do painel</button><a class="br-item" id="actOpenSheet" href="#" target="_blank" rel="noopener"><i class="fas fa-table" aria-hidden="true"></i> Abrir planilha de origem<span class="sr-only"> (abre em nova aba)</span></a><span class="br-divider" aria-hidden="true"></span><a class="br-item" href="#" id="menuHelpTrigger"><i class="fas fa-question-circle" aria-hidden="true"></i> Como usar este painel</a><a class="br-item" href="#" id="menuA11yStatementTrigger" data-modal-open="modalA11y"><i class="fas fa-universal-access" aria-hidden="true"></i> Declaração de Acessibilidade</a><div class="br-item switch-item"><div class="br-switch right small icon" role="presentation"><input id="obAutoToggle" type="checkbox" name="obAutoToggle" role="switch"><label for="obAutoToggle">Abrir tutorial automaticamente</label></div></div></div></div>
         </div>
-        <span class="br-divider vertical" aria-hidden="true"></span><a class="br-sign-in primary small" id="govbrSignIn" href="https://sso.acesso.gov.br/" target="_blank" rel="noopener">Entrar com&nbsp;<span class="text-black">gov.br</span><span class="sr-only"> (abre em nova aba)</span></a>
+        <span class="br-divider vertical" aria-hidden="true"></span>
+        <!-- Botão Autenticar (Anatomia item 8) dentro dos containers
+             documentados header-login > header-sign-in. O Avatar do
+             usuário (item 9) só aparece quando há sessão autenticada; este
+             painel não autentica ninguém — o botão leva ao SSO gov.br —,
+             então não há estado logado a representar aqui. -->
+        <div class="header-login">
+          <div class="header-sign-in"><a class="br-sign-in primary small" id="govbrSignIn" href="https://sso.acesso.gov.br/" target="_blank" rel="noopener">Entrar com&nbsp;<span class="text-black">gov.br</span><span class="sr-only"> (abre em nova aba)</span></a></div>
+        </div>
       </div>
     </div>
   </div>
@@ -211,6 +225,15 @@
 <div class="br-menu" id="sectionMenu">
   <div class="menu-container">
     <div class="menu-panel">
+      <!-- Cabeçalho do menu (Anatomia item 3) com o botão fechar (item 4):
+           o padrão recomenda oferecer as duas formas de fechamento —
+           botão e clique fora do painel, ambas ativas aqui. -->
+      <div class="menu-header">
+        <div class="menu-title">Painel de Gestão de Processos</div>
+        <div class="menu-close">
+          <button class="br-button circle small" type="button" aria-label="Fechar o menu" data-dismiss="menu"><i class="fas fa-times" aria-hidden="true"></i></button>
+        </div>
+      </div>
       <nav class="menu-body" aria-label="Seções da aba ativa" id="sectionMenuBody">
         <div class="br-group" id="sectionMenuGroup">
           <button type="button" class="br-group-header" data-toggle="collapse" data-target="sectionMenuGroupBody" aria-controls="sectionMenuGroupBody" aria-expanded="true">
@@ -355,7 +378,7 @@
         <span class="gf-tag" id="footerGovfedFallback" style="display:none;"><i class="fas fa-flag" aria-hidden="true"></i> Governo Federal</span>
       </div>
     </div>
-    <span class="br-divider" aria-hidden="true"></span>
+    <span class="br-divider dark-mode" role="presentation"></span>
     <!-- Área de Informação Legal (Anatomia 9-11): centralizada -->
     <div class="footer-legal"><div class="footer-org"><span class="fo-unit">Unidade de Gestão Normativa e de Processos — AE/GPE/UNP</span><span class="fo-address">Companhia de Desenvolvimento dos Vales do São Francisco e do Parnaíba — CNPJ 00.399.857/0001-26<br>SGAN 601, Conjunto I, Edifício Deputado Manoel Novaes, Sala 213, Asa Norte, Brasília (DF), CEP 70.830-019</span></div><p class="footer-license">Todo o conteúdo deste site está publicado sob a licença Creative Commons Atribuição-SemDerivações 3.0 · <a href="#" id="footerPrivacyTrigger" data-modal-open="modalPrivacidade">Política de Privacidade e Termos de Uso</a></p></div>
   </footer>
@@ -448,33 +471,15 @@
   </div>
 </div>
 
-<!-- ─── COOKIEBAR (simplificado) — adaptação consciente: este painel é
-     ferramenta interna de gestão de processos (servidores Codevasf),
-     sem coleta deliberada de dados pessoais nem cookies próprios
-     definidos pelo código. Mantém-se o espírito de transparência da
-     LGPD informando, de forma honesta e específica, os recursos de
-     terceiros reais que o painel carrega — em vez de um aviso
-     genérico sobre "cookies" que não existem no código. Só é
-     dispensado por ação explícita ("Entendi"), sem fechar por Esc ou
-     clique fora, adequado a um aviso de transparência/consentimento. ── -->
-<div class="br-scrim foco" id="cookieScrim" aria-hidden="true"></div>
-<div class="br-cookiebar default" id="cookieNotice" role="dialog" aria-modal="true" aria-describedby="cookieNoticeText" aria-label="Aviso sobre recursos de terceiros" tabindex="-1">
-  <div class="cn-text" id="cookieNoticeText">
-    Este painel carrega recursos de terceiros para funcionar: fontes (Google Fonts), ícones (Font Awesome via Cloudflare), leitura de planilha (SheetJS via Cloudflare) e o widget de Libras (VLibras, gov.br). Se configurada, a leitura da base de dados via Google Sheets é um recurso adicional. Esses serviços podem registrar informações técnicas de acesso (como IP) segundo suas próprias políticas. O painel em si não coleta nem armazena dados pessoais do usuário — apenas sua preferência de alto contraste, salva localmente no seu navegador.
-  </div>
-  <div class="cn-actions">
-    <button type="button" class="br-button secondary" id="cookieNoticeDetails" aria-expanded="false" aria-controls="cookieNoticeDetailBox">Detalhes</button>
-    <button type="button" class="br-button primary" id="cookieNoticeAccept">Entendi</button>
-  </div>
-  <div class="cn-details" id="cookieNoticeDetailBox" hidden>
-    <ul>
-      <li><strong>fonts.googleapis.com / fonts.gstatic.com</strong> — fontes Noto Sans/Noto Sans Mono.</li>
-      <li><strong>cdnjs.cloudflare.com</strong> — ícones Font Awesome e biblioteca SheetJS (leitura da planilha .xlsx).</li>
-      <li><strong>vlibras.gov.br</strong> — widget oficial de tradução para Libras.</li>
-      <li><strong>docs.google.com / sheets.googleapis.com</strong> — apenas se este painel estiver configurado para ler os dados via Google Sheets (ver PAINEL_CONFIG no código).</li>
-    </ul>
-  </div>
-</div>
+<!-- ─── COOKIEBAR — componente gerado dinamicamente a partir do JSON de
+     entrada (js/govbr-ui.js), como no core oficial. Adaptação consciente
+     de conteúdo: este painel é ferramenta interna da Codevasf e não
+     define cookies próprios de rastreio — as classes descrevem, com
+     honestidade, os recursos de terceiros que ele carrega e as
+     preferências guardadas no navegador. Padrão opt out: os recursos
+     opcionais podem ser desligados e a escolha é respeitada. ── -->
+<div class="br-scrim foco" id="cookieScrim" aria-hidden="true" hidden></div>
+<div class="br-cookiebar default d-none" id="cookieNotice" tabindex="-1"></div>
 
 <!-- ─── ONBOARDING — tour rápido de apresentação, mostrado automaticamente
      no primeiro acesso (com atraso, para não competir com o carregamento
@@ -484,49 +489,84 @@
      reativar. ── -->
 <div class="br-scrim foco" id="onboardingScrim" data-scrim="true" hidden>
   <div class="br-onboarding" role="dialog" aria-modal="true" aria-labelledby="obTitle-0">
-    <div class="br-carousel ob-carousel" id="onboardingCarousel" aria-roledescription="carousel" aria-label="Tutorial do painel">
-      <div class="carousel-stage"><div id="onboardingCol">
+    <div class="br-carousel ob-carousel" id="onboardingCarousel" data-stage="hibw" data-mobile-nav="" aria-roledescription="carousel" aria-label="Tutorial do painel">
+      <div class="carousel-button">
+        <button class="br-button carousel-btn-prev terciary circle" type="button" aria-label="Página anterior" aria-controls="onboardingCol" disabled><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+      </div>
+      <div class="carousel-stage" id="onboardingCol">
 
-        <div class="ob-page active">
-          <div class="ob-illus" aria-hidden="true"><i class="fas fa-sitemap"></i></div>
-          <h2 class="ob-title" id="obTitle-0">Conheça o Painel de Processos!</h2>
-          <p class="ob-text">Cadeia de valor, mapeamento e repositório de processos da Codevasf, num só lugar. Vamos a um tour rápido (5 passos)?</p>
-          <button class="br-button primary ob-start" type="button">Iniciar</button>
+        <div class="carousel-page ob-page" active role="group" aria-roledescription="slide" aria-label="Página 1 de 5" aria-live="polite">
+          <div class="carousel-content">
+            <div class="ob-illus" aria-hidden="true"><i class="fas fa-sitemap"></i></div>
+            <h2 class="ob-title" id="obTitle-0">Conheça o Painel de Processos!</h2>
+            <p class="ob-text">Cadeia de valor, mapeamento e repositório de processos da Codevasf, num só lugar. Vamos a um tour rápido (5 passos)?</p>
+            <button class="br-button primary ob-start" type="button">Iniciar</button>
+          </div>
         </div>
 
-        <div class="ob-page">
-          <div class="ob-illus" aria-hidden="true"><i class="fas fa-diagram-project"></i></div>
-          <h2 class="ob-title" id="obTitle-1">A Cadeia de Valor é o ponto de partida</h2>
-          <p class="ob-text">Na tela inicial, clique em qualquer <strong>macroprocesso</strong> para abrir sua ficha. De lá, navegue até os <strong>processos</strong>, os <strong>subprocessos</strong> (quando houver), as <strong>atividades</strong> e as <strong>tarefas</strong> — a hierarquia da metodologia CBOK 4.0, que não obriga todos os níveis: um processo simples pode ir direto às atividades.</p>
+        <div class="carousel-page ob-page" role="group" aria-roledescription="slide" aria-label="Página 2 de 5" aria-live="polite">
+          <div class="carousel-content">
+            <div class="ob-illus" aria-hidden="true"><i class="fas fa-diagram-project"></i></div>
+            <h2 class="ob-title" id="obTitle-1">A Cadeia de Valor é o ponto de partida</h2>
+            <p class="ob-text">Na tela inicial, clique em qualquer <strong>macroprocesso</strong> para abrir sua ficha. De lá, navegue até os <strong>processos</strong>, os <strong>subprocessos</strong> (quando houver), as <strong>atividades</strong> e as <strong>tarefas</strong> — a hierarquia da metodologia CBOK 4.0, que não obriga todos os níveis: um processo simples pode ir direto às atividades.</p>
+          </div>
         </div>
 
-        <div class="ob-page">
-          <div class="ob-illus" aria-hidden="true"><i class="fas fa-id-card"></i></div>
-          <h2 class="ob-title" id="obTitle-2">Cada ficha traz tudo sobre o processo</h2>
-          <p class="ob-text">SIPOC, marcos do mapeamento (M1–M10), diagrama BPMN do Bizagi, documentos vinculados, riscos, indicadores e o diário de mapeamento — o histórico rastreável do trabalho.</p>
+        <div class="carousel-page ob-page" role="group" aria-roledescription="slide" aria-label="Página 3 de 5" aria-live="polite">
+          <div class="carousel-content">
+            <div class="ob-illus" aria-hidden="true"><i class="fas fa-id-card"></i></div>
+            <h2 class="ob-title" id="obTitle-2">Cada ficha traz tudo sobre o processo</h2>
+            <p class="ob-text">SIPOC, marcos do mapeamento (M1–M10), diagrama BPMN do Bizagi, documentos vinculados, riscos, indicadores e o diário de mapeamento — o histórico rastreável do trabalho.</p>
+          </div>
         </div>
 
-        <div class="ob-page">
-          <div class="ob-illus" aria-hidden="true"><i class="fas fa-magnifying-glass"></i></div>
-          <h2 class="ob-title" id="obTitle-3">Radar de riscos, indicadores e busca</h2>
-          <p class="ob-text">As abas <strong>Riscos</strong> e <strong>Indicadores</strong> dão a visão geral do portfólio; o <strong>Dashboard</strong> resume tudo para a gestão. Use a busca no topo para encontrar processos, documentos, termos do glossário e mais.</p>
+        <div class="carousel-page ob-page" role="group" aria-roledescription="slide" aria-label="Página 4 de 5" aria-live="polite">
+          <div class="carousel-content">
+            <div class="ob-illus" aria-hidden="true"><i class="fas fa-magnifying-glass"></i></div>
+            <h2 class="ob-title" id="obTitle-3">Radar de riscos, indicadores e busca</h2>
+            <p class="ob-text">As abas <strong>Riscos</strong> e <strong>Indicadores</strong> dão a visão geral do portfólio; o <strong>Dashboard</strong> resume tudo para a gestão. Use a busca no topo para encontrar processos, documentos, termos do glossário e mais.</p>
+          </div>
         </div>
 
-        <div class="ob-page">
-          <div class="ob-illus" aria-hidden="true"><i class="fas fa-check-circle"></i></div>
-          <h2 class="ob-title" id="obTitle-4">Pronto!</h2>
-          <p class="ob-text">O botão "Mais", na barra de seções, reúne o Repositório de materiais, o NUGEP, o Glossário e o FAQ.<br><br>Dúvidas ou sugestões? Fale com a UNP: <a href="mailto:ae.gpe.unp@codevasf.gov.br">ae.gpe.unp@codevasf.gov.br</a> ou <a href="tel:+556120284441">(61) 2028-4441</a>.</p>
-          <button class="br-button primary ob-finish" type="button">Concluir</button>
+        <div class="carousel-page ob-page" role="group" aria-roledescription="slide" aria-label="Página 5 de 5" aria-live="polite">
+          <div class="carousel-content">
+            <div class="ob-illus" aria-hidden="true"><i class="fas fa-check-circle"></i></div>
+            <h2 class="ob-title" id="obTitle-4">Pronto!</h2>
+            <p class="ob-text">O botão "Mais", na barra de seções, reúne o Repositório de materiais, o NUGEP, o Glossário e o FAQ.<br><br>Dúvidas ou sugestões? Fale com a UNP: <a href="mailto:ae.gpe.unp@codevasf.gov.br">ae.gpe.unp@codevasf.gov.br</a> ou <a href="tel:+556120284441">(61) 2028-4441</a>.</p>
+            <button class="br-button primary ob-finish" type="button">Concluir</button>
+          </div>
         </div>
 
-      </div></div>
+      </div>
+      <div class="carousel-button">
+        <button class="br-button carousel-btn-next terciary circle" type="button" aria-label="Próxima página" aria-controls="onboardingCol"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
+      <!-- Botões de reprodução (item opcional da anatomia): o tutorial
+           abre sempre pausado — a recomendação do padrão é não usar
+           reprodução automática quando não há certeza do tempo de
+           leitura — e o usuário decide quando deixá-lo correr sozinho. -->
+      <div class="carousel-play">
+        <button class="br-button carousel-btn-play terciary circle small" type="button" aria-label="Reproduzir automaticamente" aria-controls="onboardingCol"><i class="fas fa-play" aria-hidden="true"></i></button>
+        <button class="br-button carousel-btn-pause terciary circle small" type="button" aria-label="Pausar reprodução automática" aria-controls="onboardingCol" hidden><i class="fas fa-pause" aria-hidden="true"></i></button>
+      </div>
+      <div class="carousel-step">
+        <nav class="br-step" data-initial="1" data-type="simple" role="none">
+          <div class="step-progress" role="listbox" aria-orientation="horizontal" aria-label="Páginas do tutorial">
+            <button class="step-progress-btn" role="option" aria-posinset="1" aria-setsize="5" aria-selected="true" active type="button"><span class="step-info">Apresentação</span></button>
+            <button class="step-progress-btn" role="option" aria-posinset="2" aria-setsize="5" aria-selected="false" type="button"><span class="step-info">Cadeia de valor</span></button>
+            <button class="step-progress-btn" role="option" aria-posinset="3" aria-setsize="5" aria-selected="false" type="button"><span class="step-info">Ficha do processo</span></button>
+            <button class="step-progress-btn" role="option" aria-posinset="4" aria-setsize="5" aria-selected="false" type="button"><span class="step-info">Riscos e busca</span></button>
+            <button class="step-progress-btn" role="option" aria-posinset="5" aria-setsize="5" aria-selected="false" type="button"><span class="step-info">Conclusão</span></button>
+          </div>
+        </nav>
+      </div>
     </div>
-    <div class="ob-nav">
-      <button class="br-button circle terciary ob-prev" type="button" aria-label="Etapa anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
-      <span class="ob-step" id="onboardingStepText" aria-live="polite"></span>
-      <button class="br-button circle terciary ob-next" type="button" aria-label="Próxima etapa"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
-    </div>
+    <span class="ob-step" id="onboardingStepText" role="status" aria-live="polite"></span>
     <div class="ob-foot">
+      <div class="br-checkbox small">
+        <input id="obDontShow" name="obDontShow" type="checkbox">
+        <label for="obDontShow">Não mostrar novamente</label>
+      </div>
       <a href="#" class="ob-skip" id="onboardingSkip">Pular tutorial</a>
     </div>
   </div>
@@ -541,12 +581,14 @@
 </div>
 
 <!-- ─── Reportar erro: botão fixo no canto inferior esquerdo, discreto,
-     sempre visível. Abre um modal que tenta capturar um print da tela
-     automaticamente (Screen Capture API — exige permissão do usuário;
-     não há como capturar a tela silenciosamente por trás, nem anexar
-     arquivos a um link mailto:, então o print é oferecido para
-     download e o e-mail é aberto com instrução para anexá-lo
-     manualmente antes de enviar). ── -->
+     sempre visível. Continua sendo um Button primário circular — não um
+     Magic Button — porque o padrão pede exclusividade: o único magic
+     button do painel é "Sugerir melhoria de processo". Abre um modal que
+     tenta capturar um print da tela automaticamente (Screen Capture API
+     — exige permissão do usuário; não existe captura silenciosa). Como
+     não há como anexar arquivos a um link mailto:, o print é oferecido
+     para download e o e-mail é aberto com instrução para anexá-lo
+     manualmente antes de enviar. ── -->
 <button class="br-button large primary circle report-error-btn" type="button" id="btnReportError" title="Reportar um erro" aria-label="Reportar um erro">
   <i class="fas fa-bug" aria-hidden="true"></i>
 </button>
@@ -563,8 +605,12 @@
         <textarea id="reportErrorText" rows="4" placeholder="O que você esperava que acontecesse, e o que aconteceu de fato?"></textarea>
       </div>
       <div class="report-error-shot" id="reportErrorShotBox">
-        <p class="report-error-shot-status" id="reportErrorShotStatus">Capturando print da tela…</p>
-        <img id="reportErrorShotPreview" alt="Pré-visualização do print capturado" hidden>
+        <div class="br-loading medium" id="reportErrorShotLoading" role="progressbar" aria-label="Capturando print da tela" hidden></div>
+        <p class="report-error-shot-status" id="reportErrorShotStatus" role="status" aria-live="polite">Capturando print da tela…</p>
+        <div class="report-error-shot-figure br-scrim legibilidade" id="reportErrorShotFigure" hidden>
+          <img id="reportErrorShotPreview" alt="Pré-visualização do print capturado">
+          <div class="scrim-text">Print que será anexado ao relato</div>
+        </div>
         <a class="br-button secondary small" id="reportErrorShotDownload" download="print-erro-painel-processos.png" hidden><i class="fas fa-download" aria-hidden="true"></i> Baixar print</a>
       </div>
     </div>

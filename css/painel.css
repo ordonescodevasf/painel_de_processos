@@ -426,6 +426,29 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 .proc-card .topo{display:flex;justify-content:space-between;gap:var(--sp2);align-items:flex-start;}
 .proc-card .nome{font:600 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin-top:2px;}
 .proc-card .rodape{margin-top:var(--sp2);}
+/* ── Painel de filtros do portfólio ── uma única superfície: linha de
+   campos (Select, Select, DateTimePicker, busca) e, após um Divider, as
+   opções de recorte e ordenação lado a lado. */
+.pp-filtros-painel{background:var(--pure-0);border:1px solid var(--gray-10);
+  border-radius:var(--r-md);padding:var(--sp3);margin-bottom:var(--sp4);
+  display:flex;flex-direction:column;gap:var(--sp3);}
+.pp-filtros-painel .filtros-campos{display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:var(--sp2) var(--sp3);align-items:end;}
+.pp-filtros-painel .br-select{max-width:none;width:100%;}
+.pp-filtros-painel .br-datetimepicker,
+.pp-filtros-painel .br-input{width:100%;}
+.pp-filtros-painel .br-input input{width:100%;}
+.pp-filtros-painel .filtros-opcoes{display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--sp3) var(--sp4);}
+.pp-filtros-painel .filtros-opcoes > *{margin:0;}
+.pp-filtros-painel .checkbox-group,
+.pp-filtros-painel fieldset.radio-group{margin:0;}
+.pp-filtros-painel .filtros-rodape{display:flex;justify-content:flex-end;}
+.pp-filtros-painel .filtros-rodape[hidden]{display:none;}
+@media (max-width:900px){
+  .pp-filtros-painel .filtros-opcoes{grid-template-columns:1fr;}
+}
 .pp-filtros{display:flex;flex-wrap:wrap;gap:var(--sp2);margin-bottom:var(--sp3);align-items:center;}
 .pp-filtros select,.pp-filtros input[type=search]{font:var(--fs-base) var(--font);
   padding:8px 10px;border:1px solid var(--gray-30);border-radius:var(--r-sm);background:var(--pure-0);}
@@ -612,6 +635,7 @@ body.contraste-alto .jornada-etapa,body.contraste-alto .je-caixa{background:#000
   padding:var(--sp3);box-shadow:var(--sh-card);display:flex;flex-direction:column;gap:4px;
   font-size:var(--fs-base);transition:box-shadow var(--dur-fast) var(--ease);}
 .nugep-card:hover{box-shadow:var(--sh-card-hover);}
+.nugep-card .br-avatar{margin-bottom:6px;}
 .nugep-avatar{width:52px;height:52px;border-radius:50%;display:inline-flex;align-items:center;
   justify-content:center;background:linear-gradient(135deg,var(--cv-blue),var(--cv-navy));
   color:var(--pure-0);font:700 1.05rem/1 var(--font);margin-bottom:6px;}
