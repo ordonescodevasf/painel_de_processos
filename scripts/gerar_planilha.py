@@ -23,10 +23,27 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
-AZUL = "1351B4"      # azul gov.br (blue-warm-vivid-70)
+AZUL = "0040B4"      # azul gov.br v4 (blue-warm-vivid-70)
 AZUL_ESCURO = "0C326F"
 CINZA_FORMULA = "F0F0F0"
+CINZA_ZEBRA = "F5F8FC"   # listra de leitura (blue-warm-vivid-5 clareado)
+# Arial, e não Noto Sans (a família da v4): a planilha é preenchida no
+# Excel/LibreOffice de cada pessoa, onde a Noto Sans não está instalada —
+# uma fonte ausente vira substituição imprevisível. Arial mantém a métrica
+# estável em qualquer máquina.
 FONTE = "Arial"
+
+# Cor da guia por grupo de conteúdo — a planilha tem 16 abas e a barra
+# inferior é a única navegação que o usuário tem.
+COR_GUIA = {
+    "LEIA-ME": AZUL_ESCURO,
+    "Macroprocessos": AZUL, "Processos": AZUL, "Subprocessos": AZUL,
+    "Atividades": AZUL, "Tarefas": AZUL,
+    "Documentos": "168821", "Riscos": "168821", "Indicadores": "168821",
+    "Jornada": "155BCB", "Repositorio": "155BCB", "NUGEP": "155BCB",
+    "Glossario": "155BCB", "FAQ": "155BCB",
+    "Parametros": "888888", "Listas": "888888",
+}
 
 th = Side(style="thin", color="CCCCCC")
 BORDA = Border(left=th, right=th, top=th, bottom=th)
@@ -34,6 +51,7 @@ F_HEAD = Font(name=FONTE, size=10, bold=True, color="FFFFFF")
 F_CELL = Font(name=FONTE, size=10)
 FILL_HEAD = PatternFill("solid", fgColor=AZUL)
 FILL_FORM = PatternFill("solid", fgColor=CINZA_FORMULA)
+FILL_ZEBRA = PatternFill("solid", fgColor=CINZA_ZEBRA)
 AL_HEAD = Alignment(horizontal="center", vertical="center", wrap_text=True)
 AL_WRAP = Alignment(vertical="top", wrap_text=True)
 AL_TOP = Alignment(vertical="top")
@@ -141,6 +159,11 @@ def com_colunas(linhas, base, *mapas):
 D = dt.date  # atalho
 
 
+# NOTA: os cabeçalhos declarados nas chamadas de cabecalho() abaixo têm de
+# bater com scripts/esquema_planilha.py, que é o que atualizar_planilha.py
+# usa para acrescentar colunas à planilha já preenchida. Ao criar uma
+# coluna nova, mexa nos DOIS arquivos — esquema_planilha.conferir() compara
+# um dicionário {aba: [colunas]} com o esquema e aponta a diferença.
 def cabecalho(ws, headers, widths, formula_cols=()):
     for j, (h, w) in enumerate(zip(headers, widths), start=1):
         c = ws.cell(row=1, column=j, value=h)
@@ -152,6 +175,10 @@ def cabecalho(ws, headers, widths, formula_cols=()):
     ws.row_dimensions[1].height = 30
     ws.auto_filter.ref = f"A1:{get_column_letter(len(headers))}1"
     ws._formula_cols = set(formula_cols)  # marcação interna
+    ws.sheet_properties.tabColor = COR_GUIA.get(ws.title, AZUL)
+    # Zoom um pouco menor: as abas largas cabem sem rolagem horizontal
+    # constante, que é o que mais cansa em preenchimento longo.
+    ws.sheet_view.zoomScale = 90
 
 
 def escreve(ws, linhas, wrap_cols=(), center_cols=(), pct_cols=(), date_cols=()):
@@ -162,6 +189,8 @@ def escreve(ws, linhas, wrap_cols=(), center_cols=(), pct_cols=(), date_cols=())
             c.border = BORDA
             if j in getattr(ws, "_formula_cols", ()):
                 c.fill = FILL_FORM
+            elif i % 2 == 0:
+                c.fill = FILL_ZEBRA
             if j in wrap_cols:
                 c.alignment = AL_WRAP
             elif j in center_cols:
@@ -175,7 +204,16 @@ def escreve(ws, linhas, wrap_cols=(), center_cols=(), pct_cols=(), date_cols=())
 
 
 def dv(ws, col_letter, listas_ref, ultima_linha=300):
-    v = DataValidation(type="list", formula1=listas_ref, allow_blank=True, showErrorMessage=False)
+    v = DataValidation(
+        type="list", formula1=listas_ref, allow_blank=True,
+        showErrorMessage=True, errorStyle="stop",
+        errorTitle="Valor fora da lista",
+        error=("Escolha uma das opções da seta ao lado da célula. "
+               "A lista completa está na aba Listas."),
+        showInputMessage=True,
+        promptTitle="Lista de opções",
+        prompt="Clique na seta ao lado da célula e escolha uma das opções.",
+    )
     ws.add_data_validation(v)
     v.add(f"{col_letter}2:{col_letter}{ultima_linha}")
 
@@ -236,6 +274,8 @@ for j, (nome, itens) in enumerate(listas.items(), start=1):
         cc = ls.cell(row=i, column=j, value=item)
         cc.font = F_CELL; cc.border = BORDA
 ls.freeze_panes = "A2"
+ls.sheet_properties.tabColor = COR_GUIA["Listas"]
+ls.sheet_view.zoomScale = 90
 
 def ref(nome):
     j = list(listas).index(nome) + 1
@@ -910,9 +950,10 @@ rp.freeze_panes = "E2"
 dv(rp, "B", ref("Categoria_Repositorio")); dv(rp, "C", ref("Fase_Instrumento"))
 
 ng = wb.create_sheet("NUGEP")
-cabecalho(ng, ["Ordem", "Nome", "Papel", "Unidade_Sigla", "Unidade_Nome", "Email", "Telefone"],
-          [7, 24, 34, 14, 38, 32, 16])
-escreve(ng, [list(x) for x in CONTEUDO.NUGEP], wrap_cols={3, 5}, center_cols={1})
+cabecalho(ng, ["Ordem", "Nome", "Papel", "Unidade_Sigla", "Unidade_Nome", "Email", "Telefone",
+               "Foto", "Hierarquia"],
+          [7, 24, 34, 14, 38, 32, 16, 46, 11])
+escreve(ng, [list(x) for x in CONTEUDO.NUGEP], wrap_cols={3, 5}, center_cols={1, 9})
 ng.freeze_panes = "C2"
 
 gl = wb.create_sheet("Glossario")
@@ -1001,7 +1042,9 @@ abas_desc = [
     ("Indicadores", "Indicadores de desempenho por nível, com meta, resultado e situação calculada."),
     ("Jornada", "Etapas da jornada de mapeamento (Descobrir → Evoluir), exibidas na aba Repositório do painel."),
     ("Repositorio", "Materiais e ferramentas: metodologia e guia oficiais (RES 031/2025), templates, instrumentos por fase do ciclo BPM, ferramentas e referências."),
-    ("NUGEP", "Integrantes do Núcleo de Gestão Normativa e de Processos (aba NUGEP do painel)."),
+    ("NUGEP", "Integrantes do Núcleo de Gestão Normativa e de Processos (aba NUGEP do painel). "
+              "Foto: URL de imagem pública que aparece no avatar. Hierarquia: 1 = Gerente-Executivo (AE), "
+              "2 = Gerente (AE/GPE), 3 = equipe da Unidade (AE/GPE/UNP), 0 = interlocutor de outra área."),
     ("Glossario", "Termos BPM (CBOK), PMBOK e metodologia Codevasf (aba Glossário)."),
     ("FAQ", "Perguntas e respostas exibidas na aba FAQ."),
     ("Parametros", "Configurações chave/valor: contato do NUGEP e links da metodologia e do guia."),

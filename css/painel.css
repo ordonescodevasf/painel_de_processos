@@ -78,15 +78,19 @@
    botões inclicáveis assim que o usuário rolava um pouco (bug real:
    testes automatizados não veem isso, pois não fazem layout/paint de
    verdade — só checam presença no DOM). ── */
-.pp-acoes-pagina{max-width:1200px;margin:0 auto;padding:8px var(--sp3);
-  border-top:1px solid var(--gray-10);
+/* As ações de página ficam na MESMA linha das abas (.tab-bar-row, que já é
+   o container centralizado da faixa). O max-width + margin:0 auto herdados
+   de quando elas viviam numa linha própria faziam o bloco flutuar sobre a
+   faixa de abas — o botão "Mais" e o nome da seção aberta ficavam atrás do
+   sino/compartilhar/imprimir. O border-top desenhava, ali, um divisor
+   extra acima desse grupo. */
+.pp-acoes-pagina{padding:8px 0;flex:0 0 auto;
   display:flex;align-items:center;justify-content:flex-end;gap:6px;overflow:visible;}
 /* A superfície flutuante da central de alertas fica ancorada à direita do
    sino, dentro da barra de seções. */
 .pp-acoes-pagina .dropdown-wrap{position:relative;display:inline-flex;}
 .pp-acoes-pagina .dropdown-wrap .dd-target{position:absolute;top:calc(100% + 6px);
   left:auto;right:0;z-index:3600;}
-@media(min-width:1600px){.pp-acoes-pagina{max-width:1560px;}}
 .pp-acoes-pagina .br-button.circle{color:var(--gray-60);border-color:var(--gray-20);}
 .pp-acoes-pagina .br-button.circle:hover{color:var(--cv-blue);border-color:var(--cv-blue);}
 .pp-share-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);
@@ -100,7 +104,7 @@
    conteúdo da página atual ── */
 @media print{
   .br-header-topbar,.br-header,#navigation,#footer,.pp-acoes-pagina,
-  .report-error-btn,.BackToTop-module,#cookieNotice,#cookieScrim,.br-scrim,
+  .report-error-btn,.report-error-wrap,.BackToTop-module,#cookieNotice,#cookieScrim,.br-scrim,
   .vw-plugin-top-wrapper,#sectionMenu,.br-skiplink{display:none!important;}
   body{background:#fff!important;}
   main{margin:0!important;}
@@ -250,7 +254,7 @@ body.contraste-alto .cv-aside,body.contraste-alto .cv-valores{background:#000;
 body.contraste-alto .ficha-hero{background:#000;border:1px solid var(--gold-vivid-20,#ffbe2e);}
 .ficha-hero .eyebrow{font:700 var(--fs-sm)/1 var(--font);letter-spacing:.12em;
   text-transform:uppercase;opacity:.85;}
-.ficha-hero h2{font:700 clamp(1.25rem,2.4vw,1.7rem)/1.25 var(--font);margin:var(--sp1) 0 var(--sp2);}
+.ficha-hero h1{font:700 clamp(1.25rem,2.4vw,1.7rem)/1.25 var(--font);margin:var(--sp1) 0 var(--sp2);}
 .ficha-hero .meta{display:flex;flex-wrap:wrap;gap:var(--sp2);align-items:center;font-size:var(--fs-base);}
 .pp-card{background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);
   padding:var(--sp3) var(--sp4);box-shadow:var(--sh-sm);}
@@ -278,24 +282,27 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
   border:1px solid var(--d-bd);border-radius:999px;padding:2px 10px;font-size:var(--fs-sm);}
 
 /* ── status/tags ── */
-.tag-status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;
-  padding:2px 10px;font:700 var(--fs-sm)/1.4 var(--font);white-space:nowrap;
-  border:1px solid transparent;}
-.tag-status.nao-iniciado{background:var(--gray-5,#f0f0f0);color:var(--gray-70);border-color:var(--gray-20);}
-.tag-status.em-andamento{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
-.tag-status.concluido{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
-.tag-status.suspenso{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+/* Cores por situação. Altura, canto, espaçamento e o gap do ícone vêm do
+   Componente Tag (.br-tag); aqui só entra o que é semântico do painel.
+   Cada par fundo/texto passa de 4,5:1, como a diretriz da Tag exige de
+   cores personalizadas. */
+.br-tag.tag-status,.br-tag.nivel-tag{border:1px solid transparent;font-weight:700;}
+.br-tag.tag-status i,.br-tag.nivel-tag i{font-size:10px;}
+.br-tag.tag-status.nao-iniciado{background:var(--gray-5,#f0f0f0);color:var(--gray-70);border-color:var(--gray-20);}
+.br-tag.tag-status.em-andamento{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+.br-tag.tag-status.concluido{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.tag-status.suspenso{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
 .tag-cat{display:inline-block;border-radius:var(--r-sm);padding:2px 8px;
   font:700 10px/1.5 var(--font);text-transform:uppercase;color:var(--pure-0);}
 .tag-cat.gerencial{background:var(--pp-gerencial);}
 .tag-cat.finalistico{background:var(--pp-finalistico);}
 .tag-cat.suporte{background:var(--pp-suporte);}
-.nivel-tag{display:inline-block;border-radius:999px;padding:1px 10px;
+.br-tag.nivel-tag{
   font:700 var(--fs-sm)/1.5 var(--font);border:1px solid transparent;}
-.nivel-baixo{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
-.nivel-moderado{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
-.nivel-alto{background:#ffe4cf;color:#9c4500;border-color:#f7c49b;}
-.nivel-extremo{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+.br-tag.nivel-baixo{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.nivel-moderado{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+.br-tag.nivel-alto{background:#ffe4cf;color:#9c4500;border-color:#f7c49b;}
+.br-tag.nivel-extremo{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
 .sit-ok{color:var(--pp-ok);font-weight:700;} .sit-ruim{color:var(--pp-erro);font-weight:700;}
 .sit-neutra{color:var(--gray-60);font-weight:600;}
 
@@ -331,7 +338,9 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 @media(max-width:575.98px){.marcos-continuo .mc-trilho{display:none;}}
 .marcos li.feito{background:#e3f5e1;border-color:var(--pp-ok);}
 .marcos li.feito::before{color:var(--pp-ok);}
-.marcos li i{margin-left:auto;}
+.marcos li > span:first-child{flex:1 1 auto;min-width:0;}
+.marcos li > i{margin-left:auto;}
+.marcos li .dica{align-self:flex-start;}
 .marcos li.feito i{color:var(--pp-ok);} .marcos li:not(.feito) i{color:var(--gray-30);}
 
 /* ── SIPOC ── */
@@ -454,8 +463,12 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 .pp-filtros-painel .filtros-opcoes > *{margin:0;}
 .pp-filtros-painel .checkbox-group,
 .pp-filtros-painel fieldset.radio-group{margin:0;}
-.pp-filtros-painel .filtros-rodape{display:flex;justify-content:flex-end;}
+.pp-filtros-painel .filtros-rodape{display:flex;justify-content:space-between;align-items:center;
+  gap:var(--sp2) var(--sp3);flex-wrap:wrap;}
 .pp-filtros-painel .filtros-rodape[hidden]{display:none;}
+/* Tags de interação dispensáveis com os filtros em vigor. */
+.pp-filtros-painel .filtros-ativos{display:flex;flex-wrap:wrap;gap:var(--sp1);flex:1 1 auto;min-width:0;}
+.pp-filtros-painel .filtros-ativos[hidden]{display:none;}
 @media (max-width:900px){
   .pp-filtros-painel .filtros-opcoes{grid-template-columns:1fr;}
 }
@@ -547,7 +560,11 @@ body.contraste-alto .hier-item .hier-nome{color:#fff;}
 /* ícone-only abaixo de 992px: rótulo some visualmente, aria-label mantém
    o texto para leitor de tela — garante 1 linha em qualquer tela */
 @media(max-width:991.98px){
-  #navigation .tab-nav .tab-label{display:none;}
+  /* Abaixo de 992px o rótulo curto substitui o completo. As abas que ainda
+     assim não couberem migram para o menu "Mais" (ajustarAbas em app.js),
+     em vez de a faixa inteira virar só ícones. */
+  #navigation .tab-label-full{display:none;}
+  #navigation .tab-label-short{display:inline;}
   #navigation .tab-item button{padding:12px 11px;}
   #navigation .tab-item .tab-count{margin-left:2px;}
 }
@@ -645,11 +662,16 @@ body.contraste-alto .jornada-etapa,body.contraste-alto .je-caixa{background:#000
   padding:var(--sp3);box-shadow:var(--sh-card);display:flex;flex-direction:column;gap:4px;
   font-size:var(--fs-base);transition:box-shadow var(--dur-fast) var(--ease);}
 .nugep-card:hover{box-shadow:var(--sh-card-hover);}
-.nugep-card .br-avatar{margin-bottom:6px;}
+/* Avatar no tamanho "large" do componente (64px): a foto do integrante é o
+   primeiro elemento do card e no tamanho anterior mal se reconhecia. */
+.nugep-card .br-avatar{margin-bottom:6px;width:64px;height:64px;}
+.nugep-card .br-avatar .content{width:64px;height:64px;font-size:var(--fs-lg);}
+.perfil-inst .br-avatar{width:56px;height:56px;}
+.perfil-inst .br-avatar .content{width:56px;height:56px;font-size:var(--fs-md);}
 .nugep-avatar{width:52px;height:52px;border-radius:50%;display:inline-flex;align-items:center;
   justify-content:center;background:linear-gradient(135deg,var(--cv-blue),var(--cv-navy));
   color:var(--pure-0);font:700 1.05rem/1 var(--font);margin-bottom:6px;}
-.nugep-card h4{font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);}
+.nugep-card h3{font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);}
 .nugep-sigla{display:inline-block;font:700 var(--fs-sm)/1.6 var(--font);letter-spacing:.04em;
   background:var(--blue-warm-vivid-5);color:var(--cv-blue);border:1px solid var(--blue-warm-vivid-30,#a8c0e8);
   border-radius:999px;padding:1px 12px;}
@@ -666,16 +688,23 @@ body.contraste-alto .jornada-etapa,body.contraste-alto .je-caixa{background:#000
   display:flex;gap:6px;align-items:center;}
 .nugep-card a:hover{text-decoration:underline;}
 body.contraste-alto .nugep-card{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
-body.contraste-alto .nugep-card h4{color:#fff;}
+body.contraste-alto .nugep-card h3{color:#fff;}
 body.contraste-alto .nugep-sigla{background:#000;color:#fff;border-color:var(--gold-vivid-20,#ffbe2e);}
 
 /* ── glossário ── */
 .gloss-abc{display:flex;flex-wrap:wrap;gap:4px;}
-.gloss-abc button{min-width:30px;padding:4px 7px;border:1px solid var(--gray-20);
-  background:var(--pure-0);border-radius:var(--r-sm);font:600 var(--fs-sm)/1 var(--font);
-  cursor:pointer;color:var(--gray-70);}
-.gloss-abc button:hover:not(:disabled){border-color:var(--cv-blue);color:var(--cv-blue);}
-.gloss-abc button.ativo{background:var(--cv-blue);border-color:var(--cv-blue);color:var(--pure-0);}
+.gloss-abc{gap:var(--sp1);}
+.gloss-abc button{display:inline-flex;align-items:center;justify-content:center;
+  min-width:32px;height:24px;padding:0 var(--sp1);border:1px solid var(--gray-20);
+  background:var(--pure-0);border-radius:var(--r-pill);font:600 var(--fs-sm)/1 var(--font);
+  cursor:pointer;color:var(--gray-70);
+  transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);}
+.gloss-abc button:hover:not(:disabled){border-color:var(--interactive);color:var(--interactive);
+  background:var(--blue-warm-vivid-5);}
+.gloss-abc button:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+  outline-offset:var(--focus-offset-field);}
+.gloss-abc button.ativo{background:var(--interactive);border-color:var(--interactive);color:var(--pure-0);}
 .gloss-abc button:disabled{opacity:.35;cursor:default;}
 .gloss-letra{font:700 1.1rem/1 var(--font);color:var(--cv-blue);
   border-bottom:2px solid var(--gray-10);padding-bottom:6px;margin:var(--sp4) 0 var(--sp2);}
@@ -698,9 +727,18 @@ body.contraste-alto .gloss-card h4{color:#fff;}
 
 /* ── FAQ ── */
 .faq-cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:var(--sp2);}
-.faq-cats .chip{cursor:pointer;background:var(--pure-0);}
-.faq-cats .chip:hover{border-color:var(--cv-blue);color:var(--cv-blue);}
-.faq-cats .chip.ativo{background:var(--cv-blue);border-color:var(--cv-blue);color:var(--pure-0);}
+.faq-cats{gap:var(--sp1);}
+.faq-cats .chip{display:inline-flex;align-items:center;height:24px;padding:0 var(--sp2);
+  border:1px solid var(--gray-20);border-radius:var(--r-pill);
+  font:600 var(--fs-sm)/1 var(--font);color:var(--gray-70);
+  cursor:pointer;background:var(--pure-0);
+  transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);}
+.faq-cats .chip:hover{border-color:var(--interactive);color:var(--interactive);
+  background:var(--blue-warm-vivid-5);}
+.faq-cats .chip:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+  outline-offset:var(--focus-offset-field);}
+.faq-cats .chip.ativo{background:var(--interactive);border-color:var(--interactive);color:var(--pure-0);}
 .faq-cat-h{font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);margin:var(--sp4) 0 var(--sp2);}
 .faq-item{background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);
   margin-bottom:var(--sp2);overflow:hidden;box-shadow:var(--sh-card);
@@ -826,3 +864,181 @@ body.contraste-alto .ficha-dl > div[class*="campo-"] dt{color:#fff;}
 .marcos li.na{opacity:.7;}
 .marcos li.na i,.marcos li.na::before{color:var(--gray-40);}
 body.contraste-alto .marcos li.na{opacity:1;}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOOLTIP DE APOIO (Componente Tooltip do gov.br DS)
+   Toda informação que antes só existia no title nativo do navegador passa
+   a ser um balão do DS, aberto por um ícone "i" discreto ao lado do
+   rótulo. Ganho real: o title nativo não abre no foco do teclado nem é
+   lido de forma confiável por leitor de tela — o Tooltip é.
+   Estados aplicados (Fundamento Estados): interativo (cor), hover
+   (overlay de cor sobre o fundo), foco (contorno de campo) e alvo de
+   toque de 24px, o mínimo recomendado, mesmo com o ícone de 12px.
+   ═══════════════════════════════════════════════════════════════════════ */
+.dica{display:inline-flex;vertical-align:baseline;margin-left:4px;}
+.dica-btn{display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;padding:0;margin:-6px 0;border:0;border-radius:50%;
+  background:transparent;color:var(--gray-60);font-size:12px;cursor:pointer;
+  transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
+.dica-btn:hover{color:var(--interactive,#1351b4);background:var(--blue-warm-vivid-5);}
+.dica-btn:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+  outline-offset:var(--focus-offset-field);}
+.kpi .lbl .dica-btn{color:inherit;opacity:.7;}
+.kpi .lbl .dica-btn:hover{opacity:1;}
+
+/* ── MARCOS DO MAPEAMENTO (M1–M10) — os dez à vista ────────────────────
+   Sem data-scroll: as dez etapas dividem em partes iguais a largura do
+   card, sem barra horizontal para arrastar. O gatilho do Tooltip é o
+   contêiner de cada etapa, porque o botão vem desabilitado (o painel só
+   informa o progresso, não deixa clicar) e elemento desabilitado não
+   dispara eventos de mouse. Abaixo de 992px a trilha assume a orientação
+   vertical do Componente Step, em vez de espremer dez colunas. ── */
+.marcos-step{overflow:visible;}
+.marcos-step .step-wrap{display:flex;flex:1 1 0;min-width:0;position:relative;cursor:help;}
+.marcos-step .step-wrap > .step-progress-btn{flex:1 1 auto;min-width:0;pointer-events:none;}
+.marcos-step .step-wrap:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+  outline-offset:var(--focus-offset-field);border-radius:var(--r-sm);}
+.marcos-step .step-info{white-space:normal;padding:0 4px;overflow-wrap:anywhere;}
+.marcos-step .dica-i{font-size:9px;color:var(--gray-40);}
+/* O conector entre as bolinhas é o ::after de cada botão; com o contêiner
+   em volta, quem é "primeiro" e "último" passa a ser o contêiner — a regra
+   abaixo desfaz o recorte que o componente faz pelo :first-child do botão
+   (agora todos são primeiros filhos, cada um dentro do seu contêiner). */
+.marcos-step .step-progress-btn:first-child::after{left:0;right:0;}
+@media(min-width:992px){
+  /* Duas linhas de cinco: dez colunas numa linha só reduziam cada etapa a
+     uma faixa estreita, com o rótulo quebrando em três ou quatro linhas.
+     Os conectores são o ::after de cada botão, então o recorte de início e
+     de fim passa a valer por LINHA (a cada cinco), não só nas pontas. */
+  .marcos-step .step-progress{display:grid;grid-template-columns:repeat(5,1fr);
+    row-gap:var(--sp4);align-items:start;}
+  .marcos-step .step-wrap{flex:0 0 auto;}
+  .marcos-step .step-wrap:nth-child(5n+1) .step-progress-btn::after{left:50%;right:0;}
+  .marcos-step .step-wrap:nth-child(5n) .step-progress-btn::after{left:0;right:50%;}
+}
+@media(max-width:991.98px){
+  .marcos-step .step-progress{flex-direction:column;}
+  .marcos-step .step-wrap{flex:0 0 auto;}
+  .marcos-step .step-wrap .step-progress-btn{flex-direction:row;align-items:center;
+    justify-content:flex-start;min-height:calc(var(--step-size) + var(--sp2));gap:var(--sp2);}
+  .marcos-step .step-wrap .step-progress-btn::before{margin:0;flex:0 0 auto;}
+  .marcos-step .step-wrap .step-progress-btn::after{height:auto;width:1px;
+    left:calc(var(--step-size) * 0.5);right:auto;top:0;bottom:0;}
+  .marcos-step .step-wrap:first-child .step-progress-btn::after{top:50%;bottom:0;}
+  .marcos-step .step-wrap:last-child .step-progress-btn::after{top:0;bottom:50%;}
+  .marcos-step .step-info{margin:0;text-align:left;}
+  .marcos-step .step-alert{top:0;right:auto;left:calc(var(--step-size) - 6px);}
+}
+
+/* ── AVATAR COM FOTO (Componente Avatar) ───────────────────────────────
+   A foto cadastrada na planilha (coluna Foto) cobre as iniciais; se a URL
+   falhar, o onerror remove a imagem e as iniciais reaparecem sozinhas. ── */
+.br-avatar .content{position:relative;}
+.br-avatar .content img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;border-radius:50%;}
+
+/* ── CONTATO INSTITUCIONAL — hierarquia da unidade ─────────────────────
+   Gerência-Executiva (AE) → Gerência (AE/GPE) → equipe da UNP, cada
+   pessoa com avatar, nome, papel, e-mail e telefone. ── */
+.contato-inst .ci-unidade{font-size:var(--fs-sm);margin-bottom:var(--sp3);}
+.ci-hier{display:flex;flex-direction:column;gap:var(--sp3);}
+.ci-nivel{display:flex;flex-direction:column;gap:var(--sp1);}
+.ci-rot{font:700 10px/1.4 var(--font);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--gray-60);}
+.ci-equipe{display:grid;gap:var(--sp2);
+  grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));}
+.perfil-inst{display:flex;gap:var(--sp2);align-items:flex-start;padding:var(--sp2);
+  border:1px solid var(--gray-10);border-radius:var(--r-md);background:var(--pure-0);}
+.perfil-inst.chefia{border-color:var(--blue-warm-vivid-30,#a8c0e8);
+  background:var(--blue-warm-vivid-5);}
+.perfil-dados h3{font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);}
+.perfil-papel{font-size:var(--fs-sm);color:var(--gray-70);margin:2px 0 6px;}
+.perfil-inst .nugep-contato{border-bottom:0;padding-bottom:0;}
+.perfil-inst a{font-size:var(--fs-sm);color:var(--interactive,#1351b4);
+  text-decoration:none;display:flex;gap:6px;align-items:center;}
+.perfil-inst a:hover{text-decoration:underline;}
+body.contraste-alto .perfil-inst{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
+body.contraste-alto .perfil-dados h3{color:#fff;}
+
+/* ── ESTADO VAZIO ILUSTRADO ───────────────────────────────────────────
+   Fundamento Ilustração: o estado vazio conta o que houve e o que fazer
+   a seguir. A ilustração fica na variante grande (acima de 160px), com o
+   texto logo abaixo — nunca só decorativa. ── */
+.pp-vazio-ilus{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--sp2);padding:var(--sp5) var(--sp3);text-align:center;}
+.pp-vazio-ilus img{width:180px;max-width:60%;height:auto;}
+.pp-vazio-ilus .pv-txt{display:flex;flex-direction:column;gap:4px;}
+/* Título: obrigatório quando o vazio ocupa a tela ou um bloco grande. */
+.pp-vazio-ilus .pv-titulo{margin:0;font:700 var(--fs-md)/1.3 var(--font);color:var(--cv-navy);}
+.pp-vazio-ilus .pv-msg{margin:0;max-width:52ch;font-size:var(--fs-base);color:var(--gray-70);}
+/* Suporte para ações: ao final do conteúdo, ênfase secundária na primeira. */
+.pp-vazio-ilus .pv-acoes{display:flex;flex-wrap:wrap;justify-content:center;
+  gap:var(--sp2);margin-top:var(--sp1);}
+.pp-vazio-ilus .pv-acoes .br-button{text-decoration:none;}
+.pp-erro-ilus{display:flex;justify-content:center;padding:var(--sp5) var(--sp3) var(--sp2);}
+.pp-erro-ilus img{width:240px;max-width:70%;height:auto;}
+
+/* ── ROLAGEM COM SOMBRA (Padrão Content Overflow > 1.3) ────────────────
+   Sombra projetada interna nas bordas do contêiner rolável, sinalizando
+   que há conteúdo além da área visível (scroll affordance). Não é
+   elevação real: é uma pista de que dá para rolar — some sozinha quando
+   a rolagem chega ao fim, porque o gradiente fica preso ao contêiner
+   (background-attachment:local) enquanto as sombras acompanham a
+   rolagem (scroll). Vale para a rolagem horizontal das tabelas largas,
+   o caso em que a diretriz recomenda rolagem horizontal. ── */
+.pp-tabela-wrap,.tbl-wrap,.responsive{
+  background:
+    linear-gradient(90deg,var(--pure-0) 30%,rgba(255,255,255,0)) left center local,
+    linear-gradient(90deg,rgba(255,255,255,0),var(--pure-0) 70%) right center local,
+    radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.16),rgba(0,0,0,0)) left center scroll,
+    radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.16),rgba(0,0,0,0)) right center scroll;
+  background-repeat:no-repeat;
+  background-size:32px 100%,32px 100%,14px 100%,14px 100%;
+}
+
+/* ── TEMPLATE ERRO (gov.br DS > Templates > Erro) ──────────────────────
+   Anatomia do template: apoio visual (ilustração), mensagem em dois
+   níveis, campo de busca e botões auxiliares. Os elementos obrigatórios
+   — cabeçalho, navegação, rodapé — vêm do Template Base, que o painel já
+   monta em volta de toda tela. A variante "crumb" do Button é a do
+   template: terciária, com ícone à esquerda. ── */
+.template-erro{display:flex;flex-direction:column;gap:var(--sp4);
+  padding:var(--sp5) 0;max-width:900px;}
+.template-erro .erro-topo{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp5);}
+.template-erro .imagem-erro{flex:0 0 auto;}
+.template-erro .imagem-erro img{width:220px;max-width:100%;height:auto;}
+.template-erro .erro-text{flex:1 1 320px;display:flex;flex-direction:column;gap:var(--sp1);}
+.template-erro .erro-titulo{margin:0;font:600 var(--fs-xxl)/1.2 var(--font);color:var(--cv-navy);}
+.template-erro .erro-sub{margin:0;font:500 var(--fs-lg)/1.35 var(--font);color:var(--interactive);}
+.template-erro .erro-desc{margin:0;font-size:var(--fs-base);color:var(--gray-70);max-width:60ch;}
+.template-erro .erro-busca{max-width:520px;}
+.template-erro .buttons-auxiliary{display:flex;flex-wrap:wrap;gap:var(--sp2);}
+.br-button.crumb{background:transparent;color:var(--interactive);border:0;
+  display:inline-flex;align-items:center;gap:var(--sp1);text-decoration:none;
+  padding:0 var(--sp2);min-height:32px;height:32px;font-size:var(--fs-sm);}
+.br-button.crumb:hover{background:var(--blue-warm-vivid-5);}
+body.contraste-alto .template-erro .erro-titulo{color:#fff;}
+body.contraste-alto .template-erro .erro-sub{color:var(--gold-vivid-20,#ffbe2e);}
+
+/* Microcopy > Visualização de Dados: número à direita, texto à esquerda,
+   ícone ao centro. IDs ficam à esquerda — são rótulo, não quantidade. */
+.br-table td.num,.br-table th.num{text-align:right;font-variant-numeric:tabular-nums;}
+/* O hero é superfície ESCURA (gradiente azul-marinho): a cor de leitura
+   é a de fundo escuro, não --gray-70, que é o token para fundo claro e
+   dava 1,39:1 sobre o azul. Branco a 88% acompanha o <h1> branco do mesmo
+   bloco e mantém a hierarquia entre título e apoio. */
+.pp-hero-sub{margin:var(--sp1) 0 0;max-width:70ch;font-size:var(--fs-md);
+  color:rgba(255,255,255,.88);}
+body.contraste-alto .pp-hero-sub{color:#fff;}
+
+/* ── NUGEP: texto dentro do cartão ─────────────────────────────────────
+   E-mail institucional e nome de unidade são cadeias longas sem espaço,
+   que em tela estreita ultrapassavam a borda do cartão. O min-width:0
+   desarma o mínimo automático do item flex (que é o tamanho do conteúdo)
+   e a quebra forçada vale para as cadeias sem espaço. ── */
+.nugep-card,.perfil-inst,.perfil-dados,.nugep-contato{min-width:0;}
+.nugep-card h3,.perfil-dados h3,.nugep-contato a,.nugep-procs a,.perfil-inst a{
+  overflow-wrap:anywhere;word-break:break-word;}
+.nugep-contato a,.perfil-inst a{align-items:flex-start;}
+.nugep-contato a i,.perfil-inst a i{flex:0 0 auto;margin-top:3px;}

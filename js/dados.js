@@ -1687,93 +1687,135 @@ window.PAINEL_DADOS = {
  "NUGEP": [
   {
    "Ordem": 1,
+   "Nome": "Ricardo Nunes Vasconcelos",
+   "Papel": "Gerente-Executivo da Área de Gestão Estratégica",
+   "Unidade_Sigla": "AE",
+   "Unidade_Nome": "Área de Gestão Estratégica",
+   "Email": "ricardo.vasconcelos@codevasf.gov.br",
+   "Telefone": "(61) 2028-4400",
+   "Foto": "https://randomuser.me/api/portraits/men/32.jpg",
+   "Hierarquia": 1
+  },
+  {
+   "Ordem": 2,
+   "Nome": "Patrícia Moreira Lopes",
+   "Papel": "Gerente de Planejamento Estratégico",
+   "Unidade_Sigla": "AE/GPE",
+   "Unidade_Nome": "Gerência de Planejamento Estratégico",
+   "Email": "patricia.lopes@codevasf.gov.br",
+   "Telefone": "(61) 2028-4430",
+   "Foto": "https://randomuser.me/api/portraits/women/68.jpg",
+   "Hierarquia": 2
+  },
+  {
+   "Ordem": 3,
    "Nome": "Bruna Souza",
    "Papel": "Coordenadora do NUGEP",
    "Unidade_Sigla": "AE/GPE/UNP",
    "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
    "Email": "bruna.souza@codevasf.gov.br",
-   "Telefone": "(61) 2028-4441"
+   "Telefone": "(61) 2028-4441",
+   "Foto": "https://randomuser.me/api/portraits/women/44.jpg",
+   "Hierarquia": 3
   },
   {
-   "Ordem": 2,
+   "Ordem": 4,
    "Nome": "Carlos Eduardo Lima",
    "Papel": "Analista de Processos",
    "Unidade_Sigla": "AE/GPE",
    "Unidade_Nome": "Gerência de Planejamento Estratégico",
    "Email": "carlos.lima@codevasf.gov.br",
-   "Telefone": "(61) 2028-4442"
+   "Telefone": "(61) 2028-4442",
+   "Foto": "https://randomuser.me/api/portraits/men/45.jpg",
+   "Hierarquia": 0
   },
   {
-   "Ordem": 3,
+   "Ordem": 5,
    "Nome": "Daniela Ribeiro",
    "Papel": "Especialista em BPM",
    "Unidade_Sigla": "AT/GTI",
    "Unidade_Nome": "Gerência de Tecnologia da Informação",
    "Email": "daniela.ribeiro@codevasf.gov.br",
-   "Telefone": "(61) 2028-4501"
+   "Telefone": "(61) 2028-4501",
+   "Foto": "https://randomuser.me/api/portraits/women/12.jpg",
+   "Hierarquia": 0
   },
   {
-   "Ordem": 4,
+   "Ordem": 6,
    "Nome": "Eduardo Martins",
    "Papel": "Interlocutor de Processos Finalísticos",
    "Unidade_Sigla": "AR/GPR",
    "Unidade_Nome": "Gerência de Projetos de Revitalização",
    "Email": "eduardo.martins@codevasf.gov.br",
-   "Telefone": "(61) 2028-4612"
+   "Telefone": "(61) 2028-4612",
+   "Foto": "https://randomuser.me/api/portraits/men/76.jpg",
+   "Hierarquia": 0
   },
   {
-   "Ordem": 5,
+   "Ordem": 7,
    "Nome": "Fernanda Alves",
    "Papel": "Analista de Riscos e Conformidade",
    "Unidade_Sigla": "AE/GAG",
    "Unidade_Nome": "Gerência de Auditoria e Governança",
    "Email": "fernanda.alves@codevasf.gov.br",
-   "Telefone": "(61) 2028-4380"
+   "Telefone": "(61) 2028-4380",
+   "Foto": "https://randomuser.me/api/portraits/women/29.jpg",
+   "Hierarquia": 0
   },
   {
-   "Ordem": 6,
+   "Ordem": 8,
    "Nome": "Gustavo Pereira",
    "Papel": "Apoio Metodológico — PMBOK/CBOK",
    "Unidade_Sigla": "AE/GPE/UNP",
    "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
    "Email": "gustavo.pereira@codevasf.gov.br",
-   "Telefone": "(61) 2028-4443"
+   "Telefone": "(61) 2028-4443",
+   "Foto": "https://randomuser.me/api/portraits/men/22.jpg",
+   "Hierarquia": 3
   },
   {
-   "Ordem": 7,
+   "Ordem": 9,
    "Nome": "Juliana Tavares",
    "Papel": "Analista de Processos",
    "Unidade_Sigla": "AE/GPE/UNP",
    "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
    "Email": "juliana.tavares@codevasf.gov.br",
-   "Telefone": "(61) 2028-4444"
+   "Telefone": "(61) 2028-4444",
+   "Foto": "https://randomuser.me/api/portraits/women/8.jpg",
+   "Hierarquia": 3
   },
   {
-   "Ordem": 8,
+   "Ordem": 10,
    "Nome": "Rafael Menezes",
    "Papel": "Analista de Dados e Indicadores",
    "Unidade_Sigla": "AE/GPE",
    "Unidade_Nome": "Gerência de Planejamento Estratégico",
    "Email": "rafael.menezes@codevasf.gov.br",
-   "Telefone": "(61) 2028-4445"
+   "Telefone": "(61) 2028-4445",
+   "Foto": "https://randomuser.me/api/portraits/men/54.jpg",
+   "Hierarquia": 0
   },
   {
-   "Ordem": 9,
+   "Ordem": 11,
    "Nome": "Camila Duarte",
    "Papel": "Interlocutora de Processos de Suporte",
    "Unidade_Sigla": "AA/GLC",
    "Unidade_Nome": "Gerência de Licitações e Contratos",
    "Email": "camila.duarte@codevasf.gov.br",
-   "Telefone": "(61) 2028-4520"
+   "Telefone": "(61) 2028-4520",
+   "Foto": "https://randomuser.me/api/portraits/women/90.jpg",
+   "Hierarquia": 0
   },
   {
-   "Ordem": 10,
+   "Ordem": 12,
    "Nome": "Paulo Henrique Barros",
    "Papel": "Apoio de Comunicação Institucional",
    "Unidade_Sigla": "PR/ASCOM",
    "Unidade_Nome": "Assessoria de Comunicação (fictícia)",
    "Email": "paulo.barros@codevasf.gov.br",
-   "Telefone": "(61) 2028-4630"
+   "Telefone": "(61) 2028-4630",
+   "Foto": "https://randomuser.me/api/portraits/men/60.jpg",
+   "Hierarquia": 0
   }
  ],
  "Glossario": [
@@ -2633,6 +2675,18 @@ window.PAINEL_DADOS = {
   {
    "Chave": "Link_Metodologia",
    "Valor": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/met_gerenciamento-processos_res-031_2025-01-08.pdf"
+  },
+  {
+   "Chave": "Titulo_Inicio",
+   "Valor": "Mapeamento de processos da Codevasf"
+  },
+  {
+   "Chave": "Subtitulo_Inicio",
+   "Valor": "Cadeia de valor, portfólio de processos e repositório de materiais da Companhia, num só lugar."
+  },
+  {
+   "Chave": "Titulo_Repositorio",
+   "Valor": "Repositório de materiais e ferramentas"
   },
   {
    "Chave": "Link_Guia",

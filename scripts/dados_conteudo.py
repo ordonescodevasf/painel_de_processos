@@ -123,28 +123,53 @@ REPOSITORIO = [
 
 
 
-# (Ordem, Nome, Papel, Unidade_Sigla, Unidade_Nome, Email, Telefone)
+# (Ordem, Nome, Papel, Unidade_Sigla, Unidade_Nome, Email, Telefone, Foto, Hierarquia)
+#
+# Foto: URL de uma imagem pública (aparece no lugar das iniciais do avatar).
+#   As URLs abaixo são retratos de exemplo (randomuser.me) só para testar a
+#   exibição — troque pelas fotos oficiais quando houver.
+# Hierarquia: 1 = Gerente-Executivo (AE); 2 = Gerente (AE/GPE); 3 = equipe da
+#   Unidade (AE/GPE/UNP); 0 = interlocutor de outra área. Os níveis 1 e 2
+#   aparecem só no bloco "Contato institucional", para mostrar a hierarquia
+#   acima da Unidade — não entram na lista de integrantes do núcleo.
+_FOTO = "https://randomuser.me/api/portraits/"
 NUGEP = [
- (1, "Bruna Souza", "Coordenadora do NUGEP", "AE/GPE/UNP",
-  "Unidade de Gestão Normativa e de Processos", "bruna.souza@codevasf.gov.br", "(61) 2028-4441"),
- (2, "Carlos Eduardo Lima", "Analista de Processos", "AE/GPE",
-  "Gerência de Planejamento Estratégico", "carlos.lima@codevasf.gov.br", "(61) 2028-4442"),
- (3, "Daniela Ribeiro", "Especialista em BPM", "AT/GTI",
-  "Gerência de Tecnologia da Informação", "daniela.ribeiro@codevasf.gov.br", "(61) 2028-4501"),
- (4, "Eduardo Martins", "Interlocutor de Processos Finalísticos", "AR/GPR",
-  "Gerência de Projetos de Revitalização", "eduardo.martins@codevasf.gov.br", "(61) 2028-4612"),
- (5, "Fernanda Alves", "Analista de Riscos e Conformidade", "AE/GAG",
-  "Gerência de Auditoria e Governança", "fernanda.alves@codevasf.gov.br", "(61) 2028-4380"),
- (6, "Gustavo Pereira", "Apoio Metodológico — PMBOK/CBOK", "AE/GPE/UNP",
-  "Unidade de Gestão Normativa e de Processos", "gustavo.pereira@codevasf.gov.br", "(61) 2028-4443"),
- (7, "Juliana Tavares", "Analista de Processos", "AE/GPE/UNP",
-  "Unidade de Gestão Normativa e de Processos", "juliana.tavares@codevasf.gov.br", "(61) 2028-4444"),
- (8, "Rafael Menezes", "Analista de Dados e Indicadores", "AE/GPE",
-  "Gerência de Planejamento Estratégico", "rafael.menezes@codevasf.gov.br", "(61) 2028-4445"),
- (9, "Camila Duarte", "Interlocutora de Processos de Suporte", "AA/GLC",
-  "Gerência de Licitações e Contratos", "camila.duarte@codevasf.gov.br", "(61) 2028-4520"),
- (10, "Paulo Henrique Barros", "Apoio de Comunicação Institucional", "PR/ASCOM",
-  "Assessoria de Comunicação (fictícia)", "paulo.barros@codevasf.gov.br", "(61) 2028-4630"),
+ (1, "Ricardo Nunes Vasconcelos", "Gerente-Executivo da Área de Gestão Estratégica", "AE",
+  "Área de Gestão Estratégica", "ricardo.vasconcelos@codevasf.gov.br", "(61) 2028-4400",
+  _FOTO + "men/32.jpg", 1),
+ (2, "Patrícia Moreira Lopes", "Gerente de Planejamento Estratégico", "AE/GPE",
+  "Gerência de Planejamento Estratégico", "patricia.lopes@codevasf.gov.br", "(61) 2028-4430",
+  _FOTO + "women/68.jpg", 2),
+ (3, "Bruna Souza", "Coordenadora do NUGEP", "AE/GPE/UNP",
+  "Unidade de Gestão Normativa e de Processos", "bruna.souza@codevasf.gov.br", "(61) 2028-4441",
+  _FOTO + "women/44.jpg", 3),
+ (4, "Carlos Eduardo Lima", "Analista de Processos", "AE/GPE",
+  "Gerência de Planejamento Estratégico", "carlos.lima@codevasf.gov.br", "(61) 2028-4442",
+  _FOTO + "men/45.jpg", 0),
+ (5, "Daniela Ribeiro", "Especialista em BPM", "AT/GTI",
+  "Gerência de Tecnologia da Informação", "daniela.ribeiro@codevasf.gov.br", "(61) 2028-4501",
+  _FOTO + "women/12.jpg", 0),
+ (6, "Eduardo Martins", "Interlocutor de Processos Finalísticos", "AR/GPR",
+  "Gerência de Projetos de Revitalização", "eduardo.martins@codevasf.gov.br", "(61) 2028-4612",
+  _FOTO + "men/76.jpg", 0),
+ (7, "Fernanda Alves", "Analista de Riscos e Conformidade", "AE/GAG",
+  "Gerência de Auditoria e Governança", "fernanda.alves@codevasf.gov.br", "(61) 2028-4380",
+  _FOTO + "women/29.jpg", 0),
+ (8, "Gustavo Pereira", "Apoio Metodológico — PMBOK/CBOK", "AE/GPE/UNP",
+  "Unidade de Gestão Normativa e de Processos", "gustavo.pereira@codevasf.gov.br", "(61) 2028-4443",
+  _FOTO + "men/22.jpg", 3),
+ (9, "Juliana Tavares", "Analista de Processos", "AE/GPE/UNP",
+  "Unidade de Gestão Normativa e de Processos", "juliana.tavares@codevasf.gov.br", "(61) 2028-4444",
+  _FOTO + "women/8.jpg", 3),
+ (10, "Rafael Menezes", "Analista de Dados e Indicadores", "AE/GPE",
+  "Gerência de Planejamento Estratégico", "rafael.menezes@codevasf.gov.br", "(61) 2028-4445",
+  _FOTO + "men/54.jpg", 0),
+ (11, "Camila Duarte", "Interlocutora de Processos de Suporte", "AA/GLC",
+  "Gerência de Licitações e Contratos", "camila.duarte@codevasf.gov.br", "(61) 2028-4520",
+  _FOTO + "women/90.jpg", 0),
+ (12, "Paulo Henrique Barros", "Apoio de Comunicação Institucional", "PR/ASCOM",
+  "Assessoria de Comunicação (fictícia)", "paulo.barros@codevasf.gov.br", "(61) 2028-4630",
+  _FOTO + "men/60.jpg", 0),
 ]
 
 _B, _P, _M, _S, _I, _G = ("BPM (CBOK)", "Projetos (PMBOK)", "Metodologia Codevasf",
@@ -310,7 +335,15 @@ FAQ = [
 ]
 
 # (Chave, Valor)
+# Textos e links institucionais editáveis pela planilha, sem mexer no
+# código do painel. Toda chave nova aqui precisa ser lida por par() em
+# js/app.js, que cai no texto atual quando a chave não existe.
 PARAMETROS = [
+ ("Titulo_Inicio", "Mapeamento de processos da Codevasf"),
+ ("Subtitulo_Inicio",
+  "Cadeia de valor, portfólio de processos e repositório de materiais "
+  "da Companhia, num só lugar."),
+ ("Titulo_Repositorio", "Repositório de materiais e ferramentas"),
  ("Contato_Unidade", "Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)"),
  ("Contato_Email", "ae.gpe.unp@codevasf.gov.br"),
  ("Contato_Telefone", "(61) 2028-4441"),

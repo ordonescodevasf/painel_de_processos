@@ -1,0 +1,116 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "caseSensitive": false,
+  "dictionaries": [
+    "companies",
+    "css",
+    "en_US",
+    "html",
+    "misc",
+    "node",
+    "softwareTerms",
+    "typescript",
+    "custom-words"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "addWords": true,
+      "name": "custom-words",
+      "path": "./cspell-wordlist.txt"
+    }
+  ],
+  "files": [
+    "**/*.{md,js,css,html}"
+  ],
+  "ignorePaths": [
+    "**/node_modules",
+    "**/img/**",
+    "**/data/**",
+    "**/*.min.css",
+    "**/*.min.js"
+  ],
+  "ignoreRegExpList": [
+    "/(```+)[\\s\\S]+?\\1/g",
+    "`([^`]*)`",
+    "/:[a-zA-Z0-9-_\\+]+:/g",
+    "https?://[^\\s]+",
+    "\\[.*?\\]\\(.*?\\)",
+    "\\b[a-zA-Z0-9][a-zA-Z0-9-]*\\.[a-zA-Z]{2,}\\b",
+    "import\\s+[^;]+",
+    "\\$[^\\s]+"
+  ],
+  "language": "en",
+  "languageSettings": [
+    {
+      "languageId": "markdown,mdx",
+      "patterns": [
+        {
+          "name": "ignore-frontmatter",
+          "pattern": "^---[\\s\\S]*?^---"
+        },
+        {
+          "name": "ignore-code-blocks",
+          "pattern": "^```[\\s\\S]*?^```$"
+        },
+        {
+          "name": "ignore-html-jsx-tags",
+          "pattern": "<[^>]+[^<]*>"
+        },
+        {
+          "name": "ignore-imports",
+          "pattern": "import\\s+[^;]+"
+        },
+        {
+          "name": "ignore-all-between-tags",
+          "pattern": "<[^>]*>.*<\\/[^>]*>"
+        }
+      ],
+      "ignoreRegExpList": [
+        "ignore-all-between-tags",
+        "ignore-code-blocks",
+        "ignore-frontmatter",
+        "ignore-html-jsx-tags",
+        "ignore-imports"
+      ]
+    },
+    {
+      "languageId": "javascript,javascriptreact,css,scss",
+      "patterns": [
+        {
+          "name": "only-comments",
+          "pattern": "(?:\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)"
+        }
+      ],
+      "includeRegExpList": [
+        "only-comments"
+      ]
+    },
+    {
+      "languageId": "html",
+      "patterns": [
+        {
+          "name": "ignore-html-attributes",
+          "pattern": "/\\b(name|value|icon)=([\\\"'])[^'\\\"]*\\2/g"
+        }
+      ],
+      "ignoreRegExpList": [
+        "ignore-html-attributes"
+      ]
+    }
+  ],
+  "overrides": [
+    {
+      "filename": "**/*.{json,jsonc}",
+      "ignoreRegExpList": [
+        "/(?<=^|{|,)\\s*(\"(?:\\\\.|[^\"\\\\])+\")\\s*:/g"
+      ]
+    },
+    {
+      "filename": "**/*.{yaml,yml}",
+      "ignoreRegExpList": [
+        "/^[ \\t]*(?:-\\s*)?(\"[^\"]+\"|'[^']+'|[^:\\s#]+)\\s*:(?:\\s|$)/gm"
+      ]
+    }
+  ],
+  "version": "0.2"
+}

@@ -68,6 +68,8 @@
     c.setAttribute('role', 'dialog');
     c.setAttribute('aria-label', this.comCalendario ? 'Selecionar data' : 'Selecionar hora');
     c.innerHTML =
+      (this.modo === 'range'
+        ? '<p class="dtp-hint" role="status" aria-live="polite"></p>' : '') +
       (this.comCalendario
         ? '<div class="dtp-months">' +
         '<button class="br-button circle small terciary dtp-prev" type="button" aria-label="Mês anterior"><i class="fas fa-angle-left" aria-hidden="true"></i></button>' +
@@ -95,6 +97,7 @@
     this.root.appendChild(c);
     this.cal = c;
     this.grade = c.querySelector('.dtp-days');
+    this.dica = c.querySelector('.dtp-hint');
     this.selMes = c.querySelector('.dtp-month-select');
     this.inpAno = c.querySelector('.dtp-year');
     this.inpHora = c.querySelector('.dtp-hora');
@@ -145,13 +148,28 @@
       if (mesmoDia(dt, hoje)) cls.push('today');
       var sel = mesmoDia(dt, this.inicio) || mesmoDia(dt, this.fim);
       if (sel) cls.push('selected');
-      else if (this.inicio && this.fim && dt > this.inicio && dt < this.fim) cls.push('in-range');
+      if (this.modo === 'range' && this.inicio) {
+        // Extremos arredondados e miolo pintado deixam o intervalo legível
+        // de relance; sem a data final, o dia sob o cursor faz as vezes de
+        // fim (prévia), que é como o usuário entende que faltam duas datas.
+        var fimVis = this.fim || this.previa;
+        if (mesmoDia(dt, this.inicio) && (this.fim || this.previa)) cls.push('range-start');
+        if (fimVis && mesmoDia(dt, fimVis) && !mesmoDia(fimVis, this.inicio)) cls.push('range-end');
+        if (!sel && fimVis && dt > this.inicio && dt < fimVis) cls.push(this.fim ? 'in-range' : 'in-range-previa');
+      }
       var off = this._desabilitado(dt);
       html += '<button type="button" class="' + cls.join(' ') + '" data-data="' + fmt(dt) + '"' +
         (off ? ' disabled' : '') + ' aria-label="' + porExtenso(dt) + '"' +
         (sel ? ' aria-current="date"' : '') + '>' + dt.getDate() + '</button>';
     }
     this.grade.innerHTML = html;
+    if (this.dica) {
+      this.dica.textContent = !this.inicio
+        ? 'Passo 1 de 2: escolha a data inicial'
+        : (!this.fim ? 'Passo 2 de 2: escolha a data final'
+          : 'Intervalo selecionado — clique em uma data para recomeçar');
+      this.dica.classList.toggle('is-ativa', !!this.inicio && !this.fim);
+    }
   };
 
   Picker.prototype._valor = function () {
@@ -211,6 +229,7 @@
       if (dia && !dia.disabled) {
         var dt = parse(dia.getAttribute('data-data'));
         if (self.modo === 'range') {
+          self.previa = null;
           if (!self.inicio || self.fim) { self.inicio = dt; self.fim = null; }
           else if (dt < self.inicio) { self.inicio = dt; }
           else { self.fim = dt; }
@@ -243,6 +262,18 @@
       if (ev.target === self.inpMinuto) { self.minuto = Math.min(59, Math.max(0, Number(self.inpMinuto.value) || 0)); self.render(); self._aplicar(); }
     });
     // Navegação por teclado entre os dias
+    this.grade.addEventListener('mouseover', function (ev) {
+      if (self.modo !== 'range' || !self.inicio || self.fim) return;
+      var dia = ev.target.closest('.dtp-day');
+      if (!dia || dia.disabled) return;
+      var dt = parse(dia.getAttribute('data-data'));
+      if (self.previa && mesmoDia(dt, self.previa)) return;
+      self.previa = dt; self.render();
+    });
+    this.grade.addEventListener('mouseleave', function () {
+      if (!self.previa) return;
+      self.previa = null; self.render();
+    });
     this.cal.addEventListener('keydown', function (ev) {
       if (ev.key === 'Escape') { self.fechar(); self.input.focus(); return; }
       var dia = ev.target.closest('.dtp-day');
@@ -260,6 +291,12 @@
       if (alvo) alvo.focus();
     });
     document.addEventListener('click', function (ev) {
+      /* O clique num dia redesenha a grade: quando o evento chega ao
+         document, o botão clicado já não está no DOM e o contains()
+         devolvia false — o calendário fechava sozinho logo após a
+         primeira data do intervalo, deixando o usuário sem entender que
+         faltava escolher a segunda. */
+      if (ev.target && ev.target.isConnected === false) return;
       if (!self.root.contains(ev.target)) self.fechar();
     });
   };

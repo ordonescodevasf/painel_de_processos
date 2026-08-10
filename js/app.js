@@ -54,10 +54,28 @@
     if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
     return null;
   }
-  function fmtData(iso) {
-    if (!iso) return '—';
-    var p = String(iso).slice(0, 10).split('-');
-    return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : String(iso);
+  /* Data para exibição. A planilha guarda AAAA-MM-DD como texto, e é isso
+     que o LEIA-ME manda preencher — mas o Excel converte o que parece data
+     em número de série, e quem preenche à mão às vezes digita DD/MM/AAAA.
+     As três formas são aceitas, para uma digitação fora do padrão não
+     apagar a coluna inteira da tela. */
+  function fmtData(v) {
+    if (v === null || v === undefined || v === '') return '—';
+    if (v instanceof Date) return dataBR(v.getDate(), v.getMonth() + 1, v.getFullYear());
+    var t = String(v).trim();
+    // Número de série do Excel (dias desde 30/12/1899).
+    if (/^\d+(\.\d+)?$/.test(t) && +t > 20000 && +t < 80000) {
+      var d = new Date(Date.UTC(1899, 11, 30) + Math.round(+t) * 86400000);
+      return dataBR(d.getUTCDate(), d.getUTCMonth() + 1, d.getUTCFullYear());
+    }
+    var iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(t);
+    if (iso) return dataBR(+iso[3], +iso[2], +iso[1]);
+    var br = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})/.exec(t);
+    if (br) return dataBR(+br[1], +br[2], +br[3]);
+    return t;
+  }
+  function dataBR(d, m, a) {
+    return (d < 10 ? '0' : '') + d + '/' + (m < 10 ? '0' : '') + m + '/' + a;
   }
   function hojeISO() { return isoData(new Date()); }
   function slug(s) {
@@ -72,7 +90,7 @@
   }
   function pctNorm(v) {                      // 0..1 ou 0..100 → 0..100
     var n = num(v); if (n == null) return 0;
-    return Math.round(n <= 1 ? n * 100 : n);
+    return Math.round(n <= 1 ? n * 100 : n /* fração (0,45) ou percentual (45) — ver LEIA-ME */);
   }
   function simNao(v) {
     if (v === true) return true;
@@ -198,6 +216,34 @@
     dd.jornada.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.repo.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    /* Foto e hierarquia dos integrantes: se a planilha em uso ainda não tem
+       as colunas Foto e Hierarquia, aproveita o que está em js/dados.js,
+       casando pelo e-mail — assim o avatar aparece com foto em qualquer
+       fonte de dados, e a planilha passa a mandar assim que as colunas
+       forem criadas (scripts/gerar_planilha.py já as gera). */
+    (function () {
+      var emb = (window.PAINEL_DADOS && window.PAINEL_DADOS.NUGEP) || [];
+      if (!emb.length) return;
+      var porEmail = {};
+      emb.forEach(function (x) { if (x.Email) porEmail[String(x.Email).toLowerCase()] = x; });
+      dd.nugep.forEach(function (m) {
+        var ref = porEmail[String(m.Email || '').toLowerCase()];
+        if (!ref) return;
+        if (!m.Foto) m.Foto = ref.Foto || '';
+        if (m.Hierarquia == null || m.Hierarquia === '') m.Hierarquia = ref.Hierarquia || 0;
+      });
+      // Chefias (níveis 1 e 2) ausentes da planilha entram pelo embutido —
+      // elas existem no painel só para mostrar a hierarquia da unidade.
+      emb.forEach(function (x) {
+        var n = +(x.Hierarquia || 0);
+        if (n !== 1 && n !== 2) return;
+        var ja = dd.nugep.some(function (m) {
+          return String(m.Email || '').toLowerCase() === String(x.Email || '').toLowerCase();
+        });
+        if (!ja) dd.nugep.push(Object.assign({}, x));
+      });
+      dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    })();
     dd.faq.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.glossario.sort(function (a, b) { return String(a.Termo || '').localeCompare(String(b.Termo || ''), 'pt-BR'); });
     dd.params = {};
@@ -279,15 +325,32 @@
   }
 
   /* ── componentes reutilizáveis (HTML) ─────────────────────────────── */
+  var ICONE_STATUS = {
+    'nao-iniciado': 'fa-circle', 'em-andamento': 'fa-spinner',
+    'concluido': 'fa-check-circle', 'suspenso': 'fa-pause-circle'
+  };
+  var _idTag = 0;
   function tagStatus(st) {
-    var cls = slug(st || 'Não iniciado');
-    return '<span class="tag-status ' + cls + '">' + esc(st || 'Não iniciado') + '</span>';
+    var rot = st || 'Não iniciado', cls = slug(rot);
+    var id = 'tg-st-' + (++_idTag);
+    return '<span class="br-tag tag-status ' + cls + '" aria-describedby="' + id + '">' +
+      '<i class="fas ' + (ICONE_STATUS[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
+      '<span id="' + id + '">' + esc(rot) + '</span></span>';
   }
   function tagCat(cat) {
     return '<span class="tag-cat ' + slug(cat) + '">' + esc(cat || '') + '</span>';
   }
+  // Ícones em escada: quanto mais grave, mais "cheia" a marca — o nível se
+  // lê sem depender da cor (diretriz de acessibilidade da Tag).
+  var ICONE_NIVEL = {
+    'baixo': 'fa-circle-check', 'moderado': 'fa-circle-exclamation',
+    'alto': 'fa-triangle-exclamation', 'extremo': 'fa-radiation'
+  };
   function tagNivel(cl) {
-    return '<span class="nivel-tag nivel-' + slug(cl) + '">' + esc(cl) + '</span>';
+    var cls = slug(cl), id = 'tg-nv-' + (++_idTag);
+    return '<span class="br-tag nivel-tag nivel-' + cls + '" aria-describedby="' + id + '">' +
+      '<i class="fas ' + (ICONE_NIVEL[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
+      '<span id="' + id + '">' + esc(cl) + '</span></span>';
   }
   function barraPct(p) {
     p = pctNorm(p);
@@ -340,6 +403,25 @@
     var pre = NIVEL_PREFIXO[nivel];
     return pre ? '#/' + pre + '/' + encodeURIComponent(codigo) : '#/';
   }
+  /* Categoria (Gerencial/Finalístico/Suporte) do macroprocesso ao qual o
+     item pertence, subindo a hierarquia a partir de qualquer nível. */
+  function categoriaDe(nivel, codigo) {
+    var mp = null;
+    if (nivel === 'Macroprocesso') mp = IDX.mp[codigo];
+    else if (nivel === 'Processo') { var p = IDX.p[codigo]; mp = p && IDX.mp[p.Macroprocesso]; }
+    else if (nivel === 'Subprocesso') { var pp = processoDoSubprocesso(codigo); mp = pp && IDX.mp[pp.Macroprocesso]; }
+    else if (nivel === 'Atividade') {
+      var a = IDX.a[codigo], an = a && ancestraisDaAtividade(a); mp = an && an.mp;
+    } else if (nivel === 'Tarefa') {
+      var t = IDX.t[codigo], a2 = t && IDX.a[t.Atividade];
+      var an2 = a2 && ancestraisDaAtividade(a2); mp = an2 && an2.mp;
+    }
+    return mp && mp.Categoria ? mp.Categoria : '';
+  }
+  function eyebrowFicha(nivel, codigo) {
+    var cat = categoriaDe(nivel, codigo);
+    return '<span class="eyebrow">' + nivel + (cat ? ' · ' + esc(cat) : '') + '</span>';
+  }
   function nomeDe(nivel, codigo) {
     var it = nivel === 'Macroprocesso' ? IDX.mp[codigo] : nivel === 'Processo' ? IDX.p[codigo]
       : nivel === 'Subprocesso' ? IDX.sp[codigo] : nivel === 'Tarefa' ? IDX.t[codigo] : IDX.a[codigo];
@@ -347,7 +429,10 @@
   }
   function linkVinculo(nivel, codigo) {
     return '<a href="' + rotaDe(nivel, codigo) + '"><span class="cod">' + esc(codDisp(codigo)) +
-      '</span> ' + esc(nomeDe(nivel, codigo)) + '</a> <span class="pp-muted">(' + esc(nivelRotulo(nivel)) + ')</span>';
+      // A sigla de duas letras no início do link já diz o nível (MG/MF/MS,
+      // PP, SP, AT, TR) — o rótulo por extesso ao lado era redundante e
+      // alargava a coluna sem informar nada de novo.
+      '</span> ' + esc(nomeDe(nivel, codigo)) + '</a>';
   }
   // Um mesmo item (documento, risco ou indicador) pode estar vinculado a dois ou mais
   // processos, dois ou mais subprocessos, ou a um processo e um subprocesso ao mesmo
@@ -385,7 +470,7 @@
     var html = '<nav class="br-breadcrumb" aria-label="Breadcrumbs">' +
       '<ol class="crumb-list" role="list">' +
       '<li class="crumb home"><a class="br-button circle" href="' + (home.href || '#/') +
-      '" aria-label="Página inicial" title="Página inicial"><span class="sr-only">Página inicial</span>' +
+      '" aria-label="Página Inicial" title="Página Inicial"><span class="sr-only">Página Inicial</span>' +
       '<i class="fas fa-home" aria-hidden="true"></i></a></li>';
     if (oculto.length) {
       html += '<li class="crumb menu-mobil">' + sep +
@@ -460,6 +545,43 @@
   var MARCOS_CAMPOS = MARCOS.map(function (m) { return m.campos[0]; });
   var MARCOS_DESCRICOES = MARCOS.map(function (m) { return m.desc; });
   // Valor do marco i no processo p — primeira coluna preenchida da lista.
+  /* Tooltip padrão gov.br (Componente Tooltip) no lugar do title nativo do
+     navegador: um ícone discreto de informação ("i") abre o balão no hover
+     E no foco, o que torna o texto alcançável por teclado e leitor de tela
+     — o title nativo não é. Uso: rótulo + dica('texto explicativo'). */
+  /* Estado vazio no padrão Dados Ausentes (gov.br DS > Padrões).
+     Anatomia: Apoio Visual (ilustração, opcional) + Título (condicional,
+     obrigatório quando o vazio ocupa a tela ou um bloco grande) +
+     Mensagem (obrigatória) + Suporte para Ações (opcional, ao final).
+     O padrão pede tom neutro — nunca sugerir que o usuário errou — e
+     mensagem específica, dizendo o critério usado e o que fazer a seguir.
+     Ilustrações do pacote oficial; a de "empty-space" é a narrativa que
+     corresponde à ausência de conteúdo. */
+  function vazio(titulo, mensagem, opts) {
+    opts = opts || {};
+    var acoes = opts.acoes || [];
+    return '<div class="pp-vazio pp-vazio-ilus" role="status">' +
+      '<img src="img/ilustracoes/' + (opts.img || 'empty-space/empty-space-07.png') + '" alt="" aria-hidden="true">' +
+      '<div class="pv-txt">' +
+      (titulo ? '<p class="pv-titulo">' + titulo + '</p>' : '') +
+      '<p class="pv-msg">' + mensagem + '</p></div>' +
+      (acoes.length ? '<div class="pv-acoes">' + acoes.map(function (a, i) {
+        // Hierarquia do componente Button: ênfase secundária na ação
+        // principal, terciária nas demais (regra do padrão).
+        var cls = 'br-button small' + (i === 0 ? ' secondary' : '');
+        var rot = (a.icone ? '<i class="fas ' + a.icone + '" aria-hidden="true"></i> ' : '') + esc(a.rotulo);
+        return a.href ? '<a class="' + cls + '" href="' + a.href + '">' + rot + '</a>'
+          : '<button class="' + cls + '" type="button" data-vazio-acao="' + a.acao + '">' + rot + '</button>';
+      }).join('') + '</div>' : '') +
+      '</div>';
+  }
+  function dica(texto, place) {
+    if (!texto) return '';
+    return '<span class="tooltip-wrap dica"><button type="button" class="dica-btn" data-tooltip-trigger' +
+      ' aria-label="Mais informações"><i class="fas fa-info-circle" aria-hidden="true"></i></button>' +
+      '<span class="br-tooltip small" role="tooltip" info place="' + (place || 'top') + '">' +
+      '<span class="subtext">' + esc(texto) + '</span></span></span>';
+  }
   function valMarco(p, i) {
     var cs = (MARCOS[i] || {}).campos || [];
     for (var k = 0; k < cs.length; k++) {
@@ -488,31 +610,42 @@
     return '';
   }
   /* Marcos do mapeamento pelo Componente Step (tipo complexo, indicador
-     numérico, orientação horizontal com data-scroll): a jornada tem ordem
-     lógica linear, que é exatamente o caso de uso do componente. Os
-     indicadores não são interativos (o painel só informa o progresso),
+     numérico, orientação horizontal): a jornada tem ordem lógica linear,
+     que é exatamente o caso de uso do componente. Os dez marcos ficam
+     todos à vista — sem data-scroll, portanto sem arrastar barra na
+     horizontal; abaixo de 992px a trilha vira vertical (variante
+     documentada do componente) em vez de espremer dez colunas.
+     Os indicadores não são interativos (o painel só informa o progresso),
      por isso vêm com disabled; a etapa atual é o primeiro marco ainda
-     pendente e "não se aplica" recebe alerta em cor de atenção. */
+     pendente e "não se aplica" recebe alerta em cor de atenção. A
+     descrição de cada marco sai do title nativo e vira Tooltip gov.br,
+     acionado pelo "i" ao lado do rótulo (o gatilho é o container, já que
+     o botão desabilitado não recebe eventos de mouse). */
   function marcosHtml(p) {
     var est = MARCOS.map(function (mk, i) { return marcoEstado(valMarco(p, i)); });
     var atual = -1;
     for (var k = 0; k < est.length; k++) { if (est[k] === '') { atual = k; break; } }
     var total = MARCOS.length;
-    return '<nav class="br-step" data-label="bottom" data-scroll="data-scroll" role="none">' +
+    return '<nav class="br-step marcos-step" data-label="bottom" role="none">' +
       '<div class="step-progress" role="listbox" aria-orientation="horizontal" aria-label="Marcos do mapeamento">' +
       MARCOS.map(function (mk, i) {
         var e = est[i], feito = e === 'feito', na = e === 'na', ativo = i === atual;
         var rotulo = 'M' + (i + 1) + ' — ' + MARCOS_ROTULOS[i] +
           (feito ? ' (concluído)' : na ? ' (não se aplica)' : ativo ? ' (em andamento)' : ' (pendente)');
-        return '<button class="step-progress-btn' + (feito ? ' is-done' : '') + '" type="button" role="option"' +
+        var texto = MARCOS_DESCRICOES[i] + (na ? ' — Não se aplica a este processo.' : '');
+        return '<span class="tooltip-wrap step-wrap" data-tooltip-trigger tabindex="0">' +
+          '<button class="step-progress-btn' + (feito ? ' is-done' : '') + '" type="button" role="option"' +
           ' step-num="' + (i + 1) + '" aria-posinset="' + (i + 1) + '" aria-setsize="' + total + '"' +
           ' aria-selected="' + (ativo ? 'true' : 'false') + '"' + (ativo ? ' active' : '') + ' disabled' +
           (na ? ' data-alert="warning"' : '') +
-          ' aria-label="' + esc(rotulo) + '" title="' + esc(MARCOS_DESCRICOES[i] + (na ? ' — Não se aplica a este processo.' : '')) + '">' +
-          '<span class="step-info">' + esc(MARCOS_ROTULOS[i]) + '</span>' +
-          (feito ? '<i class="step-icon fas fa-check" aria-hidden="true"></i>' : '') +
+          ' aria-label="' + esc(rotulo) + '">' +
+          '<span class="step-info">' + esc(MARCOS_ROTULOS[i]) +
+          ' <i class="fas fa-info-circle dica-i" aria-hidden="true"></i></span>' +
           (na ? '<span class="step-alert"></span>' : '') +
-          '</button>';
+          '</button>' +
+          '<span class="br-tooltip small" role="tooltip" info place="bottom">' +
+          '<span class="text">' + esc(rotulo) + '</span>' +
+          '<span class="subtext">' + esc(texto) + '</span></span></span>';
       }).join('') +
       '</div></nav>';
   }
@@ -596,7 +729,12 @@
         return '<a class="hier-item ' + info.classe + catCls + '" href="' + it.href + '">' +
           '<span class="hier-ic"><i class="fas ' + info.icone + '" aria-hidden="true"></i></span>' +
           '<span class="hier-tx"><span class="hier-tipo">' + info.rotulo + '</span>' +
-          '<span class="hier-nome">' + esc(codDisp(it.codigo)) + ' — ' + esc(it.nome) + '</span></span>' +
+          // Padrão Content Overflow > Truncamento: todo texto truncado
+          // precisa dar acesso ao conteúdo completo. Aqui o title cumpre o
+          // papel (o link já é alcançável por teclado, e o leitor de tela
+          // lê o texto inteiro, que não é cortado no DOM).
+          '<span class="hier-nome" title="' + esc(codDisp(it.codigo) + ' — ' + it.nome) + '">' +
+          esc(codDisp(it.codigo)) + ' — ' + esc(it.nome) + '</span></span>' +
           '<i class="fas fa-chevron-right" aria-hidden="true"></i></a>';
       }).join('') + '</div></div>';
   }
@@ -618,9 +756,9 @@
     return '<div class="diagrama-frame diagrama-iframe">' +
       '<iframe src="' + href + '" title="Diagrama BPMN interativo — ' + esc(titulo) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       '</div>' +
-      '<p class="pp-muted" style="font-size:var(--fs-sm);margin-top:6px"><i class="fas fa-circle-info" aria-hidden="true"></i> Diagrama interativo (Bizagi Web Publish). Se o quadro acima aparecer em branco, o servidor pode estar bloqueando a incorporação ou exigir rede interna — use o link abaixo.</p>' +
+      '<p class="pp-muted" style="font-size:var(--fs-sm);margin-top:6px"><i class="fas fa-info-circle" aria-hidden="true"></i> Diagrama interativo (Bizagi Web Publish). Se o quadro acima aparecer em branco, o servidor pode estar bloqueando a incorporação ou exigir rede interna — use o link abaixo.</p>' +
       '<div class="diagrama-acoes"><a class="br-button secondary small" href="' + href +
-      '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Abrir em nova aba<span class="sr-only"> (abre em nova aba)</span></a></div>';
+      '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt" aria-hidden="true"></i>&nbsp;Abrir em Nova Aba<span class="sr-only"> (abre em nova aba)</span></a></div>';
   }
 
   function listaDocsHtml(docs) {
@@ -638,60 +776,162 @@
         (x.Situacao ? ' · ' + esc(x.Situacao) : '') + '</div></div></div>';
     }).join('');
   }
+  /* ── TABLE (br-table) ── Envelope padrão gov.br para qualquer conteúdo
+     tabular do painel. Monta a anatomia completa em volta das colunas
+     recebidas: Barra de Título com título e ações utilitárias (menu de
+     densidade + gatilho de busca), Barra de Busca que cobre o título
+     enquanto ativa, Área de Dados com <caption>, cabeçalhos ordenáveis
+     (aria-sort + ícones sort/sort-up/sort-down) e wrapper responsivo.
+     O comportamento (ordenar, buscar, trocar densidade) é genérico e
+     opera sobre o DOM — ver BRTableInit em govbr-ui.js. ── */
+  var tblSeq = 0;
+  function tabelaGov(cfg) {
+    var id = cfg.id || ('tbl' + (++tblSeq));
+    var dens = cfg.densidade || 'small';
+    var cols = cfg.colunas;
+    return '<div class="br-table ' + dens + '" id="' + id + '" data-search="data-search"' +
+      ' data-selection="data-selection" data-generic="data-generic">' +
+      '<div class="table-header"><div class="top-bar">' +
+      '<div class="table-title">' + esc(cfg.titulo) + '</div>' +
+      '<div class="actions-trigger text-nowrap">' +
+      '<span class="tooltip-wrap">' +
+      '<button class="br-button circle small" type="button" id="' + id + '-dens" data-tooltip-trigger data-toggle="dropdown" data-target="' + id + '-densMenu" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button>' +
+      '<span class="br-tooltip small" role="tooltip" info place="bottom">' +
+      '<span class="text">Densidade da tabela</span>' +
+      '<span class="subtext">Compacta, regular ou espaçada</span></span>' +
+      '</span>' +
+      '<div class="br-list dd-target" id="' + id + '-densMenu" role="menu" aria-labelledby="' + id + '-dens" hidden>' +
+      [['small', 'Compacta'], ['medium', 'Regular'], ['large', 'Espaçada']].map(function (o, i) {
+        return (i ? '<span class="br-divider" role="presentation"></span>' : '') +
+          '<button class="br-item" type="button" role="menuitem" data-density="' + o[0] + '"' +
+          (dens === o[0] ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
+      }).join('') + '</div></div>' +
+      '<div class="search-trigger"><button class="br-button circle small" type="button" data-toggle="search" aria-label="Abrir busca" aria-controls="' + id + '-busca" aria-expanded="false"><i class="fas fa-search" aria-hidden="true"></i></button></div>' +
+      '</div>' +
+      '<div class="search-bar"><div class="br-input">' +
+      '<label for="' + id + '-busca">Pesquisar na tabela</label>' +
+      '<input id="' + id + '-busca" type="search" placeholder="Pesquisar na tabela">' +
+      '<button class="br-button circle small" type="button" aria-label="Pesquisar"><i class="fas fa-search" aria-hidden="true"></i></button></div>' +
+      '<button class="br-button circle small" type="button" data-dismiss="search" aria-label="Fechar pesquisa"><i class="fas fa-times" aria-hidden="true"></i></button>' +
+      '</div></div>' +
+      '<div class="responsive"><table><caption>' + esc(cfg.titulo) + '</caption><colgroup>' +
+      cols.map(function (c) {
+        // min: largura mínima em px. O .col-curta encolhe a coluna ao
+        // conteúdo (width:1%), o que espremia códigos e rótulos curtos
+        // (R-001, "Extremo", "Em tratamento") em duas ou três linhas.
+        return '<col' + (c.principal ? ' class="col-principal"' : c.curta ? ' class="col-curta"' : '') +
+          (c.min ? ' style="min-width:' + c.min + 'px"' : '') + '>';
+      }).join('') + '</colgroup><thead><tr>' +
+      cols.map(function (c) {
+        if (c.fixa) return '<th scope="col">' + esc(c.r) + '</th>';
+        return '<th scope="col"><button type="button" class="sort-btn" data-sort aria-label="Ordenar por ' + esc(c.r) + '">' +
+          esc(c.r) + '<i class="fas fa-sort" aria-hidden="true"></i></button></th>';
+      }).join('') + '</tr></thead><tbody>' + cfg.linhas + '</tbody></table></div>' +
+      '<div class="table-footer"><span class="tbl-total"><strong>' + cfg.total + '</strong> ' + esc(cfg.rotuloTotal || 'registros') + '</span></div>' +
+      '</div>';
+  }
+
+  /* Linha de detalhe (comportamento 3 do Componente Table). A informação
+     secundária sai das colunas e vem para cá: a tabela fica com o que o
+     usuário precisa ver de relance, e o resto continua a um clique. Uma
+     informação aparece OU na coluna OU no detalhe, nunca nos dois. */
+  function detalheLinha(pares) {
+    var itens = pares.filter(function (p) { return p[1] && String(p[1]).trim() && p[1] !== '—'; });
+    if (!itens.length) return '';
+    return '<tr class="collapse"><td><dl class="tbl-detalhe">' +
+      itens.map(function (p) {
+        return '<div><dt>' + esc(p[0]) + '</dt><dd>' + p[1] + '</dd></div>';
+      }).join('') + '</dl></td></tr>';
+  }
+
   // Tabela de atividades — usada na ficha do Subprocesso e na ficha do
   // Processo (quando as atividades penduram direto no processo).
   function tabelaAtividadesHtml(ativs, vazio) {
     if (!ativs.length) return '<p class="pp-vazio">' + (vazio || 'Nenhuma atividade cadastrada.') + '</p>';
-    return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>#</th><th>Atividade</th><th>Responsável (ator)</th><th>Entradas</th><th>Saídas</th><th>Prazo</th></tr></thead><tbody>' +
-      ativs.map(function (a, i) {
+    return tabelaGov({
+      titulo: 'Atividades', rotuloTotal: ativs.length === 1 ? 'atividade' : 'atividades', total: ativs.length,
+      colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Atividade', principal: true },
+        { r: 'Responsável (ator)' }, { r: 'Prazo', curta: true }],
+      linhas: ativs.map(function (a) {
         var nt = (IDX.tarefasPorAtiv[a.Codigo] || []).length;
-        return '<tr data-link><td>' + (i + 1) + '</td><td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
-          '<div class="cod">' + esc(codDisp(a.Codigo)) + (nt ? ' · ' + plural(nt, 'tarefa', 'tarefas') : '') + '</div></td>' +
-          '<td style="font-size:var(--fs-sm)">' + esc(a.Responsavel_Ator || '—') + '</td>' +
-          '<td style="font-size:var(--fs-sm)">' + (listar(a.Entradas).map(esc).join('; ') || '—') + '</td>' +
-          '<td style="font-size:var(--fs-sm)">' + (listar(a.Saidas).map(esc).join('; ') || '—') + '</td>' +
-          '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>';
-      }).join('') + '</tbody></table></div>';
+        return '<tr data-link><td class="cod">' + esc(codDisp(a.Codigo)) + '</td>' +
+          '<td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
+          (a.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(a.Descricao) + '</div>' : '') +
+          (nt ? '<div class="cod">' + plural(nt, 'tarefa', 'tarefas') + '</div>' : '') + '</td>' +
+          '<td>' + esc(a.Responsavel_Ator || '—') + '</td>' +
+          '<td class="text-nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>' +
+          detalheLinha([
+            ['Entradas', listar(a.Entradas).map(esc).join('; ')],
+            ['Saídas', listar(a.Saidas).map(esc).join('; ')],
+            ['Sistemas', listar(a.Sistemas).map(esc).join('; ')],
+            ['Executor', esc(a.Executor || '')],
+            ['Base normativa', esc(a.Base_Normativa || '')],
+            ['Unidades corresponsáveis', listar(a.Unidades_Corresponsaveis).map(esc).join('; ')]
+          ]);
+      }).join('')
+    });
   }
   function ligarLinhasTabela() {
     $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
       tr.addEventListener('click', function (ev) {
-        if (ev.target.closest('a')) return;
+        // A linha é atalho para a ficha, menos onde há controle próprio:
+        // link, caixa de seleção, botão de expandir.
+        if (ev.target.closest('a, input, label, button, .column-checkbox')) return;
         var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
       });
     });
   }
   function tabelaRiscosHtml(riscos, comVinculo) {
     if (!riscos.length) return '<p class="pp-vazio">Nenhum risco registrado.</p>';
-    return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
-      (comVinculo ? '<th>Vinculado a</th>' : '') +
-      '<th>Risco</th><th>P</th><th>I</th><th>P×I</th><th>Nível</th><th>Resposta</th><th>Status</th></tr></thead><tbody>' +
-      riscos.map(function (r) {
+    var cols = [{ r: 'ID', curta: true, min: 92 }];
+    if (comVinculo) cols.push({ r: 'Vinculado a', min: 200 });
+    cols = cols.concat([{ r: 'Risco', principal: true }, { r: 'P', curta: true }, { r: 'I', curta: true },
+      { r: 'P×I', curta: true }, { r: 'Nível', curta: true, min: 128 },
+      { r: 'Status', curta: true, min: 124 }]);
+    return tabelaGov({
+      titulo: 'Riscos', rotuloTotal: riscos.length === 1 ? 'risco' : 'riscos', total: riscos.length,
+      colunas: cols,
+      linhas: riscos.map(function (r) {
         return '<tr id="risco-' + esc(r.ID) + '"><td class="cod">' + esc(r.ID) + '</td>' +
           (comVinculo ? '<td>' + linkVinculos(r.Vinculo_Nivel, r.Vinculo_Codigo) + '</td>' : '') +
-          '<td>' + esc(r.Descricao_Risco) +
-          (r.Controles_Tratamento ? '<div class="pp-muted" style="font-size:var(--fs-sm)">Tratamento: ' + esc(r.Controles_Tratamento) + '</div>' : '') +
-          '</td><td>' + r.Probabilidade_1a5 + '</td><td>' + r.Impacto_1a5 + '</td><td><strong>' + r._nivel +
-          '</strong></td><td>' + tagNivel(r._classe) + '</td><td>' + esc(r.Resposta || '—') +
-          '</td><td>' + esc(r.Status || '—') + '</td></tr>';
-      }).join('') + '</tbody></table></div>';
+          '<td><strong>' + esc(r.Descricao_Risco) + '</strong>' +
+          '</td><td class="num">' + r.Probabilidade_1a5 + '</td><td class="num">' + r.Impacto_1a5 +
+          '</td><td class="num"><strong>' + r._nivel + '</strong></td><td>' + tagNivel(r._classe) +
+          '</td><td>' + esc(r.Status || '—') + '</td></tr>' +
+          detalheLinha([
+            ['Tratamento e controles', esc(r.Controles_Tratamento || '')],
+            ['Resposta ao risco', esc(r.Resposta || '')],
+            ['Categoria', esc(r.Categoria || '')],
+            ['Responsável', esc(r.Responsavel || '')]
+          ]);
+      }).join('')
+    });
   }
   function tabelaIndsHtml(inds, comVinculo) {
     if (!inds.length) return '<p class="pp-vazio">Nenhum indicador vinculado.</p>';
-    return '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>ID</th>' +
-      '<th>Indicador</th>' + (comVinculo ? '<th>Vinculado a</th>' : '') +
-      '<th>Meta</th><th>Resultado</th><th>Situação</th><th>Periodicidade</th><th>Última medição</th></tr></thead><tbody>' +
-      inds.map(function (x) {
+    var cols = [{ r: 'ID', curta: true, min: 100 }, { r: 'Indicador', principal: true }];
+    if (comVinculo) cols.push({ r: 'Vinculado a', min: 200 });
+    cols = cols.concat([{ r: 'Meta', curta: true }, { r: 'Resultado', curta: true }, { r: 'Situação', curta: true },
+      { r: 'Última medição', curta: true }]);
+    return tabelaGov({
+      titulo: 'Indicadores', rotuloTotal: inds.length === 1 ? 'indicador' : 'indicadores', total: inds.length,
+      colunas: cols,
+      linhas: inds.map(function (x) {
         var cls = x._sit === 'Meta atingida' ? 'sit-ok' : (x._sit === 'Sem medição' || x._sit === 'Sem meta') ? 'sit-neutra' : 'sit-ruim';
         var un = x.Unidade ? ' ' + esc(x.Unidade) : '';
         return '<tr><td class="cod">' + esc(x.ID) + '</td>' +
-          '<td><strong>' + esc(x.Nome) + '</strong>' +
-          (x.Descricao_Formula ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(x.Descricao_Formula) + '</div>' : '') +
-          '</td>' + (comVinculo ? '<td>' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' : '') +
+          '<td><strong>' + esc(x.Nome) + '</strong></td>' + (comVinculo ? '<td>' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' : '') +
           '<td>' + (x.Meta != null ? x.Meta + un : '—') + '</td><td>' + (x.Resultado_Atual != null ? x.Resultado_Atual + un : '—') +
-          '</td><td class="' + cls + '">' + esc(x._sit) + '</td><td>' + esc(x.Periodicidade || '—') +
-          '</td><td>' + fmtData(x.Ultima_Medicao) + '</td></tr>';
-      }).join('') + '</tbody></table></div>';
+          '</td><td class="' + cls + '">' + esc(x._sit) + '</td>' +
+          '<td>' + fmtData(x.Ultima_Medicao) + '</td></tr>' +
+          detalheLinha([
+            ['Fórmula de cálculo', esc(x.Descricao_Formula || '')],
+            ['Periodicidade', esc(x.Periodicidade || '')],
+            ['Polaridade', esc(x.Polaridade || '')],
+            ['Fonte', esc(x.Fonte || '')]
+          ]);
+      }).join('')
+    });
   }
 
   /* ── PAGINATION (br-pagination, gov.br DS) ────────────────────────────
@@ -745,7 +985,7 @@
       '<input id="' + id + '" type="text" readonly value="' + valor + '" ' + marca +
       ' role="combobox" aria-expanded="false" aria-controls="' + id + '-lista">' +
       '<button class="br-button" type="button" tabindex="-1" data-trigger aria-label="Exibir lista">' +
-      '<i class="fas fa-angle-down" aria-hidden="true"></i></button></div>' +
+      '<i class="fas fa-caret-down" aria-hidden="true"></i></button></div>' +
       '<div class="br-list" id="' + id + '-lista" role="listbox" tabindex="0">' +
       ops.map(function (n) {
         var oid = id + '-' + n, sel = n === valor;
@@ -851,7 +1091,79 @@
     nugep: '#/nugep', glossario: '#/glossario', faq: '#/faq' };
   var MAIS_ITENS = { repositorio: 'Repositório', nugep: 'NUGEP',
     glossario: 'Glossário', faq: 'FAQ' };
+  /* ── Barra de seções responsiva ─────────────────────────────────────
+     As ações de página (alertas, compartilhar, imprimir) são âncoras fixas
+     do cabeçalho e precisam estar sempre visíveis. Quando a linha aperta,
+     as abas que não cabem migram para o menu "Mais" — em vez de rolarem
+     para fora da tela, onde o próprio botão "Mais" desaparecia. ── */
+  function ajustarAbas() {
+    var nav = $('#navigation .tab-nav');
+    var lista = nav && nav.querySelector('ul');
+    if (!lista) return;
+    var maisLi = $('#tab-mais') && $('#tab-mais').closest('.tab-item');
+    var menu = $('#maisMenu');
+    if (!maisLi || !menu) return;
+    var itens = $all('li.tab-item', lista).filter(function (li) { return li !== maisLi; });
+    // Reinicia: todas as abas visíveis e o menu sem itens migrados.
+    itens.forEach(function (li) { li.hidden = false; });
+    $all('[data-migrado]', menu).forEach(function (n) { n.remove(); });
+    maisLi.hidden = false;
+
+    var disponivel = nav.clientWidth;
+    var larguraMais = maisLi.offsetWidth;
+    var larguras = itens.map(function (li) { return li.offsetWidth; });
+    var total = larguras.reduce(function (a, b) { return a + b; }, 0);
+    var excedentes = [];
+    if (total > disponivel) {
+      // A seção em que o usuário está permanece sempre visível na faixa —
+      // migrar a aba ativa esconderia o contexto atual.
+      // A folga de 8px garante que o botão "Mais" caiba inteiro na faixa:
+      // sem ela, o arredondamento das larguras deixava a seta do botão
+      // encostada no limite do contêiner, que tem overflow escondido.
+      var limite = disponivel - larguraMais - 8;
+      for (var i = itens.length - 1; i >= 0 && total > limite; i--) {
+        if (itens[i].classList.contains('active')) continue;
+        total -= larguras[i];
+        itens[i].hidden = true;
+        excedentes.unshift(itens[i]);
+      }
+    }
+    if (!excedentes.length) return;
+    // Cada aba migrada vira um item da List do menu, preservando ícone,
+    // rótulo e contador — sem duplicar ids.
+    var frag = d.createDocumentFragment();
+    excedentes.forEach(function (li) {
+      var b = li.querySelector('[data-rota]');
+      if (!b) return;
+      var ic = b.querySelector('.name > i');
+      var rot = b.querySelector('.tab-label-full');
+      var cnt = b.querySelector('.tab-count');
+      var item = d.createElement('button');
+      item.type = 'button';
+      item.className = 'br-item';
+      item.setAttribute('data-migrado', '');
+      item.setAttribute('data-rota', b.getAttribute('data-rota'));
+      item.setAttribute('data-painel', b.getAttribute('data-painel'));
+      item.innerHTML = '<i class="' + (ic ? ic.className : 'fas fa-circle') + '" aria-hidden="true"></i>' +
+        '<span>' + esc(rot ? rot.textContent : b.textContent.trim()) + '</span>' +
+        (cnt ? '<span class="tab-count">' + esc(cnt.textContent) + '</span>' : '');
+      frag.appendChild(item);
+    });
+    var sep = d.createElement('span');
+    sep.className = 'br-divider';
+    sep.setAttribute('data-migrado', '');
+    sep.setAttribute('aria-hidden', 'true');
+    frag.appendChild(sep);
+    var cabecalho = menu.querySelector('.header');
+    menu.insertBefore(frag, cabecalho ? cabecalho.nextSibling : menu.firstChild);
+    ajustando = true;
+    mostrarPainel(painelAtual);
+    ajustando = false;
+  }
+  var ajustando = false;
+  var painelAtual = 'inicio';
   function mostrarPainel(id) {
+    painelAtual = id;
     $all('#mainTabContent > .tab-panel').forEach(function (p) {
       var ativo = p.id === 'panel-' + id;
       p.classList.toggle('active', ativo);
@@ -879,6 +1191,12 @@
       if (ls) ls.textContent = temAtivo ? sub : 'Mais';
       maisBtn.setAttribute('aria-label', temAtivo ? ('Mais seções do painel — atual: ' + sub) : 'Mais seções do painel');
     }
+    // Se a seção recém-aberta estava migrada para o "Mais", refaz o recorte
+    // para trazê-la de volta à faixa.
+    if (!ajustando) {
+      var ativoLi = $('#navigation .tab-nav li.tab-item.active');
+      if (ativoLi && ativoLi.hidden) ajustarAbas();
+    }
   }
   function rota() {
     var h = location.hash || '#/';
@@ -904,6 +1222,12 @@
         h1.focus({ preventScroll: true });
       }
     }
+    // Os tooltips do conteúdo recém-renderizado precisam ser ligados a cada
+    // troca de tela (a inicialização é idempotente: ignora os já prontos).
+    if (window.BRTooltipInit) window.BRTooltipInit();
+    if (window.BRMessageInit) window.BRMessageInit();
+    if (window.BRTableInit) window.BRTableInit();
+    if (window.BRLoadingInit) window.BRLoadingInit();
     jaNavegou = true;
   }
   var jaNavegou = false;
@@ -998,6 +1322,11 @@
           '</span><span class="cv-meta">' + statsMacro(m.Codigo) + '</span></span></a></li>';
       }).join('') + '</ul></div>';
   }
+  /* Texto vindo da aba Parâmetros, com o texto atual como reserva. */
+  function par(chave, padrao) {
+    var v = (DADOS.params || {})[chave];
+    return (v == null || String(v).trim() === '') ? padrao : String(v);
+  }
   function renderInicio() {
     var el = $('#viewInicio');
     var procs = DADOS.procs;
@@ -1012,14 +1341,15 @@
     var sup = DADOS.macros.filter(function (m) { return m._cat === 'suporte'; });
     el.innerHTML =
       '<section class="pp-hero">' +
-      '<h1>Mapeamento de processos da Codevasf</h1>' +
+      '<h1>' + esc(par('Titulo_Inicio', 'Mapeamento de processos da Codevasf')) + '</h1>' +
+      (par('Subtitulo_Inicio', '') ? '<p class="pp-hero-sub">' + esc(par('Subtitulo_Inicio', '')) + '</p>' : '') +
       '</section>' +
       '<div class="kpi-grid">' +
-      '<div class="kpi" title="Total de macroprocessos na cadeia de valor institucional (gerenciais, finalísticos e de suporte)."><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos</span><span class="sub">' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
-      '<div class="kpi" title="Total de processos identificados no portfólio de processos da Companhia."><span class="num">' + procs.length + '</span><span class="lbl">Processos identificados</span><span class="sub">no portfólio atual</span></div>' +
-      '<div class="kpi ok" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos."><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos</span><span class="sub">' + andamento + ' em andamento</span></div>' +
-      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos do portfólio."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">do mapeamento do portfólio</span></div>' +
-      '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos</span><span class="sub">nível Alto ou Extremo</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.macros.length + '</span><span class="lbl">Macroprocessos' + dica('Total de macroprocessos na cadeia de valor institucional (gerenciais, finalísticos e de suporte).') + '</span><span class="sub">' + DADOS.subs.length + ' subprocessos · ' + DADOS.ativs.length + ' atividades · ' + DADOS.tarefas.length + ' tarefas</span></div>' +
+      '<div class="kpi"><span class="num">' + procs.length + '</span><span class="lbl">Processos identificados' + dica('Total de processos identificados no portfólio de processos da Companhia.') + '</span><span class="sub">no portfólio atual</span></div>' +
+      '<div class="kpi ok"><span class="num">' + concl + '</span><span class="lbl">Mapeamentos concluídos' + dica('Processos com todos os marcos do mapeamento (M1–M10) concluídos.') + '</span><span class="sub">' + andamento + ' em andamento</span></div>' +
+      '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio' + dica('Percentual médio de execução do mapeamento entre todos os processos do portfólio.') + '</span><span class="sub">do mapeamento do portfólio</span></div>' +
+      '<div class="kpi ' + (criticos ? 'erro' : 'ok') + '"><span class="num">' + criticos + '</span><span class="lbl">Riscos críticos abertos' + dica('Riscos classificados como Alto ou Extremo, ainda não encerrados.') + '</span><span class="sub">nível Alto ou Extremo</span></div>' +
       '</div>' +
       '<section class="pp-sec" id="sec-cadeia"><div class="pp-sec-h"><h2>Cadeia de Valor Integrada</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="cadeia">' +
@@ -1066,7 +1396,7 @@
       ' role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="' + id + '-list"' +
       (multi ? ' aria-multiselectable="true"' : '') + '></div>' +
       '<button class="br-button" type="button" data-trigger="data-trigger" tabindex="-1" aria-label="Exibir lista"' +
-      ' aria-controls="' + id + '-list" aria-expanded="false"><i class="fas fa-angle-down" aria-hidden="true"></i></button></div>' +
+      ' aria-controls="' + id + '-list" aria-expanded="false"><i class="fas fa-caret-down" aria-hidden="true"></i></button></div>' +
       '<div class="br-list" id="' + id + '-list" role="listbox" tabindex="-1" aria-label="Lista de opções">' +
       todos + itens + '</div></div>';
   }
@@ -1093,7 +1423,6 @@
   function filtroOrdemHtml() {
     return '<fieldset class="radio-group" id="fOrdemGroup">' +
       '<legend class="label">Ordenar por</legend>' +
-      '<p class="help-text" id="fOrdemAjuda">Vale para os cartões e para a paginação abaixo.</p>' +
       '<div class="radio-inline">' +
       ORDENS.map(function (o) {
         return '<div class="br-radio small"><input id="fOrdem-' + o.v + '" type="radio" name="fOrdem" value="' + o.v + '"' +
@@ -1136,10 +1465,9 @@
     var todos = marcados > 0 && marcados === disponiveis.length;
     return '<div class="checkbox-group" id="fStatusGroup">' +
       '<p class="label" id="fStatusLabel">Status do mapeamento</p>' +
-      '<p class="text-down-01">Selecione um ou mais status. Sem seleção, o portfólio mostra todos.</p>' +
       '<ul class="checkbox-list horizontal" role="group" aria-labelledby="fStatusLabel">' +
       '<li><div class="br-checkbox"><input id="fStatus-todos" name="fStatus-todos" type="checkbox" data-parent="status"' +
-      (todos ? ' checked' : '') + (marcados && !todos ? ' indeterminate' : '') + '>' +
+      (todos || marcados ? ' checked' : '') + (marcados && !todos ? ' indeterminate' : '') + '>' +
       '<label for="fStatus-todos">Todos os status</label></div></li>' +
       STATUS_MAPEAMENTO.map(function (s) {
         var v = slug(s), n = contagem[v], off = n === 0;
@@ -1157,6 +1485,9 @@
     var ativos = filhos.filter(function (c) { return !c.disabled; });
     // estado intermediário: alguns filhos marcados, mas não todos
     var marcados = ativos.filter(function (c) { return c.checked; }).length;
+    // checked + indeterminate juntos: é o que o utilitário Checkgroup
+    // define para o estado intermediário.
+    pai.checked = marcados > 0;
     pai.indeterminate = marcados > 0 && marcados < ativos.length;
     pai.onchange = function () {
       filtroCat.status = pai.checked ? ativos.map(function (c) { return c.value; }) : [];
@@ -1204,7 +1535,9 @@
     return (!lista.length && filtroCat.status.length ? '<span class="feedback warning" role="alert"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i>Nenhum processo com os status selecionados.</span>' : '') +
       (lista.length ? '<div class="proc-grid">' + pagFatia('catalogo', ordenarCat(lista), 6).map(cardProcesso).join('') + '</div>' +
         paginacaoHtml('catalogo', lista.length, 'processos', [6, 12, 24, 48])
-        : '<p class="pp-vazio">Nenhum processo corresponde aos filtros. Limpe os filtros para ver todos.</p>');
+        : vazio('Nenhum processo com esses filtros',
+          'Ajuste os critérios ou limpe os filtros para ver todo o portfólio.',
+          { acoes: [{ rotulo: 'Limpar Filtros', icone: 'fa-rotate-left', acao: 'cat-limpar' }] }));
   }
   function renderResultados() {
     var box = $('#catResultados');
@@ -1214,7 +1547,41 @@
     // O rodapé do painel vive fora de #catResultados; a visibilidade do
     // botão "Limpar filtros" acompanha cada mudança de filtro.
     var rodape = $('#fRodapeFiltros');
-    if (rodape) rodape.hidden = !catTemFiltro();
+    if (rodape) {
+      rodape.hidden = !catTemFiltro();
+      var ativos = rodape.querySelector('.filtros-ativos');
+      var html = filtrosAtivosHtml();
+      if (ativos) ativos.outerHTML = html || '<div class="filtros-ativos" hidden></div>';
+      else rodape.insertAdjacentHTML('afterbegin', html);
+    }
+  }
+  /* Filtros ativos como Tags de interação dispensáveis (Componente Tag,
+     tipo interação): cada tag mostra um recorte em vigor e o botão fechar
+     remove só aquele recorte. O rótulo tem id próprio, referenciado pelo
+     aria-describedby do botão, como pede o exemplo oficial. */
+  function filtrosAtivosHtml() {
+    var tags = [];
+    function tag(tipo, valor, icone, rotulo) {
+      var id = 'ftag-' + tipo + '-' + String(valor).replace(/[^a-z0-9]+/gi, '-');
+      tags.push('<span class="br-tag interaction small">' +
+        '<i class="fas ' + icone + '" aria-hidden="true"></i>' +
+        '<span id="' + id + '">' + esc(rotulo) + '</span>' +
+        '<button class="br-button" type="button" aria-label="Remover filtro" aria-describedby="' + id + '"' +
+        ' data-filtro-tipo="' + tipo + '" data-filtro-valor="' + esc(String(valor)) + '">' +
+        '<i class="fas fa-times" aria-hidden="true"></i></button></span>');
+    }
+    filtroCat.macro.forEach(function (c) {
+      var m = DADOS.macros.filter(function (x) { return x.Codigo === c; })[0];
+      tag('macro', c, 'fa-diagram-project', m ? (m._cod || m.Codigo) : c);
+    });
+    filtroCat.status.forEach(function (v) {
+      var r = STATUS_MAPEAMENTO.filter(function (s) { return slug(s) === v; })[0] || v;
+      tag('status', v, 'fa-check-circle', r);
+    });
+    if (filtroCat.marco) tag('marco', filtroCat.marco, 'fa-flag', 'M' + filtroCat.marco);
+    if (filtroCat.q) tag('q', 'q', 'fa-search', '“' + filtroCat.q + '”');
+    if (filtroCat.de || filtroCat.ate) tag('prazo', 'prazo', 'fa-calendar-alt', periodoTexto());
+    return tags.length ? '<div class="filtros-ativos" aria-label="Filtros ativos">' + tags.join('') + '</div>' : '';
   }
   // Algum filtro ativo? Controla a exibição do botão "Limpar filtros".
   function catTemFiltro() {
@@ -1225,7 +1592,7 @@
     var el = $('#viewCatalogo');
     var lista = catFiltrada();
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Portfólio de processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Portfólio de processos</h1><div class="linha" aria-hidden="true"></div></div>' +
       /* Painel único de filtros: uma linha de campos (Select, Select,
          DateTimePicker, Input de busca) e, após um Divider, as opções de
          recorte (Checkbox de status) e de ordenação (Radio). */
@@ -1244,7 +1611,7 @@
       '<button class="br-button circle small" type="button" id="fPrazoBtn" aria-label="Abrir calendário"><i class="fas fa-calendar-alt" aria-hidden="true"></i></button>' +
       '</div></div>' +
       '<div class="br-input has-icon">' +
-      '<label for="fBusca">Buscar no portfólio</label>' +
+      '<label for="fBusca">Pesquisar no portfólio</label>' +
       '<div class="input-group"><div class="input-icon"><i class="fas fa-search" aria-hidden="true"></i></div>' +
       '<input type="search" id="fBusca" placeholder="Código ou nome do processo" value="' + esc(filtroCat.q) + '">' +
       '</div></div>' +
@@ -1252,7 +1619,8 @@
       '<span class="br-divider" role="presentation"></span>' +
       '<div class="filtros-opcoes">' + filtroStatusHtml(DADOS.procs) + filtroOrdemHtml() + '</div>' +
       '<div class="filtros-rodape" id="fRodapeFiltros"' +
-      (catTemFiltro() ? '' : ' hidden') + '><button class="br-button secondary small" type="button" id="fLimparTudo"><i class="fas fa-rotate-left" aria-hidden="true"></i> Limpar filtros</button></div>' +
+      (catTemFiltro() ? '' : ' hidden') + '>' + filtrosAtivosHtml() +
+      '<button class="br-button secondary small" type="button" id="fLimparTudo"><i class="fas fa-rotate-left" aria-hidden="true"></i> Limpar Filtros</button></div>' +
       '</section>' +
       '<div id="catResultados">' + catResultadosHtml(lista) + '</div>';
     ligarPaginacao(el, renderResultados);
@@ -1265,13 +1633,36 @@
       filtroCat.ate = isoBr(partes[1]);
       renderCatalogo();
     };
-    var limpar = $('#fLimparTudo');
-    if (limpar) limpar.onclick = function () {
+    var rodape = $('#fRodapeFiltros');
+    if (rodape) rodape.onclick = function (ev) {
+      var b = ev.target.closest('[data-filtro-tipo]');
+      if (!b) return;
+      var t = b.getAttribute('data-filtro-tipo'), v = b.getAttribute('data-filtro-valor');
+      if (t === 'macro') filtroCat.macro = filtroCat.macro.filter(function (x) { return x !== v; });
+      else if (t === 'status') filtroCat.status = filtroCat.status.filter(function (x) { return x !== v; });
+      else if (t === 'marco') filtroCat.marco = '';
+      else if (t === 'q') filtroCat.q = '';
+      else if (t === 'prazo') { filtroCat.de = ''; filtroCat.ate = ''; }
+      PAG.catalogo.pag = 1;
+      renderCatalogo();
+    };
+    function limparFiltrosCat() {
       filtroCat.macro = []; filtroCat.status = []; filtroCat.marco = '';
       filtroCat.q = ''; filtroCat.de = ''; filtroCat.ate = '';
       PAG.catalogo.pag = 1;
       renderCatalogo();
-    };
+    }
+    var limpar = $('#fLimparTudo');
+    if (limpar) limpar.onclick = limparFiltrosCat;
+    /* O botão "Limpar filtros" do estado vazio é redesenhado a cada
+       filtragem, então a escuta fica no container (delegação). O container
+       sobrevive aos redesenhos, daí a marca para não empilhar escutas. */
+    if (!el.dataset.vazioLigado) {
+      el.dataset.vazioLigado = '1';
+      el.addEventListener('click', function (ev) {
+        if (ev.target.closest('[data-vazio-acao="cat-limpar"]')) limparFiltrosCat();
+      });
+    }
     // Instancia o comportamento do Select nos dois filtros; o retorno de
     // chamada recebe os valores selecionados (evento onChange).
     window.BRSelectInit(el, function (chave, valores) {
@@ -1305,7 +1696,7 @@
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }, { rotulo: (m._cod || m.Codigo) + ' — ' + m.Nome }]) +
         '<section class="ficha-hero nv-mp cat-' + esc(m._cat || '') + '">' +
-        '<span class="eyebrow">Macroprocesso ' + esc(m.Categoria) + '</span><h2>' + esc(m._cod || m.Codigo) + ' — ' + esc(m.Nome) + '</h2>' +
+        eyebrowFicha('Macroprocesso', m.Codigo) + '<h1>' + esc(m._cod || m.Codigo) + ' — ' + esc(m.Nome) + '</h1>' +
         '<div class="meta"><span>' + filhos.length + ' processos vinculados</span><span>· gerenciamento atual em ' + media + '%</span></div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
@@ -1344,8 +1735,8 @@
           .concat(mp ? [{ rotulo: mp._cod || mp.Codigo, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : [])
           .concat([{ rotulo: codDisp(p.Codigo) + ' — ' + p.Nome }])) +
         '<section class="ficha-hero nv-p">' +
-        '<span class="eyebrow">Processo' + (mp ? ' · ' + esc(mp.Categoria) : '') + '</span>' +
-        '<h2>' + esc(codDisp(p.Codigo)) + ' — ' + esc(p.Nome) + '</h2>' +
+        eyebrowFicha('Processo', p.Codigo) +
+        '<h1>' + esc(codDisp(p.Codigo)) + ' — ' + esc(p.Nome) + '</h1>' +
         '<div class="meta">' + tagStatus(p.Status_Mapeamento) +
         '<span>Mapeamento em <strong>' + p.Percentual + '%</strong></span>' +
         '<span>· ' + plural(contarSubprocessosRecursivo(cod), 'subprocesso', 'subprocessos') + ' · ' +
@@ -1387,8 +1778,16 @@
           ? 'Nenhum subprocesso cadastrado — este processo se decompõe direto em atividades.'
           : 'Nenhum subprocesso cadastrado.') + '</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
-        (p.Proxima_Acao ? '<p style="font-size:var(--fs-sm)">' + esc(p.Proxima_Acao) + '</p>' : '<p class="pp-vazio">—</p>') +
-        (p.Pendencia ? '<div class="pp-aviso" style="margin:var(--sp2) 0 0"><strong>Pendência:</strong> ' + esc(p.Pendencia) + '</div>' : '') + '</div>' +
+        (p.Proxima_Acao
+          ? '<div class="br-message info" role="status"><div class="icon"><i class="fas fa-info-circle" aria-hidden="true"></i></div>' +
+            '<div class="content"><span class="message-body">' + esc(p.Proxima_Acao) + '</span></div></div>'
+          : '<div class="br-message info" role="status"><div class="icon"><i class="fas fa-info-circle" aria-hidden="true"></i></div>' +
+            '<div class="content"><span class="message-body">Nenhuma ação programada para este processo.</span></div></div>') +
+        (p.Pendencia
+          ? '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>' +
+            '<div class="content"><span class="message-title">Pendência</span>' +
+            '<span class="message-body">' + esc(p.Pendencia) + '</span></div></div>'
+          : '') + '</div>' +
         '</aside></div>';
       ligarLinhasTabela();
       return;
@@ -1399,8 +1798,6 @@
       var cadeiaSp = cadeiaSubprocessos(cod).slice(1); // pais SP, do mais raso ao mais fundo (exclui o próprio "s")
       cadeiaSp.reverse();
       var pp = processoDoSubprocesso(cod); var mpp = pp && IDX.mp[pp.Macroprocesso];
-      var paiDireto = null, paiEhSub = String(s.Vinculo_Pai || '').indexOf('SP-') === 0;
-      if (paiEhSub) paiDireto = IDX.sp[s.Vinculo_Pai]; else paiDireto = pp;
       var subsFilhos = IDX.subsPorPai[cod] || [];
       var ativs = atividadesDe(cod);
       el.innerHTML =
@@ -1410,8 +1807,8 @@
           .concat(cadeiaSp.map(function (sp2) { return { rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
           .concat([{ rotulo: codDisp(s.Codigo) + ' — ' + s.Nome }])) +
         '<section class="ficha-hero nv-sp">' +
-        '<span class="eyebrow">Subprocesso' + (paiEhSub ? ' de ' + esc(paiDireto.Nome) + ' (subprocesso)' : pp ? ' de ' + esc(pp.Nome) : '') + '</span>' +
-        '<h2>' + esc(codDisp(s.Codigo)) + ' — ' + esc(s.Nome) + '</h2>' +
+        eyebrowFicha('Subprocesso', s.Codigo) +
+        '<h1>' + esc(codDisp(s.Codigo)) + ' — ' + esc(s.Nome) + '</h1>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
         (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') + '</div></section>' +
         '<div class="ficha-grid"><div>' +
@@ -1425,13 +1822,22 @@
         campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
         (subsFilhos.length ?
-          '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Subprocesso</th><th>Saídas</th><th></th></tr></thead><tbody>' +
-          subsFilhos.map(function (sf) {
-            return '<tr data-link><td class="cod">' + esc(codDisp(sf.Codigo)) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
-              (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
-              '<td style="font-size:var(--fs-sm)">' + (listar(sf.Saidas).map(esc).join('; ') || '—') + '</td>' +
-              '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>';
-          }).join('') + '</tbody></table></div>'
+          tabelaGov({
+            titulo: 'Subprocessos', total: subsFilhos.length,
+            rotuloTotal: subsFilhos.length === 1 ? 'subprocesso' : 'subprocessos',
+            colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Subprocesso', principal: true }, { r: 'Ação', fixa: true, curta: true }],
+            linhas: subsFilhos.map(function (sf) {
+              return '<tr data-link><td class="cod">' + esc(codDisp(sf.Codigo)) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
+                (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
+                '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>' +
+                detalheLinha([
+                  ['Entradas', listar(sf.Entradas).map(esc).join('; ')],
+                  ['Saídas', listar(sf.Saidas).map(esc).join('; ')],
+                  ['Sistemas', listar(sf.Sistemas).map(esc).join('; ')],
+                  ['Unidade responsável', esc(sf.Unidade_Responsavel || '')]
+                ]);
+            }).join('')
+          })
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
@@ -1447,7 +1853,7 @@
       // clique na linha abre a atividade
       $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
         tr.addEventListener('click', function (ev) {
-          if (ev.target.closest('a')) return;
+          if (ev.target.closest('a, input, label, button, .column-checkbox')) return;
           var a = tr.querySelector('a'); if (a) location.hash = a.getAttribute('href');
         });
       });
@@ -1469,8 +1875,8 @@
         .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
         .concat([{ rotulo: codDisp(a.Codigo) }])) +
       '<section class="ficha-hero nv-a">' +
-      '<span class="eyebrow">Atividade</span>' +
-      '<h2>' + esc(codDisp(a.Codigo)) + ' — ' + esc(a.Nome) + '</h2>' +
+      eyebrowFicha('Atividade', a.Codigo) +
+      '<h1>' + esc(codDisp(a.Codigo)) + ' — ' + esc(a.Nome) + '</h1>' +
       '<div class="meta">' +
       (a.Prazo_Padrao ? '<span>· Prazo padrão: ' + esc(a.Prazo_Padrao) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
@@ -1482,13 +1888,23 @@
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
       campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
       '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Tarefas</h3>' +
-      (tf3.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Tarefa</th><th>Tipo</th><th>Duração</th></tr></thead><tbody>' +
-        tf3.map(function (t) {
+      (tf3.length ? tabelaGov({
+        titulo: 'Tarefas', total: tf3.length,
+        rotuloTotal: tf3.length === 1 ? 'tarefa' : 'tarefas',
+colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: true }, { r: 'Tipo' }, { r: 'Duração', curta: true }],
+        linhas: tf3.map(function (t) {
           return '<tr data-link><td class="cod">' + esc(codDisp(t.Codigo)) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a>' +
-            (t.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(t.Descricao) + '</div>' : '') + '</td>' +
-            '<td style="font-size:var(--fs-sm)">' + esc(t.Tipo_Tarefa || '—') + '</td>' +
-            '<td style="font-size:var(--fs-sm);white-space:nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>';
-        }).join('') + '</tbody></table></div>' : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
+            '</td>' +
+            '<td>' + esc(t.Tipo_Tarefa || '—') + '</td>' +
+            '<td class="text-nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>' +
+            detalheLinha([
+              ['Descrição', esc(t.Descricao || '')],
+              ['Responsável', esc(t.Responsavel || '')],
+              ['Sistema', esc(t.Sistema || '')],
+              ['Observações', esc(t.Observacoes || '')]
+            ]);
+        }).join('')
+      }) : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
       '</div><aside>' +
       cardHierarquia(
         (mp2 ? [{ tipo: 'mp', cat: mp2._cat, codigo: mp2._cod || mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
@@ -1498,7 +1914,9 @@
       '</aside></div>';
     $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
       tr.addEventListener('click', function (ev) {
-        if (ev.target.closest('a')) return;
+        // A linha é atalho para a ficha, menos onde há controle próprio:
+        // link, caixa de seleção, botão de expandir.
+        if (ev.target.closest('a, input, label, button, .column-checkbox')) return;
         var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
       });
     });
@@ -1518,8 +1936,8 @@
         .concat(a3 ? [{ rotulo: codDisp(a3.Codigo), href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
         .concat([{ rotulo: codDisp(t.Codigo) }])) +
       '<section class="ficha-hero nv-t">' +
-      '<span class="eyebrow">Tarefa</span>' +
-      '<h2>' + esc(codDisp(t.Codigo)) + ' — ' + esc(t.Nome) + '</h2>' +
+      eyebrowFicha('Tarefa', t.Codigo) +
+      '<h1>' + esc(codDisp(t.Codigo)) + ' — ' + esc(t.Nome) + '</h1>' +
       '<div class="meta">' + (t.Tipo_Tarefa ? '<span><i class="fas fa-gear" aria-hidden="true"></i> ' + esc(t.Tipo_Tarefa) + '</span>' : '') +
       (t.Duracao_Estimada ? '<span>· Duração estimada: ' + esc(t.Duracao_Estimada) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
@@ -1540,9 +1958,38 @@
   }
   function naoEncontrado(tipo, cod) {
     return breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: tipo + ' não encontrado' }]) +
-      '<div class="pp-card"><h3>' + esc(tipo) + ' não encontrado</h3><p style="font-size:var(--fs-sm)">O código <strong>' +
-      esc(codDisp(cod)) + '</strong> não existe na base atual. Verifique a planilha ou volte à lista de <a href="#/catalogo">processos</a>.</p></div>';
+      '<div class="template-erro">' +
+      '<div class="erro-topo">' +
+      '<div class="imagem-erro"><img src="img/ilustracoes/erro/error01.png" alt="" aria-hidden="true"></div>' +
+      '<div class="erro-text">' +
+      '<p class="erro-titulo">Não encontramos esse ' + esc(tipo.toLowerCase()) + '</p>' +
+      '<p class="erro-sub">Podemos ajudá-lo a chegar ao que procura de outra forma.</p>' +
+      '<p class="erro-desc">O código <strong>' + esc(cod || '—') + '</strong> não está no portfólio. ' +
+      'Talvez o endereço tenha vindo com um erro de digitação, ou o item ainda não foi publicado.</p>' +
+      '</div></div>' +
+      '<div class="erro-busca">' + buscaCampoHtml('erroBusca', 'Aproveite para fazer uma pesquisa', 'O que você procura?', '') + '</div>' +
+      '<div class="buttons-auxiliary">' +
+      '<button class="br-button crumb" type="button" data-erro-acao="voltar">' +
+      '<i class="fas fa-chevron-left" aria-hidden="true"></i><span>Ir para Página Anterior</span></button>' +
+      '<a class="br-button crumb" href="#/"><i class="fas fa-home" aria-hidden="true"></i>' +
+      '<span>Ir para Página Principal</span></a>' +
+      '<button class="br-button crumb" type="button" data-erro-acao="feedback">' +
+      '<i class="fas fa-comment-dots" aria-hidden="true"></i><span>Envie um Feedback</span></button>' +
+      '</div></div>';
   }
+  /* Ações do Template Erro. Delegação no contêiner das telas: o bloco é
+     redesenhado a cada rota, e um listener por render acumularia. */
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-erro-acao]');
+    if (!b) return;
+    if (b.getAttribute('data-erro-acao') === 'voltar') history.back();
+    else { var rp = document.getElementById('btnReportError'); if (rp) rp.click(); }
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter') return;
+    var i = ev.target.closest('#erroBusca');
+    if (i && i.value.trim()) location.hash = '#/busca?q=' + encodeURIComponent(i.value.trim());
+  });
 
   /* ── TELAS: documentos · riscos · indicadores · diário ────────────── */
   var filtroDoc = { tipo: '', q: '', busca: '', ordem: '', dir: '', dens: 'medium', sel: {} };
@@ -1558,8 +2005,8 @@
    // Ordenação — um parâmetro por vez, sem ordenação → crescente →
    // decrescente).
   var COLS_DOC = [
-    { k: 'ID', r: 'ID' }, { k: 'Titulo', r: 'Documento' },
-    { k: 'Vinculo_Codigo', r: 'Vinculado a' }, { k: 'Data', r: 'Data' },
+    { k: 'ID', r: 'ID', min: 108 }, { k: 'Titulo', r: 'Documento', min: 420 },
+    { k: 'Vinculo_Codigo', r: 'Vinculado a', min: 200 }, { k: 'Data', r: 'Data' },
     { k: 'Situacao', r: 'Situação' }
   ];
   function renderDocumentos() {
@@ -1569,7 +2016,6 @@
     var bq = filtroDoc.busca.toLowerCase();
     var lista = DADOS.docs.filter(function (x) {
       if (filtroDoc.tipo && x.Tipo_Documento !== filtroDoc.tipo) return false;
-      if (filtroDoc.q && (x.ID + ' ' + x.Titulo).toLowerCase().indexOf(filtroDoc.q.toLowerCase()) < 0) return false;
       // Busca da barra de título: percorre todas as colunas exibidas.
       if (bq && COLS_DOC.map(function (c) { return x[c.k] || ''; }).join(' ').toLowerCase().indexOf(bq) < 0) return false;
       return true;
@@ -1584,14 +2030,27 @@
     var nSel = pagina.filter(function (x) { return filtroDoc.sel[x.ID]; }).length;
     var todosSel = pagina.length > 0 && nSel === pagina.length;
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Repositório de documentos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Repositório de documentos</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<section class="pp-filtros-painel" role="search" aria-label="Filtros do repositório de documentos">' +
       '<div class="filtros-campos">' +
       selectHtml({ chave: 'tipoDoc', id: 'fTipoDoc', rotulo: 'Tipo de documento',
         placeholder: 'Todos os tipos', selecionados: filtroDoc.tipo ? [filtroDoc.tipo] : [],
         opcoes: Object.keys(tipos).sort().map(function (t) { return { v: t, r: t }; }) }) +
-      buscaCampoHtml('fBuscaDoc', 'Buscar documento', 'Título do documento', filtroDoc.q) +
-      '</div></section>' +
+      '</div>' +
+      (filtroDoc.tipo || filtroDoc.busca
+        ? '<div class="filtros-rodape"><div class="filtros-ativos">' +
+          (filtroDoc.tipo ? '<span class="br-tag interaction" id="fdoc-tipo"><span id="fdoc-tipo-r">Tipo: ' + esc(filtroDoc.tipo) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="tipo"' +
+            ' aria-label="Remover o filtro de tipo" aria-describedby="fdoc-tipo-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.busca ? '<span class="br-tag interaction" id="fdoc-busca"><span id="fdoc-busca-r">Pesquisa: ' + esc(filtroDoc.busca) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="busca"' +
+            ' aria-label="Remover o termo pesquisado" aria-describedby="fdoc-busca-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          '</div><button class="br-button secondary small" type="button" data-doc-limpar="tudo">' +
+          '<i class="fas fa-rotate-left" aria-hidden="true"></i> Limpar Filtros</button></div>'
+        : '') +
+      '</section>' +
       '<div class="br-table ' + esc(filtroDoc.dens) + '" id="tabelaDocs" data-search="data-search" data-selection="data-selection" data-collapse="data-collapse">' +
       /* Barra de Título (item 1): título + ações utilitárias. Acima de 4
          ações a spec pede menu flutuante — densidade vai no ellipsis-v. */
@@ -1599,9 +2058,14 @@
       '<div class="top-bar">' +
       '<div class="table-title">Documentos publicados</div>' +
       '<div class="actions-trigger text-nowrap">' +
-      '<button class="br-button circle small" type="button" id="docsDensBtn" title="Ver mais opções" data-toggle="dropdown" data-target="docsDensMenu" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button>' +
+      '<span class="tooltip-wrap">' +
+      '<button class="br-button circle small" type="button" id="docsDensBtn" data-tooltip-trigger data-toggle="dropdown" data-target="docsDensMenu" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" aria-hidden="true"></i></button>' +
+      '<span class="br-tooltip small" role="tooltip" info place="bottom">' +
+      '<span class="text">Densidade da tabela</span>' +
+      '<span class="subtext">Compacta, regular ou espaçada</span></span>' +
+      '</span>' +
       '<div class="br-list dd-target" id="docsDensMenu" role="menu" aria-labelledby="docsDensBtn" hidden>' +
-      [['small', 'Densidade alta'], ['medium', 'Densidade média'], ['large', 'Densidade baixa']].map(function (o, i) {
+      [['small', 'Compacta'], ['medium', 'Regular'], ['large', 'Espaçada']].map(function (o, i) {
         return (i ? '<span class="br-divider" role="presentation"></span>' : '') +
           '<button class="br-item" type="button" role="menuitem" data-density="' + o[0] + '"' +
           (filtroDoc.dens === o[0] ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
@@ -1610,19 +2074,25 @@
       '</div>' +
       /* Busca (Comportamento 6): cobre a barra de título enquanto ativa. */
       '<div class="search-bar' + (filtroDoc.busca ? ' show' : '') + '">' +
-      '<div class="br-input"><label for="docsSearchInput">Buscar na tabela</label>' +
-      '<input id="docsSearchInput" type="search" placeholder="Buscar na tabela" value="' + esc(filtroDoc.busca) + '">' +
-      '<button class="br-button circle small" type="button" aria-label="Buscar"><i class="fas fa-search" aria-hidden="true"></i></button></div>' +
-      '<button class="br-button circle small" type="button" data-dismiss="search" aria-label="Fechar busca"><i class="fas fa-times" aria-hidden="true"></i></button>' +
+      '<div class="br-input"><label for="docsSearchInput">Pesquisar na tabela</label>' +
+      '<input id="docsSearchInput" type="search" placeholder="Pesquisar na tabela" value="' + esc(filtroDoc.busca) + '">' +
+      '<button class="br-button circle small" type="button" aria-label="Pesquisar"><i class="fas fa-search" aria-hidden="true"></i></button></div>' +
+      '<button class="br-button circle small" type="button" data-dismiss="search" aria-label="Fechar pesquisa"><i class="fas fa-times" aria-hidden="true"></i></button>' +
       '</div>' +
       /* Barra Contextual (item 2): surge sob a barra de título ao
          selecionar linhas, com contagem e ações contextuais. */
       '<div class="selected-bar' + (nSel ? ' show' : '') + '">' +
       '<div class="info"><span class="count">' + nSel + '</span><span class="text">' + (nSel === 1 ? 'item selecionado' : 'itens selecionados') + '</span></div>' +
-      '<button class="br-button circle small" type="button" id="docsSelExport" aria-label="Exportar seleção em CSV" title="Exportar seleção em CSV"><i class="fas fa-file-csv" aria-hidden="true"></i></button>' +
-      '<button class="br-button circle small" type="button" id="docsSelClear" aria-label="Limpar seleção" title="Limpar seleção"><i class="fas fa-times" aria-hidden="true"></i></button>' +
+      '<span class="tooltip-wrap">' +
+      '<button class="br-button circle small" type="button" id="docsSelExport" aria-label="Exportar seleção em CSV" data-tooltip-trigger><i class="fas fa-file-csv" aria-hidden="true"></i></button>' +
+      '<span class="br-tooltip small" role="tooltip" info place="bottom"><span class="subtext">Exportar seleção em CSV</span></span>' +
+      '</span>' +
+      '<span class="tooltip-wrap">' +
+      '<button class="br-button circle small" type="button" id="docsSelClear" aria-label="Limpar seleção" data-tooltip-trigger><i class="fas fa-times" aria-hidden="true"></i></button>' +
+      '<span class="br-tooltip small" role="tooltip" info place="bottom"><span class="subtext">Limpar seleção</span></span>' +
+      '</span>' +
       '</div></div>' +
-      '<div class="responsive"><table><caption>Documentos publicados</caption><thead><tr>' +
+      (pagina.length ? '<div class="responsive"><table><caption>Documentos publicados</caption><thead><tr>' +
       '<td class="column-collapse" aria-hidden="true"></td>' +
       '<th class="column-checkbox" scope="col"><div class="br-checkbox hidden-label">' +
       '<input id="docsCheckAll" name="docsCheckAll" type="checkbox" aria-label="Selecionar tudo"' + (todosSel ? ' checked' : '') + '>' +
@@ -1630,11 +2100,14 @@
       COLS_DOC.map(function (c) {
         var dir = filtroDoc.ordem === c.k ? filtroDoc.dir : '';
         var ic = dir === 'asc' ? 'fa-sort-up' : dir === 'desc' ? 'fa-sort-down' : 'fa-sort';
-        return '<th scope="col"' + (dir ? ' aria-sort="' + (dir === 'asc' ? 'ascending' : 'descending') + '"' : '') + '>' +
+        // min: largura mínima da coluna (esta tabela não tem colgroup, o
+        // th é quem carrega a medida).
+        return '<th scope="col"' + (dir ? ' aria-sort="' + (dir === 'asc' ? 'ascending' : 'descending') + '"' : '') +
+          (c.min ? ' style="min-width:' + c.min + 'px"' : '') + '>' +
           '<button type="button" class="sort-btn" data-sort="' + c.k + '" aria-label="Ordenar por ' + esc(c.r) + '">' +
           esc(c.r) + '<i class="fas ' + ic + '" aria-hidden="true"></i></button></th>';
       }).join('') + '</tr></thead><tbody>' +
-      (pagina.length ? pagina.map(function (x, i) {
+      pagina.map(function (x, i) {
         var tit = x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '<span class="sr-only"> (abre em nova aba)</span></a>' : esc(x.Titulo);
         var cid = 'doc-col-' + i, chk = 'doc-chk-' + i, marcada = !!filtroDoc.sel[x.ID];
         return '<tr' + (marcada ? ' class="is-selected"' : '') + '>' +
@@ -1652,16 +2125,27 @@
           '<div class="br-item" role="listitem"><strong>Versão:</strong> ' + esc(x.Versao || '—') + '</div>' +
           '<div class="br-item" role="listitem"><strong>Situação:</strong> ' + esc(x.Situacao || '—') + '</div>' +
           '</div></td></tr>';
-      }).join('') : '<tr><td colspan="7" class="pp-vazio">Nenhum documento corresponde aos filtros.</td></tr>') +
+      }).join('') +
       '</tbody></table></div>' +
-      '<div class="table-footer">' + paginacaoHtml('docs', lista.length, 'documentos') + '</div></div>';
+      '<div class="table-footer">' + paginacaoHtml('docs', lista.length, 'documentos') + '</div>'
+        : vazio('Nenhum documento com esses filtros',
+          'Revise o tipo selecionado ou o termo buscado para ver os documentos disponíveis.',
+          { img: 'empty-space/empty-space-03.png' })) + '</div>';
     ligarPaginacao(el, renderDocumentos);
+    el.querySelectorAll('[data-doc-limpar]').forEach(function (b) {
+      b.onclick = function () {
+        var q = b.getAttribute('data-doc-limpar');
+        if (q === 'tipo' || q === 'tudo') filtroDoc.tipo = '';
+        if (q === 'busca' || q === 'tudo') filtroDoc.busca = '';
+        PAG.docs.pag = 1;
+        renderDocumentos();
+      };
+    });
     window.BRSelectInit(el, function (chave, valores) {
       filtroDoc.tipo = valores[0] || '';
       PAG.docs.pag = 1;
       renderDocumentos();
     });
-    $('#fBuscaDoc').oninput = function () { filtroDoc.q = this.value; PAG.docs.pag = 1; renderDocumentos(); var n = $('#fBuscaDoc'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
 
     /* Comportamentos do Componente Table: densidade, busca na barra de
        título, ordenação por coluna, seleção de linhas com barra contextual
@@ -1728,7 +2212,11 @@
         var cls = 'n-' + slug(classeRisco(nivel));
         var pins = DADOS.riscos.filter(function (r) { return r.Probabilidade_1a5 === prob && r.Impacto_1a5 === imp; })
           .map(function (r) {
-            return '<button type="button" class="risco-pin" title="' + esc(r.Descricao_Risco) + '" data-alvo="risco-' + esc(r.ID) + '">' + esc(r.ID.replace('R-', '')) + '</button>';
+            return '<span class="tooltip-wrap"><button type="button" class="risco-pin" data-tooltip-trigger' +
+              ' data-alvo="risco-' + esc(r.ID) + '" aria-label="' + esc(r.ID + ' — ' + r.Descricao_Risco) + '">' +
+              esc(r.ID.replace('R-', '')) + '</button>' +
+              '<span class="br-tooltip small" role="tooltip" info place="top"><span class="text">' + esc(r.ID) +
+              '</span><span class="subtext">' + esc(r.Descricao_Risco) + '</span></span></span>';
           }).join('');
         celulas += '<div class="cel ' + cls + '">' + pins + '</div>';
       }
@@ -1736,7 +2224,7 @@
     celulas += '<div class="cab"></div>';
     for (var pr = 1; pr <= 5; pr++) celulas += '<div class="cab">' + pr + '</div>';
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Radar de riscos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Radar de riscos</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-card"><h3><i class="fas fa-border-all" aria-hidden="true"></i> Matriz 5×5 (Impacto ↑ × Probabilidade →)</h3>' +
       '<div class="matriz" role="img" aria-label="Matriz de riscos cinco por cinco">' + celulas + '</div>' +
       '<div class="matriz-legenda">' + ['Baixo', 'Moderado', 'Alto', 'Extremo'].map(function (c) { return tagNivel(c); }).join('') +
@@ -1756,7 +2244,7 @@
     var el = $('#viewIndicadores');
     var atingidas = DADOS.inds.filter(function (x) { return x._sit === 'Meta atingida'; }).length;
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Indicadores de desempenho</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Indicadores de desempenho</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-card">' + tabelaIndsHtml(pagFatia('inds', DADOS.inds, 5), true) +
       paginacaoHtml('inds', DADOS.inds.length, 'indicadores') + '</div>';
     ligarPaginacao(el, renderIndicadores);
@@ -1771,7 +2259,7 @@
   var PAL = ['#0c326f', '#168821', '#c05600', '#0081a1', '#4a50c4', '#776017', '#555555', '#b50909'];
   function svgWrap(titulo, conteudo, vb, altura, legenda) {
     return '<figure class="graf"><figcaption>' + esc(titulo) +
-      (legenda ? ' <i class="fas fa-circle-info graf-info" tabindex="0" data-tooltip-text="' + esc(legenda) + '" aria-label="O que este gráfico mostra e como lê-lo"></i>' : '') + '</figcaption>' +
+      (legenda ? ' ' + dica(legenda) : '') + '</figcaption>' +
       '<svg viewBox="' + vb + '" role="img" aria-label="' + esc(titulo) + (legenda ? '. ' + esc(legenda) : '') + '" ' +
       (altura ? 'style="height:' + altura + 'px"' : '') + '>' + conteudo + '</svg></figure>';
   }
@@ -1929,15 +2417,15 @@
     // verde = finalístico, laranja = suporte.
     var CAT_COR = { gerencial: '#0c326f', finalistico: '#168821', suporte: '#c05600' };
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Dashboard gerencial</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Dashboard gerencial</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="kpi-grid" style="margin-top:0">' +
-      '<div class="kpi" title="Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total do portfólio."><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
-      '<div class="kpi" title="Percentual médio de execução do mapeamento entre todos os processos do portfólio."><span class="num">' + media + '%</span><span class="lbl">Avanço médio</span><span class="sub">' + andam + ' em andamento</span></div>' +
-      '<div class="kpi" title="Total de processos mapeados no portfólio."><span class="num">' + procs.length + '</span><span class="lbl">Processos</span><span class="sub">mapeados no portfólio</span></div>' +
-      '<div class="kpi" title="Total de subprocessos mapeados no portfólio (inclusive os aninhados, subprocesso dentro de subprocesso)."><span class="num">' + DADOS.subs.length + '</span><span class="lbl">Subprocessos</span><span class="sub">mapeados no portfólio</span></div>' +
-      '<div class="kpi" title="Total de atividades mapeadas no portfólio."><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades</span><span class="sub">mapeadas no portfólio</span></div>' +
-      '<div class="kpi" title="Total de tarefas mapeadas no portfólio (menor unidade de trabalho, CBOK 4.0)."><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas</span><span class="sub">mapeadas no portfólio</span></div>' +
-      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '" title="Riscos classificados como Alto ou Extremo, ainda não encerrados."><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
+      '<div class="kpi"><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados' + dica('Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total do portfólio.') + '</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
+      '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio' + dica('Percentual médio de execução do mapeamento entre todos os processos do portfólio.') + '</span><span class="sub">' + andam + ' em andamento</span></div>' +
+      '<div class="kpi"><span class="num">' + procs.length + '</span><span class="lbl">Processos' + dica('Total de processos mapeados no portfólio.') + '</span><span class="sub">mapeados no portfólio</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.subs.length + '</span><span class="lbl">Subprocessos' + dica('Total de subprocessos mapeados no portfólio (inclusive os aninhados, subprocesso dentro de subprocesso).') + '</span><span class="sub">mapeados no portfólio</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades' + dica('Total de atividades mapeadas no portfólio.') + '</span><span class="sub">mapeadas no portfólio</span></div>' +
+      '<div class="kpi"><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas' + dica('Total de tarefas mapeadas no portfólio (menor unidade de trabalho, CBOK 4.0).') + '</span><span class="sub">mapeadas no portfólio</span></div>' +
+      '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '"><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos' + dica('Riscos classificados como Alto ou Extremo, ainda não encerrados.') + '</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
       '</div>' +
       '<div class="graf-grid">' +
       grafGauge('Avanço médio geral do portfólio', media, 100, [
@@ -1974,13 +2462,17 @@
       })(), undefined, undefined, 'Quantidade de riscos abertos, agrupados por categoria. Passe o mouse sobre uma barra para ver o total exato.') +
       '</div>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Pontos de atenção</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-card"><h3><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Processos com prazo vencido</h3>' +
-      (atrasados.length ? '<div class="br-table pp-tabela-wrap"><table class="pp-tabela"><thead><tr><th>Código</th><th>Processo</th><th>Responsável</th><th>Prazo</th><th>Avanço</th></tr></thead><tbody>' +
-        atrasados.map(function (p) {
+      '<div class="pp-card"><h3><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Processos com prazo vencido</h3>' +
+      (atrasados.length ? tabelaGov({
+        titulo: 'Processos com prazo vencido', total: atrasados.length,
+        rotuloTotal: atrasados.length === 1 ? 'processo' : 'processos',
+        colunas: [{ r: 'Código', curta: true }, { r: 'Processo', principal: true }, { r: 'Responsável' }, { r: 'Prazo', curta: true }, { r: 'Avanço', curta: true }],
+        linhas: atrasados.map(function (p) {
           return '<tr data-link><td class="cod">' + esc(codDisp(p.Codigo)) + '</td><td><a href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
-            '<td style="font-size:var(--fs-sm)">' + esc(p.Dono_Processo || '—') + '</td><td style="font-size:var(--fs-sm);white-space:nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
+            '<td>' + esc(p.Dono_Processo || '—') + '</td><td class="text-nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
             '<td style="min-width:120px">' + barraPct(p.Percentual) + '</td></tr>';
-        }).join('') + '</tbody></table></div>' : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum processo com prazo vencido.</span></div></div>') + '</div>' +
+        }).join('')
+      }) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum processo com prazo vencido.</span></div></div>') + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos críticos abertos</h3>' +
       (criticos.length ? tabelaRiscosHtml(criticos, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum risco crítico em aberto.</span></div></div>') + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores fora da meta</h3>' +
@@ -1990,7 +2482,9 @@
       })() + '</div></section>';
     $all('#viewDashboard tr[data-link]').forEach(function (tr) {
       tr.addEventListener('click', function (ev) {
-        if (ev.target.closest('a')) return;
+        // A linha é atalho para a ficha, menos onde há controle próprio:
+        // link, caixa de seleção, botão de expandir.
+        if (ev.target.closest('a, input, label, button, .column-checkbox')) return;
         var lk = tr.querySelector('a'); if (lk) location.hash = lk.getAttribute('href');
       });
     });
@@ -2004,9 +2498,32 @@
     });
   }
 
+  /* Rodapé de filtros ativos — a tela sempre mostra o que está aplicado e
+     como desfazer. Sem isso, um filtro escolhido continuava valendo mesmo
+     depois de o usuário sair da aba e voltar, sem nada em tela que o
+     explicasse. Os pares são [chave, rótulo] dos recortes ativos. */
+  function rodapeFiltrosHtml(marca, pares) {
+    var ativos = pares.filter(function (p) { return p[1]; });
+    if (!ativos.length) return "";
+    return '<div class="filtros-rodape"><div class="filtros-ativos">' +
+      ativos.map(function (p, i) {
+        var rid = marca + "-f" + i;
+        return '<span class="br-tag interaction"><span id="' + rid + '">' + esc(p[1]) + '</span>' +
+          '<button class="br-button circle small" type="button" data-limpar-filtro="' + esc(p[0]) + '"' +
+          ' data-limpar-marca="' + marca + '" aria-label="Remover este filtro" aria-describedby="' + rid + '">' +
+          '<i class="fas fa-times" aria-hidden="true"></i></button></span>';
+      }).join("") +
+      '</div><button class="br-button secondary small" type="button" data-limpar-filtro="tudo"' +
+      ' data-limpar-marca="' + marca + '"><i class="fas fa-rotate-left" aria-hidden="true"></i> Limpar Filtros</button></div>';
+  }
+  function ligarRodapeFiltros(el, marca, aplicar) {
+    $all('[data-limpar-marca="' + marca + '"]', el).forEach(function (b) {
+      b.onclick = function () { aplicar(b.getAttribute("data-limpar-filtro")); };
+    });
+  }
+
   /* ── TELA: repositório (jornada + materiais + metodologia) ────────── */
   var filtroRepo = { cat: '', fase: '', q: '' };
-  var FASES_JORNADA = ['Descobrir', 'Definir', 'Desenvolver', 'Entregar', 'Evoluir'];
   function cardRepo(it) {
     var interno = !/^https?:/i.test(String(it.Link || ''));
     var icone = { 'Documento oficial': 'fa-scale-balanced', 'Template': 'fa-file-lines',
@@ -2020,7 +2537,7 @@
       (it.Link ? '<a class="br-button secondary small" href="' + esc(it.Link) + '"' +
         (interno ? ' download' : ' target="_blank" rel="noopener"') + '>' +
         (interno ? '<i class="fas fa-download" aria-hidden="true"></i>&nbsp;Baixar' :
-          '<i class="fas fa-up-right-from-square" aria-hidden="true"></i>&nbsp;Acessar<span class="sr-only"> (abre em nova aba)</span>') + '</a>' : '') +
+          '<i class="fas fa-external-link-alt" aria-hidden="true"></i>&nbsp;Acessar<span class="sr-only"> (abre em nova aba)</span>') + '</a>' : '') +
       '</div></article>';
   }
   function renderRepositorio() {
@@ -2036,16 +2553,27 @@
     });
     var met = DADOS.params.Link_Metodologia, guia = DADOS.params.Link_Guia;
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Repositório de materiais e ferramentas</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>' + esc(par('Titulo_Repositorio', 'Repositório de materiais e ferramentas')) + '</h1><div class="linha" aria-hidden="true"></div></div>' +
       (met || guia ?
         '<div class="repo-oficial">' +
-        (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/SEI</span></div><i class="fas fa-up-right-from-square seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
-        (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/SEI</span></div><i class="fas fa-up-right-from-square seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
+        (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/SEI</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
+        (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/SEI</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
         '</div>' : '') +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Jornada de mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="jornada-fases" aria-hidden="true">' + FASES_JORNADA.map(function (f) { return '<span class="jf jf-' + slug(f) + '">' + f + '</span>'; }).join('<i class="fas fa-chevron-right"></i>') + '</div>' +
-      '<ol class="jornada">' + DADOS.jornada.map(function (e) {
-        return '<li class="jornada-etapa fase-' + slug(e.Fase || '') + '">' +
+      /* Componente Wizard: a jornada é um percurso linear e prescrito —
+         painel de etapas (Step), área de conteúdo e barra de navegação com
+         Cancelar terciário, Voltar secundário e Avançar primário (Concluir
+         na última etapa). */
+      '<div class="br-wizard" id="wizardJornada" step="1">' +
+      '<div class="wizard-progress" role="tablist" aria-label="Etapas da jornada de mapeamento">' +
+      DADOS.jornada.map(function (e, i) {
+        return '<button class="wizard-progress-btn" type="button" role="tab" aria-controls="wj-' + i +
+          '" aria-selected="false"><span class="info">' + esc(e.Nome) + '</span></button>';
+      }).join('') + '</div>' +
+      '<div class="wizard-form">' + DADOS.jornada.map(function (e, i) {
+        return '<div class="wizard-panel" role="tabpanel" id="wj-' + i + '">' +
+          '<div class="wizard-panel-content" tabindex="0">' +
+          '<div class="jornada-etapa fase-' + slug(e.Fase || '') + '">' +
           '<div class="je-topo"><span class="je-num">' + esc(e.Ordem) + '</span><div><span class="je-fase">' + esc(e.Fase || '') + '</span><h4>' + esc(e.Nome) + '</h4></div><span class="je-dur"><i class="far fa-clock" aria-hidden="true"></i> ' + esc(e.Duracao || '') + '</span></div>' +
           '<p class="je-obj">' + esc(e.Objetivo || '') + '</p>' +
           '<div class="je-grid">' +
@@ -2054,8 +2582,14 @@
           '<b style="margin-top:8px"><i class="fas fa-box-open" aria-hidden="true"></i> Entregáveis</b><p>' + esc(listar(e.Entregaveis).join(' · ')) + '</p></div>' +
           '</div>' +
           (e.Sentimento_Usuario ? '<p class="je-sente"><i class="far fa-heart" aria-hidden="true"></i> ' + esc(e.Sentimento_Usuario) + '</p>' : '') +
-          '</li>';
-      }).join('') + '</ol></section>' +
+          '</div></div>' +
+          '<div class="wizard-panel-btn">' +
+          '<button class="br-button wizard-btn-canc" type="button">Voltar ao início</button>' +
+          '<button class="br-button secondary wizard-btn-prev" type="button">Voltar</button>' +
+          '<button class="br-button primary wizard-btn-next" type="button">Avançar</button>' +
+          '</div>' +
+          '</div>';
+      }).join('') + '</div></div></section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Instrumentos, modelos e ferramentas</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<section class="pp-filtros-painel" role="search" aria-label="Filtros de instrumentos, modelos e ferramentas">' +
       '<div class="filtros-campos">' +
@@ -2065,14 +2599,22 @@
       selectHtml({ chave: 'repoFase', id: 'repoFase', rotulo: 'Fase do ciclo',
         placeholder: 'Todas as fases', selecionados: filtroRepo.fase ? [filtroRepo.fase] : [],
         opcoes: fases.map(function (c) { return { v: c, r: c }; }) }) +
-      buscaCampoHtml('repoQ', 'Buscar no repositório', 'Título, código ou descrição', filtroRepo.q) +
-      '</div></section>' +
+      buscaCampoHtml('repoQ', 'Pesquisar no repositório', 'Título, código ou descrição', filtroRepo.q) +
+      '</div>' +
+      rodapeFiltrosHtml('repo', [
+        ['cat', filtroRepo.cat ? 'Categoria: ' + filtroRepo.cat : ''],
+        ['fase', filtroRepo.fase ? 'Fase: ' + filtroRepo.fase : ''],
+        ['q', filtroRepo.q ? 'Pesquisa: ' + filtroRepo.q : '']
+      ]) +
+      '</section>' +
       (lista.length ? '<div class="repo-grid">' + pagFatia('repo', lista, 6).map(cardRepo).join('') + '</div>' +
-        paginacaoHtml('repo', lista.length, 'itens', [6, 12, 24, 48]) : '<p class="pp-vazio">Nenhum item com esses filtros.</p>') + '</section>' +
+        paginacaoHtml('repo', lista.length, 'itens', [6, 12, 24, 48]) : vazio('Nenhum material com esses filtros',
+          'Revise a categoria, a fase da jornada ou o termo buscado para ver os materiais publicados.',
+          { img: 'empty-space/empty-space-04.png' })) + '</section>' +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Metodologia em resumo</h2><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' +
-      '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Roteiro-padrão de cada projeto de mapeamento, do primeiro contato com a área até a publicação no repositório — passe o cursor sobre um marco para ver o que ele significa:</p>' +
-      '<ul class="marcos">' + MARCOS_ROTULOS.map(function (r, i) { return '<li class="feito" title="' + esc(MARCOS_DESCRICOES[i]) + '"><span>' + esc(r) + '</span><i class="fas fa-check-circle" aria-hidden="true"></i></li>'; }).join('') + '</ul>' +
+      '<p style="font-size:var(--fs-sm);margin-bottom:var(--sp2)">Roteiro-padrão de cada projeto de mapeamento, do primeiro contato com a área até a publicação no repositório — abra o "i" de cada marco para ver o que ele significa:</p>' +
+      '<ul class="marcos">' + MARCOS_ROTULOS.map(function (r, i) { return '<li class="feito"><span>' + esc(r) + '</span>' + dica(MARCOS_DESCRICOES[i]) + '<i class="fas fa-check-circle" aria-hidden="true"></i></li>'; }).join('') + '</ul>' +
       // Faixa contínua sob os marcos: monitoramento e avaliação não são um
       // marco, são atividades permanentes que atravessam todos eles.
       '<div class="marcos-continuo">' +
@@ -2080,8 +2622,23 @@
       '<span class="mc-trilho" aria-hidden="true"></span>' +
       '<span class="mc-nota">atividades contínuas — atravessam do M1 ao M10 e seguem depois da publicação</span>' +
       '</div></div>' +
-      '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div><div class="close"><button class="br-button circle small" type="button" aria-label="Fechar a mensagem"><i class="fas fa-times" aria-hidden="true"></i></button></div></div></section>';
+      '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div><div class="close"><button class="br-button circle small" type="button" aria-label="Fechar a mensagem"><i class="fas fa-times" aria-hidden="true"></i></button></div></div></section>';
     ligarPaginacao(el, renderRepositorio);
+    window.BRWizardInit(el);
+    var wCanc = el.querySelector('#wizardJornada .wizard-btn-canc');
+    if (wCanc) el.addEventListener('click', function (ev) {
+      var b = ev.target.closest('#wizardJornada .wizard-btn-canc');
+      if (!b) return;
+      var primeira = el.querySelector('#wizardJornada .wizard-progress-btn');
+      if (primeira) primeira.click();
+    });
+    ligarRodapeFiltros(el, 'repo', function (qual) {
+      if (qual === 'cat' || qual === 'tudo') filtroRepo.cat = '';
+      if (qual === 'fase' || qual === 'tudo') filtroRepo.fase = '';
+      if (qual === 'q' || qual === 'tudo') filtroRepo.q = '';
+      PAG.repo.pag = 1;
+      renderRepositorio();
+    });
     window.BRSelectInit(el, function (chave, valores) {
       if (chave === 'repoCat') filtroRepo.cat = valores[0] || '';
       else filtroRepo.fase = valores[0] || '';
@@ -2104,30 +2661,75 @@
       return String(p.Interlocutor || '').toLowerCase().indexOf(alvo) === 0;
     });
   }
+  /* Avatar (Componente Avatar, gov.br DS): a foto da planilha (coluna Foto)
+     ocupa o lugar do avatar; as iniciais ficam por baixo e voltam a
+     aparecer sozinhas se a URL da imagem falhar (onerror remove o <img>). */
+  function avatarNugep(m, cls) {
+    var foto = String(m.Foto || '').trim();
+    return '<span class="br-avatar' + (cls ? ' ' + cls : '') + '" aria-hidden="true">' +
+      '<span class="content">' + esc(iniciais(m.Nome)) +
+      (foto ? '<img src="' + esc(foto) + '" alt="" loading="lazy" onerror="this.remove()">' : '') +
+      '</span></span>';
+  }
+  function contatoNugep(m) {
+    return '<div class="nugep-contato">' +
+      (m.Email ? '<a href="mailto:' + esc(m.Email) + '"><i class="fas fa-envelope" aria-hidden="true"></i> ' + esc(m.Email) + '</a>' : '') +
+      (m.Telefone ? '<a href="tel:+55' + esc(String(m.Telefone).replace(/\D/g, '')) + '"><i class="fas fa-phone" aria-hidden="true"></i> ' + esc(m.Telefone) + '</a>' : '') +
+      '</div>';
+  }
+  // Perfil usado no bloco institucional: avatar + nome + papel + contatos.
+  function perfilInst(m, cls) {
+    return '<article class="perfil-inst' + (cls ? ' ' + cls : '') + '">' +
+      avatarNugep(m) +
+      '<div class="perfil-dados"><h3>' + esc(m.Nome) + '</h3>' +
+      (m.Papel ? '<p class="perfil-papel">' + esc(m.Papel) + '</p>' : '') +
+      contatoNugep(m) + '</div></article>';
+  }
+  function nivelNugep(m) { return +(m.Hierarquia || 0); }
   function renderNugep() {
     var el = $('#viewNugep');
     var P = DADOS.params || {};
+    /* Contato institucional na ordem hierárquica: Gerência-Executiva (1),
+       Gerência (2) e, por último, a equipe da Unidade (3 — ou quem estiver
+       lotado na AE/GPE/UNP, quando a planilha não traz a coluna). */
+    var chefias = DADOS.nugep.filter(function (m) { return nivelNugep(m) === 1 || nivelNugep(m) === 2; })
+      .sort(function (a, b) { return nivelNugep(a) - nivelNugep(b); });
+    var equipeUnp = DADOS.nugep.filter(function (m) {
+      return nivelNugep(m) === 3 || (!nivelNugep(m) && String(m.Unidade_Sigla || '') === 'AE/GPE/UNP');
+    });
+    var integrantes = DADOS.nugep.filter(function (m) { return nivelNugep(m) !== 1 && nivelNugep(m) !== 2; });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>NUGEP — Núcleo de Gestão Normativa e de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      (DADOS.nugep.length ? '<div class="nugep-grid">' + DADOS.nugep.map(function (m) {
+      '<div class="pp-sec-h" style="margin-top:0"><h1>NUGEP — Núcleo de Gestão Normativa e de Processos</h1><div class="linha" aria-hidden="true"></div></div>' +
+      (integrantes.length ? '<div class="nugep-grid">' + integrantes.map(function (m) {
         var meusProcs = processosDoNugep(m.Nome);
-        return '<article class="nugep-card"><span class="br-avatar" title="' + esc(m.Nome) + '">' +
-          '<span class="content">' + esc(iniciais(m.Nome)) + '</span></span>' +
-          '<h4>' + esc(m.Nome) + '</h4>' +
+        return '<article class="nugep-card">' + avatarNugep(m) +
+          '<h3>' + esc(m.Nome) + '</h3>' +
           '<p class="nugep-unid"><span class="nugep-sigla">' + esc(m.Unidade_Sigla || '') + '</span></p>' +
-          '<div class="nugep-contato">' +
-          (m.Email ? '<a href="mailto:' + esc(m.Email) + '"><i class="fas fa-envelope" aria-hidden="true"></i> ' + esc(m.Email) + '</a>' : '') +
-          (m.Telefone ? '<a href="tel:+55' + esc(String(m.Telefone).replace(/\D/g, '')) + '"><i class="fas fa-phone" aria-hidden="true"></i> ' + esc(m.Telefone) + '</a>' : '') +
-          '</div>' +
+          contatoNugep(m) +
           (meusProcs.length ? '<div class="nugep-procs"><b><i class="fas fa-diagram-project" aria-hidden="true"></i> Processos sob responsabilidade</b><ul>' +
             meusProcs.map(function (p) { return '<li><a href="#/p/' + encodeURIComponent(p.Codigo) + '">' + esc(codDisp(p.Codigo)) + ' — ' + esc(p.Nome) + '</a></li>'; }).join('') +
             '</ul></div>' : '') +
           '</article>';
-      }).join('') + '</div>' : '<p class="pp-vazio">Nenhum integrante cadastrado na aba NUGEP da planilha.</p>') +
-      '<div class="pp-card" style="margin-top:var(--sp4)"><h3><i class="fas fa-building" aria-hidden="true"></i> Contato institucional</h3>' +
-      '<p style="font-size:var(--fs-sm)"><strong>' + esc(P.Contato_Unidade || 'Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)') + '</strong><br>' +
+      }).join('') + '</div>' : vazio('Nenhum integrante cadastrado',
+        'A aba NUGEP da planilha ainda não tem integrantes. Assim que forem cadastrados, aparecem aqui.',
+        { img: 'empty-space/empty-space-14.png' })) +
+      '<div class="pp-card contato-inst" style="margin-top:var(--sp4)">' +
+      '<h3><i class="fas fa-building" aria-hidden="true"></i> Contato institucional' +
+      dica('Canal oficial da unidade e as pessoas responsáveis, na ordem hierárquica: gerência-executiva, gerência e a equipe da UNP.') +
+      '</h3>' +
+      '<p class="ci-unidade"><strong>' + esc(par('Contato_Unidade', 'Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)')) + '</strong><br>' +
       (P.Contato_Email ? 'E-mail: <a href="mailto:' + esc(P.Contato_Email) + '">' + esc(P.Contato_Email) + '</a>' : '') +
-      (P.Contato_Telefone ? ' · Telefone: ' + esc(P.Contato_Telefone) : '') + '</p></div>';
+      (P.Contato_Telefone ? ' · Telefone: ' + esc(P.Contato_Telefone) : '') + '</p>' +
+      ((chefias.length || equipeUnp.length) ? '<div class="ci-hier">' +
+        chefias.map(function (m) {
+          return '<div class="ci-nivel"><span class="ci-rot">' + esc(m.Unidade_Sigla || '') +
+            (m.Unidade_Nome ? ' — ' + esc(m.Unidade_Nome) : '') + '</span>' +
+            perfilInst(m, 'chefia') + '</div>';
+        }).join('') +
+        (equipeUnp.length ? '<div class="ci-nivel"><span class="ci-rot">AE/GPE/UNP — equipe da Unidade</span>' +
+          '<div class="ci-equipe">' + equipeUnp.map(function (m) { return perfilInst(m); }).join('') + '</div></div>' : '') +
+        '</div>' : '') +
+      '</div>';
   }
 
   /* ── TELA: glossário ──────────────────────────────────────────────── */
@@ -2149,10 +2751,10 @@
     var porLetra = {};
     pagina.forEach(function (t) { var L = String(t.Termo || '').charAt(0).toUpperCase(); (porLetra[L] = porLetra[L] || []).push(t); });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Glossário de Gestão de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Glossário de Gestão de Processos</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<section class="pp-filtros-painel" role="search" aria-label="Filtros do glossário">' +
       '<div class="filtros-campos">' +
-      buscaCampoHtml('glossQ', 'Buscar termo', 'Termo, sigla ou conceito (ex.: SIPOC, KPI, raia)', filtroGloss.q) +
+      buscaCampoHtml('glossQ', 'Pesquisar termo', 'Termo, sigla ou conceito (ex.: SIPOC, KPI, raia)', filtroGloss.q) +
       selectHtml({ chave: 'glossCat', id: 'glossCat', rotulo: 'Categoria',
         placeholder: 'Todas as categorias (' + todos.length + ')', selecionados: filtroGloss.cat ? [filtroGloss.cat] : [],
         opcoes: cats.map(function (c) {
@@ -2160,6 +2762,11 @@
           return { v: c, r: c + ' (' + n + ')' };
         }) }) +
       '</div>' +
+      rodapeFiltrosHtml('gloss', [
+        ['q', filtroGloss.q ? 'Pesquisa: ' + filtroGloss.q : ''],
+        ['cat', filtroGloss.cat ? 'Categoria: ' + filtroGloss.cat : ''],
+        ['letra', filtroGloss.letra ? 'Letra: ' + filtroGloss.letra : '']
+      ]) +
       '<span class="br-divider" role="presentation"></span>' +
       '<div class="gloss-abc" role="group" aria-label="Filtrar por letra"><button type="button" class="' + (filtroGloss.letra ? '' : 'ativo') + '" data-letra="">Todos</button>' +
       abc.map(function (L) { return '<button type="button" data-letra="' + L + '" class="' + (filtroGloss.letra === L ? 'ativo' : '') + '"' + (letrasDisp[L] ? '' : ' disabled') + '>' + L + '</button>'; }).join('') + '</div>' +
@@ -2172,7 +2779,8 @@
             (t.Termos_Relacionados ? '<span class="chip-lista">' + listar(t.Termos_Relacionados).map(function (r) { return '<button type="button" class="chip gloss-rel" data-termo="' + esc(r) + '">' + esc(r) + '</button>'; }).join('') + '</span>' : '') +
             '</div></article>';
         }).join('') + '</div>';
-      }).join('') : '<p class="pp-vazio">Nenhum termo encontrado com esses filtros.</p>') +
+      }).join('') : vazio('Nenhum termo encontrado',
+        'Revise o termo buscado ou a letra selecionada para ver o glossário completo.')) +
       paginacaoHtml('gloss', lista.length, 'termos', [12, 24, 48, 96]);
     ligarPaginacao(el, renderGlossario);
     window.BRSelectInit(el, function (chave, valores) {
@@ -2184,6 +2792,13 @@
     if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; PAG.gloss.pag = 1; renderGlossario(); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
     $all('.gloss-abc button', el).forEach(function (b) { b.onclick = function () { filtroGloss.letra = b.getAttribute('data-letra'); renderGlossario(); }; });
     $all('.gloss-rel', el).forEach(function (b) { b.onclick = function () { filtroGloss.q = b.getAttribute('data-termo'); filtroGloss.letra = ''; filtroGloss.cat = ''; renderGlossario(); }; });
+    ligarRodapeFiltros(el, 'gloss', function (qual) {
+      if (qual === 'q' || qual === 'tudo') filtroGloss.q = '';
+      if (qual === 'cat' || qual === 'tudo') filtroGloss.cat = '';
+      if (qual === 'letra' || qual === 'tudo') filtroGloss.letra = '';
+      PAG.gloss.pag = 1;
+      renderGlossario();
+    });
   }
 
   /* ── TELA: FAQ ────────────────────────────────────────────────────── */
@@ -2195,7 +2810,7 @@
     var lista = filtroFaq ? todos.filter(function (f) { return f.Categoria === filtroFaq; }) : todos;
     var porCat = {}; pagFatia('faq', lista, 5).forEach(function (f) { (porCat[f.Categoria || 'Geral'] = porCat[f.Categoria || 'Geral'] || []).push(f); });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Perguntas frequentes</h2><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Perguntas frequentes</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="faq-cats"><button type="button" class="chip ' + (filtroFaq ? '' : 'ativo') + '" data-cat="">Todas (' + todos.length + ')</button>' +
       cats.map(function (c) { var n = todos.filter(function (f) { return f.Categoria === c; }).length; return '<button type="button" class="chip ' + (filtroFaq === c ? 'ativo' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + ' (' + n + ')</button>'; }).join('') + '</div>' +
       // Accordion do gov.br DS (br-accordion): item + header/icon/title e a
@@ -2208,7 +2823,7 @@
             var id = 'faq-' + ic + '-' + i;
             return '<div class="item">' +
               '<button class="header" type="button" aria-controls="' + id + '" aria-expanded="false">' +
-              '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>' +
+              '<span class="icon"><i class="fas fa-chevron-down" aria-hidden="true"></i></span>' +
               '<span class="title">' + esc(f.Pergunta) + '</span></button></div>' +
               '<div class="content" id="' + id + '">' + esc(f.Resposta || '') + '</div>';
           }).join('') + '</div>';
@@ -2245,8 +2860,11 @@
     }
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Busca' }]) +
-      '<div class="pp-sec-h" style="margin-top:0"><h2>Resultados para “' + esc(q) + '”</h2><div class="linha" aria-hidden="true"></div></div>' +
-      (total ? '' : '<p class="pp-vazio">Nada encontrado. Tente outro termo ou navegue pela lista de <a href="#/catalogo">processos</a>.</p>') +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Resultados para “' + esc(q) + '”</h1><div class="linha" aria-hidden="true"></div></div>' +
+      (total ? '' : vazio('Nada encontrado para “' + esc(q) + '”',
+        'Tente outro termo, com menos palavras ou sem abreviações. Você também pode navegar pelo portfólio de processos.',
+        { img: 'empty-space/empty-space-44.png',
+          acoes: [{ rotulo: 'Ver o Portfólio', icone: 'fa-diagram-project', href: '#/catalogo' }] })) +
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m._cod || m.Codigo, m.Nome, esc(m.Categoria)); }) +
       grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), codDisp(p.Codigo), p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
       grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), codDisp(s.Codigo), s.Nome, ''); }) +
@@ -2279,6 +2897,22 @@
     if ((c = $('#cntFaq'))) c.textContent = DADOS.faq.length;
     ligarAcoesCabecalho();
     montarNotificacoes();
+    if (window.BRUploadInit) window.BRUploadInit();
+    if (window.BRTooltipInit) window.BRTooltipInit();
+    if (window.BRMessageInit) window.BRMessageInit();
+    if (window.BRTableInit) window.BRTableInit();
+    if (window.BRLoadingInit) window.BRLoadingInit();
+    ajustarAbas();
+    // Fontes e ícones mudam a largura das abas depois do primeiro layout:
+    // recalcula quando a página termina de carregar.
+    window.addEventListener('load', ajustarAbas);
+    if (d.fonts && d.fonts.ready) d.fonts.ready.then(ajustarAbas);
+    setTimeout(ajustarAbas, 400);
+    var reAjuste;
+    window.addEventListener('resize', function () {
+      clearTimeout(reAjuste);
+      reAjuste = setTimeout(ajustarAbas, 120);
+    });
     if (window.PPUI) PPUI.setMenuSections([
       { rotulo: 'Início · Cadeia de Valor', href: '#/', icone: 'fa-house', meta: DADOS.macros.length + ' macro' },
       { rotulo: 'Catálogo de processos', href: '#/catalogo', icone: 'fa-layer-group', meta: DADOS.procs.length },
@@ -2320,12 +2954,12 @@
         'Nível ' + r._classe + ' · P×I ' + r._nivel,
         esc(r.ID) + ' · ' + (r.Status || 'Aberto'),
         '#/riscos');
-    }).join('') : '<div class="empty-state"><i class="fas fa-circle-check" aria-hidden="true"></i>Nenhum risco crítico aberto.</div>';
+    }).join('') : '<div class="empty-state"><i class="fas fa-check-circle" aria-hidden="true"></i>Nenhum risco crítico aberto.</div>';
     painelP.innerHTML = prazos.length ? prazos.map(function (p) {
       return item('warning', p.Nome, 'Prazo em ' + fmtData(p.Prazo_Previsto),
         codDisp(p.Codigo) + ' · ' + (p.Status_Mapeamento || '') + ' · ' + pctNorm(p.Percentual) + '%',
         '#/p/' + encodeURIComponent(p.Codigo));
-    }).join('') : '<div class="empty-state"><i class="fas fa-circle-check" aria-hidden="true"></i>Nenhum mapeamento com prazo vencido.</div>';
+    }).join('') : '<div class="empty-state"><i class="fas fa-check-circle" aria-hidden="true"></i>Nenhum mapeamento com prazo vencido.</div>';
     var total = riscos.length + prazos.length;
     var cR = $('#notifCountRiscos'), cP = $('#notifCountPrazos'), badge = $('#notifBadge');
     if (cR) cR.textContent = riscos.length;
@@ -2335,12 +2969,26 @@
 
   function iniciar() {
     var v = $('#viewInicio');
-    if (v) v.innerHTML = '<div class="pp-loading">' +
-      '<div class="br-loading medium" role="progressbar" aria-label="Carregando dados do painel"></div>' +
-      '<p class="loading-label" role="status" aria-live="polite">Carregando dados do painel…</p></div>';
+    /* Padrão Skeleton Screen: em vez do giro sem contexto, o painel
+       desenha a forma da tela inicial (título, faixa de indicadores e
+       cartões) enquanto a planilha carrega. O status em aria-live continua
+       a cargo do leitor de tela — o esqueleto é decorativo. */
+    if (v) v.innerHTML = '<div class="pp-loading br-skeleton" aria-hidden="true">' +
+      '<div class="skeleton-group" style="max-width:520px;margin-bottom:var(--sp5)">' +
+      '<div class="skeleton-title lg" style="width:70%"></div>' +
+      '<div class="skeleton-line w-90"></div>' +
+      '<div class="skeleton-line w-50"></div></div>' +
+      '<div style="display:grid;gap:var(--sp2);grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:var(--sp5)">' +
+      '<div class="skeleton-block" style="height:104px"></div>'.repeat(5) + '</div>' +
+      '<div style="display:grid;gap:var(--sp3);grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">' +
+      '<div class="skeleton-block" style="height:180px"></div>'.repeat(3) + '</div></div>' +
+      '<p class="loading-label" role="status" aria-live="polite">Carregando dados do painel…</p>';
     carregarDados().then(posCarga).catch(function (e) {
       console.error(e);
-      if (v) v.innerHTML = '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="content"><span class="message-title">Não foi possível carregar os dados.</span> <span class="message-body">Verifique se data/painel-processos-dados.xlsx está publicado (ou gere js/dados.js com scripts/planilha_para_js.py). Detalhe: ' + esc(e.message) + '</span></div></div>';
+      /* Tela de erro ilustrada (Fundamento Ilustração > Cenários > Erro):
+         a ilustração suaviza a falha e o texto diz o que fazer. */
+      if (v) v.innerHTML = '<div class="pp-erro-ilus"><img src="img/ilustracoes/erro/error10.png" alt="" aria-hidden="true"></div>' +
+        '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div><div class="content"><span class="message-title">Não foi possível carregar os dados.</span> <span class="message-body">Verifique se data/painel-processos-dados.xlsx está publicado (ou gere js/dados.js com scripts/planilha_para_js.py). Detalhe: ' + esc(e.message) + '</span></div></div>';
     });
   }
   window.addEventListener('hashchange', rota);

@@ -70,8 +70,9 @@ team = (team
     .replace("Analista em Desenvolvimento Regional — Suporte Técnico do PTD",
              "Analista em Desenvolvimento Regional — Gestão de Processos"))
 
-footer = footer.replace("Processo e-Codevasf nº 59500.003375/2025-08-e",
-                        "Unidade de Gestão Normativa e de Processos — AE/GPE/UNP")
+# A linha da unidade saiu do rodapé: o endereço institucional e a licença
+# já identificam o responsável, e o contato da UNP vive no Mapa do Site.
+footer = footer.replace("Processo e-Codevasf nº 59500.003375/2025-08-e", "")
 
 # gatilhos de ajuda/acessibilidade passam a abrir os modais deste painel
 for bloco in ("header", "menu", "footer"):

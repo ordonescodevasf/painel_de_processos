@@ -609,3 +609,919 @@ Nada mais mudou no visual: tipografia (Noto Sans/Noto Sans Mono), escala de
 espaçamento, raios, elevação, foco laranja, ícones Font Awesome 6 e as cores
 semânticas (`#168821` sucesso · `#B38C00` alerta · `#E52207` erro ·
 `#155BCB` informação) já seguiam os tokens da v4.
+
+## Ajustes desta rodada (tooltips, marcos, tutorial e NUGEP)
+
+- **Tutorial de abertura**: no lugar do link "Pular tutorial", dois botões
+  lado a lado no rodapé do tour — **Pular** (secundário) e **Iniciar**
+  (primário) —, o mesmo par da barra de navegação do Wizard da jornada. O
+  primário acompanha o passo: *Iniciar* → *Avançar* → *Concluir*; "Pular"
+  sai de cena na última página. Os botões que ficavam soltos dentro da
+  primeira e da última página saíram (faziam a mesma coisa).
+- **Jornada de mapeamento**: removida a faixa "Descobrir → Definir →
+  Desenvolver → Entregar → Evoluir" entre o título e o Wizard — a jornada
+  já se explica no próprio Wizard.
+- **Marcos do mapeamento (M1–M10)**: os dez marcos ficam **todos à vista**
+  na ficha do processo, sem barra horizontal para arrastar (o Step perdeu o
+  `data-scroll`); abaixo de 992px a trilha assume a orientação **vertical**
+  do componente, em vez de espremer dez colunas. Na bolinha do marco
+  concluído aparece agora o **número do marco**, não o check — a bolinha
+  continua pintada de azul.
+- **Tooltip padrão gov.br em todo o painel**: o que antes só aparecia no
+  `title` nativo do navegador (KPIs da tela inicial e do Dashboard, marcos,
+  legendas dos gráficos, pinos do radar de riscos, botões flutuantes) virou
+  o Componente Tooltip, acionado por um ícone **"i"** discreto ao lado do
+  rótulo. Ganho de acessibilidade real: o `title` nativo não abre no foco
+  do teclado nem é lido de forma confiável por leitor de tela. O balão
+  agora também se desloca sozinho para não sair da tela e usa
+  `width:max-content` (antes herdava a largura do gatilho e descia em
+  coluna de uma palavra por linha).
+- **NUGEP — Contato institucional**: o bloco passou a mostrar a
+  **hierarquia da unidade** — Gerente-Executivo (AE), Gerente (AE/GPE) e a
+  equipe da AE/GPE/UNP —, cada pessoa com **avatar (foto), nome, papel,
+  e-mail e telefone**. As chefias aparecem só nesse bloco; a lista de
+  integrantes do núcleo continua como estava.
+- **Foto na planilha**: a aba NUGEP ganhou as colunas **Foto** (URL de
+  imagem pública, que substitui as iniciais do avatar) e **Hierarquia**
+  (1 = Gerente-Executivo, 2 = Gerente, 3 = equipe da Unidade, 0 =
+  interlocutor de outra área). `scripts/gerar_planilha.py` já gera as duas
+  colunas; enquanto a planilha em uso não as tiver, o painel aproveita as
+  fotos de exemplo de `js/dados.js`, casando pelo e-mail. As URLs atuais
+  são retratos de exemplo (randomuser.me) só para teste — troque pelas
+  fotos oficiais.
+- **Botão "Reportar um erro" volta a flutuar**: quem fica fixo agora é o
+  contêiner (`.report-error-wrap`). O botão é também gatilho de tooltip e
+  precisa de `position:relative`; a regra `.br-button.circle` reimpunha
+  esse relative e derrubava o botão para o fim do corpo da página, onde
+  virava uma faixa clara abaixo do rodapé em vez de flutuar.
+- **Faixa de seções**: as ações de página (alertas, compartilhar,
+  imprimir) perderam o `max-width`/`margin:0 auto` herdados de quando
+  viviam numa linha própria — era isso que jogava o bloco por cima do botão
+  **"Mais"** e do nome da seção aberta. Saiu junto o `border-top`, que
+  desenhava o **divisor extra** acima do sino. O recorte das abas passou a
+  reservar 8px de folga, para o botão "Mais" nunca ficar cortado.
+- **Sistema de Grid**: a faixa de seções e o rodapé estavam em containers
+  de 1440px enquanto cabeçalho e conteúdo usavam 1200px (1560px em TV).
+  Agora todos usam o mesmo container — pelo Fundamento Grid, o conteúdo
+  vive dentro do mesmo container em toda a página.
+- **Estados**: os novos controles (ícone "i", botões do tutorial, etapas da
+  trilha de marcos) seguem o Fundamento Estados — cor no interativo,
+  overlay no hover, contorno de foco com os tokens `--focus-*` e alvo de
+  toque de 24px mesmo com ícone de 12px.
+- **Últimos hover nativos**: os botões só-ícone de densidade da tabela,
+  exportar seleção e limpar seleção também trocaram o `title` pelo Tooltip —
+  não sobrou nenhum `title` nas telas do painel.
+- **Logo do gov.br no rodapé**: a URL externa passou a responder 404; a marca
+  agora vem de `img/govbr-negativa.svg`, dentro do próprio repositório.
+
+## Ajustes desta rodada (período, ilustração, utilitários e movimento)
+
+- **Filtro "Prazo previsto entre" (Portfólio)**: o calendário fechava sozinho
+  depois da primeira data — o clique redesenha a grade e, quando o evento
+  chegava ao `document`, o botão clicado já não estava no DOM, então o
+  "clique fora fecha" disparava. Corrigido. Além disso, o modo intervalo
+  ganhou **dica de passo** ("Passo 1 de 2: escolha a data inicial" →
+  "Passo 2 de 2: escolha a data final"), **prévia do intervalo** enquanto o
+  cursor percorre os dias e **extremos arredondados** no trecho selecionado.
+  O rótulo do campo ganhou o "i" explicando que são duas datas.
+- **Ilustração (Fundamento)**: as ilustrações oficiais do pacote gov.br
+  foram copiadas para `img/ilustracoes/` e aplicadas nos três cenários que o
+  fundamento indica — **tutorial de abertura** (5 páginas), **estados vazios**
+  (portfólio, documentos, repositório, NUGEP, glossário e busca) e **tela de
+  erro** de carregamento dos dados.
+- **Utilitários dos fundamentos**: publicados como classes reais, mapeadas
+  nos tokens já existentes — Superfície (`border-solid-*`, `border-dashed-*`,
+  `rounder-*`, `opacity-*`, `overflow-*`, `d-*` e flexbox), Elevação
+  (`shadow-*`, `shadow-*-inset`, `layer-0..4`), Movimento (`ease`, `ease-in`,
+  `ease-out`, `ease-in-out`, `linear` + `very-fast`…`very-slow`) e Tipografia
+  (`text-up-*`/`text-down-*`, `text-weight-*`, transformação, alinhamento e
+  quebra). Junto vieram os tokens com os nomes oficiais
+  (`--surface-*`, `--duration-*`, `--animation-ease-*`, `--font-size-scale-*`,
+  `--font-weight-*`, `--font-line-height-*`) apontando para os que já existiam.
+- **Movimento**: durações e atenuações soltas passaram a usar os tokens, e o
+  painel inteiro passou a respeitar `prefers-reduced-motion` — a preferência
+  de menos movimento declarada no sistema operacional desliga transições e
+  animações, como pede o fundamento (distúrbios vestibulares, epilepsia,
+  déficit de atenção).
+- **Tipografia na escala oficial**: os tokens de tamanho passaram a usar os
+  degraus da escala **Minor Third (1,2)** sobre a base de 14px do DS —
+  `--fs-sm` 11,67px (down-01), `--fs-base` 14px, `--fs-md` 16,8px (up-01),
+  `--fs-lg` 20,16px (up-02), `--fs-xl` 24,19px (up-03) e `--fs-xxl` 29,03px
+  (up-04). Antes o painel usava uma escala própria (12/16/20/24/32), próxima
+  mas fora da progressão. Como tudo se apoia nesses tokens, a mudança é sutil
+  (menos de 1px na maioria dos casos; o maior efeito é no título da capa) e
+  alinha o painel inteiro à mesma escala.
+
+## Conferência contra o código-fonte oficial (govbr-ds v4.0.0-next.32)
+
+Os utilitários publicados na rodada anterior tinham sido escritos a partir da
+documentação da **v3.7**. Com o repositório oficial em mãos
+(`projects/tokens/src/figma/*.json` e `projects/design/src/utilities/*.scss`),
+os valores foram conferidos e corrigidos:
+
+- **A v4 renomeou boa parte das classes.** O painel agora aceita os **dois**
+  nomes — o oficial da v4 e o da v3.7 que já estava em uso:
+
+  | v3.7 | v4 (oficial) |
+  | --- | --- |
+  | `border-solid-sm/md/lg` | `border-solid` + `border-width-sm/md/lg` (e `border-dotted`) |
+  | `rounder-*` | `rounded-none/sm/md/lg/full` |
+  | `opacity-xs…xl` | `opacity-10…90/full` |
+  | `shadow-*` + `layer-*` | `elevation-0…4` (sombra e camada na mesma classe) |
+  | `ease-in`, `fast` | `easing-ease-in`, `duration-fast-1…4` |
+  | `d-flex`, `d-block` | `display-flex`, `display-block` |
+  | `text-up-*`, `text-weight-*` | `font-size-up-*`, `font-weight-*` |
+
+- **Elevação estava errada.** Cada nível do DS soma **duas** sombras — "cast"
+  (projetada, com deslocamento vertical) e "occlusion" (de contato, sem
+  deslocamento e mais difusa) —, ambas em preto a 20% no tema claro. Os valores
+  agora saem dos tokens: nível 1 `0 1px 1px + 0 0 4px`; nível 2 `0 4px 4px +
+  0 0 8px`; nível 3 `0 8px 8px + 0 0 12px`; nível 4 `0 12px 12px + 0 0 16px`.
+  A classe `elevation-N` aplica sombra **e** `z-index` (0, 1000, 2000…).
+- **Movimento**: a escala real tem quatro degraus por faixa — `fast` 50/100/150/200ms,
+  `moderate` 250/300/350/400ms, `slow` 450…600ms, `very-slow` 700…1000ms —, mais as
+  atenuações `bounce-out` e `elastic-out`, que faltavam.
+- **Superfície**: `rounder-lg` era 16px por estimativa; o token oficial é **12px**.
+  Também entraram `position-*`, `overflow-visible` e `display-grid`.
+- **Tokens** passaram a existir com o nome oficial (`--br-surface-*`,
+  `--br-elevation-*`, `--br-motion-*`, `--br-typography-*`), com os nomes antigos
+  mantidos como apelido.
+
+### Padrão Dados Ausentes aplicado aos estados vazios
+
+A diretriz de **Dados Ausentes** define a anatomia do estado vazio: Apoio
+Visual (ilustração, opcional), **Título** (obrigatório quando o vazio ocupa a
+tela ou um bloco grande), **Mensagem** (obrigatória) e **Suporte para Ações**
+(opcional, ao final do conteúdo). Os estados vazios do painel tinham só
+ilustração e uma frase; agora têm título e mensagem, e o portfólio e a busca
+ganharam ação — "Limpar filtros" e "Ver o portfólio", em ênfase secundária,
+como manda a hierarquia do componente Button. Os textos seguem o tom que a
+diretriz pede: neutro, específico quanto ao critério usado e orientando o
+passo seguinte.
+
+### Identidade visual: o painel segue na v3.7
+
+A v4 muda a tipografia (Rawline → **Noto Sans**), o azul institucional
+(`#1351b4` → `#0040B4`) e a escala de tamanhos (Minor Third sobre 14px →
+Major Second 1,125 sobre 16px). **Não migramos** — e por um motivo prático: as
+páginas gov.br no ar ainda são v3.7 (o próprio site do DS serve `theme-color:
+#1351b4`), e a v4 está em pré-lançamento (`next.32`). Um painel institucional
+que destoasse das outras páginas da Codevasf e do gov.br pagaria caro por
+antecipar o salto. Os valores da v4 ficam registrados nos tokens, prontos para
+quando a migração for decidida.
+
+## Revisão das diretrizes v4 — fundamentos e padrões (1ª leva)
+
+Leitura arquivo por arquivo de `projects/diretrizes`, com o que foi corrigido:
+
+- **Estado**: o estado **Pressionado** deixou de ser mudança de cor e passou a
+  ser **sombra interna** (`state.pressed.shadow`: deslocamento 1px, suavidade
+  8px, preto a 50%) — é a mudança que a v4 fez no fundamento. O **Foco** ganhou
+  o espaçamento de segurança correto (4px = `spacing.adjust.1`; estava 2px), e
+  o **Desabilitado** passou a remover a sombra, como a diretriz manda.
+- **Iconografia**: os nomes dos ícones foram padronizados pelos tokens
+  `br.iconography.iconName.*` — o painel misturava nomes canônicos do FA6 com
+  apelidos (`fa-triangle-exclamation` x `fa-exclamation-triangle`,
+  `fa-up-right-from-square` x `fa-external-link-alt`, `fa-circle-info` x
+  `fa-info-circle`). 13 ocorrências alinhadas; visualmente idênticas, agora
+  rastreáveis até o token.
+- **Tooltip (acessibilidade)**: o gatilho passou a ser associado ao balão por
+  `aria-describedby` (o balão complementa, não nomeia); o balão ganhou a
+  carência de 400ms antes de fechar e continua aberto enquanto o cursor
+  estiver sobre ele — exigência do WCAG 2.2 · 1.4.13, que o fechamento
+  imediato violava. A sombra passou a ser a da camada 4, como pede
+  `br.tooltip.shadowStyle`.
+- **Content Overflow**: o texto truncado do card "Navegar para" passou a dar
+  acesso ao conteúdo completo (a diretriz proíbe truncar sem saída). As
+  tabelas largas ganharam a **sombra de rolagem** (técnica 1.3, *scroll
+  affordance*): a sombra aparece na borda enquanto há conteúdo além da área
+  visível e some ao chegar ao fim.
+- **Espaçamento**: escala conferida contra os tokens — layout 8…80 bate; a
+  escala de ajuste oficial vai só até 36 (o painel tinha 44 e 52 a mais, agora
+  documentados como extensão). Faltava o degrau 80, incluído.
+- **Densidade**: o menu das tabelas usava "Densidade alta/média/baixa"; a
+  classificação do DS é **Compacta / Regular / Espaçada**. Renomeado nas duas
+  tabelas, e o balão do gatilho, que dizia "Ver mais opções", passou a dizer o
+  que o menu faz.
+- **Writing**: nos *buttons*, a diretriz pede iniciais maiúsculas em todas as
+  palavras (exceto artigos e preposições) — "Limpar Filtros", "Ver o
+  Portfólio", "Abrir em Nova Aba". Rótulos de campo, itens de menu e links
+  seguem em sentença, como a diretriz também pede.
+- **Dropdown**: conferido, sem correção — o painel já usa elevação a partir da
+  camada 2, inverte a direção quando falta espaço, mantém o estado no
+  acionador enquanto aberto e dispensa o identificador nos gatilhos cujo
+  ícone já carrega a semântica (uso opcional previsto na diretriz).
+
+## Revisão das diretrizes v4 — 2ª leva (identificadores e conferências)
+
+- **Collapse e Dropdown — identificadores trocados**: o painel usava `angle-down` /
+  `angle-up` nos dois padrões, e esse nome não existe em nenhuma das duas tabelas
+  do fundamento Iconografia. A diretriz reserva o **chevron** ao identificador de
+  *collapse* (accordion, grupos do cookiebar, expansão de linha de tabela, blocos
+  do rodapé) e o **caret** ao identificador de *dropdown* (o Select). Trocado nos
+  13 pontos, no HTML inicial e na alternância em JS — o ícone continua apontando
+  para a direção em que o conteúdo abre, como a diretriz exige.
+- **Densidade**: nomes alinhados à classificação do DS (Compacta / Regular /
+  Espaçada).
+- **Formulário**: conferido, sem correção. Rótulos em sentença, sem dois-pontos e
+  acima do campo; par de botões com a ênfase primária à direita da secundária; sem
+  botão "Redefinir"/"Limpar formulário" em campos de entrada (o "Limpar Filtros" é
+  de painel de filtros, uso que a diretriz de Dados Ausentes recomenda).
+- **Writing (fechamento)**: a titulação dos *buttons* ficou completa — "Limpar
+  Filtros" (no rodapé de filtros e no estado vazio, a mesma ação com a mesma
+  grafia), "Página Inicial", "Definir Cookies", "Baixar Print", "Tentar Capturar
+  de Novo", "Abrir E-mail". Ficam em sentença apenas os rótulos que embutem o
+  nome de outro elemento ("Abrir Notícias") e os nomes próprios ("Atalhos
+  gov.br").
+- **Button (acessibilidade)**: auditado ao vivo — 100% dos botões visíveis têm
+  nome acessível e nenhum fica abaixo do alvo mínimo de 24px (WCAG 2.5.8).
+
+### Ainda por revisar
+
+Padrões *skeleton-screen*, *tema*, *sign-in*, *slot-de-composição*, *design
+conversacional* e *internacionalização*; e os componentes Input, Select, Avatar,
+Header, Footer, List, Message e Loading.
+
+## Revisão das diretrizes v4 — componentes
+
+Auditoria feita no painel em execução, contra as listas de verificação de
+acessibilidade de cada componente:
+
+- **Message — corrigido**: a diretriz exige que o leitor de tela anuncie *qual* é
+  o tipo da mensagem (erro, aviso, sucesso, informação — WCAG 4.1.2). O ícone que
+  carrega essa informação é `aria-hidden`, então o leitor lia só o corpo do texto.
+  Um `BRMessageInit` passa a inserir o rótulo invisível ("Aviso: ", "Sucesso: ")
+  em toda mensagem, presente e futura; os `role="alert"`/`role="status"` já
+  cobriam o anúncio dinâmico.
+- **List — corrigido**: a lista de classes de cookies era uma `div.br-list` sem
+  `role` — não era anunciada como lista nem informava a contagem de itens. Ganhou
+  `role="list"` e nome acessível.
+- **Button**: 100% dos botões visíveis têm nome acessível e nenhum fica abaixo do
+  alvo mínimo de 24px (WCAG 2.5.8).
+- **Input**: 53 campos, nenhum sem rótulo associado — nenhum depende de
+  *placeholder* como rótulo.
+- **Select**: `role="combobox"` com `aria-expanded` e `aria-controls` apontando para
+  o `role="listbox"` correspondente.
+- **Avatar**: decorativo (`aria-hidden`) com o nome da pessoa visível no card —
+  a foto nunca é o único portador da informação.
+- **Header / Footer**: um `banner`, um `main` e um `contentinfo` por página; as
+  navegações têm nome próprio, e as que usam `role="none"` (trilhas de Step)
+  colocam o rótulo no `listbox` interno, como o componente prevê.
+- **Loading**: `role="progressbar"` com rótulo, acompanhado de texto em
+  `role="status" aria-live="polite"`.
+
+## Ferramentas herdadas do repositório do DS
+
+O monorepo do Padrão Digital de Governo traz um conjunto de ferramentas de
+qualidade. Foram avaliadas uma a uma; entraram as que funcionam num projeto
+estático, sem etapa de build:
+
+| Arquivo | Decisão |
+| --- | --- |
+| `biome.json` | **Adotado**, adaptado. Formata e linta o JS do painel. Rode `npx @biomejs/biome check js` (ou `--write` para corrigir). O escopo virou `js/**/*.js`, o `$schema` passou a apontar para a URL pública (não havia `node_modules`) e as regras de import/`any`/complexidade saíram: o painel é ES5 clássico, sem módulos, e as funções de render são longas por natureza. |
+| `cspell.json` + `cspell-wordlist.txt` | **Adotados**, adaptados. Corretor ortográfico com o vocabulário do DS (cookiebar, skiplink, rawline, focável, rolável…), acrescido dos termos do painel (macroprocesso, NUGEP, CBOK, Bizagi…). Saíram os dicionários `pt-br` e `lorem-ipsum`: são pacotes npm separados que o `cspell` não embute, e mantê-los faria o comando falhar na resolução antes de checar qualquer palavra — o vocabulário pt-BR que interessa já está na lista local. Rode `npx cspell --config cspell.json`. |
+| `LICENSE` | **Adotado** como `LICENSES-TERCEIROS.md` — o painel deriva CSS, JS e ilustrações do DS, e o crédito MIT/CC0 precisa acompanhar o código. |
+| `package.json`, `nx.json`, `postcss.config.cjs`, `release.config.js`, `commitlint.config.js`, `cz.config.cjs`, `lint-staged.config.mjs` | **Não adotados.** São a infraestrutura de um monorepo pnpm/Nx com semantic-release: build de pacotes, versionamento automático e padrão de mensagem de commit. O painel é servido como arquivo estático e abre sem instalar nada — trazer isso custaria Node, pnpm e ~30 dependências de desenvolvimento para não mudar uma linha do que o usuário vê. |
+| `AGENTS.md`, `AI-CONTEXT.md`, `CLAUDE.md`, `GEMINI.md` | **Aproveitados** no `CLAUDE.md` da raiz do projeto, com as regras que valem aqui: tokens como fonte da verdade, preservar nomes públicos de classe, WCAG 2.2 AA como linha de base, menor diff possível. |
+| `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` | **Não adotados.** Governam a contribuição ao repositório do DS, não a este painel. |
+
+As duas ferramentas adotadas são opcionais: o painel continua abrindo e
+funcionando sem instalar nada. Elas só entram em cena se alguém quiser
+conferir o código antes de publicar.
+
+## Revisão das diretrizes v4 — padrão Tema
+
+- **O modo de alto contraste é um tema, e está conforme.** A diretriz permite que
+  um tema altere **apenas cores** — espaçamento, movimento e grid ficam de fora.
+  Conferido: `body.contraste-alto` não toca em nenhuma propriedade que não seja cor.
+- **Cores de estado derivadas do Interativo.** O padrão define cada cor de estado
+  a partir da cor Interativo (aqui Blue Warm Vivid 70). Agora estão declaradas com
+  nome próprio, para nenhum componente ter de redescobrir a regra: Visitado
+  (mesma família e grau, círculo padrão em vez do Vivid), Desabilitado (cinza no
+  mesmo grau), Ativo (±1 grau), Selecionado (±2), Ligado (±3) e Foco (família
+  complementar, grau 40 — o laranja que o painel já usava).
+- **Hover no modelo novo.** A v3 usava uma opacidade única sobre a cor
+  interativa; a v4 usa **dois overlays** — claro sobre elemento escuro, escuro
+  sobre elemento claro —, escolhendo o que gera mais contraste com o primeiro
+  plano. O Accordion, que ainda estava no modelo antigo, passou ao novo (overlay
+  escuro na versão positiva, claro na negativa).
+
+## Revisão das diretrizes v4 — padrões restantes
+
+- **Skeleton Screen — aplicado.** A tela inicial mostrava um giro sem contexto
+  enquanto a planilha carregava. Agora desenha a **forma** do que vem a seguir —
+  título, faixa de indicadores e cartões —, com os valores dos tokens
+  `br.skeleton`: fundo `background.main.secondary` com canto `rounder.sm`, brilho
+  `background.main.primary` com canto `rounder.full`, altura de linha igual ao
+  `fontSize.default` e movimento `linear` em `600ms` (`duration.slow.4`). O usuário
+  entende o que está carregando e a troca pelo conteúdo real não desloca a
+  página. O esqueleto é decorativo (`aria-hidden`); quem anuncia o carregamento
+  continua sendo o texto em `role="status"`.
+- **Internacionalização — um ajuste.** O painel já cumpria o essencial:
+  `lang="pt-BR"` no `<html>`, UTF-8 e datas por `toLocaleString('pt-BR')`. Faltava o
+  tamanho de arquivo do Upload, que saía de `toFixed(2)` e portanto sempre com
+  ponto decimal ("1.50 MB"); passou a usar `Intl.NumberFormat('pt-BR')` e agora
+  respeita a vírgula ("1,50 MB").
+- **Sign-in — não se aplica.** O painel é de consulta pública, sem autenticação.
+  O componente existe no CSS para o caso de vir a ter login.
+- **Slot de Composição — não se aplica.** É um padrão de API de componente
+  (como um componente aceita conteúdo de fora), pensado para bibliotecas em
+  framework. Aqui o HTML é montado direto em JS.
+- **Design Conversacional — não se aplica.** Trata de chatbots e assistentes;
+  o painel não tem interface de conversa.
+
+## Componente Loading — arte oficial incorporada
+
+O anel de carregamento era desenhado à mão em CSS (uma borda com um lado
+transparente). Os arquivos oficiais do componente entraram no lugar, em
+`img/loading/` — `loading-global-{small,medium,large}-{main,contrast}.svg`, seis
+no total. Eles já são desenhados para receber a cor por custom property
+(`--br-loading-color-background-*` e `--br-loading-color-foreground-*`), então o
+mesmo traçado serve ao tema claro e ao alto contraste; o painel só precisa
+apontar as quatro variáveis para os seus tokens.
+
+Detalhes da incorporação:
+
+- Os tamanhos passaram a ser os dos próprios arquivos: **19 · 40 · 72px**
+  (antes 24 e 44, estimados).
+- O caminho do SVG é embutido em `js/govbr-ui.js` e injetado por
+  `BRLoadingInit` — e não buscado por `fetch` — porque o painel também roda
+  aberto direto do arquivo (`file://`), onde `fetch` é bloqueado. Os `.svg`
+  ficam no repositório como origem do traçado.
+- O filtro de sombra interna que vinha do Figma foi descartado: seus ids
+  colidiriam entre vários Loadings na mesma página e o efeito é
+  imperceptível no tamanho em que o componente roda.
+- O anel em CSS continua no arquivo como reserva, ativado por `:empty` —
+  vale enquanto o script não rodou e no modo determinado (percentual).
+- As variantes **conversational** não entraram: são do padrão Design
+  Conversacional, que o painel não usa.
+- Os fills usam nomes **neutros** (`--br-loading-color-background` /
+  `--foreground`), e quem troca o tema é o CSS. Decidir a variante no
+  momento da injeção não funcionava: o alto contraste do painel é um
+  toggle de classe em runtime e o Loading nasce no render da rota, então a
+  arte clara ficava congelada. No alto contraste o arco passa ao dourado
+  (`--gold-vivid-20`): o azul interativo sobre preto dá 2,39:1, abaixo do
+  mínimo de 3:1 para elemento não textual (WCAG 1.4.11); o dourado dá
+  12,66:1. A troca cobre a arte oficial e o anel de reserva de uma vez.
+- O Loading do Upload nasce depois do init da tela, então recebe a arte
+  com uma chamada própria a `BRLoadingInit`.
+
+## Correções pedidas nesta rodada
+
+- **Tutorial — texto "na lateral"**: na página 2 o parágrafo aparecia à direita,
+  fora do modal. A regra do componente (`.br-carousel .carousel-content`) tem a
+  mesma especificidade da regra do tutorial e vencia por ordem, reimpondo
+  `flex-wrap:wrap` — num contêiner de altura fixa, o que não cabia transbordava
+  para uma **segunda coluna**. Corrigido qualificando a regra pelo carrossel.
+- **Tutorial — tamanho fixo**: altura única de 452px, dimensionada pela página
+  mais alta, para o modal não mudar de tamanho a cada passo.
+- **"Não mostrar novamente"** saiu do rodapé do tutorial; fechar o tour já vale
+  como visto (o tour continua acessível pelo menu de ajuda).
+- **Cookiebar**: faixa mais baixa e texto de ponta a ponta — o `max-width` em `ch`
+  vinha da medida de leitura de texto corrido e deixava metade da linha vazia
+  numa faixa que atravessa a tela.
+- **Links do cookiebar que não respondiam**: a área de conteúdo não encolhia
+  para caber na faixa, então crescia com o conteúdo e empurrava os três links
+  (LGPD, política do gov.br, falar com a UNP) para **fora da tela**. Com
+  `flex:1 1 auto` e `min-height:0` o conteúdo rola e os links voltam ao alcance.
+- **Botão Fechar (X) dos modais** aparecia embaixo do texto:
+  `.br-button.circle{position:relative}` (regra do alvo de toque, no fim do
+  arquivo) tem a mesma especificidade de `.br-modal-header .close` e vencia por
+  ordem — o botão voltava ao fluxo. Mesmo tropeço do botão flutuante de
+  reportar erro; aqui a correção foi qualificar a regra pelo modal.
+- **Logo gov.br do rodapé em preto**: os caminhos do SVG só tinham
+  `class="st0"`, sem nenhuma regra que a definisse, e o navegador caía no preto
+  padrão. Como o arquivo entra por `<img>`, `currentColor` não chega — a cor foi
+  para dentro do próprio SVG (branco, que é a definição da versão negativa).
+- **Rodapé**: a linha "Unidade de Gestão Normativa e de Processos — AE/GPE/UNP"
+  saiu (também em `scripts/montar_index.py`, senão voltaria na próxima geração).
+- **Textos de apoio removidos**: o tooltip do filtro "Prazo previsto entre" (o
+  campo já se explica sozinho depois da correção do calendário), "Vale para os
+  cartões e para a paginação abaixo" e "Selecione um ou mais status…".
+- **Tooltip do botão de densidade**: o balão ficava aberto por cima do menu que
+  o próprio botão abre, tapando a primeira opção. Agora sai de cena no clique.
+- **Colunas das tabelas**: `.col-curta` encolhe a coluna ao conteúdo
+  (`width:1%`), o que espremia códigos e rótulos curtos em duas ou três linhas.
+  As colunas ganharam largura mínima — ID de riscos 92px, ID de indicadores
+  100px, Nível 104px, Status 124px, Código de tarefas e subprocessos 132px,
+  "Vinculado a" 200px.
+- **"Vinculado a"** perdeu o rótulo entre parênteses ("(Macroprocesso)",
+  "(Processo)"): a sigla de duas letras no início do link já diz o nível.
+- **Fundo do painel**: era cinza claro com cards brancos, o que fazia cada card
+  e cada collapse aparecerem como um retângulo mais claro — o degrau que se via
+  no Glossário e no FAQ. Agora o fundo é branco (`--background` do DS) em toda
+  parte, e a separação fica por conta da borda e da sombra, que é como o DS
+  separa superfícies.
+- **Filtros do Glossário e do FAQ** passaram ao Componente Tag (interação
+  persistente): mesma altura de 24px, canto arredondado, cor interativa e foco
+  visível — eram dois controles desenhados à mão, cada um com um raio e uma
+  altura.
+- **Avatar do NUGEP** no tamanho grande do componente (64px no card, 56px no
+  bloco institucional).
+- **Check dos marcos** desalinhado: o `margin-left:auto` do ícone não tinha folga
+  para consumir — o rótulo ocupava a linha inteira e o check parava logo depois
+  do texto, em posição diferente a cada marco. Com `flex:1` no rótulo, os dez
+  checks voltam à mesma coluna.
+- **Marcos M1–M10 em duas linhas de cinco** (a partir de 992px): dez colunas
+  numa linha só reduziam cada etapa a uma faixa estreita, com o rótulo
+  quebrando em três ou quatro linhas.
+
+## Conferência contra os tokens Base14 e o Dicionário
+
+- **Escala tipográfica conferida contra o modo Base14 oficial**
+  (`tokens/Core/Base14 → typography.json`): 14 · up-1 15,75 · up-2 17,72 ·
+  up-3 19,93 · up-4 22,43 · up-5 25,23 · up-6 28,38 · up-7 31,93 · up-8 35,92;
+  down-1 12,44 · down-2 11,06 · down-3 9,83 · down-4 8,74. O painel tinha 31,94
+  em `--fs-xxl` (arredondamento próprio) — corrigido; entraram os degraus up-8 e
+  down-4, que faltavam. O manifesto dos tokens confirma que **Base14 é um modo
+  oficial** da v4, ao lado de Base16 — manter a base 14 nesta interface de
+  trabalho está dentro do padrão.
+- **Tema declarado no elemento raiz**, como manda o Guia de uso da v4:
+  `data-theme="light"` no `<html>`. O Modo Contraste passou a marcar também
+  `data-contrast="enabled"` ali — o contrato público da v4 —, mantida a classe
+  `.contraste-alto`, que é o que as regras do painel usam.
+- **Dicionário de Vocabulário Controlado**: em fluxo de *onboarding*, onde o
+  usuário lê de forma passiva, o termo é **"Próximo"** — "Avançar" pertence a
+  fluxos de tarefa, com o usuário ativo; o botão do tutorial foi corrigido. E
+  **"Pesquisar"** substituiu "Buscar" nos 11 pontos de consulta (rótulo de
+  campo, placeholder e nome acessível do botão), porque "Buscar" não está no
+  dicionário.
+- **Font Awesome**: a v4 pina a versão 7.0.1; o painel segue na 6.5.2. Decisão
+  deliberada — todos os ícones em uso renderizam na 6.5.2 (conferido), e trocar
+  de versão maior arrisca apagar ícones por renomeação, sem ganho visível.
+
+## Ajustes de tabela, avatar e planilha
+
+- **Foto do avatar preenchendo o círculo**: a imagem entrava no tamanho natural,
+  encostada no canto superior esquerdo, e deixava as iniciais à mostra em volta.
+  Agora ocupa 100% do círculo com `object-fit:cover` — recorta pelo centro e cobre
+  em qualquer proporção de foto.
+- **Coluna "Risco"**: a descrição do risco em negrito, o tratamento logo abaixo em
+  texto de apoio — dá para separar os dois de relance.
+- **Coluna ID de Documentos publicados**: largura mínima de 108px (a tabela não
+  tem `colgroup`, então a medida foi para o `th`).
+- **Coluna Nível** da tabela de riscos: de 104px para 128px, para "Extremo" e
+  "Moderado" não quebrarem em duas linhas.
+- **Balão dos três pontinhos**: o texto saía por fora do fundo azul. Os gatilhos
+  das tabelas vivem dentro de `.actions-trigger.text-nowrap`, e o `nowrap` descia
+  para dentro do balão — o texto seguia numa linha só, passando dos 240px da
+  caixa. O balão é superfície própria e agora quebra linha sozinho; a largura
+  máxima subiu para 280px e o texto virou título + explicação em duas linhas.
+- **"Próxima ação" no Componente Message**: era um parágrafo solto. Agora é uma
+  mensagem informativa com ícone e `role="status"` (e um texto próprio quando não
+  há ação programada, em vez de um travessão); a **Pendência** virou mensagem de
+  aviso com `role="alert"`. As duas herdam o rótulo de tipo para leitor de tela.
+
+### Planilha pronta para receber os dados reais
+
+A planilha já vinha com cabeçalho fixo, filtro automático, listas suspensas,
+colunas de fórmula em cinza e largura por coluna. O que mudou para o
+preenchimento render mais:
+
+- **Listas suspensas que avisam**: a validação estava com `showErrorMessage=False`
+  — um valor digitado fora da lista passava em silêncio e só quebrava depois, no
+  painel. Agora a célula recusa o valor com uma mensagem que diz o que fazer
+  ("Escolha uma das opções da seta ao lado da célula"), no tom do Padrão Writing:
+  sem culpar quem preencheu. Ao entrar na célula, uma dica anuncia a lista.
+- **Listra zebrada** nas linhas de dados: com abas de até 37 colunas, é o que
+  impede de trocar de linha no meio do preenchimento.
+- **Cor de guia por grupo**: azul para a hierarquia (Macroprocessos → Tarefas),
+  verde para os anexos (Documentos, Riscos, Indicadores), azul claro para o
+  conteúdo editorial (Jornada, Repositório, NUGEP, Glossário, FAQ) e cinza para
+  as abas de apoio (Parâmetros, Listas). A barra de guias é a única navegação da
+  planilha, e são 16 abas.
+- **Zoom em 90%**: as abas largas cabem sem rolagem horizontal constante.
+- **Azul do cabeçalho** atualizado para o `#0040B4` da v4 (era o `#1351B4` da v3).
+- A fonte segue **Arial**, e não Noto Sans: a planilha é preenchida no
+  Excel/LibreOffice de cada pessoa, onde a Noto Sans não está instalada — fonte
+  ausente vira substituição imprevisível.
+
+### Qual script rodar
+
+| Situação | Script |
+| --- | --- |
+| Quero **só a formatação** na planilha que já tenho | `python scripts/formatar_planilha.py` |
+| Quero **acrescentar** linhas/colunas novas do painel | `python scripts/atualizar_planilha.py` (já chama o formatador ao final) |
+| Quero **recriar** a planilha de exemplo do zero | `python scripts/gerar_planilha.py` — **apaga os dados reais** |
+
+`scripts/formatar_planilha.py` existe porque os dois caminhos anteriores não
+serviam a quem já tem conteúdo real: o gerador recria o arquivo do zero e o
+atualizador, de propósito, herda o estilo da linha vizinha e não aplica
+formatação nova. O formatador abre o `.xlsx` atual, repinta cabeçalho, listras,
+cor de guia, zoom e as mensagens das listas suspensas, e salva — **sem ler nem
+alterar uma célula de dado**. Célula pintada de propósito (coluna de fórmula em
+cinza, destaque manual de quem preencheu) é preservada. Rode com `--conferir`
+para ver o relatório sem salvar nada.
+
+## Planilha alinhada ao painel
+
+`scripts/esquema_planilha.py` declara, numa lista só, o que o painel espera de
+cada aba: nome de coluna, largura e um valor de demonstração para quando a
+célula está vazia. É a fonte de verdade que faltava — antes o gerador tinha os
+cabeçalhos e o atualizador tinha uma lista própria e incompleta, então colunas
+novas (Foto e Hierarquia do NUGEP, por exemplo) chegavam à planilha de exemplo
+e nunca à planilha em uso.
+
+`python scripts/atualizar_planilha.py` agora, além do que já fazia:
+
+1. **acrescenta as colunas que faltam** em cada aba, à direita, herdando o
+   estilo do cabeçalho vizinho e com a largura do esquema;
+2. **preenche só as células vazias** com dado fictício — quem já tem conteúdo
+   real não perde nada, e o painel abre sem buraco enquanto os dados verdadeiros
+   não chegam;
+3. **acrescenta as linhas que o painel espera** e talvez não existam — as duas
+   chefias (Gerente-Executivo da AE e Gerente da AE/GPE) que o bloco "Contato
+   institucional" precisa para mostrar a hierarquia;
+4. **completa as listas suspensas** com os itens que o painel usa;
+5. **formata tudo ao final** (cabeçalho v4, listras, cor de guia, zoom,
+   mensagens de validação), chamando `formatar_planilha.py`.
+
+Nada é recriado e nenhum dado é apagado. Depois de rodar, regenere o fallback
+offline com `python scripts/planilha_para_js.py`.
+
+### UI kits v3.5.0
+
+A pasta `govbr-ds-design-uikits-v3.5.0` traz só os arquivos de design (`.fig` e
+`.xd`) dos kits web, wireframe, iOS e Material, mais o material de repositório
+(licença, contribuição, lint). Não há nada a incorporar: são binários de
+ferramenta de design, na **v3.5** — anteriores à v4 que o painel já segue —, e o
+kit wireframe é de baixa fidelidade (símbolos `.wf-*` em tons de cinza), sem
+valor visual exato. Os valores que valeriam já vieram dos tokens da v4, que é a
+implementação versionada.
+
+## Planilha atualizada no arquivo (não só nos scripts)
+
+`data/painel-processos-dados.xlsx` foi **regravado** com o esquema e a formatação
+do painel. Nenhum dado foi apagado; o que havia foi lido, realinhado e devolvido.
+O que mudou no arquivo:
+
+- **NUGEP**: colunas **Foto** e **Hierarquia** criadas e preenchidas (retratos de
+  exemplo, para trocar pelas fotos oficiais), e as duas chefias que o bloco
+  "Contato institucional" precisa — Gerente-Executivo da AE e Gerente da AE/GPE —
+  entraram como linhas, com a coluna Ordem renumerada.
+- **Atividades**: a coluna antiga `Subprocesso` virou `Vinculo_Pai` (13 linhas
+  migradas), que é o nome que o painel lê. A coluna `Objetivo`, que existia fora
+  do esquema, foi preservada ao final.
+- **Processos**: coluna `Ultima_Atualizacao` criada.
+- **Duas abas novas**: **LEIA-ME**, com as regras de preenchimento e o que cada
+  aba alimenta no painel, e **Listas**, com as 21 listas suspensas.
+- **Formatação**: cabeçalho no azul `#0040B4` da v4 com texto branco e altura de
+  30px, listra zebrada nas linhas de dados, borda fina cinza, cabeçalho
+  congelado por aba, filtro automático, largura por coluna, zoom em 90% e cor de
+  guia por grupo (azul para a hierarquia, verde para os anexos, azul claro para o
+  conteúdo editorial, cinza para as abas de apoio).
+- **Listas suspensas com mensagem**: valor fora da lista é recusado com "Escolha
+  uma das opções da seta ao lado da célula", e ao entrar na célula aparece a dica
+  de uso. Antes a validação era silenciosa e o erro só aparecia no painel.
+
+Os scripts continuam valendo para as próximas rodadas (`atualizar_planilha.py`,
+`formatar_planilha.py`, `esquema_planilha.py`) — a diferença é que o arquivo já
+está pronto para baixar e começar a preencher.
+
+## Revisão pelos guias de código do DS
+
+Passagem pelos guias de **Boas práticas de HTML**, **Acessibilidade no Código
+HTML (eMAG)**, **Boas práticas de CSS**, **Codificação JavaScript**, **Codificação
+Sass**, **Uso do WAI-ARIA** e **Navegadores suportados**:
+
+| Guia | Situação |
+| --- | --- |
+| HTML — esqueleto | `<!doctype html>`, `lang="pt-BR"`, UTF-8, viewport e `title` ✓. Faltava a meta **`X-UA-Compatible`** — incluída. |
+| HTML — formatação | Tags e atributos em minúsculo, aspas duplas, atributos booleanos sem valor (`hidden`, `disabled`, `active`), `type` omitido em `script`/`link` ✓. |
+| eMAG — um H1 por página | **Corrigido**: as telas internas abriam em `h2` e nenhuma tinha `h1`. Cada tela é uma página do painel e agora traz um `h1` com o próprio nome. |
+| eMAG — hierarquia sem salto | **Corrigido**: os cards do NUGEP e do bloco institucional saltavam de `h2` para `h4`; passaram a `h3`. |
+| eMAG — alternativa em texto | Nenhuma `<img>` sem `alt`; as decorativas usam `alt=""` + `aria-hidden` ✓. |
+| eMAG — etiquetas nos campos | 53 campos, todos com `label` associado ✓ (auditado ao vivo). |
+| eMAG — tabelas só para dados | Nenhuma tabela de diagramação; todas com `th`, `caption` e `scope` ✓. |
+| CSS — arquitetura e comentários | Comentário de bloco por componente explicando finalidade e limite da escolha ✓. |
+| CSS — mobile first | Os utilitários e o grid usam `min-width`; as exceções de tela pequena estão documentadas no ponto de uso. |
+| CSS — construir pensando em temas | Sem valor hard-coded nos componentes: tudo sai de token (`--br-*` e apelidos), que é o que permite o Modo Contraste ✓. |
+| JavaScript — `no-console` | Nenhum `console.log`; só `console.error` no tratamento de falha de carga ✓. |
+| JavaScript — classe e método privado | O painel não usa classes ES6 (é ES5 clássico, para abrir por `file://` sem transpilação); a convenção equivalente — prefixo `_` e função por componente — é seguida. Documentado como simplificação intencional. |
+| Sass | Não se aplica: o painel serve CSS direto, sem etapa de build. Os blocos seguem a mesma divisão que o guia pede em mixins (tokens → default → variações). |
+| WAI-ARIA | `role` + `aria-*` conforme a taxonomia em todos os componentes; `role="none"` só onde o componente prevê, com o rótulo no `listbox` interno ✓. |
+| Navegadores | Chrome 49+, Edge 14+, Firefox 67+ e Safari 11+ — o painel usa apenas recursos suportados nessa faixa. Sem Internet Explorer, como o guia recomenda. |
+
+### Formato de data e de percentual na planilha
+
+O LEIA-ME gravado na primeira versão contradizia o dado: mandava escrever
+`DD/MM/AAAA` enquanto todas as datas estavam em ISO, e "percentual de 0 a 100"
+enquanto a coluna guardava fração. Quem seguisse o texto quebrava a coluna.
+Corrigido no arquivo:
+
+- **Datas em `AAAA-MM-DD`, como texto** — é o que os dados usam e o que o painel
+  lê. O LEIA-ME ganhou também o aviso de formatar a coluna como Texto antes de
+  digitar: o Excel converte `29/05/2026` em número de série.
+- **Percentual em fração**: 0,45 = 45%, 1 = 100%.
+
+E `fmtData` deixou de aceitar só ISO. Agora entende as três formas que aparecem
+na prática — ISO, `DD/MM/AAAA` e o número de série do Excel — para uma digitação
+fora do padrão não apagar a coluna inteira da tela.
+
+## Fichas, tags e utilitários JS
+
+### Fichas (macroprocesso → processo → subprocesso → atividade → tarefa)
+
+- **Um h1 por ficha (eMAG)**: as cinco fichas abriam o cabeçalho em `h2` e não
+  tinham `h1` nenhum — o leitor de tela não achava o título da ficha. O elemento
+  visual é o mesmo, só o nível mudou.
+- **Rótulo de nível uniforme**: o "Subprocesso · Categoria" dependia de o
+  macroprocesso ser alcançado pelo processo pai; num subprocesso aninhado isso
+  podia falhar e o rótulo saía sem a categoria. Agora uma função só
+  (`categoriaDe`) sobe a hierarquia a partir de qualquer nível, e os cinco heróis
+  usam a mesma fórmula — inclusive a **Tarefa**, que não mostrava categoria.
+- **Coluna "Documento"** (Documentos publicados) com largura mínima de 420px.
+- Variável morta (`paiDireto`) removida da ficha do subprocesso.
+
+### Tags no Componente Tag
+
+As pílulas de **status do mapeamento** (Não iniciado, Em andamento, Concluído,
+Suspenso) e de **nível de risco** (Baixo, Moderado, Alto, Extremo) eram
+desenhadas à mão. Passaram a ser `.br-tag`, e o CSS local ficou só com a cor de
+cada situação — altura, canto e espaçamento vêm do componente.
+
+A diretriz de acessibilidade da Tag é explícita: **a cor não pode ser o único
+meio de diferenciação**. Cada tag ganhou um ícone próprio (o nível de risco em
+escada: check → exclamação → triângulo → radiação), e o texto vive num `<span>`
+referenciado por `aria-describedby`, como o componente prevê.
+
+### Utilitários JavaScript
+
+| Utilitário | Situação |
+| --- | --- |
+| **Checkgroup** | **Corrigido**: no estado intermediário o checkbox pai leva `checked` **e** `indeterminate`. O painel marcava só `indeterminate`, então o pai nascia visualmente vazio quando havia filhos selecionados, e "selecionar todos" virava "desselecionar" no primeiro clique. |
+| **Collapse** | Acionadores com `data-toggle` + `data-target`; `aria-controls`, `aria-expanded` e `hidden` gerados pelo JS ✓. Ícone chevron, corrigido na rodada anterior. |
+| **Dropdown** | `data-toggle`, `data-target` e `id` no acionador; alvo com `id` ✓. Ícone caret. |
+| **Accordion** | O painel não usa o utilitário `data-toggle="accordion"` — os blocos que se comportariam como accordion (Filtros, grupos do menu) são `collapse` independentes, sem exclusão mútua, que é a diferença entre os dois. O componente `br-accordion` (FAQ) é outro caminho e segue sua própria anatomia. |
+| **Scrim** | `data-scrim="true"` no scrim; `role="dialog"` e `aria-modal` no diálogo interno, não no scrim. Divergência intencional: os dois no mesmo elemento anunciariam dois diálogos aninhados ao leitor de tela. Foco preso e ESC funcionam. |
+| **Tooltip** | `aria-describedby`, carência antes de fechar e balão alcançável pelo cursor (WCAG 1.4.13) ✓. |
+
+### Templates
+
+- **Template Base**: a estrutura que o template define já é a do painel —
+  `br-skiplink` com âncoras numeradas, `header[role=banner]` dentro de
+  `container-lg`, navegação, `main#main[role=main]` com o conteúdo e
+  `footer[role=contentinfo]`. Sem mudança.
+- **Template Erro — aplicado**: a tela de "não encontrado" era um card com um
+  parágrafo. Passou à anatomia do template: ilustração, mensagem em dois níveis
+  (o que houve + como seguir), texto explicativo, **campo de busca** e os três
+  **botões auxiliares** — Página Anterior, Página Principal e Envie um Feedback
+  (que abre o relato de erro do painel). A busca leva à tela de pesquisa com o
+  termo digitado.
+
+## Revisão dos Padrões de Design, Mobile e Writing
+
+### Corrigido
+
+- **Empty States em tabela**: a diretriz é explícita — o estado vazio deve
+  substituir **toda** a estrutura da tabela (cabeçalho, rodapé, linhas e
+  colunas), senão o usuário perde tempo lendo o cabeçalho de uma tabela sem
+  dados. Em Documentos publicados, a mensagem vinha numa célula com `colspan`,
+  com o cabeçalho e a paginação ainda na tela. Agora a tabela inteira dá lugar
+  ao estado vazio.
+- **Ajuda e Comunicação — iconografia**: o botão de relato usava o ícone de
+  inseto. A diretriz reserva o **balão de comentário** (`comment` / `comment-alt`)
+  ao envio de feedback do usuário — trocado. O ícone de ajuda contextual do
+  painel já é o `info-circle` que a diretriz indica para esse caso.
+- **Densidade + Mobile — área mínima de ação**: a diretriz separa dois mínimos,
+  24px para cursor e **40px para toque**. O painel dimensionava tudo para os
+  24px do mouse. Em aparelho de toque (`pointer:coarse`) a área de ação passa a
+  40px; onde o elemento não pode crescer sem quebrar o layout, a área
+  **ultrapassa** as dimensões da superfície, que é a saída prevista na própria
+  diretriz. O desktop não muda.
+- **Microcopy — visualização de dados**: número em tabela alinha à direita
+  (probabilidade, impacto e P×I dos riscos), com algarismos de largura fixa.
+  Texto segue à esquerda e o **ID também** — é rótulo, não quantidade, como a
+  diretriz distingue.
+- **Writing — navegação**: os nomes acessíveis das abas passaram a usar iniciais
+  maiúsculas ("Portfólio de Processos", "Repositório de Materiais"), a regra que
+  a diretriz dá para componentes de navegação.
+
+### Conferido, sem alteração
+
+| Padrão | Situação |
+| --- | --- |
+| **Ajuda e Comunicação** | Ajuda global na aba **Perguntas Frequentes**, acessível de qualquer tela pela navegação (a diretriz indica cabeçalho, rodapé ou menu); ajuda contextual em Tooltip com ícone "i", como o padrão pede para texto curto. |
+| **Content Overflow** | Rolagem vertical como norma; a horizontal só nas tabelas largas, com sombra de rolagem. Truncamento sempre com acesso ao texto completo, e nunca em título, rótulo de botão ou mensagem. Link externo sinalizado com `external-link-alt` e aviso "(abre em nova aba)" para leitor de tela. |
+| **Dropdown** | Acionador + identificador `caret` + superfície flutuante com elevação a partir da camada 2; inverte a direção junto às bordas; fecha pelo acionador, por clique fora e por ESC. |
+| **Collapse** | Identificador `chevron` apontando para a direção da expansão; conteúdo empurra os elementos adjacentes; múltiplos elementos abrem ao mesmo tempo (o painel é de consulta comparativa). |
+| **Formulário** | Rótulos em sentença acima do campo, sempre visíveis; par de botões com a ênfase primária à direita; sem "Redefinir"/"Limpar Formulário" em entrada de dados. |
+| **Gráfico** | Anatomia com cabeçalho (título + legenda), área principal e `role="img"` com descrição; matriz de risco com legenda direta e tags que não dependem de cor. |
+| **Onboarding** | Carousel + overlay + Step como indicador de progresso, saída disponível em todas as páginas, tela de boas-vindas e tela de conclusão. |
+| **Navegação** | Lateral pelas abas (sempre visíveis), progressiva pelos cards e pelo Wizard, reversa por breadcrumb — os três tipos que a diretriz define. |
+| **Mobile** | O painel é **web responsivo**: pela tabela comparativa da diretriz, todos os dez fundamentos seguem o DS (a coluna "Nativo" só vale para Android/iOS nativos). Nada a substituir. |
+| **Princípios de UX Writing** | Voz neutra e direta, sem gíria nem jargão; hiperlinks descritivos (sem "clique aqui"); classificação por cor sempre acompanhada de texto e ícone. |
+
+## Medidas do Componente Tag conferidas contra o código oficial
+
+A pasta `govbr-ds-core-v3.7.0` trouxe o **SCSS de origem** dos componentes —
+era o que faltava para conferir medidas em vez de estimá-las. Começando pela
+Tag (`src/components/tag/_mixins.scss`, sobre a escala de espaçamento de base
+8px), as nossas estavam abaixo do padrão em todos os tipos:
+
+| Tipo | Tinha | Oficial |
+| --- | --- | --- |
+| Texto — small / medium / large | 16 · 24 · 32 | **20 · 28 · 36** (2xh · 3xh · 4xh) |
+| Texto — canto | pílula | **4px** (`surface-rounder-sm`) |
+| Texto — fonte | 12,44px | **14px** (`font-size-scale-base`) |
+| Status | 8 · 12 · 16 | **12 · 16 · 24** (baseh · 2x · 3x) |
+| Contagem | 16 · 20 · 24 | **20 · 24 · 28** (2xh · 3x · 3xh) |
+| Ícone | — | **28 · 32 · 44** (3xh · 4x · 5xh), círculo |
+| Interação | 16 · 24 · 32 | **32 · 40 · 44** (4x · 5x · 5xh) |
+
+O **canto** é o achado que mais muda a aparência: a Tag de texto do DS é um
+retângulo de canto pequeno, não uma pílula. A pílula pertence só ao tipo
+contagem, o único que o SCSS declara com `border-radius:100em`. Entraram também
+o espaçamento mínimo de 4px entre tags vizinhas e a borda branca de 1px que
+status e contagem levam para se destacarem sobre qualquer fundo.
+
+Como as tags de status do mapeamento e de nível de risco herdam do componente,
+elas acompanham a correção.
+
+## Ilustrações oficiais conferidas cena a cena
+
+O pacote completo de ilustrações (46 empty-space, 24 de erro, 8 personagens ×
+16 poses, objetos e fundos) permitiu conferir se cada tela mostra a **cena**
+certa — não bastava usar arquivos do pacote, era preciso usar o arquivo que
+conta o que aconteceu.
+
+Estados vazios, antes e depois:
+
+| Tela | Tinha | Agora |
+| --- | --- | --- |
+| Portfólio, filtros sem retorno | 00 (mensagem enviada) | **07** — lupa sobre documento, com "?" |
+| Busca livre sem retorno | 00 (mensagem enviada) | **44** — a mesma cena em fundo orgânico |
+| Documentos publicados | 05 (segurança de dados) | **03** — maleta cheia de papéis |
+| Repositório de materiais | 10 (relógio) | **04** — tela com pastas e arquivos |
+| NUGEP sem integrantes | 20 (engrenagem) | **14** — pessoa saindo de um dispositivo |
+| Glossário | 05 (segurança de dados) | **07** — pesquisa sem retorno |
+
+A busca livre e o filtro do portfólio usam variações da **mesma** cena (07 e
+44): são o mesmo tipo de vazio, e a variação evita repetir a imagem quando o
+usuário passa de um para o outro.
+
+No **Template Erro** a escolha se confirmou: `erro/error01.png` é a cena do 404,
+exatamente o caso de código inexistente na URL.
+
+No **tutorial**, duas páginas prometiam no texto alternativo uma cena que o
+arquivo não mostrava — a primeira dizia "foguete decolando" exibindo a cena de
+mensagem enviada, e a quarta dizia "medidor de desempenho" exibindo um relógio.
+A abertura passou a mostrar a **personagem acenando** (Lina, do pacote oficial),
+que é onde a saudação faz sentido; a página de indicadores mostra a tela com
+painéis; e a de encerramento, a maleta de trabalho.
+
+As demais pastas do pacote foram avaliadas e ficaram de fora: **objetos** e
+**fundos geométricos** são peças de composição para arte editorial, não para
+estado de interface, e o painel não tem superfície que peça isso. Os
+**personagens** entram apenas na saudação do tutorial — o fundamento Ilustração
+reserva figura humana a boas-vindas, erro e vazio, e usá-los em mais pontos
+daria ao painel um tom de campanha que ele não tem.
+
+## Seleção de linhas e exportação em CSV em todas as tabelas
+
+A tabela de Documentos publicados tinha seleção de linhas e exportação; as
+demais, não. O Componente Table define isso como o **comportamento 4** da sua
+anatomia, então passou a valer para todas.
+
+A coluna de seleção é **injetada em JS**, não escrita em cada tabela: as linhas
+são montadas por dezenas de trechos diferentes em `app.js`, e acrescentar uma
+célula em cada um multiplicaria o mesmo código por dezenas de lugares. O CSV
+também sai do DOM — o texto visível de cada célula —, de modo que qualquer
+tabela nova ganha a exportação sem escrever uma linha.
+
+O que entrou, seguindo a anatomia:
+
+- **Caixa de seleção** no início de cada linha e **"selecionar tudo"** no header,
+  com o estado intermediário do utilitário Checkgroup (`checked` + `indeterminate`)
+  quando parte das linhas está marcada;
+- **Barra Contextual** surgindo sob a Barra de Título com a contagem ("1 item
+  selecionado" / "N itens selecionados") e as ações da seleção — exportar em CSV
+  e limpar;
+- **Estado selecionado** na linha (`is-selected`);
+- O CSV sai com BOM e ponto e vírgula, para abrir direto no Excel em pt-BR, e o
+  nome do arquivo vem do título da tabela.
+
+A linha de conteúdo expandido tem o `colspan` ajustado junto, para não
+desalinhar com a coluna nova.
+
+## Menu gov.br e textos editáveis pela planilha
+
+### Submenus do menu gov.br
+
+Os painéis de submenu (Serviços → Buscar serviços por → Categorias…) se
+sobrepunham ao texto do nível anterior a cada abertura. O submenu do menu gov.br
+é um painel que **desliza por cima** do nível que o abriu — é o que dá sentido ao
+botão "Voltar" que cada um traz. Aqui ele estava expandindo em linha, como filho
+flex do próprio `<li>`: cada nível empurrava o conteúdo e, do segundo em diante,
+os painéis se atropelavam. Agora cada `.off` cobre o painel que o abriu (o de
+nível 1 cobre a lista base, o de nível 2 cobre o de nível 1) com rolagem própria.
+
+### Textos institucionais na planilha
+
+A aba **Parâmetros** ganhou três chaves, para o texto mudar sem tocar no código:
+
+| Chave | O que controla |
+| --- | --- |
+| `Titulo_Inicio` | Título da tela inicial |
+| `Subtitulo_Inicio` | Linha de apoio sob o título (fica oculta se vazia) |
+| `Titulo_Repositorio` | Título da aba Repositório de materiais |
+
+Somadas às que já existiam — `Contato_Unidade`, `Contato_Email`,
+`Contato_Telefone`, `Link_Metodologia` e `Link_Guia` —, são oito pontos de texto
+institucional editáveis pela planilha.
+
+A leitura passa por uma função `par(chave, padrao)` que **cai no texto atual**
+quando a chave não existe: planilha antiga continua funcionando e o painel nunca
+abre com buraco. Para acrescentar outro texto editável, basta uma linha nova na
+aba Parâmetros e uma chamada a `par()` no ponto correspondente.
+
+As três linhas foram gravadas **direto no .xlsx**, com a listra zebrada da aba, e
+entraram também em `js/dados.js` (fallback offline) e em
+`scripts/dados_conteudo.py` (gerador). Nenhum dado existente foi alterado.
+
+## Filtros, ordenação e expansão de linha
+
+### Filtro que não voltava para "todos"
+
+O bug tinha duas faces. No **Select de seleção única** o item é um radio:
+clicar de novo no já escolhido não dispara mudança, e apagar o texto do campo
+só filtra a lista — ao fechar, o rótulo era reescrito. Não havia como voltar a
+"Todos os tipos". Agora o item já escolhido desmarca no segundo clique, e o
+campo ganha um **botão de limpar** que aparece enquanto há escolha.
+
+A outra face era de tela: o recorte continuava valendo depois de sair da aba,
+sem nada que o explicasse. **Documentos, Repositório e Glossário** ganharam o
+mesmo rodapé de filtros ativos que o Portfólio já tinha — tags com o que está
+aplicado, cada uma removível, e o botão **Limpar Filtros**.
+
+### Ordenação em três estados
+
+O componente prevê três (seta dupla = ordenação padrão, crescente,
+decrescente), mas o terceiro clique voltava a "crescente" e não havia como
+desfazer. Agora o ciclo é **crescente → decrescente → ordem original**, que é a
+ordem em que a tela montou a tabela, guardada na primeira ordenação.
+
+### Expandir e retrair linha em todas as tabelas
+
+O comportamento 3 da anatomia do Table, que só existia em Documentos
+publicados, passou a valer para todas. A coluna do chevron é **injetada em JS**,
+pelo mesmo motivo da coluna de seleção: as linhas são montadas por dezenas de
+trechos em `app.js`. Quem quiser o comportamento só emite, depois da linha, um
+`<tr class="collapse">` — a coluna, o `colspan`, o `aria-controls` e o chevron saem
+daqui. O conteúdo expandido leva sombra interna, que é como o componente marca
+a hierarquia entre o detalhe e a linha que o abriu.
+
+A informação secundária saiu das colunas e foi para o detalhe. Uma informação
+aparece **ou** na coluna **ou** no detalhe, nunca nas duas:
+
+| Tabela | Ficou na tabela | Foi para o detalhe |
+| --- | --- | --- |
+| Atividades | Código · Atividade · Responsável · Prazo | Entradas, saídas, sistemas, executor, base normativa, corresponsáveis |
+| Tarefas | Código · Tarefa · Tipo · Duração | Descrição, responsável, sistema, observações |
+| Riscos | ID · Risco · P · I · P×I · Nível · Status | Tratamento, resposta, categoria, responsável |
+| Indicadores | ID · Indicador · Meta · Resultado · Situação · Última medição | Fórmula, periodicidade, polaridade, fonte |
+| Subprocessos | Código · Subprocesso · Ação | Entradas, saídas, sistemas, unidade responsável |
+
+A **tabela de atividades** passou ao formato da de tarefas (código, nome,
+classificação e tempo), que era o pedido: mesma disposição, dados próprios de
+cada nível.
+
+### Outros
+
+- **Tique do checkbox no Select** ficava no canto superior esquerdo do quadrado:
+  a caixa começa em 14px/8px e o tique estava em 19/9, quando o deslocamento
+  correto dentro dela é 9/4 — daí 23/12.
+- **NUGEP**: e-mail institucional e nome de unidade são cadeias longas sem
+  espaço, que em tela estreita passavam da borda do cartão. O `min-width:0`
+  desarma o mínimo automático do item flex e a quebra forçada vale para as
+  cadeias sem espaço.
+
+## Planilha: o que se calcula sozinho
+
+Revisão de campo repetido — informação que o usuário digitava duas vezes, ou
+que o painel já derivava do que estava ao lado. Sete colunas passaram a ser
+**fórmula**, no cinza que a planilha já usava para "não digite aqui":
+
+| Aba · coluna | De onde vem |
+| --- | --- |
+| Processos · `Macroprocesso` | O código do processo já carrega o do macroprocesso (P-06.01 → MP-06) |
+| Processos · `Percentual` | Marcos "Sim" ÷ marcos aplicáveis; os "Não se aplica" saem da conta |
+| Documentos, Riscos, Indicadores · `Vinculo_Nivel` | O prefixo do código em `Vinculo_Codigo` (MP-, P-, SP-, A-, T-) |
+| Riscos · `Nivel_PxI` | Probabilidade × Impacto |
+| Riscos · `Classificacao` | Faixa do P×I: 20+ Extremo · 12+ Alto · 5+ Moderado · abaixo, Baixo |
+| Indicadores · `Situacao` | Resultado contra Meta, conforme a Polaridade |
+| NUGEP · `Unidade_Nome` | A sigla, pela tabela de unidades na aba Listas |
+
+As três últimas o painel **já recalculava** ao carregar (`classeRisco` e
+`situacaoInd` em `app.js`) — o que estava digitado era ignorado. As fórmulas usam
+exatamente as mesmas faixas e a mesma regra, então planilha e tela dizem a
+mesma coisa.
+
+A aba **Listas** ganhou a tabela de referência de unidades (colunas V e W):
+a sigla puxa o nome por extenso, que antes era redigitado a cada pessoa do
+NUGEP.
+
+O **LEIA-ME** passou a ter um bloco próprio sobre as colunas cinza — o que cada
+uma calcula e por que não se digita nelas — e a nota sobre vínculo múltiplo: a
+fórmula resolve o vínculo único; para apontar para mais de um item, os códigos
+vão separados por ponto e vírgula e os níveis à mão, na mesma ordem.

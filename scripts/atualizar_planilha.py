@@ -45,6 +45,9 @@ from copy import copy
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import esquema_planilha as ESQ
+
 BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 XLSX = os.path.join(BASE, "data", "painel-processos-dados.xlsx")
 
@@ -286,8 +289,7 @@ def acrescenta_colunas(ws, nomes):
         c = ws.cell(row=1, column=j, value=nome)
         if j > 1:
             copia_estilo(c, ws.cell(row=1, column=j - 1))
-        largura = 30
-        ws.column_dimensions[get_column_letter(j)].width = largura
+        ws.column_dimensions[get_column_letter(j)].width = ESQ.largura(ws.title, nome)
         criadas.append(nome)
     return criadas
 
@@ -311,6 +313,17 @@ def preenche_coluna(ws, nome, valores):
         copia_estilo(alvo, ws.cell(row=r, column=max(1, j - 1)))
         escritas += 1
     return escritas
+
+
+def existe_valor(ws, coluna, valor):
+    """True se o valor já aparece na coluna indicada (comparação textual)."""
+    if valor in (None, "") or not coluna:
+        return False
+    alvo = str(valor).strip()
+    for r in range(2, ws.max_row + 1):
+        if str(ws.cell(row=r, column=coluna).value or "").strip() == alvo:
+            return True
+    return False
 
 
 def existe_codigo(ws, codigo):
@@ -493,7 +506,78 @@ def main():
         print("\nNada mudou — a planilha já estava atualizada.")
         return 0
 
+    # 7. Alinhamento ao esquema canônico (scripts/esquema_planilha.py):
+    #    toda coluna que o painel lê e ainda não existe na planilha é criada
+    #    à direita e preenchida com dado de demonstração onde a célula está
+    #    vazia. Nada existente é sobrescrito.
+    novas_cols, novas_cels, novas_linhas = [], 0, 0
+    for aba in ESQ.ESQUEMA:
+        if aba not in wb.sheetnames:
+            print("7. AVISO: aba %s não encontrada — pulando." % aba)
+            continue
+        ws = wb[aba]
+        for nome in acrescenta_colunas(ws, ESQ.colunas(aba)):
+            novas_cols.append(aba + "." + nome)
+        # Preenche as vazias (das colunas recém-criadas e das que já
+        # existiam mas vieram em branco) com o valor de demonstração.
+        cols = cols_por_cabecalho(ws)
+        ult = ultima_linha(ws)
+        for nome in ESQ.colunas(aba):
+            if nome not in cols:
+                continue
+            j = cols[nome]
+            for i, r in enumerate(range(2, ult + 1)):
+                alvo = ws.cell(row=r, column=j)
+                if alvo.value not in (None, ""):
+                    continue
+                v = ESQ.valor_demo(aba, nome, i, ws)
+                if v in (None, ""):
+                    continue
+                alvo.value = v
+                copia_estilo(alvo, ws.cell(row=r, column=max(1, j - 1)))
+                novas_cels += 1
+        # Linhas que o painel espera e que talvez não existam (as chefias
+        # do bloco "Contato institucional" da aba NUGEP, por exemplo).
+        cols = cols_por_cabecalho(ws)
+        for reg in ESQ.LINHAS_NOVAS.get(aba, []):
+            col_nome = cols.get("Nome")
+            if col_nome and existe_valor(ws, col_nome, reg.get("Nome")):
+                continue
+            acrescenta_linha(ws, reg)
+            novas_linhas += 1
+    print("7. Esquema: %d coluna(s) nova(s), %d célula(s) preenchida(s), "
+          "%d linha(s) nova(s)." % (len(novas_cols), novas_cels, novas_linhas))
+    if novas_cols:
+        print("   colunas: " + ", ".join(novas_cols))
+        mudou.append("%d coluna(s) do esquema" % len(novas_cols))
+    if novas_cels:
+        mudou.append("%d célula(s) com dado de demonstração" % novas_cels)
+    if novas_linhas:
+        mudou.append("%d linha(s) do esquema" % novas_linhas)
+
+    # 8. Itens que precisam existir nas listas suspensas
+    if "Listas" in wb.sheetnames:
+        add_itens = 0
+        for lista, itens in ESQ.ITENS_LISTAS.items():
+            for item in itens:
+                res = acrescenta_item_lista(wb["Listas"], lista, item)
+                if res:
+                    estende_validacoes(wb, res[0], res[1])
+                    add_itens += 1
+        print("8. Listas: %d item(ns) acrescentado(s)." % add_itens)
+
     wb.save(XLSX)
+    # A formatação do painel (cabeçalho v4, listras, cor de guia, zoom e as
+    # mensagens das listas suspensas) é aplicada por scripts/formatar_planilha.py,
+    # que reabre o arquivo e não toca em nenhum valor — assim as linhas
+    # recém-acrescentadas entram já no padrão, sem duplicar a lógica aqui.
+    try:
+        import formatar_planilha
+        print("")
+        formatar_planilha.main()
+    except Exception as e:  # noqa: BLE001 — formatar é acessório, não pode
+        print("Aviso: formatação não aplicada (%s)." % e)  # derrubar a atualização
+        print("Rode 'python scripts/formatar_planilha.py' à parte.")
     print("\nOK → " + os.path.relpath(XLSX, BASE))
     for m in mudou:
         print("   · " + m)
