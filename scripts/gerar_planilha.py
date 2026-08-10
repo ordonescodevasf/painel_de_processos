@@ -1092,5 +1092,15 @@ ordem_final = ["LEIA-ME", "Macroprocessos", "Processos", "Subprocessos", "Ativid
                "Repositorio", "NUGEP", "Glossario", "FAQ", "Parametros", "Listas"]
 wb._sheets = [wb[n] for n in ordem_final]
 wb.active = 0
-wb.save("/home/claude/painel-processos/data/painel-processos-dados.xlsx")
-print("Planilha gerada com sucesso.")
+from pathlib import Path
+
+DESTINO = Path(__file__).resolve().parent.parent / "data" / "painel-processos-dados.xlsx"
+wb.save(DESTINO)
+
+# O openpyxl grava a fórmula, nunca o resultado dela — o cache de valor do XML
+# fica vazio e qualquer leitor que não seja o Excel (o painel, entre eles) lê
+# célula nula nas colunas calculadas. Este passo recalcula e grava `<f>` e `<v>`
+# juntos, como o Excel faria. Sem ele a planilha sai quebrada para o painel.
+from cachear_formulas import cachear  # noqa: E402
+
+print(f"Planilha gerada com sucesso ({cachear(DESTINO)} fórmulas com valor calculado).")

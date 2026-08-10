@@ -313,11 +313,11 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 .pct .valor{font:700 var(--fs-base)/1 var(--font);color:var(--cv-navy);min-width:3ch;text-align:right;}
 
 /* ── marcos M1–M9 ── */
-.marcos{display:grid;gap:var(--sp1);grid-template-columns:repeat(auto-fit,minmax(min(150px, 100%), 1fr));
-  list-style:none;margin:0;padding:0;counter-reset:marco;}
-.marcos li{display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-sm);
+.marcos{display:grid;gap:var(--sp1);grid-template-columns:repeat(auto-fit,minmax(min(210px, 100%), 1fr));
+  list-style:none;margin:0;padding:0;counter-reset:marco;overflow:visible;}
+.marcos li{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);overflow:visible;
   border:1px solid var(--d-bd);border-radius:var(--r-sm);padding:6px 8px;background:var(--gray-2);}
-.marcos li::before{counter-increment:marco;content:"M" counter(marco);
+.marcos li::before{counter-increment:marco;content:"M" counter(marco);flex:0 0 auto;
   font:700 10px/1.6 var(--font);color:var(--gray-60);}
 /* Faixa "Monitoramento e avaliação": desenha, sob a régua de marcos, que
    as duas atividades correm em paralelo a todos eles em vez de ocupar uma
@@ -338,10 +338,15 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 @media(max-width:575.98px){.marcos-continuo .mc-trilho{display:none;}}
 .marcos li.feito{background:#e3f5e1;border-color:var(--pp-ok);}
 .marcos li.feito::before{color:var(--pp-ok);}
-.marcos li > span:first-child{flex:1 1 auto;min-width:0;}
-.marcos li > i{margin-left:auto;}
-.marcos li .dica{align-self:flex-start;}
-.marcos li.feito i{color:var(--pp-ok);} .marcos li:not(.feito) i{color:var(--gray-30);}
+.marcos li > span:first-child{flex:1 1 auto;min-width:0;overflow-wrap:break-word;}
+/* Ordem fixa da linha: M1 · rótulo (elastástico) · "i" · check. Os dois ícones
+   têm largura própria e não encolhem, para nunca montarem sobre o texto. */
+.marcos li > i{margin-left:0;flex:0 0 auto;}
+.marcos li .dica{align-self:center;flex:0 0 auto;margin-left:auto;overflow:visible;}
+/* O ícone de informação é do tooltip, não do estado do marco — fica neutro
+   mesmo no marco concluído, senão some dentro do verde do check. */
+.marcos li.feito > i{color:var(--pp-ok);} .marcos li:not(.feito) > i{color:var(--gray-30);}
+.marcos li .dica .dica-btn i{color:var(--gray-60);}
 
 /* ── SIPOC ── */
 .sipoc{display:grid;gap:var(--sp2);grid-template-columns:repeat(auto-fit,minmax(min(150px, 100%), 1fr));}
@@ -947,7 +952,7 @@ body.contraste-alto .marcos li.na{opacity:1;}
 .ci-rot{font:700 10px/1.4 var(--font);letter-spacing:.06em;text-transform:uppercase;
   color:var(--gray-60);}
 .ci-equipe{display:grid;gap:var(--sp2);
-  grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));}
+  grid-template-columns:repeat(auto-fill,minmax(min(310px,100%),1fr));}
 .perfil-inst{display:flex;gap:var(--sp2);align-items:flex-start;padding:var(--sp2);
   border:1px solid var(--gray-10);border-radius:var(--r-md);background:var(--pure-0);}
 .perfil-inst.chefia{border-color:var(--blue-warm-vivid-30,#a8c0e8);
@@ -1038,7 +1043,19 @@ body.contraste-alto .pp-hero-sub{color:#fff;}
    desarma o mínimo automático do item flex (que é o tamanho do conteúdo)
    e a quebra forçada vale para as cadeias sem espaço. ── */
 .nugep-card,.perfil-inst,.perfil-dados,.nugep-contato{min-width:0;}
-.nugep-card h3,.perfil-dados h3,.nugep-contato a,.nugep-procs a,.perfil-inst a{
+.nugep-card h3,.perfil-dados h3,.nugep-procs a{
   overflow-wrap:anywhere;word-break:break-word;}
 .nugep-contato a,.perfil-inst a{align-items:flex-start;}
 .nugep-contato a i,.perfil-inst a i{flex:0 0 auto;margin-top:3px;}
+/* Endereço de e-mail e telefone não se quebram: um e-mail partido em duas
+   linhas deixa de ser legível como endereço. Ficam em linha única dentro do
+   card, e o texto que não couber é cortado com reticências — o endereço
+   completo continua no title e no próprio href. */
+.nugep-contato a[href^="mailto:"],.nugep-contato a[href^="tel:"],
+.perfil-inst a[href^="mailto:"],.perfil-inst a[href^="tel:"]{align-items:center;}
+.nugep-contato a[href^="mailto:"] span,.nugep-contato a[href^="tel:"] span,
+.perfil-inst a[href^="mailto:"] span,.perfil-inst a[href^="tel:"] span,
+.nugep-contato a[href^="mailto:"],.perfil-inst a[href^="mailto:"]{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.nugep-contato a[href^="mailto:"] i,.perfil-inst a[href^="mailto:"] i,
+.nugep-contato a[href^="tel:"] i,.perfil-inst a[href^="tel:"] i{margin-top:0;}

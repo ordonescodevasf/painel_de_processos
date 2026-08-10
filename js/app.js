@@ -143,7 +143,9 @@
   }
   function carregarXlsx() {
     if (typeof XLSX === 'undefined') return Promise.reject(new Error('SheetJS indisponível'));
-    return fetch(CONFIG.arquivoXlsx).then(function (r) {
+    // Cache-bust: sem isso, o navegador pode reservir a planilha antiga do
+    // cache HTTP mesmo depois do arquivo mudar no servidor.
+    return fetch(CONFIG.arquivoXlsx + '?t=' + Date.now()).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.arrayBuffer();
     }).then(function (buf) {
@@ -177,7 +179,17 @@
 
   /* ── normalização + índices ───────────────────────────────────────── */
   function normalizar(bruto) {
-    function pega(aba) { return (bruto[aba] || []).map(function (l) { return Object.assign({}, l); }); }
+    /* Tira espaço nas pontas de todo texto vindo da planilha antes de qualquer
+       outro processamento — um código ("MP-06 ") ou vínculo com espaço a mais
+       nunca bate numa chave de índice, e o processo some da cadeia de valor
+       sem erro nenhum no console. */
+    function pega(aba) {
+      return (bruto[aba] || []).map(function (l) {
+        var o = {};
+        Object.keys(l).forEach(function (k) { o[k] = typeof l[k] === 'string' ? l[k].trim() : l[k]; });
+        return o;
+      });
+    }
     var dd = {
       macros: pega('Macroprocessos'),
       procs: pega('Processos'),
@@ -883,9 +895,9 @@
   }
   function tabelaRiscosHtml(riscos, comVinculo) {
     if (!riscos.length) return '<p class="pp-vazio">Nenhum risco registrado.</p>';
-    var cols = [{ r: 'ID', curta: true, min: 92 }];
+    var cols = [{ r: 'ID', curta: true, min: 92 }, { r: 'Risco', principal: true }];
     if (comVinculo) cols.push({ r: 'Vinculado a', min: 200 });
-    cols = cols.concat([{ r: 'Risco', principal: true }, { r: 'P', curta: true }, { r: 'I', curta: true },
+    cols = cols.concat([{ r: 'P', curta: true }, { r: 'I', curta: true },
       { r: 'P×I', curta: true }, { r: 'Nível', curta: true, min: 128 },
       { r: 'Status', curta: true, min: 124 }]);
     return tabelaGov({
@@ -893,9 +905,9 @@
       colunas: cols,
       linhas: riscos.map(function (r) {
         return '<tr id="risco-' + esc(r.ID) + '"><td class="cod">' + esc(r.ID) + '</td>' +
-          (comVinculo ? '<td>' + linkVinculos(r.Vinculo_Nivel, r.Vinculo_Codigo) + '</td>' : '') +
-          '<td><strong>' + esc(r.Descricao_Risco) + '</strong>' +
-          '</td><td class="num">' + r.Probabilidade_1a5 + '</td><td class="num">' + r.Impacto_1a5 +
+          '<td data-th="Risco"><strong>' + esc(r.Descricao_Risco) + '</strong></td>' +
+          (comVinculo ? '<td data-th="Vinculado a">' + linkVinculos(r.Vinculo_Nivel, r.Vinculo_Codigo) + '</td>' : '') +
+          '<td class="num">' + r.Probabilidade_1a5 + '</td><td class="num">' + r.Impacto_1a5 +
           '</td><td class="num"><strong>' + r._nivel + '</strong></td><td>' + tagNivel(r._classe) +
           '</td><td>' + esc(r.Status || '—') + '</td></tr>' +
           detalheLinha([
@@ -1268,8 +1280,14 @@
     if (exp) exp.onclick = function () {
       var cab = ['Codigo', 'Macroprocesso', 'Nome', 'Status_Mapeamento', 'Percentual', 'Fase_Ciclo_BPM',
         'Area_Responsavel', 'Dono_Processo', 'Prazo_Previsto'];
+      // O CSV leva a sigla de exibição (PP-/AT-/TR-), a mesma que aparece na
+      // tela — quem exporta compara com o painel, não com a planilha.
+      var codigos = { Codigo: 1, Macroprocesso: 1, Vinculo_Pai: 1 };
       var linhas = [cab.join(';')].concat(DADOS.procs.map(function (p) {
-        return cab.map(function (k) { return '"' + String(p[k] == null ? '' : p[k]).replace(/"/g, '""') + '"'; }).join(';');
+        return cab.map(function (k) {
+          var v = codigos[k] ? codDisp(p[k]) : p[k];
+          return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+        }).join(';');
       }));
       var blob = new Blob(['\ufeff' + linhas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
       var a = d.createElement('a');
@@ -2194,7 +2212,12 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       var linhas = lista.filter(function (x) { return filtroDoc.sel[x.ID]; });
       baixarCsv('documentos-selecionados.csv',
         [COLS_DOC.map(function (c) { return c.r; })].concat(linhas.map(function (x) {
-          return COLS_DOC.map(function (c) { return String(x[c.k] == null ? '' : x[c.k]); });
+          return COLS_DOC.map(function (c) {
+            var v = x[c.k];
+            if (c.k === 'Vinculo_Codigo') v = String(v || '').split(';')
+              .map(function (cd) { return codDisp(cd.trim()); }).join('; ');
+            return String(v == null ? '' : v);
+          });
         })));
     };
     // A expansão de linha fica a cargo do listener global de
@@ -2214,7 +2237,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
           .map(function (r) {
             return '<span class="tooltip-wrap"><button type="button" class="risco-pin" data-tooltip-trigger' +
               ' data-alvo="risco-' + esc(r.ID) + '" aria-label="' + esc(r.ID + ' — ' + r.Descricao_Risco) + '">' +
-              esc(r.ID.replace('R-', '')) + '</button>' +
+              esc(r.ID.replace(/^RIS-/i, '')) + '</button>' +
               '<span class="br-tooltip small" role="tooltip" info place="top"><span class="text">' + esc(r.ID) +
               '</span><span class="subtext">' + esc(r.Descricao_Risco) + '</span></span></span>';
           }).join('');
