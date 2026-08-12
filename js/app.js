@@ -814,7 +814,8 @@
     var origemTxt = origem ? codDisp(home) + ' — ' + origem.Nome : home;
     return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(codDisp(s.Codigo)) + '</span>' +
       '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div>' +
-      (marcarReuso ? '<div style="margin-top:4px"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável — definido em ' + esc(origemTxt) + '</span></div>' : '') +
+      (marcarReuso ? '<div class="reuso-def"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' +
+        '<span class="reuso-origem">Definido em ' + esc(origemTxt) + '</span></div>' : '') +
       '</div></div></a>';
   }
   // Mesma marcação de reúso, numa linha de tabelaGov (usada em "Subprocessos
@@ -1899,9 +1900,7 @@
         campo('Responsável no NUGEP', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
         campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
         campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
-        '<div class="span2 campo-tecnico"><dt>Duração estimada de execução' +
-        dica('Soma da duração estimada de todas as atividades do processo — diretas e as de subprocessos, em qualquer nível de aninhamento, inclusive subprocessos reutilizáveis chamados de outros pontos do portfólio. Não é o caminho mais otimista (o "caminho feliz"): é o caminho crítico, a sequência completa que define a duração mínima do processo.') +
-        '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
+        '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
         campo('Sistemas utilizados', chips(p.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> ' + termoLink('SIPOC') + '</h3><div class="sipoc">' +
         '<div class="col"><h4>Fornecedores</h4><ul>' + (listar(p.Fornecedores).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
@@ -1970,14 +1969,8 @@
         campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Corresponsaveis, null, true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
-        '<div class="span2 campo-tecnico"><dt>Duração estimada de execução' +
-        dica('Soma da duração estimada das atividades deste subprocesso e de seus subprocessos internos, em qualquer nível — o caminho crítico, não o caminho feliz.') +
-        '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
+        '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
         campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
-        (s.Reutilizavel === 'Sim' ? '<div class="pp-card"><h3><i class="fas fa-link" aria-hidden="true"></i> Reutilizado em</h3>' +
-          usosDoReutilizavel(s).map(function (u) {
-            return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="' + u.href + '"><div class="topo"><div><span class="cod">' + esc(u.cod) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(u.nome) + '</div></div></div></a>';
-          }).join('') + '</div>' : '') +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
         ((subsFilhos.length || subsReusados.length) ?
           tabelaGov({
@@ -1998,6 +1991,13 @@
           .concat(pp ? [{ tipo: 'p', codigo: pp.Codigo, nome: pp.Nome, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
           .concat(cadeiaSp.map(function (sp2) { return { tipo: 'sp', codigo: sp2.Codigo, nome: sp2.Nome, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
         ) +
+        // "Reutilizado em" vive aqui, logo abaixo de "Navegar para" — mesma
+        // disposição da ficha do processo (Navegar para → Subprocessos
+        // vinculados), padronizando as duas telas.
+        (s.Reutilizavel === 'Sim' ? '<div class="pp-card"><h3><i class="fas fa-link" aria-hidden="true"></i> Reutilizado em</h3>' +
+          usosDoReutilizavel(s).map(function (u) {
+            return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="' + u.href + '"><div class="topo"><div><span class="cod">' + esc(u.cod) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(u.nome) + '</div></div></div></a>';
+          }).join('') + '</div>' : '') +
         '</aside></div>';
       // clique na linha abre a atividade
       $all('#viewDetalhe tr[data-link]').forEach(function (tr) {

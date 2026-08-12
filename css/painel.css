@@ -256,13 +256,18 @@ body.contraste-alto .ficha-hero{background:#000;border:1px solid var(--gold-vivi
   text-transform:uppercase;opacity:.85;}
 .ficha-hero h1{font:700 clamp(1.25rem,2.4vw,1.7rem)/1.25 var(--font);margin:var(--sp1) 0 var(--sp2);}
 .ficha-hero .meta{display:flex;flex-wrap:wrap;gap:var(--sp2);align-items:center;font-size:var(--fs-base);}
-.pp-card{background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);
-  padding:var(--sp3) var(--sp4);box-shadow:var(--sh-sm);}
+/* Sem borda: a sombra é o que separa o card do fundo, igual ao .br-card
+   oficial do DS (govbr-ds.css) — "sem borda visível" é a regra do
+   Fundamento Cor para superfícies de card. */
+.pp-card{background:var(--d-card);border-radius:var(--r-md);
+  padding:var(--sp3) var(--sp4);box-shadow:var(--sh-card);}
 .pp-card + .pp-card{margin-top:var(--sp3);}
 .pp-card > h3{font:700 var(--fs-base)/1.2 var(--font);text-transform:uppercase;
   letter-spacing:.06em;color:var(--cv-blue);margin-bottom:var(--sp2);
   display:flex;align-items:center;gap:var(--sp1);}
-body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
+/* Alto contraste é a exceção: a separação volta a ser por borda, porque
+   sombra não rende com contraste confiável sobre fundo preto. */
+body.contraste-alto .pp-card{background:#000;border:1px solid var(--gold-vivid-20,#ffbe2e);}
 .ficha-grid{display:grid;gap:var(--sp3);grid-template-columns:minmax(0,2fr) minmax(min(260px, 100%), 1fr);
   align-items:start;margin-top:var(--sp3);}
 /* Itens de grade nascem com min-width:auto, o que deixa um filho de
@@ -271,7 +276,7 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
    acontecer dentro do próprio componente. */
 .ficha-grid > *{min-width:0;}
 @media(max-width:991.98px){.ficha-grid{grid-template-columns:1fr;}}
-.ficha-dl{display:grid;gap:var(--sp2) var(--sp4);grid-template-columns:repeat(auto-fit,minmax(min(230px, 100%), 1fr));
+.ficha-dl{display:grid;gap:var(--sp3) var(--sp4);grid-template-columns:repeat(auto-fit,minmax(min(230px, 100%), 1fr));
   font-size:var(--fs-base);margin:0;}
 .ficha-dl dt{font:700 var(--fs-sm)/1.3 var(--font);text-transform:uppercase;color:var(--gray-60);}
 .ficha-dl dd{margin:2px 0 0;}
@@ -390,7 +395,11 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 /* ── subprocesso reutilizável (Call Activity do BPMN 2.0 — no Bizagi, que
    este painel usa para os diagramas, o próprio elemento já se chama
    "Subprocesso Reutilizável"): usa o Componente Tag oficial do DS
-   (.br-tag.info, tipo Texto — sem borda; só Status/Contagem têm). ── */
+   (.br-tag.info, tipo Texto — sem borda; só Status/Contagem têm). A Tag é
+   rótulo curto e não quebra linha — "definido em X — Y" (comprimento
+   variável) sai como legenda normal abaixo dela, nunca dentro. ── */
+.reuso-def{margin-top:4px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;}
+.reuso-def .reuso-origem{font-size:var(--fs-sm);color:var(--gray-60);}
 
 /* ── ícone de explicação do gráfico (Tooltip reutilizado no figcaption) ── */
 .graf-info{font-size:12px;color:var(--gray-40);cursor:help;}
@@ -844,29 +853,19 @@ body.contraste-alto .graf svg text{fill:#fff !important;}
   #modalEquipeDev .team-email{justify-content:center;}
 }
 
-/* ── categorização por cor dos campos da ficha (Macroprocesso, Processo,
+/* ── categorização por cor dos rótulos da ficha (Macroprocesso, Processo,
    Subprocesso, Atividade, Tarefa) — com muita informação preenchida, os
-   campos se misturavam visualmente. Uma barra lateral + rótulo tingido
-   agrupa por tipo de informação, só com tokens já usados no painel:
-   azul = descritivo · navy = responsabilidade · verde = valor entregue ·
-   petróleo = técnico/normativo. Sem legenda: o próprio nome do campo já
-   diz o que é; a cor só reforça o agrupamento ao passar o olho rápido. ── */
-.ficha-dl > div[class*="campo-"]{border-left:3px solid transparent;
-  padding:2px 0 2px 10px;border-radius:0 4px 4px 0;transition:background var(--dur-fast) var(--ease);}
-/* Tokens oficiais gov.br (Blue Warm Vivid 70/90, Green Cool Vivid 50,
-   Green Warm Vivid 50) — as cores anteriores #0a6b80 (petróleo) e
-   #005ca8/#007d4e (marca Codevasf) não pertenciam à paleta do DS. */
-.ficha-dl > div.campo-desc{border-left-color:var(--blue-warm-vivid-70);background:rgba(0,64,180,.05);}
+   campos se misturavam visualmente. Só o rótulo (dt) leva cor por tipo de
+   informação — azul = descritivo · navy = responsabilidade · verde = valor
+   entregue · petróleo = técnico/normativo; sem caixa nem borda lateral (o
+   DS separa superfície por sombra, não por moldura colorida — ver .br-card
+   em govbr-ds.css). Sem legenda: o nome do campo já diz o que é; a cor só
+   reforça o agrupamento ao passar o olho rápido. Tokens oficiais gov.br
+   (Blue Warm Vivid 70/90, Green Cool Vivid 50, Green Warm Vivid 50). ── */
 .ficha-dl > div.campo-desc dt{color:var(--blue-warm-vivid-70);}
-.ficha-dl > div.campo-quem{border-left-color:var(--blue-warm-vivid-90);background:rgba(7,29,65,.05);}
 .ficha-dl > div.campo-quem dt{color:var(--blue-warm-vivid-90);}
-.ficha-dl > div.campo-valor{border-left-color:var(--green-cool-vivid-50);background:rgba(22,136,33,.06);}
 .ficha-dl > div.campo-valor dt{color:var(--green-cool-vivid-50);}
-.ficha-dl > div.campo-tecnico{border-left-color:var(--green-warm-vivid-50);background:rgba(106,125,0,.06);}
 .ficha-dl > div.campo-tecnico dt{color:var(--green-warm-vivid-50);}
-.ficha-dl > div.campo-tempo{border-left-color:#8a6d00;background:rgba(138,109,0,.05);}
-.ficha-dl > div.campo-tempo dt{color:#8a6d00;}
-body.contraste-alto .ficha-dl > div[class*="campo-"]{background:transparent;border-left-color:var(--gold-vivid-20,#ffbe2e);}
 body.contraste-alto .ficha-dl > div[class*="campo-"] dt{color:#fff;}
 
 /* ════════════════════════════════════════════════════════════════════
