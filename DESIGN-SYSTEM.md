@@ -236,9 +236,9 @@ corretamente em qualquer profundidade. Veja o exemplo já incluído:
   aprovado" (validado pelo dono, aprovado no DEX).
 - **Diário de Mapeamento removido** do painel inteiro (menu, ficha do
   processo, busca, planilha) — evidências agora ficam no processo
-  e-Codevasf/SEI.
+  e-Codevasf.
 - **Repositório**: 18 itens removidos (formulários, templates e ferramentas
-  hoje cobertos pelo SEI/e-Codevasf ou fora do escopo atual); seções "Ciclo
+  hoje cobertos pelo e-Codevasf ou fora do escopo atual); seções "Ciclo
   de vida BPM" e "Como este painel é alimentado" removidas.
 - **Alertas (sino) removidos** do cabeçalho — não é mais necessário.
 - **Catálogo → Processos**: aba renomeada.

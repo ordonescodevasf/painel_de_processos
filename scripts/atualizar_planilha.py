@@ -168,8 +168,7 @@ ATIVIDADES_EXEMPLO = [
         "Responsavel_Ator": "AA/GLC",
         "Entradas": "Contrato assinado; Minuta de portaria de designação",
         "Saidas": "Portaria de designação publicada",
-        "Sistemas": "SEI",
-        "Prazo_Padrao": "5 dias úteis",
+        "Sistemas": "e-Codevasf",
         "Base_Normativa": "Lei nº 14.133/2021, art. 117",
     },
     {
@@ -182,8 +181,7 @@ ATIVIDADES_EXEMPLO = [
         "Responsavel_Ator": "Fiscal técnico do contrato",
         "Entradas": "Relatório de execução; Nota fiscal",
         "Saidas": "Medição registrada; Nota fiscal atestada",
-        "Sistemas": "SEI",
-        "Prazo_Padrao": "10 dias úteis",
+        "Sistemas": "e-Codevasf",
         "Base_Normativa": "Lei nº 14.133/2021, art. 140",
     },
 ]
@@ -198,8 +196,8 @@ TAREFAS_EXEMPLO = [
         "Objetivo": "Confirmar que a entrega corresponde ao que foi contratado.",
         "Tipo_Tarefa": "Manual",
         "Responsavel": "Fiscal técnico do contrato",
-        "Sistema": "SEI",
-        "Duracao_Estimada": "1 dia",
+        "Sistema": "e-Codevasf",
+        "Duracao_Estimada": 8,
     },
     {
         "Codigo": "T-06.03.02.02",
@@ -210,8 +208,8 @@ TAREFAS_EXEMPLO = [
         "Objetivo": "Deixar a medição registrada e rastreável no processo do contrato.",
         "Tipo_Tarefa": "Manual",
         "Responsavel": "Fiscal técnico do contrato",
-        "Sistema": "SEI",
-        "Duracao_Estimada": "0,5 dia",
+        "Sistema": "e-Codevasf",
+        "Duracao_Estimada": 4,
     },
     {
         "Codigo": "T-06.03.02.03",
@@ -222,8 +220,8 @@ TAREFAS_EXEMPLO = [
         "Objetivo": "Autorizar o pagamento com base na conferência registrada.",
         "Tipo_Tarefa": "Manual",
         "Responsavel": "Gestor do contrato",
-        "Sistema": "SEI",
-        "Duracao_Estimada": "0,5 dia",
+        "Sistema": "e-Codevasf",
+        "Duracao_Estimada": 4,
         "Observacoes": "O prazo de pagamento conta a partir do ateste.",
     },
 ]

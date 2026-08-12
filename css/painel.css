@@ -387,6 +387,11 @@ body.contraste-alto .pp-card{background:#000;border-color:var(--gold-vivid-20,#f
 /* ── vínculo múltiplo (documento/risco/indicador ligado a 2+ itens) ── */
 .vinculo-lista{display:flex;flex-direction:column;gap:4px;}
 
+/* ── subprocesso reutilizável (Call Activity do BPMN 2.0 — no Bizagi, que
+   este painel usa para os diagramas, o próprio elemento já se chama
+   "Subprocesso Reutilizável"): usa o Componente Tag oficial do DS
+   (.br-tag.info, tipo Texto — sem borda; só Status/Contagem têm). ── */
+
 /* ── ícone de explicação do gráfico (Tooltip reutilizado no figcaption) ── */
 .graf-info{font-size:12px;color:var(--gray-40);cursor:help;}
 .graf-info:hover,.graf-info:focus-visible{color:var(--cv-blue);}
@@ -696,7 +701,31 @@ body.contraste-alto .nugep-card{background:#000;border-color:var(--gold-vivid-20
 body.contraste-alto .nugep-card h3{color:#fff;}
 body.contraste-alto .nugep-sigla{background:#000;color:#fff;border-color:var(--gold-vivid-20,#ffbe2e);}
 
+/* ── link para o Glossário (sigla de unidade ou termo técnico, ex.: SIPOC):
+   sublinhado pontilhado para não se confundir com um link de navegação
+   comum — o Tooltip é componente depreciado no DS, por isso a referência
+   abre a definição completa no Glossário em vez de um balão flutuante. ── */
+.termo-link{color:inherit;text-decoration:underline;text-decoration-style:dotted;
+  text-underline-offset:2px;text-decoration-color:currentColor;}
+.termo-link:hover{color:var(--interactive,#1351b4);}
+.termo-link:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
+  outline-offset:2px;border-radius:2px;}
+
 /* ── glossário ── */
+.gloss-abas{margin-bottom:var(--sp3);}
+.gloss-abas .chip{cursor:pointer;background:transparent;}
+.gloss-abas .chip:hover{border-color:var(--interactive);color:var(--interactive);background:var(--blue-warm-vivid-5);}
+.gloss-abas .chip:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);outline-offset:var(--focus-offset-field);}
+.gloss-abas .chip.ativo{background:var(--interactive);border-color:var(--interactive);color:var(--pure-0);}
+.siglas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));
+  gap:var(--sp2);margin-top:var(--sp3);}
+.siglas-item{display:flex;align-items:baseline;gap:var(--sp2);padding:var(--sp2) var(--sp3);
+  background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);}
+.siglas-cod{flex:0 0 auto;font:700 var(--fs-sm)/1.4 'Noto Sans Mono',ui-monospace,monospace;
+  color:var(--cv-blue);white-space:nowrap;}
+.siglas-item span{color:var(--gray-70);font-size:var(--fs-sm);}
+body.contraste-alto .siglas-item{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
+body.contraste-alto .siglas-cod{color:#fff;}
 .gloss-abc{display:flex;flex-wrap:wrap;gap:4px;}
 .gloss-abc{gap:var(--sp1);}
 .gloss-abc button{display:inline-flex;align-items:center;justify-content:center;

@@ -16,7 +16,7 @@
     arquivoXlsx: 'data/painel-processos-dados.xlsx',
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
            'Documentos', 'Riscos', 'Indicadores',
-           'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Parametros']
+           'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
   var d = document;
@@ -204,6 +204,7 @@
       nugep: pega('NUGEP'),
       glossario: pega('Glossario'),
       faq: pega('FAQ'),
+      siglas: pega('Siglas'),
       parametros: pega('Parametros')
     };
     dd.macros.forEach(function (m) { m._cat = slug(m.Categoria); });
@@ -262,7 +263,7 @@
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
     var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorPai: {}, tarefasPorAtiv: {},
-      vinc: { docs: {}, riscos: {}, inds: {} } };
+      reusoPorAlvo: {}, vinc: { docs: {}, riscos: {}, inds: {} } };
     idx.ativsPorSub = idx.ativsPorPai;   // nome antigo do índice, mantido por compatibilidade
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     // Codificação exibida dos macroprocessos, por tipo: gerencial = MG,
@@ -291,6 +292,17 @@
       // Name"): um subprocesso pode conter outro subprocesso, tantos níveis quanto o
       // processo exigir, até chegar à atividade.
       (idx.subsPorPai[s.Vinculo_Pai] = idx.subsPorPai[s.Vinculo_Pai] || []).push(s);
+      // Subprocesso reutilizável (o "Call Activity" do BPMN 2.0 — no Bizagi,
+      // que este painel já usa para os diagramas, o próprio elemento se
+      // chama "Subprocesso Reutilizável"): mora nativamente sob Vinculo_Pai,
+      // mas Reutilizado_Em lista outros processos/subprocessos — de
+      // qualquer macroprocesso, em qualquer nível de aninhamento — que
+      // também o chamam, sem duplicar o mapeamento.
+      if (s.Reutilizavel === 'Sim' && s.Reutilizado_Em) {
+        listar(s.Reutilizado_Em).forEach(function (alvo) {
+          (idx.reusoPorAlvo[alvo] = idx.reusoPorAlvo[alvo] || []).push(s);
+        });
+      }
     });
     dd.ativs.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.ativs.forEach(function (a) {
@@ -369,11 +381,41 @@
     return '<div class="pct"><div class="trilho"><div class="barra" style="width:' + p +
       '%"></div></div><span class="valor">' + p + '%</span></div>';
   }
-  function chips(str, icone) {
+  // Sigla conhecida pela aba Siglas da planilha (Lista de Nomes e Siglas
+  // oficial, Decisão da Presidência nº 601/2025) — carregada em DADOS.siglas,
+  // não mais em código, para a UNP editar um nome sem tocar em nada aqui.
+  var _siglasIdx = null;
+  function siglasIdx() {
+    if (!_siglasIdx) {
+      _siglasIdx = {};
+      (DADOS.siglas || []).forEach(function (u) { _siglasIdx[u.Sigla] = u.Nome; });
+    }
+    return _siglasIdx;
+  }
+  function siglaConhecida(codigo) {
+    var idx = siglasIdx(), partes = String(codigo || '').trim().split('/'), acc = '';
+    if (!partes[0]) return false;
+    for (var i = 0; i < partes.length; i++) { acc = i === 0 ? partes[i] : acc + '/' + partes[i]; if (idx[acc]) return true; }
+    return false;
+  }
+  // Sigla de unidade como link para a ficha dela no Glossário (Tooltip é
+  // componente depreciado no DS — a referência abre a definição completa
+  // em vez de um balão flutuante, sem the código não bater com nada conhecido.
+  function siglaTag(codigo) {
+    var cod = String(codigo == null ? '' : codigo).trim();
+    if (!cod) return '';
+    if (!siglaConhecida(cod)) return esc(cod);
+    return '<a class="termo-link" href="#/glossario?aba=siglas&q=' + encodeURIComponent(cod) + '">' + esc(cod) + '</a>';
+  }
+  // Termo técnico (ex.: SIPOC) como link para a definição no Glossário.
+  function termoLink(termo, textoVisivel) {
+    return '<a class="termo-link" href="#/glossario?aba=termos&q=' + encodeURIComponent(termo) + '">' + esc(textoVisivel || termo) + '</a>';
+  }
+  function chips(str, icone, comoSigla) {
     var itens = listar(str);
     if (!itens.length) return '<span class="pp-vazio">Não informado</span>';
     return '<div class="chip-lista">' + itens.map(function (x) {
-      return '<span class="chip">' + (icone ? '<i class="fas ' + icone + '" aria-hidden="true"></i> ' : '') + esc(x) + '</span>';
+      return '<span class="chip">' + (icone ? '<i class="fas ' + icone + '" aria-hidden="true"></i> ' : '') + (comoSigla ? siglaTag(x) : esc(x)) + '</span>';
     }).join('') + '</div>';
   }
   // ── texto responsivo ──────────────────────────────────────────────
@@ -700,26 +742,104 @@
     return { pai: pai, sp: sp, p: p, mp: p ? IDX.mp[p.Macroprocesso] : null,
       cadeiaSp: sp ? cadeiaSubprocessos(sp.Codigo).slice().reverse() : [] };
   }
-  function contarAtividadesRecursivo(codigoPai) {
+  // Filhos de codigoPai para fins de agregação: os subprocessos nativos MAIS
+  // os subprocessos reutilizáveis chamados aqui (definidos em outro lugar,
+  // mas que executam de verdade quando este processo roda). O parâmetro
+  // "vistos" evita loop infinito se um cadastro criar um ciclo de reúso.
+  function subsReutilizadosEm(codigo) { return IDX.reusoPorAlvo[codigo] || []; }
+  function filhosSubDe(codigoPai) { return (IDX.subsPorPai[codigoPai] || []).concat(subsReutilizadosEm(codigoPai)); }
+  function contarAtividadesRecursivo(codigoPai, vistos) {
+    vistos = vistos || {};
+    if (vistos[codigoPai]) return 0;
+    vistos[codigoPai] = true;
     // atividades ligadas DIRETO a codigoPai (processo sem subprocesso, ou
     // subprocesso) + as de todos os subprocessos descendentes, em qualquer
-    // profundidade (subprocesso dentro de subprocesso)
+    // profundidade (subprocesso dentro de subprocesso) e incluindo
+    // subprocessos reutilizáveis chamados a partir daqui.
     var total = atividadesDe(codigoPai).length;
-    (IDX.subsPorPai[codigoPai] || []).forEach(function (s) {
-      total += contarAtividadesRecursivo(s.Codigo);
+    filhosSubDe(codigoPai).forEach(function (s) {
+      total += contarAtividadesRecursivo(s.Codigo, vistos);
     });
     return total;
   }
-  function contarSubprocessosRecursivo(codigoPai) {
-    var subs = IDX.subsPorPai[codigoPai] || [], total = subs.length;
-    subs.forEach(function (s) { total += contarSubprocessosRecursivo(s.Codigo); });
+  function contarSubprocessosRecursivo(codigoPai, vistos) {
+    vistos = vistos || {};
+    if (vistos[codigoPai]) return 0;
+    vistos[codigoPai] = true;
+    var subs = filhosSubDe(codigoPai), total = subs.length;
+    subs.forEach(function (s) { total += contarSubprocessosRecursivo(s.Codigo, vistos); });
     return total;
   }
-  function contarTarefasRecursivo(codigoPai) {
+  function contarTarefasRecursivo(codigoPai, vistos) {
+    vistos = vistos || {};
+    if (vistos[codigoPai]) return 0;
+    vistos[codigoPai] = true;
     var total = 0;
     atividadesDe(codigoPai).forEach(function (a) { total += (IDX.tarefasPorAtiv[a.Codigo] || []).length; });
-    (IDX.subsPorPai[codigoPai] || []).forEach(function (s) { total += contarTarefasRecursivo(s.Codigo); });
+    filhosSubDe(codigoPai).forEach(function (s) { total += contarTarefasRecursivo(s.Codigo, vistos); });
     return total;
+  }
+  // Duração: hora útil é a unidade de medida da coluna Duracao_Estimada da
+  // aba Tarefas. A duração de uma atividade é o somatório das suas tarefas;
+  // a de um processo (ou subprocesso) é o somatório recursivo — o caminho
+  // crítico do processo, não o caminho feliz (o cenário mais otimista).
+  var HORAS_POR_DIA_UTIL = 8;
+  function horasTarefa(t) { var h = Number(t.Duracao_Estimada); return isFinite(h) && h > 0 ? h : 0; }
+  function duracaoAtividadeHoras(a) {
+    return (IDX.tarefasPorAtiv[a.Codigo] || []).reduce(function (soma, t) { return soma + horasTarefa(t); }, 0);
+  }
+  function duracaoRecursivaHoras(codigoPai, vistos) {
+    vistos = vistos || {};
+    if (vistos[codigoPai]) return 0;
+    vistos[codigoPai] = true;
+    var soma = atividadesDe(codigoPai).reduce(function (s, a) { return s + duracaoAtividadeHoras(a); }, 0);
+    filhosSubDe(codigoPai).forEach(function (s) { soma += duracaoRecursivaHoras(s.Codigo, vistos); });
+    return soma;
+  }
+  function formatarHorasUteis(horas, comDias) {
+    var h = Math.round(horas * 10) / 10;
+    var txt = plural(h, 'hora útil', 'horas úteis');
+    if (comDias && horas > 0) {
+      var dias = Math.round((horas / HORAS_POR_DIA_UTIL) * 10) / 10;
+      txt += ' (' + plural(dias, 'dia útil', 'dias úteis') + ')';
+    }
+    return txt;
+  }
+  // Card de um subprocesso na lista "Subprocessos vinculados": o mesmo
+  // cartão, com uma marcação extra quando o item é reutilizado aqui (mora
+  // nativamente em outro processo/subprocesso, de outro macroprocesso ou não).
+  function subCardHtml(s, marcarReuso) {
+    var home = String(s.Vinculo_Pai || '');
+    var origem = ehCodigoSub(home) ? IDX.sp[home] : IDX.p[home];
+    var origemTxt = origem ? codDisp(home) + ' — ' + origem.Nome : home;
+    return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(codDisp(s.Codigo)) + '</span>' +
+      '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div>' +
+      (marcarReuso ? '<div style="margin-top:4px"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável — definido em ' + esc(origemTxt) + '</span></div>' : '') +
+      '</div></div></a>';
+  }
+  // Mesma marcação de reúso, numa linha de tabelaGov (usada em "Subprocessos
+  // deste subprocesso", que já é tabela, não cartão).
+  function linhaSubprocesso(sf, marcarReuso) {
+    return '<tr data-link><td class="cod">' + esc(codDisp(sf.Codigo)) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
+      (marcarReuso ? '<div style="margin-top:4px"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span></div>' : '') +
+      (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
+      '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>' +
+      detalheLinha([
+        ['Entradas', listar(sf.Entradas).map(esc).join('; ')],
+        ['Saídas', listar(sf.Saidas).map(esc).join('; ')],
+        ['Sistemas', listar(sf.Sistemas).map(esc).join('; ')],
+        ['Unidade responsável', esc(sf.Unidade_Responsavel || '')]
+      ]);
+  }
+  // Todo lugar que chama um subprocesso reutilizável: o pai nativo
+  // (Vinculo_Pai) mais cada código em Reutilizado_Em, sem repetir.
+  function usosDoReutilizavel(s) {
+    var alvos = [String(s.Vinculo_Pai || '')].concat(listar(s.Reutilizado_Em));
+    var vistos = {};
+    return alvos.filter(function (c) { if (!c || vistos[c]) return false; vistos[c] = true; return true; }).map(function (c) {
+      var ehSub = ehCodigoSub(c), item = ehSub ? IDX.sp[c] : IDX.p[c];
+      return { cod: codDisp(c), nome: item ? item.Nome : c, href: ehSub ? '#/sp/' + encodeURIComponent(c) : '#/p/' + encodeURIComponent(c) };
+    });
   }
   var HIER_INFO = {
     mp: { rotulo: 'Macroprocesso', icone: 'fa-diagram-project', classe: 'hier-mp' },
@@ -863,7 +983,7 @@
     return tabelaGov({
       titulo: 'Atividades', rotuloTotal: ativs.length === 1 ? 'atividade' : 'atividades', total: ativs.length,
       colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Atividade', principal: true },
-        { r: 'Responsável (ator)' }, { r: 'Prazo', curta: true }],
+        { r: 'Responsável (ator)' }, { r: 'Duração estimada', curta: true }],
       linhas: ativs.map(function (a) {
         var nt = (IDX.tarefasPorAtiv[a.Codigo] || []).length;
         return '<tr data-link><td class="cod">' + esc(codDisp(a.Codigo)) + '</td>' +
@@ -871,7 +991,7 @@
           (a.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(a.Descricao) + '</div>' : '') +
           (nt ? '<div class="cod">' + plural(nt, 'tarefa', 'tarefas') + '</div>' : '') + '</td>' +
           '<td>' + esc(a.Responsavel_Ator || '—') + '</td>' +
-          '<td class="text-nowrap">' + esc(a.Prazo_Padrao || '—') + '</td></tr>' +
+          '<td class="text-nowrap">' + (nt ? formatarHorasUteis(duracaoAtividadeHoras(a)) : '—') + '</td></tr>' +
           detalheLinha([
             ['Entradas', listar(a.Entradas).map(esc).join('; ')],
             ['Saídas', listar(a.Saidas).map(esc).join('; ')],
@@ -1221,7 +1341,14 @@
     else if (h === '#/dashboard') { renderDashboard(); mostrarPainel('dashboard'); }
     else if (h === '#/repositorio' || h === '#/metodologia') { renderRepositorio(); mostrarPainel('repositorio'); }
     else if (h === '#/nugep') { renderNugep(); mostrarPainel('nugep'); }
-    else if (h === '#/glossario') { renderGlossario(); mostrarPainel('glossario'); }
+    else if ((m = h.match(/^#\/glossario(?:\?(.*))?$/))) {
+      if (m[1]) {
+        var qp = {}; m[1].split('&').forEach(function (par) { var kv = par.split('='); qp[kv[0]] = decodeURIComponent(kv[1] || ''); });
+        if (qp.aba) filtroGloss.aba = qp.aba;
+        if (qp.q != null) { if (filtroGloss.aba === 'siglas') filtroSiglas.q = qp.q; else filtroGloss.q = qp.q; }
+      }
+      renderGlossario(); mostrarPainel('glossario');
+    }
     else if (h === '#/faq') { renderFaq(); mostrarPainel('faq'); }
     else if ((m = h.match(/^#\/busca\?q=(.*)$/))) { renderBusca(decodeURIComponent(m[1])); mostrarPainel('busca'); }
     else if ((m = h.match(/^#\/(mp|p|sp|a|t)\/(.+)$/))) { renderDetalhe(m[1], decodeURIComponent(m[2])); mostrarPainel('detalhe'); }
@@ -1719,8 +1846,8 @@
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
         campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
-        campo('Unidade Orgânica responsável', m.Unidade_Responsavel && esc(m.Unidade_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(m.Unidades_Corresponsaveis), false, 'quem') +
+        campo('Unidade Orgânica responsável', m.Unidade_Responsavel && siglaTag(m.Unidade_Responsavel), false, 'quem') +
+        campo('Unidades orgânicas corresponsáveis', chips(m.Unidades_Corresponsaveis, null, true), false, 'quem') +
         campo('Entregas (produtos/serviços)', chips(m.Entregas), true, 'valor') +
         campo('Beneficiários', chips(m.Clientes_Beneficiarios), false, 'valor') +
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
@@ -1743,6 +1870,7 @@
       if (!p) { el.innerHTML = naoEncontrado('Processo', cod); return; }
       var mp = IDX.mp[p.Macroprocesso];
       var subs = IDX.subsPorPai[cod] || [];
+      var reusados = subsReutilizadosEm(cod);
       // Um processo pode não ter subprocesso e ainda assim ter atividades (e
       // tarefas) ligadas direto a ele — é o que ativsDiretas cobre.
       var ativsDiretas = atividadesDe(cod);
@@ -1760,19 +1888,22 @@
         '<span>· ' + plural(contarSubprocessosRecursivo(cod), 'subprocesso', 'subprocessos') + ' · ' +
         plural(totalAtivs, 'atividade', 'atividades') + ' · ' + plural(totalTarefas, 'tarefa', 'tarefas') + '</span>' +
         (p.Area_Responsavel ? '<span>' + esc(p.Area_Responsavel) + '</span>' : '') +
-        (p.Processo_SEI ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> SEI ' + esc(p.Processo_SEI) + '</span>' : '') +
+        (p.Processo_ECodevasf ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> e-Codevasf ' + esc(p.Processo_ECodevasf) + '</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do processo</h3><dl class="ficha-dl">' +
         campo('Objetivo', p.Objetivo && esc(p.Objetivo), false, 'desc') +
         campo('Descrição', p.Descricao && esc(p.Descricao), false, 'desc') +
-        campo('Unidade Orgânica responsável', p.Area_Responsavel && esc(p.Area_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(p.Unidades_Corresponsaveis), false, 'quem') +
+        campo('Unidade Orgânica responsável', p.Area_Responsavel && siglaTag(p.Area_Responsavel), false, 'quem') +
+        campo('Unidades orgânicas corresponsáveis', chips(p.Unidades_Corresponsaveis, null, true), false, 'quem') +
         campo('Responsável no NUGEP', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
         campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
         campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
+        '<div class="span2 campo-tecnico"><dt>Duração estimada de execução' +
+        dica('Soma da duração estimada de todas as atividades do processo — diretas e as de subprocessos, em qualquer nível de aninhamento, inclusive subprocessos reutilizáveis chamados de outros pontos do portfólio. Não é o caminho mais otimista (o "caminho feliz"): é o caminho crítico, a sequência completa que define a duração mínima do processo.') +
+        '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
         campo('Sistemas utilizados', chips(p.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
-        '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> SIPOC</h3><div class="sipoc">' +
+        '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> ' + termoLink('SIPOC') + '</h3><div class="sipoc">' +
         '<div class="col"><h4>Fornecedores</h4><ul>' + (listar(p.Fornecedores).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col"><h4>Entradas</h4><ul>' + (listar(p.Entradas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col centro"><h4>Processo</h4><div style="font-weight:600">' + esc(p.Nome) + '</div></div>' +
@@ -1789,10 +1920,9 @@
         '</div><aside>' +
         cardHierarquia(mp ? [{ tipo: 'mp', cat: mp._cat, codigo: mp._cod || mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos vinculados</h3>' +
-        (subs.length ? subs.map(function (s) {
-          return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(codDisp(s.Codigo)) + '</span>' +
-            '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div></div></div></a>';
-        }).join('') : '<p class="pp-vazio">' + (ativsDiretas.length
+        ((subs.length || reusados.length) ? subs.map(function (s) { return subCardHtml(s, false); }).join('') +
+          reusados.map(function (s) { return subCardHtml(s, true); }).join('')
+          : '<p class="pp-vazio">' + (ativsDiretas.length
           ? 'Nenhum subprocesso cadastrado — este processo se decompõe direto em atividades.'
           : 'Nenhum subprocesso cadastrado.') + '</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-forward" aria-hidden="true"></i> Próxima ação</h3>' +
@@ -1817,6 +1947,7 @@
       cadeiaSp.reverse();
       var pp = processoDoSubprocesso(cod); var mpp = pp && IDX.mp[pp.Macroprocesso];
       var subsFilhos = IDX.subsPorPai[cod] || [];
+      var subsReusados = subsReutilizadosEm(cod);
       var ativs = atividadesDe(cod);
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
@@ -1828,37 +1959,37 @@
         eyebrowFicha('Subprocesso', s.Codigo) +
         '<h1>' + esc(codDisp(s.Codigo)) + ' — ' + esc(s.Nome) + '</h1>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
-        (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') + '</div></section>' +
+        (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') +
+        (s.Reutilizavel === 'Sim' ? '<span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' : '') +
+        '</div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do subprocesso</h3><dl class="ficha-dl">' +
         campo('Descrição', s.Descricao && esc(s.Descricao), true, 'desc') +
         campo('Objetivo', s.Objetivo && esc(s.Objetivo), true, 'desc') +
-        campo('Unidade Orgânica responsável', s.Unidade_Responsavel && esc(s.Unidade_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Corresponsaveis), false, 'quem') +
+        campo('Unidade Orgânica responsável', s.Unidade_Responsavel && siglaTag(s.Unidade_Responsavel), false, 'quem') +
+        campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Corresponsaveis, null, true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
+        '<div class="span2 campo-tecnico"><dt>Duração estimada de execução' +
+        dica('Soma da duração estimada das atividades deste subprocesso e de seus subprocessos internos, em qualquer nível — o caminho crítico, não o caminho feliz.') +
+        '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
         campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
+        (s.Reutilizavel === 'Sim' ? '<div class="pp-card"><h3><i class="fas fa-link" aria-hidden="true"></i> Reutilizado em</h3>' +
+          usosDoReutilizavel(s).map(function (u) {
+            return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="' + u.href + '"><div class="topo"><div><span class="cod">' + esc(u.cod) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(u.nome) + '</div></div></div></a>';
+          }).join('') + '</div>' : '') +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
-        (subsFilhos.length ?
+        ((subsFilhos.length || subsReusados.length) ?
           tabelaGov({
-            titulo: 'Subprocessos', total: subsFilhos.length,
-            rotuloTotal: subsFilhos.length === 1 ? 'subprocesso' : 'subprocessos',
+            titulo: 'Subprocessos', total: subsFilhos.length + subsReusados.length,
+            rotuloTotal: (subsFilhos.length + subsReusados.length) === 1 ? 'subprocesso' : 'subprocessos',
             colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Subprocesso', principal: true }, { r: 'Ação', fixa: true, curta: true }],
-            linhas: subsFilhos.map(function (sf) {
-              return '<tr data-link><td class="cod">' + esc(codDisp(sf.Codigo)) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
-                (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
-                '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>' +
-                detalheLinha([
-                  ['Entradas', listar(sf.Entradas).map(esc).join('; ')],
-                  ['Saídas', listar(sf.Saidas).map(esc).join('; ')],
-                  ['Sistemas', listar(sf.Sistemas).map(esc).join('; ')],
-                  ['Unidade responsável', esc(sf.Unidade_Responsavel || '')]
-                ]);
-            }).join('')
+            linhas: subsFilhos.map(function (sf) { return linhaSubprocesso(sf, false); }).join('') +
+              subsReusados.map(function (sf) { return linhaSubprocesso(sf, true); }).join('')
           })
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades (com entradas e saídas)</h3>' +
+        '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades</h3>' +
         tabelaAtividadesHtml(ativs) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
@@ -1896,7 +2027,7 @@
       eyebrowFicha('Atividade', a.Codigo) +
       '<h1>' + esc(codDisp(a.Codigo)) + ' — ' + esc(a.Nome) + '</h1>' +
       '<div class="meta">' +
-      (a.Prazo_Padrao ? '<span>· Prazo padrão: ' + esc(a.Prazo_Padrao) + '</span>' : '') + '</div></section>' +
+      (tf3.length ? '<span>· Duração estimada: ' + formatarHorasUteis(duracaoAtividadeHoras(a)) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da atividade</h3><dl class="ficha-dl">' +
       campo('Descrição', a.Descricao && esc(a.Descricao), true, 'desc') +
@@ -1914,7 +2045,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
           return '<tr data-link><td class="cod">' + esc(codDisp(t.Codigo)) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a>' +
             '</td>' +
             '<td>' + esc(t.Tipo_Tarefa || '—') + '</td>' +
-            '<td class="text-nowrap">' + esc(t.Duracao_Estimada || '—') + '</td></tr>' +
+            '<td class="text-nowrap">' + (t.Duracao_Estimada ? formatarHorasUteis(horasTarefa(t)) : '—') + '</td></tr>' +
             detalheLinha([
               ['Descrição', esc(t.Descricao || '')],
               ['Responsável', esc(t.Responsavel || '')],
@@ -1957,11 +2088,10 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       eyebrowFicha('Tarefa', t.Codigo) +
       '<h1>' + esc(codDisp(t.Codigo)) + ' — ' + esc(t.Nome) + '</h1>' +
       '<div class="meta">' + (t.Tipo_Tarefa ? '<span><i class="fas fa-gear" aria-hidden="true"></i> ' + esc(t.Tipo_Tarefa) + '</span>' : '') +
-      (t.Duracao_Estimada ? '<span>· Duração estimada: ' + esc(t.Duracao_Estimada) + '</span>' : '') + '</div></section>' +
+      (t.Duracao_Estimada ? '<span>· Duração estimada: ' + formatarHorasUteis(horasTarefa(t)) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
       campo('Descrição', t.Descricao && esc(t.Descricao), true, 'desc') +
-      campo('Objetivo', t.Objetivo && esc(t.Objetivo), true, 'desc') +
       campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa), false, 'tecnico') +
       campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
@@ -2579,8 +2709,8 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       '<div class="pp-sec-h" style="margin-top:0"><h1>' + esc(par('Titulo_Repositorio', 'Repositório de materiais e ferramentas')) + '</h1><div class="linha" aria-hidden="true"></div></div>' +
       (met || guia ?
         '<div class="repo-oficial">' +
-        (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/SEI</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
-        (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/SEI</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
+        (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/e-Codevasf</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
+        (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/e-Codevasf</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
         '</div>' : '') +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Jornada de mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
       /* Componente Wizard: a jornada é um percurso linear e prescrito —
@@ -2727,7 +2857,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
         var meusProcs = processosDoNugep(m.Nome);
         return '<article class="nugep-card">' + avatarNugep(m) +
           '<h3>' + esc(m.Nome) + '</h3>' +
-          '<p class="nugep-unid"><span class="nugep-sigla">' + esc(m.Unidade_Sigla || '') + '</span></p>' +
+          '<p class="nugep-unid"><span class="nugep-sigla">' + siglaTag(m.Unidade_Sigla || '') + '</span></p>' +
           contatoNugep(m) +
           (meusProcs.length ? '<div class="nugep-procs"><b><i class="fas fa-diagram-project" aria-hidden="true"></i> Processos sob responsabilidade</b><ul>' +
             meusProcs.map(function (p) { return '<li><a href="#/p/' + encodeURIComponent(p.Codigo) + '">' + esc(codDisp(p.Codigo)) + ' — ' + esc(p.Nome) + '</a></li>'; }).join('') +
@@ -2745,7 +2875,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       (P.Contato_Telefone ? ' · Telefone: ' + esc(P.Contato_Telefone) : '') + '</p>' +
       ((chefias.length || equipeUnp.length) ? '<div class="ci-hier">' +
         chefias.map(function (m) {
-          return '<div class="ci-nivel"><span class="ci-rot">' + esc(m.Unidade_Sigla || '') +
+          return '<div class="ci-nivel"><span class="ci-rot">' + siglaTag(m.Unidade_Sigla || '') +
             (m.Unidade_Nome ? ' — ' + esc(m.Unidade_Nome) : '') + '</span>' +
             perfilInst(m, 'chefia') + '</div>';
         }).join('') +
@@ -2756,9 +2886,23 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
   }
 
   /* ── TELA: glossário ──────────────────────────────────────────────── */
-  var filtroGloss = { q: '', cat: '', letra: '' };
+  var filtroGloss = { q: '', cat: '', letra: '', aba: 'termos' };
+  var filtroSiglas = { q: '' };
   function renderGlossario() {
     var el = $('#viewGlossario');
+    var ehSiglas = filtroGloss.aba === 'siglas';
+    el.innerHTML =
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Glossário</h1><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="chip-lista gloss-abas" role="tablist" aria-label="Tipo de glossário">' +
+      '<button type="button" role="tab" aria-selected="' + (!ehSiglas) + '" class="chip' + (!ehSiglas ? ' ativo' : '') + '" data-aba="termos">Termos de gestão de processos</button>' +
+      '<button type="button" role="tab" aria-selected="' + ehSiglas + '" class="chip' + (ehSiglas ? ' ativo' : '') + '" data-aba="siglas">Siglas das unidades</button>' +
+      '</div><div id="glossCorpo"></div>';
+    $all('.gloss-abas [data-aba]', el).forEach(function (b) {
+      b.onclick = function () { filtroGloss.aba = b.getAttribute('data-aba'); renderGlossario(); };
+    });
+    if (ehSiglas) renderSiglasGlossario($('#glossCorpo')); else renderTermosGlossario($('#glossCorpo'));
+  }
+  function renderTermosGlossario(el) {
     var todos = DADOS.glossario;
     var cats = []; todos.forEach(function (t) { if (t.Categoria && cats.indexOf(t.Categoria) < 0) cats.push(t.Categoria); });
     var ql = filtroGloss.q.toLowerCase();
@@ -2774,7 +2918,6 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
     var porLetra = {};
     pagina.forEach(function (t) { var L = String(t.Termo || '').charAt(0).toUpperCase(); (porLetra[L] = porLetra[L] || []).push(t); });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h1>Glossário de Gestão de Processos</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<section class="pp-filtros-painel" role="search" aria-label="Filtros do glossário">' +
       '<div class="filtros-campos">' +
       buscaCampoHtml('glossQ', 'Pesquisar termo', 'Termo, sigla ou conceito (ex.: SIPOC, KPI, raia)', filtroGloss.q) +
@@ -2805,23 +2948,44 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       }).join('') : vazio('Nenhum termo encontrado',
         'Revise o termo buscado ou a letra selecionada para ver o glossário completo.')) +
       paginacaoHtml('gloss', lista.length, 'termos', [12, 24, 48, 96]);
-    ligarPaginacao(el, renderGlossario);
+    ligarPaginacao(el, function () { renderTermosGlossario(el); });
     window.BRSelectInit(el, function (chave, valores) {
       filtroGloss.cat = valores[0] || '';
       PAG.gloss.pag = 1;
-      renderGlossario();
+      renderTermosGlossario(el);
     });
     var q = $('#glossQ');
-    if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; PAG.gloss.pag = 1; renderGlossario(); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
-    $all('.gloss-abc button', el).forEach(function (b) { b.onclick = function () { filtroGloss.letra = b.getAttribute('data-letra'); renderGlossario(); }; });
-    $all('.gloss-rel', el).forEach(function (b) { b.onclick = function () { filtroGloss.q = b.getAttribute('data-termo'); filtroGloss.letra = ''; filtroGloss.cat = ''; renderGlossario(); }; });
+    if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; PAG.gloss.pag = 1; renderTermosGlossario(el); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
+    $all('.gloss-abc button', el).forEach(function (b) { b.onclick = function () { filtroGloss.letra = b.getAttribute('data-letra'); renderTermosGlossario(el); }; });
+    $all('.gloss-rel', el).forEach(function (b) { b.onclick = function () { filtroGloss.q = b.getAttribute('data-termo'); filtroGloss.letra = ''; filtroGloss.cat = ''; renderTermosGlossario(el); }; });
     ligarRodapeFiltros(el, 'gloss', function (qual) {
       if (qual === 'q' || qual === 'tudo') filtroGloss.q = '';
       if (qual === 'cat' || qual === 'tudo') filtroGloss.cat = '';
       if (qual === 'letra' || qual === 'tudo') filtroGloss.letra = '';
       PAG.gloss.pag = 1;
-      renderGlossario();
+      renderTermosGlossario(el);
     });
+  }
+  // Lista de Nomes e Siglas das Unidades Orgânicas (Decisão da Presidência
+  // nº 601/2025, js/siglas.js) — aba irmã da de termos, mesmo padrão de busca.
+  function renderSiglasGlossario(el) {
+    var todas = DADOS.siglas || [];
+    var ql = filtroSiglas.q.trim().toLowerCase();
+    var lista = !ql ? todas : todas.filter(function (u) {
+      return u.Sigla.toLowerCase().indexOf(ql) >= 0 || u.Nome.toLowerCase().indexOf(ql) >= 0;
+    });
+    var pagina = pagFatia('siglas', lista, 24);
+    el.innerHTML =
+      '<section class="pp-filtros-painel" role="search" aria-label="Filtro de siglas"><div class="filtros-campos">' +
+      buscaCampoHtml('siglasQ', 'Pesquisar sigla ou unidade', 'Ex.: UNP, Gerência de Custos, AE/GFN', filtroSiglas.q) +
+      '</div></section>' +
+      (lista.length ? '<div class="siglas-grid">' + pagina.map(function (u) {
+        return '<div class="siglas-item"><code class="siglas-cod">' + esc(u.Sigla) + '</code><span>' + esc(u.Nome) + '</span></div>';
+      }).join('') + '</div>' : vazio('Nenhuma unidade encontrada', 'Revise o termo pesquisado.')) +
+      paginacaoHtml('siglas', lista.length, 'unidades', [24, 48, 96]);
+    ligarPaginacao(el, function () { renderSiglasGlossario(el); });
+    var q = $('#siglasQ');
+    if (q) q.oninput = function () { filtroSiglas.q = this.value; PAG.siglas.pag = 1; renderSiglasGlossario(el); var n = $('#siglasQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
   }
 
   /* ── TELA: FAQ ────────────────────────────────────────────────────── */

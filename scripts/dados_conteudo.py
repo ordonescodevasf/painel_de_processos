@@ -18,7 +18,7 @@ JORNADA = [
   "Segurança: “agora sei o que esperam de mim”"),
  (3, "Desenvolver", "Modelagem AS-IS", "2–4 semanas",
   "Fotografar o processo como ele é hoje, incluindo variações, filas, retrabalhos e workarounds.",
-  "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro de hipóteses, dores e memória do mapeamento (no processo e-Codevasf/SEI); Identificação de riscos, gargalos e handoffs",
+  "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro de hipóteses, dores e memória do mapeamento (no processo e-Codevasf); Identificação de riscos, gargalos e handoffs",
   "Equipe de mapeamento; Executores do processo",
   "Diagrama BPMN AS-IS; Lista de dores e riscos",
   "Reconhecimento: “alguém finalmente enxerga o que a gente vive”"),
@@ -61,11 +61,11 @@ _GUIA = "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/gov
 REPOSITORIO = [
  ("REP-001", "Documento oficial", "", "RES 031/2025",
   "Metodologia de Gerenciamento de Processos da Codevasf",
-  "Documento normativo que institui a metodologia corporativa de gerenciamento de processos (disponível na intranet/SEI).",
+  "Documento normativo que institui a metodologia corporativa de gerenciamento de processos (disponível na intranet/e-Codevasf).",
   "Codevasf", _MET, 1),
  ("REP-002", "Documento oficial", "", "RES 031/2025",
   "Guia de Gerenciamento de Processos da Codevasf",
-  "Guia prático que detalha etapas, papéis, artefatos e padrões do mapeamento (disponível na intranet/SEI).",
+  "Guia prático que detalha etapas, papéis, artefatos e padrões do mapeamento (disponível na intranet/e-Codevasf).",
   "Codevasf", _GUIA, 2),
  ("REP-005", "Template", "Desenho", "",
   "Modelo de Diagramas BPMN",
@@ -299,7 +299,7 @@ FAQ = [
  (7, _FM, "Que notação a Codevasf usa para modelar processos?",
   "BPMN 2.0, modelada preferencialmente no Bizagi Modeler, conforme o Guia de Gerenciamento de Processos (RES 031/2025). Os diagramas publicados aparecem na ficha de cada macroprocesso, processo e subprocesso."),
  (8, _FM, "Como propor uma mudança em um processo já mapeado?",
-  "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no processo e-Codevasf/SEI correspondente."),
+  "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no processo e-Codevasf correspondente."),
  (9, _FG, "O que é a Cadeia de Valor Integrada da Codevasf?",
   "É a representação dos macroprocessos da Companhia organizados por contribuição ao valor público: gerenciais no direcionamento, finalísticos na entrega à sociedade e de suporte na sustentação — emoldurados pela missão, visão, propósito e valores. Ela é a porta de entrada de navegação deste painel."),
  (10, _FG, "Quem é o dono do processo?",
@@ -331,7 +331,7 @@ FAQ = [
  (23, _FU, "Como o painel é alimentado?",
   "Por uma planilha única (Google Sheets ou o arquivo data/painel-processos-dados.xlsx do repositório): cadeia de valor, fichas, documentos, riscos, indicadores, jornada, repositório, NUGEP, glossário e FAQ vêm todos de lá. Os detalhes estão na aba LEIA-ME da planilha e no README."),
  (24, _FU, "Onde encontro os modelos, a metodologia e o guia oficiais?",
-  "Na aba Repositório: a jornada de mapeamento, a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025, na intranet/SEI), os instrumentos por fase do ciclo BPM, os templates e as ferramentas de modelagem."),
+  "Na aba Repositório: a jornada de mapeamento, a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025, na intranet/e-Codevasf), os instrumentos por fase do ciclo BPM, os templates e as ferramentas de modelagem."),
 ]
 
 # (Chave, Valor)

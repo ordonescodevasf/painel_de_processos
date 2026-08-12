@@ -1,7 +1,7 @@
 /* GERADO AUTOMATICAMENTE a partir de data/painel-processos-dados.xlsx — não edite à mão.
    Fonte: data/painel-processos-dados.xlsx */
 window.PAINEL_DADOS = {
- "_gerado_em": "2026-08-10 14:31",
+ "_gerado_em": "2026-08-12 00:00",
  "_fonte": "painel-processos-dados.xlsx",
  "Macroprocessos": [
   {
@@ -16,7 +16,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Plano Estratégico; Plano de Ação Anual; Relatórios de desempenho",
    "Clientes_Beneficiarios": "Diretoria Executiva; Conselho de Administração; Unidades internas",
    "Partes_Interessadas": "Ministério supervisor; Órgãos de controle; Sociedade",
-   "Sistemas": "e-Codevasf; SEI; Painéis de BI",
+   "Sistemas": "e-Codevasf; Painéis de BI",
    "Normativos_Aplicaveis": "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
    "Imagem_Bizagi": null,
    "Observacoes": null,
@@ -34,7 +34,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Política de Gestão de Riscos; Matriz de riscos corporativa; Plano de integridade",
    "Clientes_Beneficiarios": "Alta administração; Gestores de 1ª linha",
    "Partes_Interessadas": "Auditoria interna; CGU; TCU",
-   "Sistemas": "SEI; Sistema de gestão de riscos",
+   "Sistemas": "e-Codevasf; Sistema de gestão de riscos",
    "Normativos_Aplicaveis": "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
    "Imagem_Bizagi": null,
    "Observacoes": null,
@@ -52,7 +52,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Projetos de estruturação produtiva; Convênios e instrumentos de repasse",
    "Clientes_Beneficiarios": "Produtores rurais; Cooperativas; Municípios",
    "Partes_Interessadas": "Parlamentares; Entes federados; Entidades parceiras",
-   "Sistemas": "TransfereGov; SEI",
+   "Sistemas": "TransfereGov; e-Codevasf",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Portarias de transferências voluntárias",
    "Imagem_Bizagi": null,
    "Observacoes": null,
@@ -70,7 +70,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Perímetros em operação; Água distribuída; Relatórios de O&M",
    "Clientes_Beneficiarios": "Irrigantes; Distritos de irrigação",
    "Partes_Interessadas": "ANA; Agências estaduais; Associações de usuários",
-   "Sistemas": "SIG-Irrigação (fictício); SEI",
+   "Sistemas": "SIG-Irrigação (fictício); e-Codevasf",
    "Normativos_Aplicaveis": "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
    "Imagem_Bizagi": null,
    "Observacoes": null,
@@ -88,7 +88,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Nascentes recuperadas; Obras hidroambientais; Sistemas de abastecimento",
    "Clientes_Beneficiarios": "Comunidades ribeirinhas; Municípios",
    "Partes_Interessadas": "Comitês de bacia; MMA; Órgãos ambientais",
-   "Sistemas": "SEI; GeoPortal (fictício)",
+   "Sistemas": "e-Codevasf; GeoPortal (fictício)",
    "Normativos_Aplicaveis": "Legislação ambiental aplicável",
    "Imagem_Bizagi": null,
    "Observacoes": null,
@@ -106,7 +106,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Editais publicados; Contratos firmados; Atas de registro de preços",
    "Clientes_Beneficiarios": "Todas as unidades demandantes",
    "Partes_Interessadas": "Fornecedores; Assessoria Jurídica; Órgãos de controle; PNCP",
-   "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; SEI",
+   "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; e-Codevasf",
    "Normativos_Aplicaveis": "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Imagem_Bizagi": null,
    "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento.",
@@ -124,7 +124,7 @@ window.PAINEL_DADOS = {
    "Entregas": "Empregados admitidos e capacitados; Folha de pagamento",
    "Clientes_Beneficiarios": "Empregados; Gestores",
    "Partes_Interessadas": "Sindicatos; SEST; Ministério supervisor",
-   "Sistemas": "SIGEP (fictício); SEI",
+   "Sistemas": "SIGEP (fictício); e-Codevasf",
    "Normativos_Aplicaveis": "CLT; Normas internas de pessoal",
    "Imagem_Bizagi": null,
    "Observacoes": null,
@@ -171,9 +171,9 @@ window.PAINEL_DADOS = {
    "Entradas": "DFD; Plano de Contratações Anual; Requisitos da área",
    "Saidas": "ETP aprovado; TR aprovado; Pesquisa de preços validada",
    "Beneficiarios": "AA/GLC (Seleção do Fornecedor); Assessoria Jurídica",
-   "Sistemas": "SEI; Compras.gov.br; Painel de Preços",
+   "Sistemas": "e-Codevasf; Compras.gov.br; Painel de Preços",
    "Normativos_Relacionados": "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
-   "Processo_SEI": "59500.000123/2026-11",
+   "Processo_ECodevasf": "59500.000123/2026-11",
    "Imagem_Bizagi": "https://fluxosti.codevasf.gov.br/incidentes/",
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
@@ -211,9 +211,9 @@ window.PAINEL_DADOS = {
    "Entradas": "Edital minutado; Parecer jurídico; ETP/TR",
    "Saidas": "Resultado homologado; Contrato/ata para assinatura",
    "Beneficiarios": "Unidades demandantes; Fornecedores",
-   "Sistemas": "Compras.gov.br; PNCP; SEI",
+   "Sistemas": "Compras.gov.br; PNCP; e-Codevasf",
    "Normativos_Relacionados": "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
-   "Processo_SEI": "59500.000456/2026-22",
+   "Processo_ECodevasf": "59500.000456/2026-22",
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
@@ -251,9 +251,9 @@ window.PAINEL_DADOS = {
    "Entradas": "Contrato assinado; Cronograma; Garantias",
    "Saidas": "Objeto recebido; Pagamentos efetuados; Termo de encerramento",
    "Beneficiarios": "Unidades demandantes; Fornecedores",
-   "Sistemas": "SEI; Compras.gov.br",
+   "Sistemas": "e-Codevasf; Compras.gov.br",
    "Normativos_Relacionados": "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
-   "Processo_SEI": "59500.000789/2026-33",
+   "Processo_ECodevasf": "59500.000789/2026-33",
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
@@ -291,9 +291,9 @@ window.PAINEL_DADOS = {
    "Entradas": "Outorga de uso; Demanda de irrigação; Plano de cultivo",
    "Saidas": "Água distribuída; Infraestrutura mantida; Relatórios de O&M",
    "Beneficiarios": "Irrigantes; Distritos",
-   "Sistemas": "SIG-Irrigação (fictício); SEI",
+   "Sistemas": "SIG-Irrigação (fictício); e-Codevasf",
    "Normativos_Relacionados": "Lei nº 12.787/2013",
-   "Processo_SEI": "59500.000901/2026-44",
+   "Processo_ECodevasf": "59500.000901/2026-44",
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
@@ -331,9 +331,9 @@ window.PAINEL_DADOS = {
    "Entradas": "Diagnóstico hidroambiental; Termos de cooperação",
    "Saidas": "Nascentes recuperadas; Relatórios de monitoramento",
    "Beneficiarios": "Comunidades; Órgãos ambientais",
-   "Sistemas": "SEI; GeoPortal (fictício)",
+   "Sistemas": "e-Codevasf; GeoPortal (fictício)",
    "Normativos_Relacionados": "Legislação ambiental aplicável",
-   "Processo_SEI": null,
+   "Processo_ECodevasf": null,
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Não",
    "M2_Macro_Processo_Modelados": "Não",
@@ -373,7 +373,7 @@ window.PAINEL_DADOS = {
    "Beneficiarios": "Diretoria Executiva; Conselhos",
    "Sistemas": "e-Codevasf; Painéis de BI",
    "Normativos_Relacionados": "Lei nº 13.303/2016",
-   "Processo_SEI": "59500.000015/2025-77",
+   "Processo_ECodevasf": "59500.000015/2025-77",
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Sim",
    "M2_Macro_Processo_Modelados": "Sim",
@@ -411,9 +411,9 @@ window.PAINEL_DADOS = {
    "Entradas": "Resultado homologado; Documentação do candidato",
    "Saidas": "Empregado admitido e integrado",
    "Beneficiarios": "Novos empregados; Unidades de lotação",
-   "Sistemas": "SIGEP (fictício); SEI",
+   "Sistemas": "SIGEP (fictício); e-Codevasf",
    "Normativos_Relacionados": "CLT; Normas internas de pessoal",
-   "Processo_SEI": null,
+   "Processo_ECodevasf": null,
    "Imagem_Bizagi": null,
    "M1_Reuniao_Contextualizacao": "Não",
    "M2_Macro_Processo_Modelados": "Não",
@@ -442,10 +442,12 @@ window.PAINEL_DADOS = {
    "Unidade_Responsavel": "AA/GLC",
    "Dono": "Gerente de Licitações",
    "Entradas": "DFD; Levantamento de soluções de mercado",
-   "Saidas": "ETP aprovado no SEI",
-   "Sistemas": "SEI; Compras.gov.br",
+   "Saidas": "ETP aprovado no e-Codevasf",
+   "Sistemas": "e-Codevasf; Compras.gov.br",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AI/GOM"
+   "Unidades_Corresponsaveis": "AI/GOM",
+   "Reutilizavel": "",
+   "Reutilizado_Em": ""
   },
   {
    "Codigo": "SP-06.01.02",
@@ -458,9 +460,11 @@ window.PAINEL_DADOS = {
    "Dono": "Gerente de Licitações",
    "Entradas": "ETP aprovado; Modelos padronizados de TR",
    "Saidas": "TR aprovado e validado juridicamente",
-   "Sistemas": "SEI",
+   "Sistemas": "e-Codevasf",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AR/GRB"
+   "Unidades_Corresponsaveis": "AR/GRB",
+   "Reutilizavel": "",
+   "Reutilizado_Em": ""
   },
   {
    "Codigo": "SP-06.01.03",
@@ -473,9 +477,11 @@ window.PAINEL_DADOS = {
    "Dono": "Gerente de Licitações",
    "Entradas": "TR validado; Fontes de preços admitidas",
    "Saidas": "Relatório de pesquisa de preços; Mapa comparativo",
-   "Sistemas": "Painel de Preços; PNCP; SEI",
+   "Sistemas": "Painel de Preços; PNCP; e-Codevasf",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP"
+   "Unidades_Corresponsaveis": "AG/GGP",
+   "Reutilizavel": "",
+   "Reutilizado_Em": ""
   },
   {
    "Codigo": "SP-06.01.03.01",
@@ -488,9 +494,11 @@ window.PAINEL_DADOS = {
    "Dono": "Gerente de Licitações",
    "Entradas": "Amostra de preços coletados na pesquisa",
    "Saidas": "Valores discrepantes identificados e justificados",
-   "Sistemas": "Planilha padrão; SEI",
+   "Sistemas": "Planilha padrão; e-Codevasf",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP"
+   "Unidades_Corresponsaveis": "AG/GGP",
+   "Reutilizavel": "Sim",
+   "Reutilizado_Em": "P-06.02; P-04.01"
   },
   {
    "Codigo": "SP-06.02.01",
@@ -505,7 +513,9 @@ window.PAINEL_DADOS = {
    "Saidas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AT/GTI"
+   "Unidades_Corresponsaveis": "AT/GTI",
+   "Reutilizavel": "",
+   "Reutilizado_Em": ""
   },
   {
    "Codigo": "SP-04.01.01",
@@ -520,7 +530,9 @@ window.PAINEL_DADOS = {
    "Saidas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AE/GPE"
+   "Unidades_Corresponsaveis": "AE/GPE",
+   "Reutilizavel": "",
+   "Reutilizado_Em": ""
   }
  ],
  "Atividades": [
@@ -532,9 +544,8 @@ window.PAINEL_DADOS = {
    "Descricao": "Registrar o Documento de Formalização da Demanda com justificativa, quantitativos e alinhamento ao PCA.",
    "Responsavel_Ator": "Área demandante",
    "Entradas": "Necessidade identificada; Plano de Contratações Anual",
-   "Saidas": "DFD assinado no SEI",
-   "Sistemas": "SEI",
-   "Prazo_Padrao": "5 dias úteis",
+   "Saidas": "DFD assinado no e-Codevasf",
+   "Sistemas": "e-Codevasf",
    "Base_Normativa": "NI-027/2024 (fictícia)",
    "Imagem_Bizagi": "https://placehold.co/960x420/155bcb/ffffff?text=Diagrama+BPMN+A-06.01.01.01",
    "Executor": "Analista em Desenvolvimento Regional",
@@ -551,7 +562,6 @@ window.PAINEL_DADOS = {
    "Entradas": "DFD; Catálogos; Contratações similares (PNCP)",
    "Saidas": "Levantamento de soluções documentado",
    "Sistemas": "PNCP; Compras.gov.br",
-   "Prazo_Padrao": "10 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 18",
    "Imagem_Bizagi": null,
    "Executor": "Técnico em Desenvolvimento Regional",
@@ -567,8 +577,7 @@ window.PAINEL_DADOS = {
    "Responsavel_Ator": "Equipe de planejamento da contratação",
    "Entradas": "Levantamento de soluções; Séries históricas",
    "Saidas": "Memória de cálculo de quantitativos",
-   "Sistemas": "SEI",
-   "Prazo_Padrao": "5 dias úteis",
+   "Sistemas": "e-Codevasf",
    "Base_Normativa": "A definir",
    "Imagem_Bizagi": null,
    "Executor": "Assistente em Desenvolvimento Regional",
@@ -584,8 +593,7 @@ window.PAINEL_DADOS = {
    "Responsavel_Ator": "Equipe de planejamento; Autoridade competente",
    "Entradas": "Levantamentos e memórias anteriores",
    "Saidas": "ETP aprovado",
-   "Sistemas": "SEI; Compras.gov.br",
-   "Prazo_Padrao": "7 dias úteis",
+   "Sistemas": "e-Codevasf; Compras.gov.br",
    "Base_Normativa": "Lei nº 14.133/2021, art. 18",
    "Imagem_Bizagi": null,
    "Executor": "Analista em Desenvolvimento Regional",
@@ -601,8 +609,7 @@ window.PAINEL_DADOS = {
    "Responsavel_Ator": "Equipe de planejamento da contratação",
    "Entradas": "ETP aprovado; Modelos padronizados",
    "Saidas": "Minuta de TR",
-   "Sistemas": "SEI",
-   "Prazo_Padrao": "10 dias úteis",
+   "Sistemas": "e-Codevasf",
    "Base_Normativa": "Lei nº 14.133/2021, art. 6º, XXIII",
    "Imagem_Bizagi": null,
    "Executor": "Técnico em Desenvolvimento Regional",
@@ -618,8 +625,7 @@ window.PAINEL_DADOS = {
    "Responsavel_Ator": "AA/GLC; Assessoria Jurídica",
    "Entradas": "Minuta de TR",
    "Saidas": "TR validado; Parecer jurídico",
-   "Sistemas": "SEI",
-   "Prazo_Padrao": "15 dias úteis",
+   "Sistemas": "e-Codevasf",
    "Base_Normativa": "Lei nº 14.133/2021, art. 53",
    "Imagem_Bizagi": null,
    "Executor": "Assistente em Desenvolvimento Regional",
@@ -636,7 +642,6 @@ window.PAINEL_DADOS = {
    "Entradas": "TR validado; Fontes de preços",
    "Saidas": "Relatório de pesquisa de preços",
    "Sistemas": "Painel de Preços; PNCP",
-   "Prazo_Padrao": "10 dias úteis",
    "Base_Normativa": "IN SEGES nº 65/2021",
    "Imagem_Bizagi": null,
    "Executor": "Analista em Desenvolvimento Regional",
@@ -652,8 +657,7 @@ window.PAINEL_DADOS = {
    "Responsavel_Ator": "Equipe de planejamento da contratação",
    "Entradas": "Relatório de pesquisa",
    "Saidas": "Valor estimado consolidado",
-   "Sistemas": "SEI",
-   "Prazo_Padrao": "3 dias úteis",
+   "Sistemas": "e-Codevasf",
    "Base_Normativa": "IN SEGES nº 65/2021, art. 6º",
    "Imagem_Bizagi": null,
    "Executor": "Técnico em Desenvolvimento Regional",
@@ -670,7 +674,6 @@ window.PAINEL_DADOS = {
    "Entradas": "Amostra de preços coletados",
    "Saidas": "Amostra tratada; Justificativa de exclusão",
    "Sistemas": "Planilha padrão",
-   "Prazo_Padrao": "1 dia útil",
    "Base_Normativa": "IN SEGES nº 65/2021, art. 6º, §3º",
    "Imagem_Bizagi": null,
    "Executor": "Assistente em Desenvolvimento Regional",
@@ -687,7 +690,6 @@ window.PAINEL_DADOS = {
    "Entradas": "Edital aprovado; Parecer jurídico",
    "Saidas": "Edital publicado (PNCP)",
    "Sistemas": "Compras.gov.br; PNCP",
-   "Prazo_Padrao": "2 dias úteis",
    "Base_Normativa": "Lei nº 14.133/2021, art. 54",
    "Imagem_Bizagi": null,
    "Executor": "Analista em Desenvolvimento Regional",
@@ -704,7 +706,6 @@ window.PAINEL_DADOS = {
    "Entradas": "Edital publicado; Propostas",
    "Saidas": "Ata da sessão; Resultado do julgamento",
    "Sistemas": "Compras.gov.br",
-   "Prazo_Padrao": "Conforme edital",
    "Base_Normativa": "Lei nº 14.133/2021",
    "Imagem_Bizagi": null,
    "Executor": "Técnico em Desenvolvimento Regional",
@@ -721,7 +722,6 @@ window.PAINEL_DADOS = {
    "Entradas": "Plano de cultivo; Disponibilidade hídrica",
    "Saidas": "Programação semanal aprovada",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Prazo_Padrao": "Semanal",
    "Base_Normativa": "A definir",
    "Imagem_Bizagi": null,
    "Executor": "Assistente em Desenvolvimento Regional",
@@ -738,7 +738,6 @@ window.PAINEL_DADOS = {
    "Entradas": "Programação semanal",
    "Saidas": "Volumes registrados; Ocorrências",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Prazo_Padrao": "Diário",
    "Base_Normativa": "A definir",
    "Imagem_Bizagi": null,
    "Executor": "Analista em Desenvolvimento Regional",
@@ -755,27 +754,25 @@ window.PAINEL_DADOS = {
    "Descricao": "Levantar justificativa, quantitativos preliminares e alinhamento ao PCA junto ao gestor da área.",
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Área demandante",
-   "Sistema": "SEI",
-   "Duracao_Estimada": "0,5 dia",
+   "Sistema": "e-Codevasf",
+   "Duracao_Estimada": 4,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AA/GLC",
-   "Objetivo": "Coletar, junto ao gestor da área, os elementos necessários para justificar a demanda."
+   "Unidades_Corresponsaveis": "AA/GLC"
   },
   {
    "Codigo": "T-06.01.01.01.02",
    "Atividade": "A-06.01.01.01",
    "Ordem": "2",
-   "Nome": "Preencher o formulário DFD no SEI",
+   "Nome": "Preencher o formulário DFD no e-Codevasf",
    "Descricao": "Registrar o Documento de Formalização da Demanda no modelo padronizado.",
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Área demandante",
-   "Sistema": "SEI",
-   "Duracao_Estimada": "0,5 dia",
+   "Sistema": "e-Codevasf",
+   "Duracao_Estimada": 4,
    "Observacoes": "Modelo DOC-006/DOC-012.",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP",
-   "Objetivo": "Registrar formalmente a demanda no modelo padronizado do DFD."
+   "Unidades_Corresponsaveis": "AG/GGP"
   },
   {
    "Codigo": "T-06.01.01.01.03",
@@ -785,12 +782,11 @@ window.PAINEL_DADOS = {
    "Descricao": "Encaminhar o DFD para assinatura da autoridade competente da unidade.",
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Área demandante",
-   "Sistema": "SEI",
-   "Duracao_Estimada": "1 dia",
+   "Sistema": "e-Codevasf",
+   "Duracao_Estimada": 8,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AT/GTI",
-   "Objetivo": "Validar formalmente o DFD perante a autoridade competente da unidade."
+   "Unidades_Corresponsaveis": "AT/GTI"
   },
   {
    "Codigo": "T-06.01.03.01.01",
@@ -801,11 +797,10 @@ window.PAINEL_DADOS = {
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Equipe de planejamento",
    "Sistema": "Painel de Preços",
-   "Duracao_Estimada": "0,5 dia",
+   "Duracao_Estimada": 4,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AE/GPE",
-   "Objetivo": "Obter parâmetros de preço de contratações públicas similares."
+   "Unidades_Corresponsaveis": "AE/GPE"
   },
   {
    "Codigo": "T-06.01.03.01.02",
@@ -816,11 +811,10 @@ window.PAINEL_DADOS = {
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Equipe de planejamento",
    "Sistema": "PNCP",
-   "Duracao_Estimada": "0,5 dia",
+   "Duracao_Estimada": 4,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AE/GAG",
-   "Objetivo": "Confirmar preços praticados em contratos vigentes de objeto equivalente."
+   "Unidades_Corresponsaveis": "AE/GAG"
   },
   {
    "Codigo": "T-06.01.03.01.03",
@@ -830,12 +824,11 @@ window.PAINEL_DADOS = {
    "Descricao": "Solicitar e registrar cotações diretas quando as fontes oficiais forem insuficientes.",
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Equipe de planejamento",
-   "Sistema": "SEI",
-   "Duracao_Estimada": "3 dias",
+   "Sistema": "e-Codevasf",
+   "Duracao_Estimada": 24,
    "Observacoes": "Mínimo de 3 fontes (IN 65/2021).",
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AR/GDT",
-   "Objetivo": "Complementar a amostra de preços quando as fontes oficiais forem insuficientes."
+   "Unidades_Corresponsaveis": "AR/GDT"
   },
   {
    "Codigo": "T-06.01.03.01.04",
@@ -846,11 +839,10 @@ window.PAINEL_DADOS = {
    "Tipo_Tarefa": "Regra de negócio",
    "Responsavel": "Equipe de planejamento",
    "Sistema": "Planilha padrão",
-   "Duracao_Estimada": "0,5 dia",
+   "Duracao_Estimada": 4,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AI/GOM",
-   "Objetivo": "Chegar a um valor de referência estatisticamente consistente."
+   "Unidades_Corresponsaveis": "AI/GOM"
   },
   {
    "Codigo": "T-06.02.01.01.01",
@@ -861,11 +853,10 @@ window.PAINEL_DADOS = {
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Agente de contratação",
    "Sistema": "Compras.gov.br",
-   "Duracao_Estimada": "0,5 dia",
+   "Duracao_Estimada": 4,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AR/GRB",
-   "Objetivo": "Disponibilizar o edital e seus anexos no sistema de compras."
+   "Unidades_Corresponsaveis": "AR/GRB"
   },
   {
    "Codigo": "T-06.02.01.01.02",
@@ -876,11 +867,10 @@ window.PAINEL_DADOS = {
    "Tipo_Tarefa": "Automatizada",
    "Responsavel": "Compras.gov.br",
    "Sistema": "PNCP",
-   "Duracao_Estimada": "Imediato",
+   "Duracao_Estimada": 0,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AA/GLC",
-   "Objetivo": "Garantir a publicidade nacional do aviso de licitação."
+   "Unidades_Corresponsaveis": "AA/GLC"
   },
   {
    "Codigo": "T-04.01.01.01.01",
@@ -891,11 +881,10 @@ window.PAINEL_DADOS = {
    "Tipo_Tarefa": "Manual",
    "Responsavel": "Equipe de operação",
    "Sistema": "SIG-Irrigação (fictício)",
-   "Duracao_Estimada": "1 dia",
+   "Duracao_Estimada": 8,
    "Observacoes": null,
    "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP",
-   "Objetivo": "Reunir os pedidos de água por setor hidráulico antes da programação."
+   "Unidades_Corresponsaveis": "AG/GGP"
   }
  ],
  "Documentos": [
@@ -945,7 +934,7 @@ window.PAINEL_DADOS = {
    "Data": "2026-01-12",
    "Situacao": "Vigente",
    "Link": "https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0601",
-   "Observacoes": "SEI 59500.000123/2026-11."
+   "Observacoes": "e-Codevasf 59500.000123/2026-11."
   },
   {
    "ID": "DOC-005",
@@ -1036,7 +1025,7 @@ window.PAINEL_DADOS = {
    "Vinculo_Nivel": "Atividade",
    "Vinculo_Codigo": "A-06.01.01.01",
    "Tipo_Documento": "Formulário/Modelo",
-   "Titulo": "Passo a passo do DFD no SEI",
+   "Titulo": "Passo a passo do DFD no e-Codevasf",
    "Versao": "1.0",
    "Data": "2026-02-12",
    "Situacao": "Vigente",
@@ -1122,7 +1111,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 15,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Designação formal de fiscais, agenda de medições e alertas no SEI.",
+   "Controles_Tratamento": "Designação formal de fiscais, agenda de medições e alertas no e-Codevasf.",
    "Responsavel": "Ricardo Nogueira",
    "Status": "Aberto"
   },
@@ -1212,7 +1201,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 9,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Oficinas de capacitação e modelo simplificado de DFD no SEI.",
+   "Controles_Tratamento": "Oficinas de capacitação e modelo simplificado de DFD no e-Codevasf.",
    "Responsavel": "Bruna Souza",
    "Status": "Encerrado"
   }
@@ -1245,7 +1234,7 @@ window.PAINEL_DADOS = {
    "Resultado_Atual": "26",
    "Situacao": "Meta atingida",
    "Periodicidade": "Mensal",
-   "Fonte": "SEI",
+   "Fonte": "e-Codevasf",
    "Ultima_Medicao": "2026-06-30"
   },
   {
@@ -1275,7 +1264,7 @@ window.PAINEL_DADOS = {
    "Resultado_Atual": "92",
    "Situacao": "Abaixo da meta",
    "Periodicidade": "Mensal",
-   "Fonte": "SEI",
+   "Fonte": "e-Codevasf",
    "Ultima_Medicao": "2026-06-30"
   },
   {
@@ -1335,7 +1324,7 @@ window.PAINEL_DADOS = {
    "Resultado_Atual": "88",
    "Situacao": "Abaixo da meta",
    "Periodicidade": "Mensal",
-   "Fonte": "SEI",
+   "Fonte": "e-Codevasf",
    "Ultima_Medicao": "2026-06-30"
   },
   {
@@ -1383,7 +1372,7 @@ window.PAINEL_DADOS = {
    "Nome": "Modelagem AS-IS",
    "Duracao": "2–4 semanas",
    "Objetivo": "Fotografar o processo como ele é hoje, incluindo variações, filas, retrabalhos e workarounds.",
-   "Atividades_Chave": "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro de hipóteses, dores e memória do mapeamento (no processo e-Codevasf/SEI); Identificação de riscos, gargalos e handoffs",
+   "Atividades_Chave": "Workshops de modelagem com quem executa; Desenho BPMN no Bizagi (com anexação de evidências); Registro de hipóteses, dores e memória do mapeamento (no processo e-Codevasf/e-Codevasf); Identificação de riscos, gargalos e handoffs",
    "Quem_Faz": "Equipe de mapeamento; Executores do processo",
    "Entregaveis": "Diagrama BPMN AS-IS; Lista de dores e riscos",
    "Sentimento_Usuario": "Reconhecimento: “alguém finalmente enxerga o que a gente vive”"
@@ -1451,7 +1440,7 @@ window.PAINEL_DADOS = {
    "Fase_Ciclo": null,
    "Codigo": "RES 031/2025",
    "Titulo": "Metodologia de Gerenciamento de Processos da Codevasf",
-   "Descricao": "Documento normativo que institui a metodologia corporativa de gerenciamento de processos (disponível na intranet/SEI).",
+   "Descricao": "Documento normativo que institui a metodologia corporativa de gerenciamento de processos (disponível na intranet/e-Codevasf).",
    "Fonte": "Codevasf",
    "Link": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/met_gerenciamento-processos_res-031_2025-01-08.pdf",
    "Ordem": "1"
@@ -1462,7 +1451,7 @@ window.PAINEL_DADOS = {
    "Fase_Ciclo": null,
    "Codigo": "RES 031/2025",
    "Titulo": "Guia de Gerenciamento de Processos da Codevasf",
-   "Descricao": "Guia prático que detalha etapas, papéis, artefatos e padrões do mapeamento (disponível na intranet/SEI).",
+   "Descricao": "Guia prático que detalha etapas, papéis, artefatos e padrões do mapeamento (disponível na intranet/e-Codevasf).",
    "Fonte": "Codevasf",
    "Link": "https://intraplone.codevasf.gov.br/documentos_normativos_referencia/governanca-e-gestao/copy_of_planos/guia_gerenciamento-processos_res-031_2025-01-08.pdf",
    "Ordem": "2"
@@ -2487,7 +2476,7 @@ window.PAINEL_DADOS = {
    "Ordem": "8",
    "Categoria": "Modelagem e SIPOC",
    "Pergunta": "Como propor uma mudança em um processo já mapeado?",
-   "Resposta": "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no processo e-Codevasf/SEI correspondente."
+   "Resposta": "Use o botão flutuante “Sugerir melhoria de processo” (que abre um e-mail para a UNP) ou procure o dono do processo indicado na ficha. Propostas aceitas abrem um novo ciclo de análise e redesenho, registrado no processo e-Codevasf/e-Codevasf correspondente."
   },
   {
    "Ordem": "9",
@@ -2583,7 +2572,7 @@ window.PAINEL_DADOS = {
    "Ordem": "24",
    "Categoria": "Como usar o painel",
    "Pergunta": "Onde encontro os modelos, a metodologia e o guia oficiais?",
-   "Resposta": "Na aba Repositório: a jornada de mapeamento, a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025, na intranet/SEI), os instrumentos por fase do ciclo BPM, os templates e as ferramentas de modelagem."
+   "Resposta": "Na aba Repositório: a jornada de mapeamento, a Metodologia e o Guia de Gerenciamento de Processos (RES 031/2025, na intranet/e-Codevasf), os instrumentos por fase do ciclo BPM, os templates e as ferramentas de modelagem."
   }
  ],
  "Parametros": [
@@ -2618,6 +2607,1688 @@ window.PAINEL_DADOS = {
   {
    "Chave": "Titulo_Repositorio",
    "Valor": "Repositório de materiais e ferramentas"
+  }
+ ],
+ "Siglas": [
+  {
+   "Sigla": "10ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "10ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "10ª/EAG",
+   "Nome": "Escritório de Apoio Técnico de Araguaína"
+  },
+  {
+   "Sigla": "10ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "10ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "10ª/GTR",
+   "Nome": "Gerência Técnica Regional"
+  },
+  {
+   "Sigla": "10ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "10ª/SR",
+   "Nome": "10ª Superintendência Regional"
+  },
+  {
+   "Sigla": "11ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "11ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "11ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "11ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "11ª/GGR/UOF",
+   "Nome": "Unidade Regional de Orçamento e Finanças"
+  },
+  {
+   "Sigla": "11ª/GGR/UOF/SCO",
+   "Nome": "Setor de Contabilidade"
+  },
+  {
+   "Sigla": "11ª/GGR/URA",
+   "Nome": "Unidade Regional de Administração"
+  },
+  {
+   "Sigla": "11ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "11ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "11ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "11ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "11ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "11ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "11ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "11ª/SR",
+   "Nome": "11ª Superintendência Regional"
+  },
+  {
+   "Sigla": "12ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "12ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "12ª/EMO",
+   "Nome": "Escritório de Apoio Técnico de Mossoró"
+  },
+  {
+   "Sigla": "12ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "12ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "12ª/GTR",
+   "Nome": "Gerência Técnica Regional"
+  },
+  {
+   "Sigla": "12ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "12ª/SR",
+   "Nome": "12ª Superintendência Regional"
+  },
+  {
+   "Sigla": "13ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "13ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "13ª/EPT",
+   "Nome": "Escritório de Apoio Técnico de Patos"
+  },
+  {
+   "Sigla": "13ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "13ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "13ª/GTR",
+   "Nome": "Gerência Técnica Regional"
+  },
+  {
+   "Sigla": "13ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "13ª/SR",
+   "Nome": "13ª Superintendência Regional"
+  },
+  {
+   "Sigla": "14ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "14ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "14ª/ETA",
+   "Nome": "Escritório de Apoio Técnico de Tauá"
+  },
+  {
+   "Sigla": "14ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "14ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "14ª/GTR",
+   "Nome": "Gerência Técnica Regional"
+  },
+  {
+   "Sigla": "14ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "14ª/SR",
+   "Nome": "14ª Superintendência Regional"
+  },
+  {
+   "Sigla": "15ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "15ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "15ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "15ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "15ª/GTR",
+   "Nome": "Gerência Técnica Regional"
+  },
+  {
+   "Sigla": "15ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "15ª/SR",
+   "Nome": "15ª Superintendência Regional"
+  },
+  {
+   "Sigla": "16ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "16ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "16ª/EPI",
+   "Nome": "Escritório de Apoio Técnico de Piumhi"
+  },
+  {
+   "Sigla": "16ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "16ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "16ª/GTR",
+   "Nome": "Gerência Técnica Regional"
+  },
+  {
+   "Sigla": "16ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "16ª/SR",
+   "Nome": "16ª Superintendência Regional"
+  },
+  {
+   "Sigla": "1ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "1ª/CIG",
+   "Nome": "Centro Integrado de Recursos Pesqueiros e Aquicultura de Gorutuba"
+  },
+  {
+   "Sigla": "1ª/CIM",
+   "Nome": "Centro Integrado de Recursos Pesqueiros e Aquicultura de Três Marias"
+  },
+  {
+   "Sigla": "1ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "1ª/EAL",
+   "Nome": "Escritório de Apoio Técnico de Almenara"
+  },
+  {
+   "Sigla": "1ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "1ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "1ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "1ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "1ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "1ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "1ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "1ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "1ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "1ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "1ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "1ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "1ª/GRG/UFN/SCB",
+   "Nome": "Setor de Cobrança"
+  },
+  {
+   "Sigla": "1ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "1ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "1ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "1ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "1ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "1ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "1ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "1ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "1ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "1ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "1ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "1ª/SR",
+   "Nome": "1ª Superintendência Regional"
+  },
+  {
+   "Sigla": "2ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "2ª/CIX",
+   "Nome": "Centro Integrado de Recursos Pesqueiros e Aquicultura de Xique-Xique"
+  },
+  {
+   "Sigla": "2ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "2ª/EGU",
+   "Nome": "Escritório de Apoio Técnico de Guanambi"
+  },
+  {
+   "Sigla": "2ª/EIR",
+   "Nome": "Escritório de Apoio Técnico de Irecê"
+  },
+  {
+   "Sigla": "2ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "2ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "2ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "2ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "2ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "2ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "2ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "2ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "2ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "2ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "2ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "2ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "2ª/GRG/UFN/SCB",
+   "Nome": "Setor de Cobrança"
+  },
+  {
+   "Sigla": "2ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "2ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "2ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "2ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "2ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "2ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "2ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "2ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "2ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "2ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "2ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "2ª/SR",
+   "Nome": "2ª Superintendência Regional"
+  },
+  {
+   "Sigla": "2ª/UBA",
+   "Nome": "Unidade Regional Descentralizada de Barreiras"
+  },
+  {
+   "Sigla": "2ª/UVC",
+   "Nome": "Unidade Regional Descentralizada de Vitória da Conquista"
+  },
+  {
+   "Sigla": "3ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "3ª/CIB",
+   "Nome": "Centro Integrado de Recursos Pesqueiros e Aquicultura de Bebedouro"
+  },
+  {
+   "Sigla": "3ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "3ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "3ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "3ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "3ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "3ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "3ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "3ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "3ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "3ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "3ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "3ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "3ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "3ª/GRG/UFN/SCB",
+   "Nome": "Setor de Cobrança"
+  },
+  {
+   "Sigla": "3ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "3ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "3ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "3ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "3ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "3ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "3ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "3ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "3ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "3ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "3ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "3ª/SR",
+   "Nome": "3ª Superintendência Regional"
+  },
+  {
+   "Sigla": "4ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "4ª/CIT",
+   "Nome": "Centro Integrado de Recursos Pesqueiros e Aquicultura de Betume"
+  },
+  {
+   "Sigla": "4ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "4ª/EPR",
+   "Nome": "Escritório de Apoio Técnico de Propriá"
+  },
+  {
+   "Sigla": "4ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "4ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "4ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "4ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "4ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "4ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "4ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "4ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "4ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "4ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "4ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "4ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "4ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "4ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "4ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "4ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "4ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "4ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "4ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "4ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "4ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "4ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "4ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "4ª/SR",
+   "Nome": "4ª Superintendência Regional"
+  },
+  {
+   "Sigla": "5ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "5ª/CII",
+   "Nome": "Centro Integrado de Recursos Pesqueiros e Aquicultura de Itiúba"
+  },
+  {
+   "Sigla": "5ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "5ª/EPE",
+   "Nome": "Escritório de Apoio Técnico de Penedo"
+  },
+  {
+   "Sigla": "5ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "5ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "5ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "5ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "5ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "5ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "5ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "5ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "5ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "5ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "5ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "5ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "5ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "5ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "5ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "5ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "5ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "5ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "5ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "5ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "5ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "5ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "5ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "5ª/SR",
+   "Nome": "5ª Superintendência Regional"
+  },
+  {
+   "Sigla": "6ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "6ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "6ª/ESA",
+   "Nome": "Escritório de Representação de Salvador"
+  },
+  {
+   "Sigla": "6ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "6ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "6ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "6ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "6ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "6ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "6ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "6ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "6ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "6ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "6ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "6ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "6ª/GRG/UFN/SCB",
+   "Nome": "Setor de Cobrança"
+  },
+  {
+   "Sigla": "6ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "6ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "6ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "6ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "6ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "6ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "6ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "6ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "6ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "6ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "6ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "6ª/SR",
+   "Nome": "6ª Superintendência Regional"
+  },
+  {
+   "Sigla": "6ª/UPF",
+   "Nome": "Unidade Regional Descentralizada de Paulo Afonso"
+  },
+  {
+   "Sigla": "7ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "7ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "7ª/EOE",
+   "Nome": "Escritório de Apoio Técnico de Oeiras"
+  },
+  {
+   "Sigla": "7ª/EPA",
+   "Nome": "Escritório de Apoio Técnico de Parnaíba"
+  },
+  {
+   "Sigla": "7ª/ERN",
+   "Nome": "Escritório de Apoio Técnico de São Raimundo Nonato"
+  },
+  {
+   "Sigla": "7ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "7ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "7ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "7ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "7ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "7ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "7ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "7ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "7ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "7ª/GRD/UPS",
+   "Nome": "Unidade Regional de Projetos Especiais"
+  },
+  {
+   "Sigla": "7ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "7ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "7ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "7ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "7ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "7ª/GRI",
+   "Nome": "Gerência Regional de Irrigação e Operações"
+  },
+  {
+   "Sigla": "7ª/GRI/UEI",
+   "Nome": "Unidade Regional de Gestão dos Empreendimentos de Irrigação"
+  },
+  {
+   "Sigla": "7ª/GRI/URP",
+   "Nome": "Unidade Regional de Apoio à Produção"
+  },
+  {
+   "Sigla": "7ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "7ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "7ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "7ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "7ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "7ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "7ª/SR",
+   "Nome": "7ª Superintendência Regional"
+  },
+  {
+   "Sigla": "8ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "8ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "8ª/EIM",
+   "Nome": "Escritório de Apoio Técnico de Imperatriz"
+  },
+  {
+   "Sigla": "8ª/EPD",
+   "Nome": "Escritório de Apoio Técnico de Presidente Dutra"
+  },
+  {
+   "Sigla": "8ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "8ª/GB/URC",
+   "Nome": "Unidade Regional de Comunicação"
+  },
+  {
+   "Sigla": "8ª/GRA",
+   "Nome": "Gerência Regional de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "8ª/GRA/UGP",
+   "Nome": "Unidade Regional de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "8ª/GRA/USA",
+   "Nome": "Unidade Regional de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "8ª/GRA/UTI",
+   "Nome": "Unidade Regional de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "8ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "8ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "8ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "8ª/GRD/UPS",
+   "Nome": "Unidade Regional de Projetos Especiais"
+  },
+  {
+   "Sigla": "8ª/GRG",
+   "Nome": "Gerência Regional de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "8ª/GRG/UCB",
+   "Nome": "Unidade Regional de Contabilidade"
+  },
+  {
+   "Sigla": "8ª/GRG/UFN",
+   "Nome": "Unidade Regional de Finanças e Cobrança"
+  },
+  {
+   "Sigla": "8ª/GRG/UMC",
+   "Nome": "Unidade Regional de Monitoramento e de Controle de Contratos e Convênios"
+  },
+  {
+   "Sigla": "8ª/GRG/URO",
+   "Nome": "Unidade Regional Orçamentária"
+  },
+  {
+   "Sigla": "8ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "8ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "8ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "8ª/GRS",
+   "Nome": "Gerência Regional de Suporte Integrado"
+  },
+  {
+   "Sigla": "8ª/GRS/ULF",
+   "Nome": "Unidade Regional de Licenciamento Ambiental e Administração Fundiária"
+  },
+  {
+   "Sigla": "8ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "8ª/SR",
+   "Nome": "8ª Superintendência Regional"
+  },
+  {
+   "Sigla": "9ª/AJ",
+   "Nome": "Assessoria Jurídica Regional"
+  },
+  {
+   "Sigla": "9ª/Cogex",
+   "Nome": "Comitê de Gestão Executiva da Superintendência Regional"
+  },
+  {
+   "Sigla": "9ª/GB",
+   "Nome": "Gabinete da Superintendência Regional"
+  },
+  {
+   "Sigla": "9ª/GGR",
+   "Nome": "Gerência de Gestão Regional"
+  },
+  {
+   "Sigla": "9ª/GGR/UOF",
+   "Nome": "Unidade Regional de Orçamento e Finanças"
+  },
+  {
+   "Sigla": "9ª/GGR/UOF/SCO",
+   "Nome": "Setor de Contabilidade"
+  },
+  {
+   "Sigla": "9ª/GGR/URA",
+   "Nome": "Unidade Regional de Administração"
+  },
+  {
+   "Sigla": "9ª/GRD",
+   "Nome": "Gerência Regional de Infraestrutura"
+  },
+  {
+   "Sigla": "9ª/GRD/UEP",
+   "Nome": "Unidade Regional de Estudos e Projetos"
+  },
+  {
+   "Sigla": "9ª/GRD/UIP",
+   "Nome": "Unidade Regional de Implantação e Acompanhamento de Projetos"
+  },
+  {
+   "Sigla": "9ª/GRR",
+   "Nome": "Gerência Regional de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "9ª/GRR/UDT",
+   "Nome": "Unidade Regional de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "9ª/GRR/UES",
+   "Nome": "Unidade Regional de Empreendimentos Socioambientais"
+  },
+  {
+   "Sigla": "9ª/SL",
+   "Nome": "Secretaria Regional de Licitações"
+  },
+  {
+   "Sigla": "9ª/SR",
+   "Nome": "9ª Superintendência Regional"
+  },
+  {
+   "Sigla": "AA",
+   "Nome": "Área de Administração e Tecnologia"
+  },
+  {
+   "Sigla": "AA/GGP",
+   "Nome": "Gerência de Gestão de Pessoas"
+  },
+  {
+   "Sigla": "AA/GGP/UBS",
+   "Nome": "Unidade de Benefícios e Saúde Ocupacional"
+  },
+  {
+   "Sigla": "AA/GGP/UCP",
+   "Nome": "Unidade de Cadastro e Pagamento"
+  },
+  {
+   "Sigla": "AA/GGP/UDP",
+   "Nome": "Unidade de Desenvolvimento de Pessoas"
+  },
+  {
+   "Sigla": "AA/GGP/URT",
+   "Nome": "Unidade de Relações de Trabalho"
+  },
+  {
+   "Sigla": "AA/GPA",
+   "Nome": "Gerência de Patrimônio, Logística e Serviços Auxiliares"
+  },
+  {
+   "Sigla": "AA/GPA/SBI",
+   "Nome": "Setor de Biblioteca"
+  },
+  {
+   "Sigla": "AA/GPA/SDP",
+   "Nome": "Setor de Documentação e Protocolo"
+  },
+  {
+   "Sigla": "AA/GPA/UAL",
+   "Nome": "Unidade de Administração Predial e Logística"
+  },
+  {
+   "Sigla": "AA/GPA/UCS",
+   "Nome": "Unidade de Compras Administrativas"
+  },
+  {
+   "Sigla": "AA/GPA/UPM",
+   "Nome": "Unidade de Patrimônio e Material"
+  },
+  {
+   "Sigla": "AA/GTI",
+   "Nome": "Gerência de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "AA/GTI/UIT",
+   "Nome": "Unidade de Infraestrutura e Tecnologia"
+  },
+  {
+   "Sigla": "AA/GTI/UPC",
+   "Nome": "Unidade de Conformidade e Controle de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "AA/GTI/USC",
+   "Nome": "Unidade de Segurança Cibernética"
+  },
+  {
+   "Sigla": "AA/GTI/USI",
+   "Nome": "Unidade de Sistemas de Informações"
+  },
+  {
+   "Sigla": "AD",
+   "Nome": "Área de Desenvolvimento e Infraestrutura"
+  },
+  {
+   "Sigla": "AD/GEP",
+   "Nome": "Gerência de Estudos e Projetos"
+  },
+  {
+   "Sigla": "AD/GEP/UPE",
+   "Nome": "Unidade de Estudos e Projetos de Infraestrutura Urbana e Edificações"
+  },
+  {
+   "Sigla": "AD/GEP/UPH",
+   "Nome": "Unidade de Estudos e Projetos de Infraestrutura Hídrica e Irrigação"
+  },
+  {
+   "Sigla": "AD/GIM",
+   "Nome": "Gerência de Implantação de Obras"
+  },
+  {
+   "Sigla": "AD/GIM/UOE",
+   "Nome": "Unidade de Implantação de Obras de Infraestrutura Urbana e Edificações"
+  },
+  {
+   "Sigla": "AD/GIM/UOH",
+   "Nome": "Unidade de Implantação de Obras de Infraestrutura Hídrica e Irrigação"
+  },
+  {
+   "Sigla": "AD/GPI",
+   "Nome": "Gerência de Parcerias e Investimentos"
+  },
+  {
+   "Sigla": "AD/GQV",
+   "Nome": "Gerência de Qualificação Viária"
+  },
+  {
+   "Sigla": "AD/GQV/UGV",
+   "Nome": "Unidade de Gestão e Controle de Projetos de Qualificação Viária"
+  },
+  {
+   "Sigla": "AD/GQV/UIO",
+   "Nome": "Unidade de Implantação de Obras de Qualificação Viária"
+  },
+  {
+   "Sigla": "AD/SE",
+   "Nome": "Secretaria Executiva"
+  },
+  {
+   "Sigla": "AE",
+   "Nome": "Área de Estratégia e Finanças"
+  },
+  {
+   "Sigla": "AE/GCB",
+   "Nome": "Gerência de Contabilidade"
+  },
+  {
+   "Sigla": "AE/GCB/UCC",
+   "Nome": "Unidade de Conformidade Contábil"
+  },
+  {
+   "Sigla": "AE/GCB/UEC",
+   "Nome": "Unidade de Execução Contábil"
+  },
+  {
+   "Sigla": "AE/GCB/UER",
+   "Nome": "Unidade de Escrituração e Revisão Contábil"
+  },
+  {
+   "Sigla": "AE/GFN",
+   "Nome": "Gerência de Finanças"
+  },
+  {
+   "Sigla": "AE/GFN/UCR",
+   "Nome": "Unidade de Gestão da Cobrança"
+  },
+  {
+   "Sigla": "AE/GFN/UEF",
+   "Nome": "Unidade de Programação e Execução Financeira"
+  },
+  {
+   "Sigla": "AE/GGO",
+   "Nome": "Gerência de Gestão Orçamentária"
+  },
+  {
+   "Sigla": "AE/GGO/UEO",
+   "Nome": "Unidade de Execução Orçamentária"
+  },
+  {
+   "Sigla": "AE/GGO/UPO",
+   "Nome": "Unidade de Programação Orçamentária"
+  },
+  {
+   "Sigla": "AE/GPE",
+   "Nome": "Gerência de Planejamento Estratégico"
+  },
+  {
+   "Sigla": "AE/GPE/UAT",
+   "Nome": "Unidade de Acompanhamento de Transferências"
+  },
+  {
+   "Sigla": "AE/GPE/UNP",
+   "Nome": "Unidade de Gestão Normativa e de Processos"
+  },
+  {
+   "Sigla": "AE/GPE/UPL",
+   "Nome": "Unidade de Planejamento Institucional"
+  },
+  {
+   "Sigla": "AG",
+   "Nome": "Área de Governança e Sustentabilidade"
+  },
+  {
+   "Sigla": "AG/GAF",
+   "Nome": "Gerência de Administração Fundiária e Geotecnologia"
+  },
+  {
+   "Sigla": "AG/GAF/UDF",
+   "Nome": "Unidade de Documentação Fundiária"
+  },
+  {
+   "Sigla": "AG/GAF/UGG",
+   "Nome": "Unidade de Gestão Geotecnológica"
+  },
+  {
+   "Sigla": "AG/GCT",
+   "Nome": "Gerência de Custos"
+  },
+  {
+   "Sigla": "AG/GCT/UCT",
+   "Nome": "Unidade de Custos e Orçamentação"
+  },
+  {
+   "Sigla": "AG/GCT/UTR",
+   "Nome": "Unidade de Procedimentos Técnicos Referenciais"
+  },
+  {
+   "Sigla": "AG/GMA",
+   "Nome": "Gerência de Meio Ambiente"
+  },
+  {
+   "Sigla": "AG/GMA/UCA",
+   "Nome": "Unidade de Conservação Ambiental"
+  },
+  {
+   "Sigla": "AG/GMA/ULA",
+   "Nome": "Unidade de Licenciamento Ambiental"
+  },
+  {
+   "Sigla": "AG/SE",
+   "Nome": "Secretaria Executiva"
+  },
+  {
+   "Sigla": "AGE",
+   "Nome": "Assembleia Geral"
+  },
+  {
+   "Sigla": "AI",
+   "Nome": "Área de Irrigação e Operações"
+  },
+  {
+   "Sigla": "AI/GAP",
+   "Nome": "Gerência de Apoio à Produção Irrigada"
+  },
+  {
+   "Sigla": "AI/GAP/UGI",
+   "Nome": "Unidade de Gestão de Áreas Irrigadas"
+  },
+  {
+   "Sigla": "AI/GAP/UPI",
+   "Nome": "Unidade de Apoio aos Projetos Públicos de Irrigação"
+  },
+  {
+   "Sigla": "AI/GEE",
+   "Nome": "Gerência de Eficiência Energética"
+  },
+  {
+   "Sigla": "AI/GEE/UEE",
+   "Nome": "Unidade de Gestão de Energia e Apoio ao PISF"
+  },
+  {
+   "Sigla": "AI/GEE/USB",
+   "Nome": "Unidade de Gestão e Segurança de Barragens"
+  },
+  {
+   "Sigla": "AI/GGE",
+   "Nome": "Gerência de Gestão de Empreendimentos"
+  },
+  {
+   "Sigla": "AI/GGE/UGM",
+   "Nome": "Unidade de Gestão e Monitoramento de Empreendimentos"
+  },
+  {
+   "Sigla": "AI/GGE/UOR",
+   "Nome": "Unidade de Operação e Reabilitação de Empreendimentos"
+  },
+  {
+   "Sigla": "AI/SE",
+   "Nome": "Secretaria Executiva"
+  },
+  {
+   "Sigla": "AR",
+   "Nome": "Área de Revitalização e Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "AR/GDT",
+   "Nome": "Gerência de Desenvolvimento Territorial"
+  },
+  {
+   "Sigla": "AR/GDT/UAP",
+   "Nome": "Unidade de Desenvolvimento dos Arranjos Produtivos"
+  },
+  {
+   "Sigla": "AR/GDT/UPA",
+   "Nome": "Unidade de Recursos Pesqueiros, Aquicultura e Beneficiamento"
+  },
+  {
+   "Sigla": "AR/GMT",
+   "Nome": "Gerência de Mecanização e Modernização Territorial"
+  },
+  {
+   "Sigla": "AR/GMT/UCM",
+   "Nome": "Unidade de Gestão e Controle da Modernização Territorial"
+  },
+  {
+   "Sigla": "AR/GMT/UME",
+   "Nome": "Unidade de Aquisição de Máquinas e Equipamentos"
+  },
+  {
+   "Sigla": "AR/GSA",
+   "Nome": "Gerência de Saneamento e Acesso à Água"
+  },
+  {
+   "Sigla": "AR/GSA/UAS",
+   "Nome": "Unidade de Água e Saneamento Básico"
+  },
+  {
+   "Sigla": "AR/GSA/UEA",
+   "Nome": "Unidade de Esgotamento Rural e Acesso a Água"
+  },
+  {
+   "Sigla": "AR/SE",
+   "Nome": "Secretaria Executiva"
+  },
+  {
+   "Sigla": "CEC",
+   "Nome": "Comissão de Ética da Codevasf"
+  },
+  {
+   "Sigla": "Coaud",
+   "Nome": "Comitê de Auditoria Estatutário"
+  },
+  {
+   "Sigla": "Cogid",
+   "Nome": "Comitê de Governança Interna e Digital"
+  },
+  {
+   "Sigla": "Cogid/SPDP",
+   "Nome": "Subcomitê de Proteção de Dados Pessoais"
+  },
+  {
+   "Sigla": "Cogid/SSI",
+   "Nome": "Subcomitê de Segurança da Informação"
+  },
+  {
+   "Sigla": "Cogid/STIC",
+   "Nome": "Subcomitê de Tecnologia da Informação"
+  },
+  {
+   "Sigla": "Confis",
+   "Nome": "Conselho Fiscal"
+  },
+  {
+   "Sigla": "Consad",
+   "Nome": "Conselho de Administração"
+  },
+  {
+   "Sigla": "Consad/AUD",
+   "Nome": "Auditoria Interna"
+  },
+  {
+   "Sigla": "Consad/AUD/UGE",
+   "Nome": "Unidade de Acompanhamento e Avaliação da Gestão"
+  },
+  {
+   "Sigla": "Consad/AUD/UIN",
+   "Nome": "Unidade de Apoio e Informação"
+  },
+  {
+   "Sigla": "Consad/AUD/UPR",
+   "Nome": "Unidade de Acompanhamento e Avaliação de Programas"
+  },
+  {
+   "Sigla": "Consad/COR",
+   "Nome": "Corregedoria"
+  },
+  {
+   "Sigla": "Consad/COR/UIV",
+   "Nome": "Unidade Especial de Admissibilidade e Investigação"
+  },
+  {
+   "Sigla": "Consad/COR/UPJ",
+   "Nome": "Unidade Especial de Processos Acusatórios e Julgamento"
+  },
+  {
+   "Sigla": "Consad/OUV",
+   "Nome": "Ouvidoria"
+  },
+  {
+   "Sigla": "Copes",
+   "Nome": "Comitê de Pessoas, Elegibilidade, Sucessão e Remuneração"
+  },
+  {
+   "Sigla": "DEX",
+   "Nome": "Diretoria Executiva"
+  },
+  {
+   "Sigla": "PR",
+   "Nome": "Presidência"
+  },
+  {
+   "Sigla": "PR/AC",
+   "Nome": "Assessoria de Comunicação"
+  },
+  {
+   "Sigla": "PR/AC/UCE",
+   "Nome": "Unidade Especial de Cerimonial e Eventos"
+  },
+  {
+   "Sigla": "PR/AC/UIM",
+   "Nome": "Unidade Especial de Imagem e Promoção Institucional"
+  },
+  {
+   "Sigla": "PR/AJ",
+   "Nome": "Assessoria Jurídica"
+  },
+  {
+   "Sigla": "PR/AJ/UAA",
+   "Nome": "Unidade de Assuntos Administrativos"
+  },
+  {
+   "Sigla": "PR/AJ/UCO",
+   "Nome": "Unidade do Contencioso"
+  },
+  {
+   "Sigla": "PR/EBE",
+   "Nome": "Escritório de Representação de Belém"
+  },
+  {
+   "Sigla": "PR/GB",
+   "Nome": "Gabinete da Presidência"
+  },
+  {
+   "Sigla": "PR/SC",
+   "Nome": "Secretaria de Órgãos Colegiados"
+  },
+  {
+   "Sigla": "PR/SI",
+   "Nome": "Secretaria de Integridade"
+  },
+  {
+   "Sigla": "PR/SLC",
+   "Nome": "Secretaria de Licitações e Contratos"
+  },
+  {
+   "Sigla": "PR/SLC/UGC",
+   "Nome": "Unidade Especial de Gestão de Contratos"
+  },
+  {
+   "Sigla": "PR/SLC/UGL",
+   "Nome": "Unidade Especial de Gestão de Licitações"
+  },
+  {
+   "Sigla": "PR/SRC",
+   "Nome": "Secretaria de Gestão de Riscos e Controle Interno"
+  },
+  {
+   "Sigla": "PR/SRC/UGR",
+   "Nome": "Unidade Especial de Gerenciamento de Riscos Corporativos"
   }
  ]
 };

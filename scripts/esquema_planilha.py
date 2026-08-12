@@ -33,7 +33,7 @@ ESQUEMA = {
         ("Inicio_Mapeamento", 13), ("Prazo_Previsto", 13), ("Data_Conclusao", 13),
         ("Fornecedores", 30), ("Entradas", 34), ("Saidas", 34),
         ("Beneficiarios", 28), ("Sistemas", 28), ("Normativos_Relacionados", 40),
-        ("Processo_SEI", 20), ("Imagem_Bizagi", 30),
+        ("Processo_ECodevasf", 20), ("Imagem_Bizagi", 30),
         ("M1_Reuniao_Contextualizacao", 9), ("M2_Macro_Processo_Modelados", 9),
         ("M3_Subprocessos_Modelados", 9), ("M4_ASIS_Modelado", 9),
         ("M5_ASIS_Validado", 9), ("M6_Procedimento_Validado", 9),
@@ -42,19 +42,32 @@ ESQUEMA = {
         ("Proxima_Acao", 28), ("Pendencia", 13), ("Ultima_Atualizacao", 13),
         ("Unidades_Corresponsaveis", 30),
     ],
+    # Reutilizavel/Reutilizado_Em modelam o "Subprocesso Reutilizável" do
+    # BPMN 2.0 (Call Activity) — no Bizagi, que o painel usa para os
+    # diagramas, o próprio elemento já se chama assim. Reutilizavel = Sim
+    # marca que ESTE subprocesso (que mora nativamente sob Vinculo_Pai) é
+    # chamado também de outros pontos do portfólio; Reutilizado_Em lista os
+    # códigos desses outros Processos/Subprocessos (';'), de qualquer
+    # macroprocesso e em qualquer nível de aninhamento.
     "Subprocessos": [
         ("Codigo", 16), ("Vinculo_Pai", 16), ("Ordem", 7), ("Nome", 34),
         ("Descricao", 46), ("Objetivo", 40), ("Unidade_Responsavel", 16),
         ("Dono", 24), ("Entradas", 40), ("Saidas", 40), ("Sistemas", 28),
         ("Imagem_Bizagi", 30), ("Unidades_Corresponsaveis", 30),
+        ("Reutilizavel", 13), ("Reutilizado_Em", 34),
     ],
+    # Prazo_Padrao saiu: a duração de uma atividade não é mais digitada, é o
+    # somatório de Duracao_Estimada das suas tarefas (painel calcula em JS).
     "Atividades": [
         ("Codigo", 16), ("Vinculo_Pai", 13), ("Ordem", 7), ("Nome", 36),
         ("Descricao", 46), ("Responsavel_Ator", 24), ("Entradas", 38),
-        ("Saidas", 38), ("Sistemas", 24), ("Prazo_Padrao", 14),
+        ("Saidas", 38), ("Sistemas", 24),
         ("Base_Normativa", 30), ("Imagem_Bizagi", 44), ("Executor", 30),
         ("Unidades_Corresponsaveis", 30),
     ],
+    # Duracao_Estimada é NÚMERO em horas úteis (1 dia útil = 8h) — não mais
+    # texto livre. Some-se por atividade, depois recursivamente por
+    # subprocesso/processo (caminho crítico, não caminho feliz).
     "Tarefas": [
         ("Codigo", 20), ("Atividade", 16), ("Ordem", 7), ("Nome", 38),
         ("Descricao", 46), ("Tipo_Tarefa", 16), ("Responsavel", 24),
@@ -101,6 +114,7 @@ ESQUEMA = {
     "FAQ": [
         ("Ordem", 7), ("Categoria", 26), ("Pergunta", 50), ("Resposta", 90),
     ],
+    "Siglas": [("Sigla", 20), ("Nome", 60)],
     "Parametros": [("Chave", 24), ("Valor", 90)],
 }
 
