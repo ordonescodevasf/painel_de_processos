@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════
-   PAINEL DE GESTÃO DE PROCESSOS — aplicação (dados + rotas + telas).
+   REPOSITÓRIO DE PROCESSOS — aplicação (dados + rotas + telas).
    Fonte de dados, em ordem de prioridade:
      1. Google Sheets (gviz JSONP), se PAINEL_CONFIG.googleSheetId
         estiver preenchido — mesmo padrão do Painel do PTD;
@@ -14,8 +14,15 @@
   var CONFIG = Object.assign({
     googleSheetId: '',                      // cole aqui o ID da planilha Google (opcional)
     arquivoXlsx: 'data/painel-processos-dados.xlsx',
+    // Corrigido: faltavam 6 abas reais (Metricas/Medicoes substituíram
+    // Indicadores; Papeis, Regras, Cultura_Processos e Iniciativas nunca
+    // tinham entrado aqui) — carregarXlsx() só busca o que está nesta
+    // lista, então elas SEMPRE voltavam vazias ao carregar da planilha real
+    // ou do Google Sheets (só apareciam com dados porque js/dados.js
+    // embutido cobria o buraco, escondendo o problema em qualquer preview).
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
-           'Documentos', 'Riscos', 'Indicadores',
+           'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
+           'PlanoAcao', 'Cultura_Processos', 'Iniciativas', 'Competencias',
            'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
@@ -101,6 +108,19 @@
   var DADOS = null;   // coleções normalizadas
   var IDX = null;     // índices por código / vínculo
   var FONTE = '';     // descrição da origem carregada
+  // Métrica de uso do repositório (CBOK 4.2.2.3: "a métrica chave para um
+  // bom repositório é a sua utilização") — site estático sem login nem
+  // backend, então só é possível contar visitas NESTE navegador, não o
+  // total de usuários da Companhia; o rótulo no dashboard é explícito
+  // sobre essa limitação, para não sugerir uma métrica que não é.
+  var VISITAS_NAVEGADOR = 0;
+  function contarVisitaRepositorio() {
+    try {
+      var n = (parseInt(localStorage.getItem('pp_visitas_repositorio'), 10) || 0) + 1;
+      localStorage.setItem('pp_visitas_repositorio', String(n));
+      return n;
+    } catch (e) { return 0; }
+  }
 
   function gvizLinhas(table) {               // tabela gviz → [{Header: valor}]
     var cols = (table.cols || []).map(function (c) { return (c.label || c.id || '').trim(); });
@@ -198,7 +218,14 @@
       tarefas: pega('Tarefas'),
       docs: pega('Documentos'),
       riscos: pega('Riscos'),
-      inds: pega('Indicadores'),
+      metricas: pega('Metricas'),
+      medicoes: pega('Medicoes'),
+      papeis: pega('Papeis'),
+      regras: pega('Regras'),
+      planoAcao: pega('PlanoAcao'),
+      culturaProcessos: pega('Cultura_Processos'),
+      iniciativas: pega('Iniciativas'),
+      competencias: pega('Competencias'),
       jornada: pega('Jornada'),
       repo: pega('Repositorio'),
       nugep: pega('NUGEP'),
@@ -215,10 +242,24 @@
       p._status = slug(p.Status_Mapeamento || 'Não iniciado');
     });
     dd.docs.forEach(function (x) { x.Data = isoData(x.Data); });
-    dd.inds.forEach(function (x) {
-      x.Ultima_Medicao = isoData(x.Ultima_Medicao);
-      x.Meta = num(x.Meta); x.Resultado_Atual = num(x.Resultado_Atual);
+    // Medição (dado bruto), Métrica (valor calculado, com meta e polaridade)
+    // e Indicador (a leitura simples dela, o selo "Meta atingida"/"Meta não
+    // atingida") são três coisas diferentes no CBOK — cada Medição pertence
+    // a uma Métrica (Metrica_ID); o "resultado atual" e a data de referência
+    // da métrica vêm sempre da medição mais recente, nunca de uma célula
+    // reescrita a cada apuração.
+    dd.medicoes.forEach(function (x) { x.Data_Medicao = isoData(x.Data_Medicao); x.Valor = num(x.Valor); });
+    var medicoesPorMetrica = {};
+    dd.medicoes.forEach(function (x) { (medicoesPorMetrica[x.Metrica_ID] = medicoesPorMetrica[x.Metrica_ID] || []).push(x); });
+    dd.metricas.forEach(function (x) {
+      x.Meta = num(x.Meta);
+      var hist = (medicoesPorMetrica[x.ID] || []).slice().sort(function (a, b) { return (b.Data_Medicao || '').localeCompare(a.Data_Medicao || ''); });
+      x._medicoes = hist;
+      x._ultima = hist[0] || null;
+      x.Resultado_Atual = x._ultima ? x._ultima.Valor : null;
+      x.Ultima_Medicao = x._ultima ? x._ultima.Data_Medicao : null;
       x._sit = situacaoInd(x);
+      x._proxima = proximaMedicaoPrevista(x.Periodicidade, x.Ultima_Medicao);
     });
     dd.riscos.forEach(function (r) {
       r.Probabilidade_1a5 = num(r.Probabilidade_1a5) || 0;
@@ -263,7 +304,7 @@
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
     var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorPai: {}, tarefasPorAtiv: {},
-      reusoPorAlvo: {}, vinc: { docs: {}, riscos: {}, inds: {} } };
+      reusoPorAlvo: {}, vinc: { docs: {}, riscos: {}, metricas: {}, papeis: {}, regras: {}, planoAcao: {} } };
     idx.ativsPorSub = idx.ativsPorPai;   // nome antigo do índice, mantido por compatibilidade
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     // Codificação exibida dos macroprocessos, por tipo: gerencial = MG,
@@ -329,7 +370,10 @@
     }
     dd.docs.forEach(function (x) { vincula(idx.vinc.docs, x); });
     dd.riscos.forEach(function (x) { vincula(idx.vinc.riscos, x); });
-    dd.inds.forEach(function (x) { vincula(idx.vinc.inds, x); });
+    dd.metricas.forEach(function (x) { vincula(idx.vinc.metricas, x); });
+    dd.papeis.forEach(function (x) { vincula(idx.vinc.papeis, x); });
+    dd.regras.forEach(function (x) { vincula(idx.vinc.regras, x); });
+    dd.planoAcao.forEach(function (x) { vincula(idx.vinc.planoAcao, x); });
     DADOS = dd; IDX = idx;
     return dd;
   }
@@ -340,12 +384,38 @@
     if (n >= 5) return 'Moderado';
     return n > 0 ? 'Baixo' : '—';
   }
+  // Próxima medição esperada = última medição + intervalo da periodicidade.
+  function proximaMedicaoPrevista(periodicidade, dataUltima) {
+    var meses = { 'Mensal': 1, 'Bimestral': 2, 'Trimestral': 3, 'Semestral': 6, 'Anual': 12 }[periodicidade];
+    if (!meses || !dataUltima) return null;
+    var d = new Date(dataUltima + 'T00:00:00');
+    if (isNaN(d.getTime())) return null;
+    d.setMonth(d.getMonth() + meses);
+    return d.toISOString().slice(0, 10);
+  }
   function situacaoInd(x) {
     if (x.Resultado_Atual == null) return 'Sem medição';
     if (x.Meta == null) return 'Sem meta';
     var maior = /^maior/i.test(String(x.Polaridade || ''));
     var ok = maior ? x.Resultado_Atual >= x.Meta : x.Resultado_Atual <= x.Meta;
-    return ok ? 'Meta atingida' : (maior ? 'Abaixo da meta' : 'Acima da meta');
+    // Um único rótulo de "não atingida": "Acima/Abaixo da meta" lia como bom
+    // fora do contexto de cor — um indicador "menor melhor" acima do alvo é
+    // resultado ruim, mas o texto por si soava positivo. A direção (Meta vs
+    // Resultado, já nas colunas ao lado, e Polaridade no detalhe) mostra o
+    // "quanto" sem um rótulo ambíguo carregando o veredito.
+    return ok ? 'Meta atingida' : 'Meta não atingida';
+  }
+  // N-000 (Norma de Gestão dos Instrumentos Normativos), item 4.2.3: todo
+  // instrumento normativo deve ser revisado no máximo a cada 3 anos. Só se
+  // aplica aos tipos que a Norma trata como instrumento normativo de fato
+  // (Norma interna/Procedimento/Manual) — não a atas, diagramas, relatórios etc.
+  var TIPOS_NORMATIVOS_N000 = { 'Norma interna': 1, 'Procedimento (PRO)': 1, 'Manual': 1 };
+  function revisaoVencida(x) {
+    if (!TIPOS_NORMATIVOS_N000[x.Tipo_Documento] || !x.Data || x.Situacao === 'Revogado') return false;
+    var d = new Date(x.Data + 'T00:00:00');
+    if (isNaN(d.getTime())) return false;
+    d.setFullYear(d.getFullYear() + 3);
+    return isoData(d) < hojeISO();
   }
 
   /* ── componentes reutilizáveis (HTML) ─────────────────────────────── */
@@ -375,6 +445,27 @@
     return '<span class="br-tag nivel-tag nivel-' + cls + '" aria-describedby="' + id + '">' +
       '<i class="fas ' + (ICONE_NIVEL[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
       '<span id="' + id + '">' + esc(cl) + '</span></span>';
+  }
+  // Maturidade de processos (CBOK, escala tipo CMM) — preenchimento manual
+  // na planilha; ícones em escada como nivel-tag, para não depender só de cor.
+  var ICONE_MATURIDADE = {
+    'inicial': 'fa-seedling', 'repetivel': 'fa-arrows-rotate', 'definido': 'fa-clipboard-check',
+    'gerenciado': 'fa-gauge-high', 'otimizado': 'fa-star'
+  };
+  function tagMaturidade(nivel) {
+    var cls = slug(nivel), id = 'tg-mt-' + (++_idTag);
+    return '<span class="br-tag maturidade-tag maturidade-' + cls + '" aria-describedby="' + id + '">' +
+      '<i class="fas ' + (ICONE_MATURIDADE[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
+      '<span id="' + id + '">' + esc(nivel) + '</span></span>';
+  }
+  // Tipos de atividade (CBOK 3.1.7): agregação de valor, transferência
+  // (handoff) e controle — definições completas no Glossário.
+  var ICONE_TIPO_ATIV = { 'agregacao-de-valor': 'fa-gem', 'transferencia': 'fa-right-left', 'controle': 'fa-shield-halved' };
+  function tagTipoAtividade(tipo) {
+    var cls = slug(tipo), id = 'tg-ta-' + (++_idTag);
+    return '<span class="br-tag tipo-ativ-tag tipo-ativ-' + cls + '" aria-describedby="' + id + '">' +
+      '<i class="fas ' + (ICONE_TIPO_ATIV[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
+      '<span id="' + id + '">' + termoLink(tipo) + '</span></span>';
   }
   function barraPct(p) {
     p = pctNorm(p);
@@ -430,6 +521,15 @@
       '<span class="tx-lg">' + completo + '</span></span>';
   }
   function plural(n, sing, plur) { return n + ' ' + (n === 1 ? sing : plur); }
+  // Lista simples (ul) ou ordenada (ol) a partir de "a; b; c" — para campos
+  // com frases inteiras por item (passos, critérios), onde o chip-pill de
+  // chips() ficaria estranho.
+  function listaTexto(str, ordenada) {
+    var itens = listar(str);
+    if (!itens.length) return null;
+    var tag = ordenada ? 'ol' : 'ul';
+    return '<' + tag + '>' + itens.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</' + tag + '>';
+  }
   function campo(rotulo, valorHtml, span2, categoria) {
     var cls = (span2 ? 'span2 ' : '') + (categoria ? 'campo-' + categoria : '');
     return '<div' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '><dt>' + esc(rotulo) + '</dt><dd>' +
@@ -472,9 +572,14 @@
     }
     return mp && mp.Categoria ? mp.Categoria : '';
   }
+  // Macroprocesso/Subprocesso/Atividade/Tarefa têm definição própria no
+  // Glossário ("Processo" não — só aparece dentro de outras definições,
+  // sem entrada exata, então fica sem link para não abrir uma busca vaga).
+  var NIVEIS_NO_GLOSSARIO = { 'Macroprocesso': 1, 'Subprocesso': 1, 'Atividade': 1, 'Tarefa': 1 };
   function eyebrowFicha(nivel, codigo) {
     var cat = categoriaDe(nivel, codigo);
-    return '<span class="eyebrow">' + nivel + (cat ? ' · ' + esc(cat) : '') + '</span>';
+    var rotulo = NIVEIS_NO_GLOSSARIO[nivel] ? termoLink(nivel) : nivel;
+    return '<span class="eyebrow">' + rotulo + (cat ? ' · ' + esc(cat) : '') + '</span>';
   }
   function nomeDe(nivel, codigo) {
     var it = nivel === 'Macroprocesso' ? IDX.mp[codigo] : nivel === 'Processo' ? IDX.p[codigo]
@@ -565,16 +670,19 @@
     });
   });
   /* ── Marcos do mapeamento (M1–M10) ──
-     Nesta versão: "Reunião de contextualização" virou "Conhecer o processo";
-     "Procedimento elaborado" saiu; "Processo publicado" (antes "Publicado no
-     repositório") subiu para logo depois de "Procedimento aprovado"; e
-     "Processo transformado" entrou como marco final.
-     Cada marco lê a PRIMEIRA coluna existente da sua lista `campos` — o
-     primeiro nome é o desta versão, os seguintes são os nomes antigos na
-     planilha, mantidos para que planilhas ainda não regeradas continuem
-     funcionando sem ajuste. */
+     Cada marco lê a coluna real do esquema atual (ver esquema_planilha.py).
+     Até esta auditoria contra a RES 031/2025, três marcos apontavam para
+     nomes de coluna que não existem mais (M1_Conhecer_Processo,
+     M6_Procedimento_Aprovado, M7_Processo_Publicado, M9_TOBE_Aprovado) —
+     "apelidos antigos" de rodadas anteriores que nunca foram atualizados
+     junto com o esquema. Na prática, M7 acabava lendo por acidente
+     M10_Publicado_Repositorio (a única coluna real que sobrava na lista de
+     fallback), e M10 não tinha coluna nenhuma: ficava pendente para sempre,
+     mesmo em processos 100% concluídos. Corrigido: cada marco tem exatamente
+     uma coluna real, e M10_Processo_Transformado (nova, ver esquema) fecha
+     de fato o décimo marco. */
   var MARCOS = [
-    { rot: 'Conhecer o processo', campos: ['M1_Conhecer_Processo', 'M1_Reuniao_Contextualizacao'],
+    { rot: 'Conhecer o processo', campos: ['M1_Reuniao_Contextualizacao'],
       desc: 'Primeira reunião com a área para conhecer o processo: apresentar a metodologia, entender o contexto e coletar o formulário de levantamento.' },
     { rot: 'Processo modelado', campos: ['M2_Macro_Processo_Modelados'],
       desc: 'Oficinas de modelagem do macroprocesso e do processo em BPMN, com a equipe de mapeamento e a área.' },
@@ -584,13 +692,13 @@
       desc: 'O conjunto de diagramas AS-IS (macroprocesso, processo, subprocessos e atividades) está consolidado.' },
     { rot: 'AS-IS validado', campos: ['M5_ASIS_Validado'],
       desc: 'O dono do processo validou formalmente o AS-IS como retrato da realidade atual.' },
-    { rot: 'Procedimento aprovado', campos: ['M6_Procedimento_Aprovado', 'M7_Procedimento_Aprovado'],
+    { rot: 'Procedimento aprovado', campos: ['M7_Procedimento_Aprovado'],
       desc: 'O procedimento (PRO) foi aprovado pela Diretoria Executiva (DEX) — pronto para orientar a execução do processo.' },
-    { rot: 'Processo publicado', campos: ['M7_Processo_Publicado', 'M10_Publicado_Repositorio'],
+    { rot: 'Processo publicado', campos: ['M10_Publicado_Repositorio'],
       desc: 'O processo, seus diagramas e o PRO foram publicados no repositório institucional, disponíveis para consulta de toda a Empresa.' },
     { rot: 'TO-BE elaborado', campos: ['M8_TOBE_Elaborado'],
       desc: 'O redesenho (TO-BE) do processo foi elaborado, com melhorias, riscos residuais e indicadores propostos.' },
-    { rot: 'TO-BE aprovado', campos: ['M9_TOBE_Aprovado', 'M9_TOBE_Validado'],
+    { rot: 'TO-BE aprovado', campos: ['M9_TOBE_Validado'],
       desc: 'O dono do processo validou o TO-BE, que foi aprovado pela Diretoria Executiva (DEX).' },
     { rot: 'Processo transformado', campos: ['M10_Processo_Transformado'],
       desc: 'O redesenho aprovado foi implantado: o processo passou a ser executado na forma TO-BE, com os ganhos acompanhados pelos indicadores.' }
@@ -783,7 +891,6 @@
   // aba Tarefas. A duração de uma atividade é o somatório das suas tarefas;
   // a de um processo (ou subprocesso) é o somatório recursivo — o caminho
   // crítico do processo, não o caminho feliz (o cenário mais otimista).
-  var HORAS_POR_DIA_UTIL = 8;
   function horasTarefa(t) { var h = Number(t.Duracao_Estimada); return isFinite(h) && h > 0 ? h : 0; }
   function duracaoAtividadeHoras(a) {
     return (IDX.tarefasPorAtiv[a.Codigo] || []).reduce(function (soma, t) { return soma + horasTarefa(t); }, 0);
@@ -796,14 +903,9 @@
     filhosSubDe(codigoPai).forEach(function (s) { soma += duracaoRecursivaHoras(s.Codigo, vistos); });
     return soma;
   }
-  function formatarHorasUteis(horas, comDias) {
+  function formatarHorasUteis(horas) {
     var h = Math.round(horas * 10) / 10;
-    var txt = plural(h, 'hora útil', 'horas úteis');
-    if (comDias && horas > 0) {
-      var dias = Math.round((horas / HORAS_POR_DIA_UTIL) * 10) / 10;
-      txt += ' (' + plural(dias, 'dia útil', 'dias úteis') + ')';
-    }
-    return txt;
+    return plural(h, 'hora', 'horas');
   }
   // Card de um subprocesso na lista "Subprocessos vinculados": o mesmo
   // cartão, com uma marcação extra quando o item é reutilizado aqui (mora
@@ -904,9 +1006,9 @@
       var tit = x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) +
         '<span class="sr-only"> (abre em nova aba)</span></a>' : esc(x.Titulo);
       return '<div class="doc-item"><i class="fas ' + ic + ' fa-stack-ico" aria-hidden="true"></i><div>' +
-        '<div class="tit">' + tit + '</div><div class="meta">' + esc(x.Tipo_Documento || 'Documento') +
+        '<div class="tit">' + tit + (revisaoVencida(x) ? ' <span class="br-tag revisao-vencida"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Revisão vencida</span>' : '') + '</div><div class="meta">' + esc(x.Tipo_Documento || 'Documento') +
         (x.Versao ? ' · v' + esc(x.Versao) : '') + (x.Data ? ' · ' + fmtData(x.Data) : '') +
-        (x.Situacao ? ' · ' + esc(x.Situacao) : '') + '</div></div></div>';
+        (x.Situacao ? ' · ' + esc(x.Situacao) : '') + (x.Ato_Aprovacao ? ' · ' + esc(x.Ato_Aprovacao) : '') + '</div></div></div>';
     }).join('');
   }
   /* ── TABLE (br-table) ── Envelope padrão gov.br para qualquer conteúdo
@@ -979,27 +1081,26 @@
 
   // Tabela de atividades — usada na ficha do Subprocesso e na ficha do
   // Processo (quando as atividades penduram direto no processo).
-  function tabelaAtividadesHtml(ativs, vazio) {
+  // unidadeSigla vem do PAI (subprocesso ou processo) sendo exibido, não de
+  // um campo próprio da atividade — todas as atividades de uma mesma
+  // tabela pertencem ao mesmo pai, logo à mesma unidade responsável.
+  function tabelaAtividadesHtml(ativs, vazio, unidadeSigla) {
     if (!ativs.length) return '<p class="pp-vazio">' + (vazio || 'Nenhuma atividade cadastrada.') + '</p>';
     return tabelaGov({
       titulo: 'Atividades', rotuloTotal: ativs.length === 1 ? 'atividade' : 'atividades', total: ativs.length,
       colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Atividade', principal: true },
-        { r: 'Responsável (ator)' }, { r: 'Duração estimada', curta: true }],
+        { r: 'Unidade Orgânica Responsável' }, { r: 'Duração estimada', curta: true }],
       linhas: ativs.map(function (a) {
         var nt = (IDX.tarefasPorAtiv[a.Codigo] || []).length;
         return '<tr data-link><td class="cod">' + esc(codDisp(a.Codigo)) + '</td>' +
-          '<td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a>' +
-          (a.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(a.Descricao) + '</div>' : '') +
-          (nt ? '<div class="cod">' + plural(nt, 'tarefa', 'tarefas') + '</div>' : '') + '</td>' +
-          '<td>' + esc(a.Responsavel_Ator || '—') + '</td>' +
+          '<td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a></td>' +
+          '<td>' + (unidadeSigla ? siglaTag(unidadeSigla) : '—') + '</td>' +
           '<td class="text-nowrap">' + (nt ? formatarHorasUteis(duracaoAtividadeHoras(a)) : '—') + '</td></tr>' +
           detalheLinha([
             ['Entradas', listar(a.Entradas).map(esc).join('; ')],
             ['Saídas', listar(a.Saidas).map(esc).join('; ')],
             ['Sistemas', listar(a.Sistemas).map(esc).join('; ')],
-            ['Executor', esc(a.Executor || '')],
-            ['Base normativa', esc(a.Base_Normativa || '')],
-            ['Unidades corresponsáveis', listar(a.Unidades_Corresponsaveis).map(esc).join('; ')]
+            ['Tarefas', nt ? plural(nt, 'tarefa', 'tarefas') : '']
           ]);
       }).join('')
     });
@@ -1035,7 +1136,9 @@
             ['Tratamento e controles', esc(r.Controles_Tratamento || '')],
             ['Resposta ao risco', esc(r.Resposta || '')],
             ['Categoria', esc(r.Categoria || '')],
-            ['Responsável', esc(r.Responsavel || '')]
+            ['Responsável', esc(r.Responsavel || '')],
+            ['Cronograma do risco', esc(r.Cronograma_Risco || '')],
+            ['Fatores (o que pode acionar o risco)', esc(r.Fatores || '')]
           ]);
       }).join('')
     });
@@ -1058,10 +1161,18 @@
           '</td><td class="' + cls + '">' + esc(x._sit) + '</td>' +
           '<td>' + fmtData(x.Ultima_Medicao) + '</td></tr>' +
           detalheLinha([
+            ['Categoria da métrica', esc(x.Categoria || '')],
             ['Fórmula de cálculo', esc(x.Descricao_Formula || '')],
             ['Periodicidade', esc(x.Periodicidade || '')],
             ['Polaridade', esc(x.Polaridade || '')],
-            ['Fonte', esc(x.Fonte || '')]
+            ['Fonte', esc(x.Fonte || '')],
+            ['Observação', esc(x.Observacoes || '')],
+            ['Próxima medição prevista', x._proxima ? fmtData(x._proxima) + (x._proxima < hojeISO() ? ' <span class="sit-ruim">(atrasada)</span>' : '') : ''],
+            // Medição é o dado bruto (CBOK) — o histórico completo mora na
+            // aba Medicoes; aqui mostramos só as últimas, para contexto.
+            ['Últimas medições', x._medicoes && x._medicoes.length
+              ? x._medicoes.slice(0, 6).map(function (me) { return fmtData(me.Data_Medicao) + ': ' + esc(me.Valor) + (x.Unidade ? ' ' + esc(x.Unidade) : ''); }).join(' &nbsp;·&nbsp; ')
+              : '']
           ]);
       }).join('')
     });
@@ -1827,10 +1938,75 @@
   function secVinculos(nivel, codigo, semIndicadores) {
     var docs = vinculados('docs', nivel, codigo);
     var riscos = vinculados('riscos', nivel, codigo);
-    var inds = semIndicadores ? [] : vinculados('inds', nivel, codigo);
+    var inds = semIndicadores ? [] : vinculados('metricas', nivel, codigo);
+    var papeis = vinculados('papeis', nivel, codigo);
+    var regras = vinculados('regras', nivel, codigo);
+    var planoAcao = vinculados('planoAcao', nivel, codigo);
     return (semIndicadores ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos (matriz 5×5 · P×I)</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
+      (planoAcao.length ? '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Plano de ação (5W2H)</h3>' + listaPlanoAcaoHtml(planoAcao) + '</div>' : '') +
+      (papeis.length ? '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Papéis e envolvidos</h3>' + listaPapeisHtml(papeis) + '</div>' : '') +
+      (regras.length ? '<div class="pp-card"><h3><i class="fas fa-gavel" aria-hidden="true"></i> Regras de negócio</h3>' + listaRegrasHtml(regras) + '</div>' : '') +
       '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Normativos e documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>';
+  }
+  // RACI traduzido: Executa (R), Aprova (A), Consultado (C), Informado (I).
+  function listaPapeisHtml(papeis) {
+    if (!papeis.length) return '<p class="pp-vazio">Nenhum papel cadastrado.</p>';
+    return '<div class="br-list raci-lista" role="list">' + papeis.map(function (r) {
+      return '<div class="br-item raci-item" role="listitem"><span class="br-tag small raci-' + slug(r.Envolvimento || '') + '">' + esc(r.Envolvimento || '—') + '</span>' +
+        '<div class="raci-tx"><strong>' + esc(r.Papel) + '</strong>' + (r.Unidade_Pessoa ? '<span class="pp-muted"> · ' + esc(r.Unidade_Pessoa) + '</span>' : '') + '</div></div>';
+    }).join('') + '</div>';
+  }
+  function listaRegrasHtml(regras) {
+    if (!regras.length) return '<p class="pp-vazio">Nenhuma regra cadastrada.</p>';
+    return '<div class="br-list regras-lista" role="list">' + regras.map(function (r) {
+      return '<div class="br-item regra-item" role="listitem"><div class="regra-topo"><span class="br-tag info small">' + esc(r.Tipo_Regra || '—') + '</span>' +
+        (r.Fonte_Normativa ? '<span class="pp-muted">' + esc(r.Fonte_Normativa) + '</span>' : '') + '</div>' +
+        '<div class="regra-nome">' + esc(r.Nome) + '</div>' +
+        (r.Descricao ? '<p class="regra-desc">' + esc(r.Descricao) + '</p>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  // Plano de Ação 5W2H (RES 031/2025, item 5.5.4) — entregável da etapa
+  // "Analisar o processo" da Jornada; mesmo padrão de card que Regras.
+  function listaPlanoAcaoHtml(itens) {
+    if (!itens.length) return '<p class="pp-vazio">Nenhuma ação de melhoria registrada.</p>';
+    return '<div class="br-list plano-lista" role="list">' + itens.map(function (a) {
+      var cls = a.Status === 'Concluído' ? ' success' : a.Status === 'Em andamento' ? ' info' : '';
+      return '<div class="br-item plano-item" role="listitem">' +
+        '<div class="plano-topo"><strong>' + esc(a.Problema) + '</strong>' +
+        '<span class="br-tag small' + cls + '">' + esc(a.Status || 'Não iniciado') + '</span></div>' +
+        '<dl class="plano-grid">' + [['O que', a.O_Que], ['Por que', a.Por_Que], ['Onde', a.Onde],
+          ['Quando', a.Quando], ['Quem', a.Quem], ['Como', a.Como], ['Quanto custa', a.Quanto_Custa]]
+          .filter(function (p) { return p[1]; })
+          .map(function (p) { return '<dt>' + p[0] + '</dt><dd>' + esc(p[1]) + '</dd>'; }).join('') +
+        '</dl></div>';
+    }).join('') + '</div>';
+  }
+  // Cultura de Processos (CBOK 9.5.6) é autoavaliação ORGANIZACIONAL, não por
+  // processo — fica no dashboard gerencial. Vem "Não avaliado" por padrão:
+  // só a equipe pode dizer se cada característica já é realidade.
+  function cardCulturaProcessos() {
+    var itens = DADOS.culturaProcessos || [];
+    if (!itens.length) return '';
+    var sim = itens.filter(function (c) { return c.Situacao === 'Sim'; }).length;
+    return '<div class="pp-card"><h3><i class="fas fa-people-group" aria-hidden="true"></i> Cultura de processos</h3>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp2)">Autoavaliação organizacional (CBOK 9.5.6) — ' + sim + ' de ' + itens.length + ' características já presentes. Atualize a situação de cada uma na aba Cultura_Processos da planilha.</p>' +
+      '<div class="cultura-lista">' + itens.map(function (c) {
+        return '<div class="cultura-item"><span class="br-tag small cultura-' + slug(c.Situacao || 'nao-avaliado') + '">' + esc(c.Situacao || 'Não avaliado') + '</span><span>' + esc(c.Caracteristica) + '</span></div>';
+      }).join('') + '</div></div>';
+  }
+  // Iniciativas viabilizadas pelo repósitorio: uma das 3 métricas de um bom
+  // repositório no CBOK (4.2.11) — fica vazio de propósito até a equipe
+  // registrar um uso real; não é dado para eu inventar.
+  function cardIniciativas() {
+    var itens = DADOS.iniciativas || [];
+    return '<div class="pp-card"><h3><i class="fas fa-rocket" aria-hidden="true"></i> Iniciativas viabilizadas pelo repositório</h3>' +
+      (itens.length ? '<div class="br-list" role="list">' + itens.map(function (i) {
+        return '<div class="br-item" role="listitem"><div><strong>' + esc(i.Titulo) + '</strong><span class="pp-muted"> · ' + fmtData(i.Data) + '</span>' +
+          (i.Tipo ? ' <span class="br-tag info small">' + esc(i.Tipo) + '</span>' : '') + '</div>' +
+          (i.Descricao ? '<p style="margin:2px 0 0">' + esc(i.Descricao) + '</p>' : '') + '</div>';
+      }).join('') + '</div>' :
+      '<p class="pp-vazio">Nenhuma iniciativa registrada ainda. Uma das três métricas de um bom repositório (CBOK 4.2.11) é quantas iniciativas ele viabiliza — registre na aba Iniciativas da planilha quando o repositório embasar uma decisão, automação ou projeto de melhoria.</p>') + '</div>';
   }
   function renderDetalhe(tipo, cod) {
     var el = $('#viewDetalhe');
@@ -1897,11 +2073,14 @@
         campo('Descrição', p.Descricao && esc(p.Descricao), false, 'desc') +
         campo('Unidade Orgânica responsável', p.Area_Responsavel && siglaTag(p.Area_Responsavel), false, 'quem') +
         campo('Unidades orgânicas corresponsáveis', chips(p.Unidades_Corresponsaveis, null, true), false, 'quem') +
-        campo('Responsável no NUGEP', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
+        campo('Ponto focal do Nugep', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
         campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
         campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
-        '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
-        campo('Sistemas utilizados', chips(p.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
+        campo('Maturidade do processo', p.Maturidade && tagMaturidade(p.Maturidade), false, 'quem') +
+        '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
+        campo('Sistemas utilizados', chips(p.Sistemas, 'fa-desktop'), false, 'tecnico') +
+        campo('Fontes de dados', chips(p.Fontes_Dados, 'fa-database'), false, 'tecnico') +
+        campo('Competências necessárias', chips(p.Competencias_Necessarias, 'fa-graduation-cap'), true, 'tecnico') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-right-left" aria-hidden="true"></i> ' + termoLink('SIPOC') + '</h3><div class="sipoc">' +
         '<div class="col"><h4>Fornecedores</h4><ul>' + (listar(p.Fornecedores).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '<div class="col"><h4>Entradas</h4><ul>' + (listar(p.Entradas).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
@@ -1914,7 +2093,7 @@
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades ligadas direto ao processo</h3>' +
         (subs.length && !ativsDiretas.length
           ? '<p class="pp-vazio">Nenhuma atividade ligada diretamente ao processo — neste caso as atividades ficam dentro dos subprocessos listados ao lado.</p>'
-          : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.')) + '</div>' +
+          : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.', p.Area_Responsavel)) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
         cardHierarquia(mp ? [{ tipo: 'mp', cat: mp._cat, codigo: mp._cod || mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
@@ -1959,6 +2138,7 @@
         '<h1>' + esc(codDisp(s.Codigo)) + ' — ' + esc(s.Nome) + '</h1>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
         (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') +
+        '<span>· Subprocesso de ' + (cadeiaSp.length + 1) + 'º nível' + (cadeiaSp.length > 0 ? ' (aninhado)' : '') + '</span>' +
         (s.Reutilizavel === 'Sim' ? '<span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
@@ -1969,8 +2149,11 @@
         campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Corresponsaveis, null, true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
-        '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod), true) + '</dd></div>' +
-        campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
+        campo('Produto principal', s.Produto && esc(s.Produto), false, 'valor') +
+        '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
+        campo('Cronograma proposto', s.Cronograma_Proposto_Dias && (esc(s.Cronograma_Proposto_Dias) + ' dias úteis'), false, 'tecnico') +
+        campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') +
+        campo('Fontes de dados', chips(s.Fontes_Dados, 'fa-database'), false, 'tecnico') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
         ((subsFilhos.length || subsReusados.length) ?
           tabelaGov({
@@ -1983,7 +2166,7 @@
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades</h3>' +
-        tabelaAtividadesHtml(ativs) + '</div>' +
+        tabelaAtividadesHtml(ativs, undefined, s.Unidade_Responsavel) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
         cardHierarquia(
@@ -2017,6 +2200,9 @@
     var anc2 = ancestraisDaAtividade(a);
     var sp2 = anc2.sp, cadeiaSp2 = anc2.cadeiaSp, p2 = anc2.p, mp2 = anc2.mp;
     var tf3 = IDX.tarefasPorAtiv[cod] || [];
+    // Mesma regra da tabela: a atividade não tem unidade própria, herda a
+    // do pai (subprocesso ou, na ausência dele, o processo direto).
+    var unidadeAtiv = sp2 ? sp2.Unidade_Responsavel : (p2 ? p2.Area_Responsavel : null);
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp2 ? [{ rotulo: mp2._cod || mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
@@ -2031,8 +2217,9 @@
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da atividade</h3><dl class="ficha-dl">' +
       campo('Descrição', a.Descricao && esc(a.Descricao), true, 'desc') +
-      campo('Objetivo', a.Objetivo && esc(a.Objetivo), true, 'desc') +
-      campo('Executor', a.Executor && esc(a.Executor), false, 'quem') +
+      campo('Tipo de atividade', a.Tipo_Atividade && tagTipoAtividade(a.Tipo_Atividade), false, 'tecnico') +
+      campo('Unidade Orgânica Responsável', unidadeAtiv && siglaTag(unidadeAtiv), false, 'quem') +
+      (a.Responsavel ? campo('Responsável pela execução', esc(a.Responsavel), false, 'quem') : '') +
       campo('Entradas (insumos)', chips(a.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
       campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
@@ -2040,20 +2227,14 @@
       (tf3.length ? tabelaGov({
         titulo: 'Tarefas', total: tf3.length,
         rotuloTotal: tf3.length === 1 ? 'tarefa' : 'tarefas',
-colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: true }, { r: 'Tipo' }, { r: 'Duração', curta: true }],
+        colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: true }, { r: 'Tipo' }, { r: 'Duração', curta: true }],
         linhas: tf3.map(function (t) {
-          return '<tr data-link><td class="cod">' + esc(codDisp(t.Codigo)) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a>' +
-            '</td>' +
+          return '<tr data-link><td class="cod">' + esc(codDisp(t.Codigo)) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a></td>' +
             '<td>' + esc(t.Tipo_Tarefa || '—') + '</td>' +
-            '<td class="text-nowrap">' + (t.Duracao_Estimada ? formatarHorasUteis(horasTarefa(t)) : '—') + '</td></tr>' +
-            detalheLinha([
-              ['Descrição', esc(t.Descricao || '')],
-              ['Responsável', esc(t.Responsavel || '')],
-              ['Sistema', esc(t.Sistema || '')],
-              ['Observações', esc(t.Observacoes || '')]
-            ]);
+            '<td class="text-nowrap">' + (t.Duracao_Estimada ? formatarHorasUteis(horasTarefa(t)) : '—') + '</td></tr>';
         }).join('')
       }) : '<p class="pp-vazio">Nenhuma tarefa cadastrada para esta atividade.</p>') + '</div>' +
+      secVinculos('Atividade', cod) +
       '</div><aside>' +
       cardHierarquia(
         (mp2 ? [{ tipo: 'mp', cat: mp2._cat, codigo: mp2._cod || mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
@@ -2091,9 +2272,14 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       (t.Duracao_Estimada ? '<span>· Duração estimada: ' + formatarHorasUteis(horasTarefa(t)) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
-      campo('Descrição', t.Descricao && esc(t.Descricao), true, 'desc') +
+      campo('Disparador (evento de início)', t.Disparador && esc(t.Disparador), false, 'desc') +
       campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa), false, 'tecnico') +
-      campo('Sistema', t.Sistema ? chips(t.Sistema, 'fa-desktop') : null, false, 'tecnico') +
+      campo('Passos', listaTexto(t.Passos, true), true, 'desc') +
+      campo('Princípios a seguir', listaTexto(t.Principios), true, 'desc') +
+      campo('Critérios de desempenho', listaTexto(t.Criterios_Desempenho), false, 'valor') +
+      campo('Resultados esperados', listaTexto(t.Resultados_Esperados), false, 'valor') +
+      campo('Materiais e ferramentas', chips(t.Materiais_Ferramentas, 'fa-toolbox'), false, 'tecnico') +
+      campo('Pessoas a consultar', chips(t.Pessoas_Consultar, 'fa-user-group'), false, 'quem') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
       '</div><aside>' +
       cardHierarquia(
@@ -2266,12 +2452,13 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
           esc(x.Tipo_Documento || '') + (x.Versao ? ' · v' + esc(x.Versao) : '') + '</div></td>' +
           '<td data-th="Vinculado a">' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' +
           '<td data-th="Data">' + fmtData(x.Data) + '</td>' +
-          '<td data-th="Situação">' + esc(x.Situacao || '—') + '</td></tr>' +
+          '<td data-th="Situação">' + esc(x.Situacao || '—') + (revisaoVencida(x) ? ' <span class="br-tag revisao-vencida"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Revisão vencida</span>' : '') + '</td></tr>' +
           '<tr class="collapse"><td id="' + cid + '" colspan="7" hidden>' +
           '<div class="br-list" role="list">' +
           '<div class="br-item" role="listitem"><strong>Tipo:</strong> ' + esc(x.Tipo_Documento || '—') + '</div>' +
           '<div class="br-item" role="listitem"><strong>Versão:</strong> ' + esc(x.Versao || '—') + '</div>' +
           '<div class="br-item" role="listitem"><strong>Situação:</strong> ' + esc(x.Situacao || '—') + '</div>' +
+          (x.Ato_Aprovacao ? '<div class="br-item" role="listitem"><strong>Ato de aprovação:</strong> ' + esc(x.Ato_Aprovacao) + '</div>' : '') +
           '</div></td></tr>';
       }).join('') +
       '</tbody></table></div>' +
@@ -2395,12 +2582,20 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
   }
   function renderIndicadores() {
     var el = $('#viewIndicadores');
-    var atingidas = DADOS.inds.filter(function (x) { return x._sit === 'Meta atingida'; }).length;
+    // Agrupado por Categoria (SLA/ROI/Processo/Produto/Projeto) — mapeia
+    // quase 1:1 às perspectivas do Balanced Scorecard (CBOK 7.3.3/10.1.9):
+    // SLA≈Cliente, Financeiro (ROI)≈Financeira, Processo≈Processos Internos,
+    // Produto/Projeto≈Aprendizado e Crescimento.
+    var ORDEM_CAT = ['Nível de Serviço (SLA)', 'Financeiro (ROI)', 'Processo', 'Produto', 'Projeto'];
+    var porCategoria = {};
+    DADOS.metricas.forEach(function (x) { var c = x.Categoria || 'Sem categoria'; (porCategoria[c] = porCategoria[c] || []).push(x); });
+    var categorias = ORDEM_CAT.filter(function (c) { return porCategoria[c]; })
+      .concat(Object.keys(porCategoria).filter(function (c) { return ORDEM_CAT.indexOf(c) < 0; }));
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h1>Indicadores de desempenho</h1><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="pp-card">' + tabelaIndsHtml(pagFatia('inds', DADOS.inds, 5), true) +
-      paginacaoHtml('inds', DADOS.inds.length, 'indicadores') + '</div>';
-    ligarPaginacao(el, renderIndicadores);
+      categorias.map(function (c) {
+        return '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> ' + esc(c) + '</h3>' + tabelaIndsHtml(porCategoria[c], true) + '</div>';
+      }).join('');
   }
   /* ── TELA: metodologia ────────────────────────────────────────────── */
   /* ── GRÁFICOS (SVG puro, sem dependências; cores do DS gov.br) ────── */
@@ -2548,6 +2743,12 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
     var cobertura = procs.length ? Math.round(concl / procs.length * 100) : 0;
     var media = procs.length ? Math.round(procs.reduce(function (s, p) { return s + p.Percentual; }, 0) / procs.length) : 0;
     var atrasados = procs.filter(function (p) { return p.Prazo_Previsto && p.Prazo_Previsto < hoje && p._status !== 'concluido'; });
+    // Taxa de atualização (CBOK 4.2.11, uma das 3 métricas de repositório):
+    // % de processos com Ultima_Atualizacao nos últimos 90 dias.
+    var corte90 = new Date(hoje + 'T00:00:00'); corte90.setDate(corte90.getDate() - 90);
+    var corte90ISO = corte90.toISOString().slice(0, 10);
+    var atualizRecente = procs.filter(function (p) { return p.Ultima_Atualizacao && p.Ultima_Atualizacao >= corte90ISO; }).length;
+    var txAtualizPct = procs.length ? Math.round((atualizRecente / procs.length) * 100) : 0;
     var riscosAb = DADOS.riscos.filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
     var criticos = riscosAb.filter(function (r) { return r._classe === 'Alto' || r._classe === 'Extremo'; });
     // marcos agregados (funil)
@@ -2579,7 +2780,10 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       '<div class="kpi"><span class="num">' + DADOS.ativs.length + '</span><span class="lbl">Atividades' + dica('Total de atividades mapeadas no portfólio.') + '</span><span class="sub">mapeadas no portfólio</span></div>' +
       '<div class="kpi"><span class="num">' + DADOS.tarefas.length + '</span><span class="lbl">Tarefas' + dica('Total de tarefas mapeadas no portfólio (menor unidade de trabalho, CBOK 4.0).') + '</span><span class="sub">mapeadas no portfólio</span></div>' +
       '<div class="kpi ' + (criticos.length ? 'erro' : 'ok') + '"><span class="num">' + criticos.length + '</span><span class="lbl">Riscos críticos' + dica('Riscos classificados como Alto ou Extremo, ainda não encerrados.') + '</span><span class="sub">' + riscosAb.length + ' riscos abertos no total</span></div>' +
+      '<div class="kpi"><span class="num">' + VISITAS_NAVEGADOR + '</span><span class="lbl">Visitas ao repositório' + dica('Utilização é a métrica chave de um bom repositório de processos (CBOK). Contador local deste navegador — o painel é um site estático sem login, não soma visitas de outras pessoas nem de outros dispositivos.') + '</span><span class="sub">neste navegador</span></div>' +
+      '<div class="kpi"><span class="num">' + txAtualizPct + '%</span><span class="lbl">Taxa de atualização' + dica('Uma das três métricas de repositório do CBOK (4.2.11): percentual de processos atualizados nos últimos 90 dias.') + '</span><span class="sub">processos atualizados nos últimos 90 dias</span></div>' +
       '</div>' +
+      cardCulturaProcessos() +
       '<div class="graf-grid">' +
       grafGauge('Avanço médio geral do portfólio', media, 100, [
         { ate: 40, cor: '#b50909' }, { ate: 70, cor: '#947100' }, { ate: 100, cor: '#168821' }],
@@ -2593,7 +2797,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       grafDonut('Processos por tipo (CBOK)', ['gerencial', 'finalistico', 'suporte'].map(function (c) {
         return { rotulo: c === 'finalistico' ? 'Finalístico' : c === 'gerencial' ? 'Gerencial' : 'Suporte',
           valor: procs.filter(function (p) { var m = IDX.mp[p.Macroprocesso]; return m && m._cat === c; }).length, cor: CAT_COR[c] };
-      }), 'Distribuição dos processos mapeados entre os três tipos de macroprocesso do CBOK 4.0: gerencial, finalístico e de suporte.') +
+      }), 'Distribuição dos processos mapeados entre os três tipos de macroprocesso do CBOK 4.0: gerencial, finalístico e de suporte. Referência do CBOK para comparação (não é meta obrigatória): cerca de 20% primários (finalísticos), 70% de suporte e 10% de gestão.') +
       grafBarras('Avanço por macroprocesso (%) — clique para abrir', DADOS.macros.map(function (m) {
         var ps = IDX.procsPorMacro[m.Codigo] || [];
         return { rotulo: (m._cod || m.Codigo) + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#0c326f', href: '#/mp/' + encodeURIComponent(m.Codigo),
@@ -2630,7 +2834,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       (criticos.length ? tabelaRiscosHtml(criticos, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum risco crítico em aberto.</span></div></div>') + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores fora da meta</h3>' +
       (function () {
-        var fora = DADOS.inds.filter(function (x) { return x._sit === 'Abaixo da meta' || x._sit === 'Acima da meta'; });
+        var fora = DADOS.metricas.filter(function (x) { return x._sit === 'Meta não atingida'; });
         return fora.length ? tabelaIndsHtml(fora, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Todos os indicadores medidos estão na meta.</span></div></div>';
       })() + '</div></section>';
     $all('#viewDashboard tr[data-link]').forEach(function (tr) {
@@ -2712,6 +2916,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
         (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/e-Codevasf</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
         (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/e-Codevasf</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
         '</div>' : '') +
+      cardIniciativas() +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Jornada de mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
       /* Componente Wizard: a jornada é um percurso linear e prescrito —
          painel de etapas (Step), área de conteúdo e barra de navegação com
@@ -2839,6 +3044,23 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       contatoNugep(m) + '</div></article>';
   }
   function nivelNugep(m) { return +(m.Hierarquia || 0); }
+  // Competências e atribuições (RES 031/2025, item 3) — instâncias da mais
+  // alta à equipe do processo; accordion do gov.br DS, mesmo padrão do FAQ.
+  function cardCompetencias() {
+    var itens = DADOS.competencias || [];
+    if (!itens.length) return '';
+    return '<div class="pp-card" style="margin-top:var(--sp4)"><h3><i class="fas fa-scale-balanced" aria-hidden="true"></i> Competências e atribuições</h3>' +
+      '<p class="pp-muted" style="margin-bottom:var(--sp2)">Atribuições de cada instância na gestão de processos, conforme a Resolução nº 031/2025 (item 3).</p>' +
+      '<div class="br-accordion" id="comptAcc">' + itens.map(function (c, i) {
+        var id = 'compt-' + i;
+        return '<div class="item">' +
+          '<button class="header" type="button" aria-controls="' + id + '" aria-expanded="false">' +
+          '<span class="icon"><i class="fas fa-chevron-down" aria-hidden="true"></i></span>' +
+          '<span class="title">' + esc(c.Instancia) + '</span></button></div>' +
+          '<div class="content" id="' + id + '"><ul class="compt-lista">' +
+          listar(c.Atribuicoes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+      }).join('') + '</div></div>';
+  }
   function renderNugep() {
     var el = $('#viewNugep');
     var P = DADOS.params || {};
@@ -2882,7 +3104,9 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
         (equipeUnp.length ? '<div class="ci-nivel"><span class="ci-rot">AE/GPE/UNP — equipe da Unidade</span>' +
           '<div class="ci-equipe">' + equipeUnp.map(function (m) { return perfilInst(m); }).join('') + '</div></div>' : '') +
         '</div>' : '') +
-      '</div>';
+      '</div>' +
+      cardCompetencias();
+    if (window.PPUI && PPUI.iniciarAccordions) PPUI.iniciarAccordions(el);
   }
 
   /* ── TELA: glossário ──────────────────────────────────────────────── */
@@ -2893,10 +3117,18 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
     var ehSiglas = filtroGloss.aba === 'siglas';
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h1>Glossário</h1><div class="linha" aria-hidden="true"></div></div>' +
-      '<div class="chip-lista gloss-abas" role="tablist" aria-label="Tipo de glossário">' +
-      '<button type="button" role="tab" aria-selected="' + (!ehSiglas) + '" class="chip' + (!ehSiglas ? ' ativo' : '') + '" data-aba="termos">Termos de gestão de processos</button>' +
-      '<button type="button" role="tab" aria-selected="' + ehSiglas + '" class="chip' + (ehSiglas ? ' ativo' : '') + '" data-aba="siglas">Siglas das unidades</button>' +
-      '</div><div id="glossCorpo"></div>';
+      // Componente Tab oficial do DS (br-tab/tab-nav/tab-item — mesma anatomia
+      // da faixa #navigation e das abas do dropdown de Alertas), não mais o
+      // chip de filtro. Os dois botões apontam para o mesmo painel dinâmico
+      // #glossCorpo (o conteúdo é regenerado ali, não existem dois tab-panels
+      // separados) — simplificação intencional do padrão de abas, registrada
+      // aqui por não haver conteúdo fixo por aba para dividir.
+      '<div class="br-tab gloss-abas" id="glossTab">' +
+      '<nav class="tab-nav" aria-label="Tipo de glossário"><ul role="tablist">' +
+      '<li class="tab-item' + (!ehSiglas ? ' active' : '') + '" role="presentation"><button type="button" role="tab" id="glossTabTermos" aria-selected="' + (!ehSiglas) + '" aria-controls="glossCorpo" data-aba="termos"><i class="fas fa-spell-check" aria-hidden="true"></i> Termos de gestão de processos</button></li>' +
+      '<li class="tab-item' + (ehSiglas ? ' active' : '') + '" role="presentation"><button type="button" role="tab" id="glossTabSiglas" aria-selected="' + ehSiglas + '" aria-controls="glossCorpo" data-aba="siglas"><i class="fas fa-building" aria-hidden="true"></i> Siglas das unidades</button></li>' +
+      '</ul></nav></div>' +
+      '<div id="glossCorpo" role="tabpanel" aria-labelledby="' + (ehSiglas ? 'glossTabSiglas' : 'glossTabTermos') + '"></div>';
     $all('.gloss-abas [data-aba]', el).forEach(function (b) {
       b.onclick = function () { filtroGloss.aba = b.getAttribute('data-aba'); renderGlossario(); };
     });
@@ -3033,8 +3265,8 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       mp: DADOS.macros.filter(function (m) { return bate(m.Codigo) || bate(m._cod) || bate(m.Nome) || bate(m.Descricao); }),
       p: DADOS.procs.filter(function (p) { return bate(p.Codigo) || bate(p.Nome) || bate(p.Descricao); }),
       sp: DADOS.subs.filter(function (s) { return bate(s.Codigo) || bate(s.Nome) || bate(s.Descricao); }),
-      a: DADOS.ativs.filter(function (a) { return bate(a.Codigo) || bate(a.Nome) || bate(a.Descricao); }),
-      t: DADOS.tarefas.filter(function (t) { return bate(t.Codigo) || bate(t.Nome) || bate(t.Descricao); }),
+      a: DADOS.ativs.filter(function (a) { return bate(a.Codigo) || bate(a.Nome); }),
+      t: DADOS.tarefas.filter(function (t) { return bate(t.Codigo) || bate(t.Nome); }),
       doc: DADOS.docs.filter(function (x) { return bate(x.ID) || bate(x.Titulo); }),
       gl: DADOS.glossario.filter(function (t) { return bate(t.Termo) || bate(t.Definicao); }),
       rp: DADOS.repo.filter(function (i) { return bate(i.Titulo) || bate(i.Descricao) || bate(i.Codigo); })
@@ -3055,7 +3287,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m._cod || m.Codigo, m.Nome, esc(m.Categoria)); }) +
       grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), codDisp(p.Codigo), p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
       grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), codDisp(s.Codigo), s.Nome, ''); }) +
-      grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), codDisp(a.Codigo), a.Nome, esc(a.Responsavel_Ator || '')); }) +
+      grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), codDisp(a.Codigo), a.Nome, ''); }) +
       grupo('Tarefas', r.t, function (t) { return linha('#/t/' + encodeURIComponent(t.Codigo), codDisp(t.Codigo), t.Nome, esc(t.Tipo_Tarefa || '')); }) +
       grupo('Documentos', r.doc, function (x) {
         return '<div class="doc-item"><i class="fas fa-file fa-stack-ico" aria-hidden="true"></i><div><div class="tit">' +
@@ -3072,12 +3304,13 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
 
   /* ── inicialização ────────────────────────────────────────────────── */
   function posCarga() {
+    VISITAS_NAVEGADOR = contarVisitaRepositorio();
     var chip = $('#syncChip'); if (chip) chip.textContent = FONTE;
     var c;
     if ((c = $('#cntCatalogo'))) c.textContent = DADOS.procs.length;
     if ((c = $('#cntDocumentos'))) c.textContent = DADOS.docs.length;
     if ((c = $('#cntRiscos'))) c.textContent = DADOS.riscos.length;
-    if ((c = $('#cntIndicadores'))) c.textContent = DADOS.inds.length;
+    if ((c = $('#cntIndicadores'))) c.textContent = DADOS.metricas.length;
     if ((c = $('#cntRepositorio'))) c.textContent = DADOS.repo.length;
     if ((c = $('#cntNugep'))) c.textContent = DADOS.nugep.length;
     if ((c = $('#cntGlossario'))) c.textContent = DADOS.glossario.length;
@@ -3107,7 +3340,7 @@ colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: tru
       { rotulo: 'Repositório de materiais', href: '#/repositorio', icone: 'fa-toolbox' },
       { rotulo: 'Documentos', href: '#/documentos', icone: 'fa-folder-open', meta: DADOS.docs.length },
       { rotulo: 'Radar de riscos', href: '#/riscos', icone: 'fa-shield-halved', meta: DADOS.riscos.length },
-      { rotulo: 'Indicadores', href: '#/indicadores', icone: 'fa-chart-line', meta: DADOS.inds.length },
+      { rotulo: 'Indicadores', href: '#/indicadores', icone: 'fa-chart-line', meta: DADOS.metricas.length },
       { rotulo: 'NUGEP', href: '#/nugep', icone: 'fa-people-group' },
       { rotulo: 'Glossário', href: '#/glossario', icone: 'fa-spell-check', meta: DADOS.glossario.length },
       { rotulo: 'Perguntas frequentes', href: '#/faq', icone: 'fa-circle-question', meta: DADOS.faq.length }

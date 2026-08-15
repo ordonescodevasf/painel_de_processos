@@ -1,4 +1,4 @@
-# Painel de Gestão de Processos — Codevasf (AE/GPE/UNP)
+# Repositório de Processos — Codevasf (AE/GPE/UNP)
 
 Site estático (HTML + CSS + JavaScript puros, padrão **gov.br DS v4**) que publica a
 cadeia de valor, o repositório de processos e a rastreabilidade do trabalho de
@@ -1525,3 +1525,209 @@ O **LEIA-ME** passou a ter um bloco próprio sobre as colunas cinza — o que ca
 uma calcula e por que não se digita nelas — e a nota sobre vínculo múltiplo: a
 fórmula resolve o vínculo único; para apontar para mais de um item, os códigos
 vão separados por ponto e vírgula e os níveis à mão, na mesma ordem.
+
+## Auditoria contra a Metodologia (RES 031/2025) — marcos, jornada e glossário
+
+Conferência linha a linha do painel contra o texto da própria Resolução
+(`MET_Gerenciamento.Processos_RES.031_2025.01.08.pdf`, a fonte oficial), para
+fechar lacunas de conteúdo — o alinhamento visual à v4 já estava feito (seções
+acima); nenhuma decisão de estilo mudou aqui.
+
+**Marco M10 nunca fechava — corrigido.** O array `MARCOS` (`js/app.js`) trazia
+nomes de coluna que sobraram de renumerações antigas e não existem no esquema
+atual: `M1_Conhecer_Processo`, `M6_Procedimento_Aprovado`, `M7_Processo_Publicado`
+e `M9_TOBE_Aprovado` eram "apelidos" de fallback que nunca bateram com as
+colunas reais (`M1_Reuniao_Contextualizacao` … `M10_Publicado_Repositorio`). Na
+prática, o marco M7 ("Processo publicado") lia por acidente a última coluna
+real (`M10_Publicado_Repositorio`), e o M10 ("Processo transformado") não tinha
+coluna nenhuma — ficava pendente para sempre, mesmo num processo 100% concluído
+(caso do P-06.01). Corrigido:
+
+- `campos` de cada marco agora referencia só nomes de coluna que existem.
+- Coluna nova **`M10_Processo_Transformado`** (Processos): fecha de fato o
+  décimo marco. "Sim" quando M1–M9 não têm nenhum "Não" entre si (mesma regra
+  do `Percentual` — "Não se aplica" não bloqueia). Adicionada ao esquema
+  (`esquema_planilha.py`), ao gerador (`gerar_planilha.py`, calculada por linha
+  em vez de reescrever as ~20 linhas de `procs` à mão) e à planilha de exemplo
+  (`js/dados.js`).
+
+**Jornada: faltava a etapa "Analisar o processo".** A Resolução (§5.5) trata a
+análise — identificar problemas e causas, avaliar recursos, propor melhorias,
+montar o Plano de Ação (5W2H) — como etapa própria, entre validar o AS-IS e
+redesenhar o TO-BE. A jornada do painel saltava direto de "Validação AS-IS"
+para "Redesenho TO-BE". Nova etapa **5 "Análise do processo"** (fase
+Desenvolver), no mesmo formato das demais (objetivo, atividades-chave, quem
+faz, entregáveis, sentimento do usuário); as etapas 5–8 anteriores viraram 6–9.
+Replicado em `js/dados.js` e `scripts/dados_conteudo.py`.
+
+**Onze termos da Resolução, ausentes do Glossário.** O §2 da norma define
+termos que o painel usa nos rótulos, na navegação e nas fichas, mas nunca
+explicava: 5W2H, Ator do Processo, Diagrama, Equipe de Gerenciamento de
+Processo, Gestor do Processo, Hierarquia de Processos, Plano de Gerenciamento
+do Processo (PGP), Ponto Focal do Nugep, Procedimento (PRO), Regras de Negócio
+e Unidade Orgânica. Adicionados com `"Fonte": "RES 031/2025"`, cruzados por
+`Termos_Relacionados` com o que já existia — ex.: Gestor do Processo ↔ Dono do
+Processo (o sinônimo genérico do CBOK, já no Glossário); Ponto Focal do Nugep
+↔ Interlocutor de Processos.
+
+**Não alterado, para decisão sua:**
+
+- **Ponto Focal do Nugep vs. Interlocutor de Processos / "Responsável no
+  NUGEP"** parecem o mesmo papel institucional sob nomes diferentes — o
+  Glossário agora cruza os dois termos, mas os campos da ficha continuam com o
+  nome que já usavam.
+- **Competências e atribuições (§3 da Resolução)** — Conselho de Administração,
+  Diretoria Executiva, AE/GPE/UNP, Nugep, ponto focal, gestor do processo e
+  equipe de gerenciamento têm, cada um, uma lista própria de responsabilidades
+  na norma que o painel não expõe hoje (só o organograma de contatos, na aba
+  NUGEP). Não criei essa seção — é conteúdo novo, não uma correção.
+
+## Segunda rodada — 5W2H, Ponto Focal do Nugep, Competências e sincronização real
+
+**"Ponto Focal do Nugep" virou o termo padrão.** A Resolução usa esse nome
+(item 3.5) para o papel que o painel chamava de "Interlocutor de Processos"
+(Glossário), "Responsável no NUGEP" (ficha do processo) e "Interlocutor(a) de
+Processos Finalísticos/de Suporte" (aba NUGEP). Padronizado nos três lugares
+— a coluna de planilha por trás continua `Interlocutor` (menor diff; é um
+nome de campo interno, não um rótulo visível) e os dois papéis da aba NUGEP
+viraram "Ponto Focal do Nugep — Processos Finalísticos" / "— Processos de
+Suporte", preservando o recorte que já existia. O Glossário perde a entrada
+duplicada ("Interlocutor de Processos" era a mesma pessoa sob outro nome) e
+mantém só "Ponto Focal do Nugep", com fonte RES 031/2025.
+
+**5W2H ganhou dado próprio, não só definição.** A etapa "Analisar o
+processo" (item 5.5.4 da Resolução) tem como entregável um plano de ação
+montado com a técnica 5W2H — sete perguntas (o quê, por quê, onde, quando,
+por quem, como, quanto custa). Isso é conteúdo por processo, não um conceito
+de glossário: nova aba **PlanoAcao**, no mesmo padrão de vínculo de
+Riscos/Papéis/Regras (`Vinculo_Nivel` + `Vinculo_Codigo`, aparece na ficha do
+processo/subprocesso e pode agregar por portfólio depois, se fizer sentido).
+Campos: `Problema` (o que a ação resolve — cruza com Riscos quando a causa é
+a mesma) + as sete colunas 5W2H + `Status`. Card novo na ficha ("Plano de
+ação (5W2H)"), entre Riscos e Papéis — a ordem de leitura fica risco →
+plano de ação → quem está envolvido → regras. Três exemplos de demonstração,
+ligados a P-06.01 e SP-06.01.03, dois deles resolvendo as causas-raiz dos
+riscos R-001 e R-008 já cadastrados (mesma lógica do CBOK: a análise nasce
+dos problemas/riscos identificados).
+
+**Competências e atribuições (item 3 da Resolução), na aba NUGEP.** Nova
+aba **Competencias** (`Ordem`, `Instancia`, `Item_Normativo`, `Atribuicoes`)
+com as sete instâncias da norma — Conselho de Administração, Diretoria
+Executiva, AE/GPE/UNP, Nugep, ponto focal do Nugep, gestor do processo e
+equipe de gerenciamento — cada uma com sua lista de atribuições literal da
+Resolução. Exibida como `accordion` (`br-accordion`, mesmo componente e
+marcação do FAQ) num card novo no fim da aba NUGEP, abaixo de "Contato
+institucional": card fechado por padrão preserva o foco na equipe (o motivo
+principal de quem abre a aba), a base normativa fica a um clique.
+
+**Bug real encontrado: seis abas nunca carregavam da planilha real.**
+`CONFIG.abas` (`js/app.js`) — a lista que `carregarXlsx()` usa para saber
+quais abas buscar — ainda tinha o inventário de quando só existiam 15 abas.
+Desde que Indicadores virou Metricas+Medicoes e as abas Papeis, Regras,
+Cultura_Processos e Iniciativas foram criadas, nenhuma delas está nessa
+lista — `carregarXlsx()` simplesmente não as pedia, então `normalizar()`
+recebia `[]` para todas as seis. O painel parecia funcionar porque toda
+pré-visualização cai no fallback `js/dados.js` (o fetch da planilha local
+falha por CORS fora de um servidor real) — **em produção, com a planilha de
+verdade num servidor, essas seis abas apareceriam sempre vazias**, por mais
+que a equipe as preenchesse. Corrigido: a lista agora tem as 21 abas de
+dado reais (mais `PlanoAcao` e `Competencias`, novas nesta rodada); a antiga
+"Indicadores" saiu (não existe mais).
+
+**A planilha real não pôde ser regravada por mim com segurança — descoberta
+técnica, não decisão de design.** Tentei ler `data/painel-processos-dados.xlsx`
+com uma biblioteca JavaScript (ExcelJS) para aplicar as mudanças acima
+diretamente no arquivo. Teste de sanidade antes de gravar: abrir o arquivo
+e salvar de volta *sem nenhuma mudança* — o resultado encolheu de 255 KB
+para 62 KB. Ou seja, essa biblioteca não consegue reabrir e regravar este
+arquivo (gerado pelo openpyxl, em Python) sem perder conteúdo; a causa exata
+não importa tanto quanto o sintoma: gravar por esse caminho arriscava
+corromper silenciosamente a planilha real. Um limite de segurança do próprio
+ambiente recusou a gravação antes que isso acontecesse.
+
+Em vez de forçar isso, escrevi o script que já devia existir —
+`scripts/gerar_planilha.py` alerta desde o topo para não rodá-lo sobre uma
+planilha em uso e usar `scripts/atualizar_planilha.py`, mas esse arquivo
+nunca tinha sido criado:
+
+- **`scripts/atualizar_planilha.py`** (novo): abre a planilha real com
+  openpyxl (a mesma biblioteca que a gerou — sem risco de conversão) e
+  aplica só as mudanças desta auditoria — coluna `M10_Processo_Transformado`,
+  etapa "Análise do processo" na Jornada, os 11 termos do Glossário, o
+  reposicionamento de Ponto Focal do Nugep e as abas PlanoAcao/Competencias
+  — preservando tudo o resto (dados já preenchidos, formatação, fórmulas,
+  validações). Idempotente: cada mudança confere se já foi aplicada antes de
+  agir, então rodar de novo não duplica nada.
+- **`scripts/planilha_para_js.py`** (novo, fechava a outra ponta que faltava):
+  regenera `js/dados.js` a partir da planilha real, lendo as mesmas abas que
+  `CONFIG.abas` espera.
+
+`js/dados.js` já está 100% atualizado nesta sessão (editado diretamente).
+Quando puder rodar Python, sincronize o arquivo `.xlsx` de verdade com:
+
+```
+python scripts/atualizar_planilha.py
+python scripts/planilha_para_js.py
+```
+
+A segunda chamada é redundante logo após a primeira (o `.js` já está em dia)
+— mas vira o comando de rotina depois de qualquer edição manual na planilha.
+
+**Atualização: os três scripts já rodaram sobre a planilha real** (via um
+interpretador Python real, não a biblioteca JS que corrompia o arquivo — ver
+acima). `data/painel-processos-dados.xlsx` e `js/dados.js` estão sincronizados
+e verificados célula a célula (fórmulas recalculadas inclusive). Os três
+scripts continuam no repositório para a próxima edição manual da planilha.
+
+## Terceira rodada — auditoria contra o Guia de Modelagem de Processos
+
+Mesma Resolução 031/2025, documento complementar: não é sobre governança e
+etapas (isso é a Metodologia, já auditada acima), é sobre **como os diagramas
+BPMN devem ser desenhados e documentados** no Bizagi Modeler. A maior parte do
+Guia (categorias de elementos BPMN, swimlanes, gateways, eventos, conectores,
+convenções de desenho) rege quem desenha o diagrama no Bizagi — o painel só
+exibe a imagem exportada (`Imagem_Bizagi`), então não precisa de campo ou tela
+correspondente a essas seções. Achados que SÃO dado do painel:
+
+- **Subprocessos ganhou `Produto`** (Anexo B, Tabela de Descrição do
+  Subprocesso) — o produto/entrega principal do subprocesso, distinto das
+  "Saídas" (que já existiam). Card da ficha do subprocesso.
+- **Subprocessos ganhou `Cronograma_Proposto_Dias`** (Anexo B) — dias úteis
+  até a conclusão, diferente da duração em horas (que já é a soma recursiva
+  das tarefas): o Guia trata os dois como medidas distintas — horas é
+  esforço de trabalho, dias é tempo decorrido (inclui esperas e handoffs
+  entre pessoas/áreas). Em branco até a equipe preencher.
+- **Atividades ganhou `Responsavel`** (Anexo A pede um responsável por
+  atividade) — opcional; antes a atividade só herdava a unidade do
+  subprocesso/processo pai (decisão documentada de uma rodada anterior). O
+  Guia prevê que atividades de um mesmo subprocesso passem por mãos
+  diferentes (handoff) — herança continua sendo o padrão quando o campo
+  fica em branco.
+- **Glossário**: "Mapa" e "Modelo" somados a "Diagrama" (item 8 do Guia — os
+  três níveis de detalhamento de um processo), cruzados entre si.
+
+**Considerado e não implementado:**
+
+- **Tipo de processo (privativo/público/global)** — item 9 do Guia. É uma
+  decisão de como o diagrama BPMN é desenhado (pools/lanes/mensagens entre
+  participantes), não um dado sobre o processo em si — não caberia bem como
+  coluna do painel.
+- **"Competências" na Tabela de Catalogação do Processo (Anexo C)** — no
+  contexto do Guia, são as competências/habilidades necessárias para
+  executar o processo (RH), diferente da nova aba `Competencias` desta
+  sessão (que são atribuições de governança do item 3 da Metodologia).
+  Não implementado — é dado mais próximo de gestão de pessoas do que de
+  acompanhamento de processos; ficou como pendência para decidir.
+- **"Versão" da Tabela de Catalogação** — já coberta pela versão do
+  Procedimento (`Documentos.Versao`) vinculado ao processo; não duplicada
+  como coluna do próprio processo.
+
+**Achado à parte, não relacionado ao Guia**: `scripts/gerar_planilha.py` (o
+gerador da planilha de EXEMPLO, que recria do zero — nunca deve rodar sobre a
+planilha em uso, ver seu próprio aviso no topo) está com colunas de
+Atividades desatualizadas (ainda lista `Executor`, que saiu do esquema numa
+rodada anterior) e nunca ganhou os blocos de Metricas/Medicoes/Papeis/Regras/
+Cultura_Processos/Iniciativas (só a extinta "Indicadores" de uma única aba).
+Não é um problema da planilha REAL — que já tem tudo isso — é dívida técnica
+só do gerador de dados fictícios; registrado em pendencias.md, não corrigido
+agora para não expandir ainda mais o escopo desta sessão.

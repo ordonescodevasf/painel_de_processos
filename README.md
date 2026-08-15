@@ -1,4 +1,4 @@
-# Painel de Gestão de Processos — Codevasf
+# Repositório de Processos — Codevasf
 
 Painel de consulta pública do portfólio de processos da Codevasf: cadeia de
 valor, fichas de macroprocesso a tarefa, marcos do mapeamento (M1–M10),

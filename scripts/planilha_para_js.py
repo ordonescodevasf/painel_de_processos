@@ -1,78 +1,84 @@
 # -*- coding: utf-8 -*-
 """
-Lê data/painel-processos-dados.xlsx e gera js/dados.js
-(window.PAINEL_DADOS), usado como fallback quando o painel é aberto
-sem servidor (file://) ou quando o Google Sheets/planilha local falha.
+Gera js/dados.js a partir de data/painel-processos-dados.xlsx — o fallback
+embutido que o painel usa quando não consegue buscar a planilha (aberto
+localmente via file://, sem servidor, ou se o fetch falhar). Rode depois de
+editar a planilha real. Depois de scripts/atualizar_planilha.py, rode
+scripts/cachear_formulas.py ANTES deste — atualizar_planilha.py salva com
+openpyxl, que descarta o valor calculado das fórmulas já existentes (só
+regrava a fórmula em si); sem recachear, colunas como Processos.Percentual e
+Riscos.Nivel_PxI saem vazias abaixo:
 
-Uso:  python scripts/planilha_para_js.py
-Requisito: openpyxl (pip install openpyxl)
+    python scripts/atualizar_planilha.py
+    python scripts/cachear_formulas.py
+    python scripts/planilha_para_js.py
+
+Lê as mesmas abas que js/app.js busca (CONFIG.abas) e escreve cada uma como
+um array de objetos, no formato que o painel já espera.
+
+Limitação conhecida: colunas com fórmula (ex. Riscos.Nivel_PxI, NUGEP
+.Unidade_Nome) só saem com valor se algum programa com motor de planilha
+(Excel, LibreOffice, Google Sheets) já tiver aberto e salvo o arquivo pelo
+menos uma vez — o openpyxl não calcula fórmulas, só lê o último valor
+armazenado nelas.
 """
 import json
 import os
 import datetime as dt
 from openpyxl import load_workbook
 
-BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-XLSX = os.path.join(BASE, "data", "painel-processos-dados.xlsx")
-SAIDA = os.path.join(BASE, "js", "dados.js")
+RAIZ = os.path.dirname(os.path.abspath(__file__))
+XLSX = os.path.join(RAIZ, "..", "data", "painel-processos-dados.xlsx")
+SAIDA = os.path.join(RAIZ, "..", "js", "dados.js")
 
-ABAS = ["Macroprocessos", "Processos", "Subprocessos", "Atividades", "Tarefas",
-        "Documentos", "Riscos", "Indicadores",
-        "Jornada", "Repositorio", "NUGEP", "Glossario", "FAQ", "Parametros"]
-
-
-def valor(v):
-    """Normaliza valores de célula para JSON."""
-    if isinstance(v, (dt.datetime, dt.date)):
-        return v.strftime("%Y-%m-%d")
-    if isinstance(v, str):
-        v = v.strip()
-        return v if v else None
-    return v
+# Mesma lista de abas de dados que js/app.js (CONFIG.abas) lê da planilha —
+# se uma aba nova entrar lá, entre com ela aqui também.
+ABAS = ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
+        'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
+        'PlanoAcao', 'Cultura_Processos', 'Iniciativas', 'Competencias',
+        'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
 
 
-def aba_para_linhas(ws):
-    """Converte uma aba em lista de objetos {cabecalho: valor} (linhas com Código/ID)."""
+def valor_json(v):
+    if isinstance(v, (dt.date, dt.datetime)):
+        return v.isoformat()
+    return v.strip() if isinstance(v, str) else v
+
+
+def aba_para_lista(ws):
     linhas = list(ws.iter_rows(values_only=True))
     if not linhas:
         return []
-    cab = [str(c).strip() if c is not None else "" for c in linhas[0]]
-    out = []
-    for row in linhas[1:]:
-        if row[0] is None or str(row[0]).strip() == "":
-            continue  # ignora linhas sem código/ID
+    cabecalho = [str(h).strip() if h is not None else "" for h in linhas[0]]
+    saida = []
+    for linha in linhas[1:]:
+        primeiro = linha[0] if linha else None
+        if primeiro is None or str(primeiro).strip() == "":
+            continue  # mesma regra do carregarXlsx() do painel: ignora linha sem valor na 1ª coluna
         obj = {}
-        for k, v in zip(cab, row):
-            if k:
-                obj[k] = valor(v)
-        out.append(obj)
-    return out
+        for h, v in zip(cabecalho, linha):
+            if h:
+                obj[h] = valor_json(v)
+        saida.append(obj)
+    return saida
 
 
-def main():
-    # data_only=True lê os valores calculados (a planilha entregue já foi
-    # recalculada; se você editar e as fórmulas zerarem, abra e salve no
-    # Excel/LibreOffice antes de rodar este script)
+def principal():
     wb = load_workbook(XLSX, data_only=True)
-    dados = {"_gerado_em": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
-             "_fonte": os.path.basename(XLSX)}
+    dados = {}
     for aba in ABAS:
-        if aba not in wb.sheetnames:
-            print(f"AVISO: aba '{aba}' não encontrada — ignorada.")
-            dados[aba] = []
-            continue
-        dados[aba] = aba_para_linhas(wb[aba])
-        print(f"{aba}: {len(dados[aba])} linhas")
+        dados[aba] = aba_para_lista(wb[aba]) if aba in wb.sheetnames else []
+    dados["_gerado_em"] = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    os.makedirs(os.path.dirname(SAIDA), exist_ok=True)
+    corpo = json.dumps(dados, ensure_ascii=False, indent=1)
     with open(SAIDA, "w", encoding="utf-8") as f:
-        f.write("/* GERADO AUTOMATICAMENTE por scripts/planilha_para_js.py — não edite à mão.\n")
-        f.write("   Fonte: data/painel-processos-dados.xlsx */\n")
-        f.write("window.PAINEL_DADOS = ")
-        json.dump(dados, f, ensure_ascii=False, indent=1)
-        f.write(";\n")
-    print(f"OK → {os.path.relpath(SAIDA, BASE)}")
+        f.write(
+            "/* GERADO AUTOMATICAMENTE a partir de data/painel-processos-dados.xlsx — não edite à mão.\n"
+            "   Fonte: data/painel-processos-dados.xlsx */\n"
+            "window.PAINEL_DADOS = " + corpo + ";\n"
+        )
+    print(f"js/dados.js regenerado a partir de {len(ABAS)} abas de {XLSX}.")
 
 
 if __name__ == "__main__":
-    main()
+    principal()

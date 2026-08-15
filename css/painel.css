@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════
-   PAINEL DE GESTÃO DE PROCESSOS — estilos das seções de conteúdo.
+   REPOSITÓRIO DE PROCESSOS — estilos das seções de conteúdo.
    Complementa css/govbr-ds.css (extraído do Painel de Transformação
    Digital, gov.br DS v4). Usa exclusivamente os tokens de lá:
    --sp*, --fs-*, --gray-*, --blue-warm-vivid-*, --pure-0, --r-*,
@@ -297,6 +297,10 @@ body.contraste-alto .pp-card{background:#000;border:1px solid var(--gold-vivid-2
 .br-tag.tag-status.em-andamento{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
 .br-tag.tag-status.concluido{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
 .br-tag.tag-status.suspenso{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+/* Revisão vencida (N-000, item 4.2.3): instrumento normativo (Norma/
+   Procedimento/Manual) sem revisão há mais de 3 anos. */
+.br-tag.revisao-vencida{border:1px solid transparent;font-weight:700;background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+.br-tag.revisao-vencida i{font-size:10px;}
 .tag-cat{display:inline-block;border-radius:var(--r-sm);padding:2px 8px;
   font:700 10px/1.5 var(--font);text-transform:uppercase;color:var(--pure-0);}
 .tag-cat.gerencial{background:var(--pp-gerencial);}
@@ -308,8 +312,60 @@ body.contraste-alto .pp-card{background:#000;border:1px solid var(--gold-vivid-2
 .br-tag.nivel-moderado{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
 .br-tag.nivel-alto{background:#ffe4cf;color:#9c4500;border-color:#f7c49b;}
 .br-tag.nivel-extremo{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
-.sit-ok{color:var(--pp-ok);font-weight:700;} .sit-ruim{color:var(--pp-erro);font-weight:700;}
-.sit-neutra{color:var(--gray-60);font-weight:600;}
+/* ── RACI (Papéis e envolvidos) — CBOK pede papéis e organizações na
+   modelagem; Executa/Aprova/Consultado/Informado são a tradução do RACI. ── */
+.raci-lista{display:flex;flex-direction:column;gap:var(--sp2);}
+.raci-item{display:flex;align-items:center;gap:var(--sp2);}
+.raci-item .raci-tx{flex:1;min-width:0;}
+.br-tag.raci-executa{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.raci-aprova{background:#dcecff;color:#0c326f;border-color:#a8c0e8;}
+.br-tag.raci-consultado{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+.br-tag.raci-informado{background:var(--gray-5,#f0f0f0);color:var(--gray-70);border-color:var(--gray-20);}
+body.contraste-alto .raci-lista .br-tag{background:#000;color:#fff;border-color:var(--gold-vivid-20,#ffbe2e);}
+
+/* ── Regras de negócio (nova aba Regras) ── */
+.regras-lista{display:flex;flex-direction:column;gap:var(--sp3);}
+.regra-item{padding-bottom:var(--sp3);border-bottom:1px solid var(--gray-10);}
+.regra-item:last-child{border-bottom:0;padding-bottom:0;}
+.regra-topo{display:flex;align-items:center;gap:var(--sp2);flex-wrap:wrap;margin-bottom:4px;}
+.regra-topo .pp-muted{font-size:var(--fs-sm);}
+.regra-nome{font:700 var(--fs-base)/1.3 var(--font);color:var(--cv-navy);}
+.regra-desc{margin:2px 0 0;font-size:var(--fs-sm);}
+
+/* ── Plano de Ação 5W2H (nova aba PlanoAcao) ── */
+.plano-lista{display:flex;flex-direction:column;gap:var(--sp3);}
+.plano-item{padding-bottom:var(--sp3);border-bottom:1px solid var(--gray-10);}
+.plano-item:last-child{border-bottom:0;padding-bottom:0;}
+.plano-topo{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp2);margin-bottom:var(--sp2);}
+.plano-topo strong{font:700 var(--fs-base)/1.35 var(--font);color:var(--cv-navy);}
+.plano-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px var(--sp3);margin:0;}
+.plano-grid dt{font:700 var(--fs-sm)/1.3 var(--font);text-transform:uppercase;letter-spacing:.04em;color:var(--gray-60);}
+.plano-grid dd{margin:0 0 var(--sp2);font-size:var(--fs-sm);}
+
+/* ── Competências e atribuições (nova aba Competencias) ── */
+.compt-lista{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:6px;font-size:var(--fs-sm);}
+
+/* ── Maturidade de processos (CBOK, escala tipo CMM) e Tipo de atividade
+   (CBOK 3.1.7) — mesmo tratamento de .nivel-tag: ícone em escada +
+   par fundo/texto com contraste ≥4,5:1, nunca só cor para diferenciar. ── */
+.br-tag.maturidade-tag,.br-tag.tipo-ativ-tag{font:700 var(--fs-sm)/1.5 var(--font);border:1px solid transparent;}
+.br-tag.maturidade-inicial{background:var(--gray-5,#f0f0f0);color:var(--gray-70);border-color:var(--gray-20);}
+.br-tag.maturidade-repetivel{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+.br-tag.maturidade-definido{background:var(--blue-warm-vivid-5);color:var(--interactive);border-color:var(--blue-warm-vivid-30,#a8c0e8);}
+.br-tag.maturidade-gerenciado{background:#dcecff;color:#0c326f;border-color:#a8c0e8;}
+.br-tag.maturidade-otimizado{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.tipo-ativ-agregacao-de-valor{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.tipo-ativ-transferencia{background:var(--blue-warm-vivid-5);color:var(--interactive);border-color:var(--blue-warm-vivid-30,#a8c0e8);}
+.br-tag.tipo-ativ-controle{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+body.contraste-alto .br-tag.maturidade-tag,body.contraste-alto .br-tag.tipo-ativ-tag{background:#000;color:#fff;border-color:var(--gold-vivid-20,#ffbe2e);}
+
+/* ── Cultura de processos (CBOK 9.5.6) ── */
+.cultura-lista{display:flex;flex-direction:column;gap:var(--sp2);}
+.cultura-item{display:flex;align-items:center;gap:var(--sp2);}
+.br-tag.cultura-sim{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.cultura-parcial{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+.br-tag.cultura-nao{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+.br-tag.cultura-nao-avaliado{background:var(--gray-5,#f0f0f0);color:var(--gray-70);border-color:var(--gray-20);}
 
 /* ── barra de percentual ── */
 .pct{display:flex;align-items:center;gap:var(--sp2);}
@@ -719,19 +775,26 @@ body.contraste-alto .nugep-sigla{background:#000;color:#fff;border-color:var(--g
 .termo-link:hover{color:var(--interactive,#1351b4);}
 .termo-link:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);
   outline-offset:2px;border-radius:2px;}
+/* Sobre o fundo do ficha-hero (gradiente escuro por nível), o hover azul
+   do termo-link padrão perde contraste — troca por sublinhado sólido,
+   mantendo o branco herdado do eyebrow. */
+.ficha-hero .eyebrow .termo-link:hover,.ficha-hero .eyebrow .termo-link:focus-visible{
+  color:var(--pure-0);text-decoration-style:solid;}
 
 /* ── glossário ── */
+/* .gloss-abas agora é um .br-tab (ver renderGlossario em app.js) — usa a
+   estilização genérica de .br-tab/.tab-item de govbr-ds.css, nada aqui. */
 .gloss-abas{margin-bottom:var(--sp3);}
-.gloss-abas .chip{cursor:pointer;background:transparent;}
-.gloss-abas .chip:hover{border-color:var(--interactive);color:var(--interactive);background:var(--blue-warm-vivid-5);}
-.gloss-abas .chip:focus-visible{outline:var(--focus-width-field) var(--focus-style-field) var(--focus-color);outline-offset:var(--focus-offset-field);}
-.gloss-abas .chip.ativo{background:var(--interactive);border-color:var(--interactive);color:var(--pure-0);}
 .siglas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));
   gap:var(--sp2);margin-top:var(--sp3);}
 .siglas-item{display:flex;align-items:baseline;gap:var(--sp2);padding:var(--sp2) var(--sp3);
-  background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);}
-.siglas-cod{flex:0 0 auto;font:700 var(--fs-sm)/1.4 'Noto Sans Mono',ui-monospace,monospace;
-  color:var(--cv-blue);white-space:nowrap;}
+  background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);box-shadow:var(--sh-card);}
+/* Mesmo tratamento de código usado em .pp-tabela .cod e .cv-bloco .cod:
+   token --font-mono (Noto Sans Mono, carregada no index.html) e --gray-60
+   neutro — nunca uma pilha de fontes própria nem a cor de marca Codevasf
+   (--cv-blue). Sigla é um código curto, não uma cor de marca. */
+.siglas-cod{flex:0 0 auto;font:600 var(--fs-sm)/1.4 var(--font-mono);
+  color:var(--gray-60);white-space:nowrap;}
 .siglas-item span{color:var(--gray-70);font-size:var(--fs-sm);}
 body.contraste-alto .siglas-item{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
 body.contraste-alto .siglas-cod{color:#fff;}
@@ -853,19 +916,25 @@ body.contraste-alto .graf svg text{fill:#fff !important;}
   #modalEquipeDev .team-email{justify-content:center;}
 }
 
-/* ── categorização por cor dos rótulos da ficha (Macroprocesso, Processo,
-   Subprocesso, Atividade, Tarefa) — com muita informação preenchida, os
-   campos se misturavam visualmente. Só o rótulo (dt) leva cor por tipo de
-   informação — azul = descritivo · navy = responsabilidade · verde = valor
-   entregue · petróleo = técnico/normativo; sem caixa nem borda lateral (o
-   DS separa superfície por sombra, não por moldura colorida — ver .br-card
-   em govbr-ds.css). Sem legenda: o nome do campo já diz o que é; a cor só
-   reforça o agrupamento ao passar o olho rápido. Tokens oficiais gov.br
-   (Blue Warm Vivid 70/90, Green Cool Vivid 50, Green Warm Vivid 50). ── */
+/* ── cada campo da ficha (Macroprocesso, Processo, Subprocesso, Atividade,
+   Tarefa) vira um bloco: com muita informação preenchida, texto solto num
+   grid se misturava visualmente. Cantos arredondados pequenos (--r-sm,
+   4px — a escala do DS para superfícies pequenas tipo card/input; o card
+   da ficha em volta, .pp-card, já usa --r-md, 8px — o raio menor por
+   dentro do maior é a hierarquia certa) e fundo neutro sólido (--gray-2,
+   o mesmo tom do .chip) — sem gradiente, sem borda, como manda o
+   Fundamento Cor/Superfície do DS. O rótulo (dt) também leva cor por tipo
+   de informação — azul = descritivo · navy = responsabilidade · verde =
+   valor entregue · petróleo = técnico/normativo — reforçando o
+   agrupamento ao passar o olho rápido, sem precisar de legenda. Tokens
+   oficiais gov.br (Blue Warm Vivid 70/90, Green Cool Vivid 50, Green Warm
+   Vivid 50). ── */
+.ficha-dl > div{background:var(--gray-2);border-radius:var(--r-sm);padding:var(--sp2) var(--sp3);}
 .ficha-dl > div.campo-desc dt{color:var(--blue-warm-vivid-70);}
 .ficha-dl > div.campo-quem dt{color:var(--blue-warm-vivid-90);}
 .ficha-dl > div.campo-valor dt{color:var(--green-cool-vivid-50);}
 .ficha-dl > div.campo-tecnico dt{color:var(--green-warm-vivid-50);}
+body.contraste-alto .ficha-dl > div{background:transparent;border:1px solid var(--gold-vivid-20,#ffbe2e);}
 body.contraste-alto .ficha-dl > div[class*="campo-"] dt{color:#fff;}
 
 /* ════════════════════════════════════════════════════════════════════

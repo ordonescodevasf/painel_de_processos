@@ -343,7 +343,7 @@
         'Data/hora: ' + new Date().toLocaleString('pt-BR')
       ];
       if (shotDataUrl) lines.push('', 'IMPORTANTE: anexe a este e-mail o print que foi baixado (botão "Baixar Print" no painel) antes de enviar.');
-      var subject = encodeURIComponent('Erro no Painel de Processos');
+      var subject = encodeURIComponent('Erro no Repositório de Processos');
       var body = encodeURIComponent(lines.join('\n'));
       window.location.href = 'mailto:ae.gpe.unp@codevasf.gov.br?subject=' + subject + '&body=' + body;
     });
@@ -863,7 +863,7 @@
     function tituloAtual() {
       var painelAtivo = d.querySelector('#mainTabContent .tab-panel:not([hidden])');
       var h = painelAtivo && painelAtivo.querySelector('h1, h2');
-      return (h ? h.textContent.trim() + ' — ' : '') + 'Painel de Gestão de Processos · Codevasf';
+      return (h ? h.textContent.trim() + ' — ' : '') + 'Repositório de Processos · Codevasf';
     }
     function toast(msg) {
       var el = d.getElementById('ppShareToast');

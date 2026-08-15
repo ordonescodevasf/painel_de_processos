@@ -7,7 +7,7 @@ JORNADA = [
  (1, "Descobrir", "Escuta e contextualização", "1–2 semanas",
   "Compreender a dor real, o contexto e as expectativas de quem executa e de quem se beneficia do processo.",
   "Reunião de sensibilização com a unidade demandante; Entrevistas semiestruturadas com executores e gestores; Aplicação do formulário de contextualização; Escuta ativa das partes interessadas (jornada empática)",
-  "NUGEP; Interlocutor da área; Dono do processo",
+  "NUGEP; Ponto focal do Nugep; Dono do processo",
   "Ata de reunião; Formulário preenchido; Mapa de partes interessadas",
   "Curiosidade e ansiedade: “por que estão olhando meu trabalho?”"),
  (2, "Definir", "Delimitação de escopo", "1 semana",
@@ -28,25 +28,31 @@ JORNADA = [
   "Dono do processo; NUGEP",
   "AS-IS homologado e publicado no repositório",
   "Orgulho: “é isso que a gente faz”"),
- (5, "Desenvolver", "Redesenho TO-BE", "2–4 semanas",
+ (5, "Desenvolver", "Análise do processo", "1–2 semanas",
+  "Investigar as causas dos problemas do AS-IS validado e preparar o plano de melhorias, antes de redesenhar o processo.",
+  "Entrevista estruturada por componente habilitador (pessoas, fluxo de trabalho, TI, regras/políticas, métricas, infraestrutura, colaboração); Identificação de causas e consequências dos problemas; Elaboração de propostas de melhoria; Plano de Ação pela técnica 5W2H",
+  "Equipe de gerenciamento de processo; Dono do processo",
+  "Lista de problemas e causas; Plano de Ação (5W2H)",
+  "Alívio: “agora vamos atacar o que realmente trava o meu trabalho”"),
+ (6, "Desenvolver", "Redesenho TO-BE", "2–4 semanas",
   "Desenhar o processo desejado, eliminando desperdícios e melhorando a experiência de quem executa e de quem recebe.",
   "Análise de causas-raiz das dores identificadas; Ideação de melhorias com a equipe da área; Modelagem TO-BE (BPMN) e simulação de cenários; Definição de indicadores de desempenho e riscos residuais",
   "NUGEP; Área; Escritório de Riscos (2ª linha)",
   "Diagrama TO-BE; Indicadores; Plano de transição",
   "Esperança: “dá pra melhorar de verdade”"),
- (6, "Entregar", "Publicação e transição", "2 semanas",
+ (7, "Entregar", "Publicação e transição", "2 semanas",
   "Colocar o novo processo em operação com apoio, treinamento e comunicação clara.",
   "Publicação no repositório institucional de processos; Capacitação dos executores e multiplicadores; Atualização de normativos e do e-Codevasf; Lançamento do TO-BE",
   "Área responsável; NUGEP; Comunicação",
   "Processo publicado; Equipe capacitada; Comunicação institucional",
   "Confiança: “fui preparado para o novo jeito”"),
- (7, "Evoluir", "Monitoramento e indicadores", "Contínuo",
+ (8, "Evoluir", "Monitoramento e indicadores", "Contínuo",
   "Acompanhar o desempenho real do processo e a experiência de quem o executa e recebe.",
   "Coleta de indicadores (eficiência, eficácia, qualidade, satisfação); Monitoramento de riscos e controles (2ª linha); Escuta contínua da unidade e dos beneficiários",
   "Dono do processo; NUGEP; Escritório de Riscos",
   "Painel de indicadores; Radar de riscos atualizado",
   "Pertencimento: “meu trabalho é acompanhado e valorizado”"),
- (8, "Evoluir", "Melhoria contínua", "Contínuo",
+ (9, "Evoluir", "Melhoria contínua", "Contínuo",
   "Fechar o ciclo: aprender, ajustar e reiniciar a jornada sempre que necessário (PDCA/CBOK 4.0).",
   "Retrospectivas periódicas com a área; Revisão do processo com base em dados e feedback; Abertura de novo ciclo de redesenho quando necessário",
   "NUGEP; Comunidade de prática BPM",
@@ -149,7 +155,7 @@ NUGEP = [
  (5, "Daniela Ribeiro", "Especialista em BPM", "AT/GTI",
   "Gerência de Tecnologia da Informação", "daniela.ribeiro@codevasf.gov.br", "(61) 2028-4501",
   _FOTO + "women/12.jpg", 0),
- (6, "Eduardo Martins", "Interlocutor de Processos Finalísticos", "AR/GPR",
+ (6, "Eduardo Martins", "Ponto Focal do Nugep — Processos Finalísticos", "AR/GPR",
   "Gerência de Projetos de Revitalização", "eduardo.martins@codevasf.gov.br", "(61) 2028-4612",
   _FOTO + "men/76.jpg", 0),
  (7, "Fernanda Alves", "Analista de Riscos e Conformidade", "AE/GAG",
@@ -164,7 +170,7 @@ NUGEP = [
  (10, "Rafael Menezes", "Analista de Dados e Indicadores", "AE/GPE",
   "Gerência de Planejamento Estratégico", "rafael.menezes@codevasf.gov.br", "(61) 2028-4445",
   _FOTO + "men/54.jpg", 0),
- (11, "Camila Duarte", "Interlocutora de Processos de Suporte", "AA/GLC",
+ (11, "Camila Duarte", "Ponto Focal do Nugep — Processos de Suporte", "AA/GLC",
   "Gerência de Licitações e Contratos", "camila.duarte@codevasf.gov.br", "(61) 2028-4520",
   _FOTO + "women/90.jpg", 0),
  (12, "Paulo Henrique Barros", "Apoio de Comunicação Institucional", "PR/ASCOM",
@@ -223,7 +229,6 @@ GLOSSARIO = [
  ("Handoff", _B, "Transferência de responsabilidade entre áreas, sistemas ou pessoas no fluxo do processo. Cada handoff é ponto crítico de falha e atraso.", "CBOK 4.0", "Processo Ponta a Ponta"),
  ("Indicador", _I, "Medida quantitativa ou qualitativa que reflete o desempenho de um processo, atividade ou objetivo. Deve ter fórmula, fonte, meta, periodicidade e responsável.", "CBOK 4.0", "KPI; Meta; Linha de Base (Indicador)"),
  ("Impacto", _I, "Magnitude das consequências de um evento de risco caso ele se concretize, normalmente avaliado em escala.", "ISO 31000", "Risco; Probabilidade"),
- ("Interlocutor de Processos", _M, "Empregado indicado pela unidade gestora para representar a área no projeto de mapeamento: facilita reuniões, valida modelos e mobiliza especialistas.", "Metodologia Codevasf", "Dono do Processo; UNP"),
  ("Kaizen", _B, "Filosofia japonesa de melhoria contínua que promove pequenas mudanças incrementais com participação de toda a equipe.", "Lean", "PDCA; Melhoria Contínua"),
  ("KPI", _I, "Key Performance Indicator — indicador-chave de desempenho. Métrica quantificável usada para avaliar o sucesso de um processo, projeto ou objetivo estratégico.", "BSC / CBOK", "Indicador; Meta; SLA"),
  ("Kanban", _P, "Método visual de gestão do fluxo de trabalho, com cartões e colunas (To Do, Doing, Done) e limites de WIP.", "Toyota / Kanban Method", "Agile; WIP"),
@@ -276,6 +281,74 @@ GLOSSARIO = [
  ("Unidade Gestora", _M, "Área da Codevasf responsável pelo processo, por seus resultados e pela manutenção da documentação atualizada.", "Metodologia Codevasf", "Dono do Processo"),
  ("Valor Agregado", _B, "Atributo de uma atividade que transforma a entrada de forma percebida como valiosa pelo cliente. Atividades sem valor agregado devem ser eliminadas ou reduzidas.", "Lean / CBOK", "Análise de Processos"),
  ("WIP", _P, "Work in Progress — quantidade de trabalho em andamento. Limitar o WIP reduz multitarefa e acelera entregas.", "Kanban / Lean", "Kanban; Lean"),
+ # Termos abaixo: auditoria contra a RES 031/2025 (§2) — definidos na
+ # Resolução e usados pelo painel, mas ausentes do Glossário até então.
+ ("5W2H", _P, "Checklist de atividades, prazos e responsabilidades usado no plano de ação da etapa de análise: o que, por que, onde, quando, por quem, como e quanto vai custar.", "RES 031/2025", "Plano de Gerenciamento do Processo (PGP)"),
+ ("Ator do Processo", _M, "Empregado que participa, em algum momento, da execução do processo.", "RES 031/2025", "Gestor do Processo; Equipe de Gerenciamento de Processo"),
+ ("Diagrama", _B, "Representação gráfica que demonstra os principais elementos do fluxo do processo, ajudando a identificar e entender rapidamente suas atividades.", "RES 031/2025", "BPMN; Fluxograma"),
+ ("Equipe de Gerenciamento de Processo", _M, "Grupo formado pelo ponto focal do Nugep, pelo gestor do processo e por atores do processo, responsável por gerenciar o processo priorizado.", "RES 031/2025", "Ponto Focal do Nugep; Gestor do Processo; Ator do Processo"),
+ ("Gestor do Processo", _M, "Titular da unidade orgânica responsável pela execução do processo ou, na sua ausência, o demandante do processo. Aprova os processos mapeados pelo ponto focal, forma a equipe de gerenciamento e responde pelos resultados perante a UNP.", "RES 031/2025", "Dono do Processo; Unidade Orgânica"),
+ ("Hierarquia de Processos", _B, "Forma de visualizar como os processos se desdobram do nível mais alto — a cadeia de valor — até o mais baixo — as tarefas.", "RES 031/2025", "Arquitetura de Processos; Cadeia de Valor"),
+ ("Plano de Gerenciamento do Processo (PGP)", _M, "Documento da etapa de planejamento, com o cronograma das etapas de conhecimento, análise, transformação, gerenciamento de desempenho, monitoramento e reavaliação do processo.", "RES 031/2025", "Equipe de Gerenciamento de Processo; Cronograma"),
+ ("Ponto Focal do Nugep", _M, "Empregado que conduz e coordena os trabalhos de gerenciamento de processos na própria unidade orgânica, como agente multiplicador do Nugep.", "RES 031/2025", "Equipe de Gerenciamento de Processo"),
+ ("Procedimento (PRO)", _B, "Documento que reúne objetivo, diagramas, referências legais, classificação na cadeia de valor, unidade responsável, sistemas, produtos, atores, tarefas, regras de negócio, cronograma e indicadores do processo.", "RES 031/2025", "Regras de Negócio; Diagrama"),
+ ("Regras de Negócio", _B, "Premissas e restrições que garantem o funcionamento adequado da organização: definem o que, onde, por que e como algo será feito, e como será gerenciado e governado.", "RES 031/2025", "Procedimento (PRO)"),
+ ("Unidade Orgânica", _M, "Toda e qualquer unidade com representação formal na estrutura orgânica da Empresa.", "RES 031/2025", "Gestor do Processo; Unidade Gestora"),
+ # Guia de Modelagem de Processos (RES 031/2025) — completa a distinção de
+ # níveis de representação junto de "Diagrama", já no Glossário.
+ ("Mapa", _B, "Nível intermediário de detalhamento de um processo: evolução do diagrama que soma atores, eventos, regras e resultados. Usado para representar subprocessos, de preferência pelo “caminho feliz” — as exceções ficam na Tabela de Descrição das Atividades.", "RES 031/2025", "Diagrama; Modelo"),
+ ("Modelo", _B, "Nível mais analítico de detalhamento de um processo, usado quando o mapa não é suficiente. Tem alto grau de precisão, mas exige cuidado para não poluir a leitura.", "RES 031/2025", "Diagrama; Mapa"),
+]
+
+# Competências e atribuições (RES 031/2025, item 3) — exibidas na aba NUGEP
+# do painel, seção "Competências e atribuições" (accordion).
+COMPETENCIAS = [
+ (1, "Conselho de Administração", "3.1",
+  "Garantir o apoio institucional para a gestão de processos."),
+ (2, "Diretoria Executiva", "3.2",
+  "Definir diretrizes para a gestão de processos; "
+  "Aprovar a metodologia de gestão de processos; "
+  "Aprovar a priorização para a gestão de processos; "
+  "Aprovar os indicadores e metas de desempenho dos processos; "
+  "Avaliar a aferição dos indicadores dos processos."),
+ (3, "Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)", "3.3",
+  "Promover e supervisionar a gestão de processos na Codevasf; "
+  "Coordenar o Núcleo de Gestão Normativa e de Processos; "
+  "Sistematizar, padronizar e difundir princípios, práticas e padrões de gestão de processos; "
+  "Elaborar e manter atualizada a metodologia de gestão de processos; "
+  "Fornecer orientação e treinamento sobre o gerenciamento de processos; "
+  "Difundir a cultura de gestão de processos; "
+  "Gerenciar a arquitetura e o repositório de processos; "
+  "Consolidar informações por meio de relatórios gerenciais."),
+ (4, "Núcleo de Gestão Normativa e de Processos (Nugep)", "3.4",
+  "Propor as diretrizes sobre a gestão de processos; "
+  "Auxiliar no acompanhamento dos resultados dos processos e na proposição de correções e melhorias; "
+  "Avaliar e propor melhorias na metodologia de gestão de processos; "
+  "Avaliar e propor melhorias para elaboração de indicadores e metas de desempenho; "
+  "Avaliar e propor melhorias nos artefatos e documentos relacionados à gestão de processos; "
+  "Fomentar e promover a gestão de processos em suas unidades organizacionais; "
+  "Propor a priorização para o gerenciamento de processos."),
+ (5, "Ponto focal do Nugep", "3.5",
+  "Conduzir e coordenar os trabalhos de gerenciamento de processos no âmbito de sua unidade orgânica; "
+  "Conduzir as oficinas de trabalho para levantamento, análise, coleta de informações e proposição de melhorias; "
+  "Planejar a implementação, o monitoramento e a avaliação dos processos mapeados; "
+  "Atuar como fornecedor de informações técnicas específicas, mesmo em processo fora de sua unidade de lotação; "
+  "Atuar como agente multiplicador e facilitador da AE/GPE/UNP; "
+  "Ter perfil de liderança e conhecimento em gestão de processos; "
+  "Ter prioridade nas capacitações relacionadas ao tema."),
+ (6, "Gestor do processo", "3.6",
+  "Aprovar os processos de trabalho mapeados pelos respectivos pontos focais do Nugep; "
+  "Formar equipe de gerenciamento de processos para gerenciamento do processo; "
+  "Engajar os atores do processo nos trabalhos de gerenciamento do processo; "
+  "Gerenciar e monitorar os processos sob sua responsabilidade; "
+  "Reportar os resultados dos processos à AE/GPE/UNP; "
+  "Acompanhar os trabalhos de gerenciamento dos processos sob sua responsabilidade; "
+  "Elaborar, monitorar e prestar informações sobre os indicadores de desempenho dos processos; "
+  "Assegurar que o processo atenda às expectativas de desempenho estabelecidas; "
+  "Propor melhorias ou inovações, com vistas a tornar os processos/subprocessos eficientes, eficazes e efetivos; "
+  "Disseminar os processos/subprocessos mapeados dentro da respectiva unidade orgânica."),
+ (7, "Equipe de Gerenciamento de Processo", "3.7",
+  "Realizar o gerenciamento dos processos priorizados de sua competência."),
 ]
 
 _FC, _FM, _FG, _FI, _FP, _FU = ("Conceitos básicos", "Modelagem e SIPOC",

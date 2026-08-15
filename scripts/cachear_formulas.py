@@ -151,9 +151,9 @@ def calcular(aba: str, linhas: list[dict[str, str]]) -> dict[int, dict[str, obje
             elif meta is None:
                 situacao = "Sem meta"
             elif linha.get("G", "").startswith("Maior"):
-                situacao = "Meta atingida" if resultado >= meta else "Abaixo da meta"
+                situacao = "Meta atingida" if resultado >= meta else "Meta não atingida"
             else:
-                situacao = "Meta atingida" if resultado <= meta else "Acima da meta"
+                situacao = "Meta atingida" if resultado <= meta else "Meta não atingida"
             por(linha["_r"], "J", situacao)
 
     return fora

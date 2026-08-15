@@ -39,8 +39,14 @@ ESQUEMA = {
         ("M5_ASIS_Validado", 9), ("M6_Procedimento_Validado", 9),
         ("M7_Procedimento_Aprovado", 9), ("M8_TOBE_Elaborado", 9),
         ("M9_TOBE_Validado", 9), ("M10_Publicado_Repositorio", 34),
+        ("M10_Processo_Transformado", 9),
         ("Proxima_Acao", 28), ("Pendencia", 13), ("Ultima_Atualizacao", 13),
         ("Unidades_Corresponsaveis", 30),
+        # Guia de Modelagem, Anexo C (Tabela de Catalogação do Processo):
+        # competências/habilidades de RH necessárias para executar o
+        # processo — distinto da aba Competencias (atribuições de
+        # governança, item 3 da Metodologia).
+        ("Competencias_Necessarias", 40),
     ],
     # Reutilizavel/Reutilizado_Em modelam o "Subprocesso Reutilizável" do
     # BPMN 2.0 (Call Activity) — no Bizagi, que o painel usa para os
@@ -55,29 +61,47 @@ ESQUEMA = {
         ("Dono", 24), ("Entradas", 40), ("Saidas", 40), ("Sistemas", 28),
         ("Imagem_Bizagi", 30), ("Unidades_Corresponsaveis", 30),
         ("Reutilizavel", 13), ("Reutilizado_Em", 34),
+        # Guia de Modelagem, Anexo B (Tabela de Descrição do Subprocesso):
+        # faltavam o produto principal e o cronograma em dias úteis (tempo
+        # decorrido, incluindo esperas/handoffs) — distinto da duração em
+        # horas, que é o somatório recursivo das tarefas (o painel já calcula).
+        ("Produto", 34), ("Cronograma_Proposto_Dias", 15),
     ],
-    # Prazo_Padrao saiu: a duração de uma atividade não é mais digitada, é o
-    # somatório de Duracao_Estimada das suas tarefas (painel calcula em JS).
+    # Sem Objetivo/Base_Normativa (deixaram de ser úteis) e sem
+    # Unidades_Corresponsaveis: a atividade não tem responsável PRÓPRIO por
+    # padrão, herda a Unidade_Responsavel do subprocesso (ou Area_Responsavel
+    # do processo, quando não há subprocesso) — o painel resolve isso em JS a
+    # partir de Vinculo_Pai, não é coluna. Prazo_Padrao também saiu: a duração
+    # de uma atividade é o somatório de Duracao_Estimada das suas tarefas
+    # (painel calcula em JS). Responsavel é a EXCEÇÃO a essa regra: o Guia de
+    # Modelagem (Anexo A) pede um responsável por atividade que pode diferir
+    # do responsável do subprocesso (ex.: handoff entre áreas dentro do mesmo
+    # subprocesso) — opcional; em branco, o painel continua herdando a
+    # unidade do pai, como sempre fez. Descricao voltou (N-000, Anexo J): o
+    # quadro "Descrição dos Procedimentos" exige título E descrição
+    # detalhada de cada atividade, não só o título (Nome).
     "Atividades": [
         ("Codigo", 16), ("Vinculo_Pai", 13), ("Ordem", 7), ("Nome", 36),
-        ("Descricao", 46), ("Responsavel_Ator", 24), ("Entradas", 38),
-        ("Saidas", 38), ("Sistemas", 24),
-        ("Base_Normativa", 30), ("Imagem_Bizagi", 44), ("Executor", 30),
-        ("Unidades_Corresponsaveis", 30),
+        ("Entradas", 38), ("Saidas", 38), ("Sistemas", 24), ("Imagem_Bizagi", 44),
+        ("Responsavel", 24), ("Descricao", 46),
     ],
     # Duracao_Estimada é NÚMERO em horas úteis (1 dia útil = 8h) — não mais
     # texto livre. Some-se por atividade, depois recursivamente por
-    # subprocesso/processo (caminho crítico, não caminho feliz).
+    # subprocesso/processo (caminho crítico, não caminho feliz). Sem
+    # Descricao/Responsavel/Sistema: deixaram de ser úteis para a tarefa.
     "Tarefas": [
         ("Codigo", 20), ("Atividade", 16), ("Ordem", 7), ("Nome", 38),
-        ("Descricao", 46), ("Tipo_Tarefa", 16), ("Responsavel", 24),
-        ("Sistema", 22), ("Duracao_Estimada", 14), ("Observacoes", 28),
+        ("Tipo_Tarefa", 16), ("Duracao_Estimada", 14), ("Observacoes", 28),
         ("Imagem_Bizagi", 44), ("Unidades_Corresponsaveis", 30),
     ],
+    # Ato_Aprovacao (N-000, cabeçalho-padrão de todo instrumento normativo):
+    # só Norma interna/Procedimento (PRO)/Manual são aprovados por resolução
+    # (item 3.1.1) — Formulários e os demais tipos (ata, relatório,
+    # diagrama...) ficam em branco.
     "Documentos": [
         ("ID", 10), ("Vinculo_Nivel", 15), ("Vinculo_Codigo", 14),
         ("Tipo_Documento", 26), ("Titulo", 52), ("Versao", 8), ("Data", 12),
-        ("Situacao", 14), ("Link", 44), ("Observacoes", 30),
+        ("Situacao", 14), ("Link", 44), ("Observacoes", 30), ("Ato_Aprovacao", 30),
     ],
     "Riscos": [
         ("ID", 9), ("Vinculo_Nivel", 15), ("Vinculo_Codigo", 14),
@@ -85,12 +109,60 @@ ESQUEMA = {
         ("Impacto_1a5", 10), ("Nivel_PxI", 9), ("Classificacao", 13),
         ("Resposta", 11), ("Controles_Tratamento", 46), ("Responsavel", 22),
         ("Status", 14),
+        # Elementos de risco do CBOK 9.5.5 que faltavam: quando (Cronograma)
+        # e o que pode acionar o risco (Fatores) — Evento/Probabilidade/
+        # Impacto já têm coluna (Descricao_Risco/Probabilidade_1a5/Impacto_1a5).
+        ("Cronograma_Risco", 30), ("Fatores", 40),
     ],
-    "Indicadores": [
+    # Indicadores virou duas abas (CBOK: medição é o dado bruto, métrica é o
+    # valor calculado com meta; o indicador é só a leitura simples dela — o
+    # selo Meta atingida/não atingida que o próprio painel já calcula).
+    # Metricas = definição (fixa); Medicoes = histórico de valores no tempo.
+    "Metricas": [
         ("ID", 10), ("Vinculo_Nivel", 15), ("Vinculo_Codigo", 14), ("Nome", 40),
-        ("Descricao_Formula", 46), ("Unidade", 9), ("Polaridade", 14),
-        ("Meta", 8), ("Resultado_Atual", 12), ("Situacao", 15),
-        ("Periodicidade", 13), ("Fonte", 24), ("Ultima_Medicao", 13),
+        ("Descricao_Formula", 46), ("Categoria", 22), ("Unidade", 9),
+        ("Polaridade", 14), ("Meta", 8), ("Periodicidade", 13), ("Fonte", 24),
+        ("Observacoes", 28),
+    ],
+    "Medicoes": [
+        ("ID", 10), ("Metrica_ID", 10), ("Data_Medicao", 13), ("Valor", 10),
+        ("Observacao", 30),
+    ],
+    # Papéis e organizações (CBOK) — RACI traduzido em Envolvimento.
+    "Papeis": [
+        ("ID", 9), ("Vinculo_Nivel", 15), ("Vinculo_Codigo", 14),
+        ("Papel", 30), ("Envolvimento", 16), ("Unidade_Pessoa", 20),
+    ],
+    # Regras de negócio (CBOK 6.1.7 / cap. Medição e Tecnologia).
+    "Regras": [
+        ("ID", 9), ("Vinculo_Nivel", 15), ("Vinculo_Codigo", 14), ("Nome", 34),
+        ("Tipo_Regra", 26), ("Descricao", 50), ("Fonte_Normativa", 26),
+    ],
+    # Plano de Ação 5W2H (RES 031/2025, item 5.5.4) — entregável da etapa
+    # "Analisar o processo" da Jornada; vincula-se como Riscos/Papeis/Regras.
+    "PlanoAcao": [
+        ("ID", 9), ("Vinculo_Nivel", 15), ("Vinculo_Codigo", 14),
+        ("Problema", 42), ("O_Que", 40), ("Por_Que", 34), ("Onde", 26),
+        ("Quando", 16), ("Quem", 26), ("Como", 40), ("Quanto_Custa", 20),
+        ("Status", 14),
+    ],
+    # Competências e atribuições (RES 031/2025, item 3) — exibidas na aba
+    # NUGEP do painel; conteúdo fixo, sem vínculo com processos.
+    "Competencias": [
+        ("Ordem", 7), ("Instancia", 46), ("Item_Normativo", 14),
+        ("Atribuicoes", 90),
+    ],
+    # Cultura de processos (CBOK 9.5.6) — autoavaliação organizacional, não
+    # por processo; Situacao vem "Não avaliado" até a equipe preencher.
+    "Cultura_Processos": [
+        ("ID", 10), ("Ordem", 7), ("Caracteristica", 60), ("Situacao", 16),
+        ("Observacao", 30),
+    ],
+    # Iniciativas viabilizadas pelo repositório (CBOK 4.2.11, métrica de
+    # repositório) — fica vazia até a equipe registrar um uso real.
+    "Iniciativas": [
+        ("ID", 10), ("Data", 12), ("Titulo", 40), ("Descricao", 50),
+        ("Tipo", 22), ("Processos_Relacionados", 30),
     ],
     "Jornada": [
         ("Ordem", 7), ("Fase", 13), ("Nome", 30), ("Duracao", 12),
@@ -125,7 +197,6 @@ CALCULADAS = {
     "Processos": ["Macroprocesso", "Percentual"],
     "Documentos": ["Vinculo_Nivel"],
     "Riscos": ["Vinculo_Nivel", "Nivel_PxI", "Classificacao"],
-    "Indicadores": ["Vinculo_Nivel", "Situacao"],
     "NUGEP": ["Unidade_Nome"],
 }
 
@@ -156,7 +227,7 @@ _UNIDADES = ["AE/GPE/UNP", "AE/GPE", "AT/GTI", "AR/GPR", "AE/GAG",
 DEMO = {
     "NUGEP": {
         "Papel": ["Analista de Processos", "Especialista em BPM",
-                  "Interlocutor de Processos", "Apoio Metodológico",
+                  "Ponto Focal do Nugep", "Apoio Metodológico",
                   "Analista de Riscos e Conformidade"],
         "Unidade_Sigla": _UNIDADES,
         "Unidade_Nome": "Unidade de Gestão Normativa e de Processos",
@@ -176,21 +247,15 @@ DEMO = {
         "Pendencia": "",
         "Normativos_Relacionados": "A definir",
     },
-    "Subprocessos": {"Unidades_Corresponsaveis": _UNIDADES},
-    "Atividades": {
-        "Unidades_Corresponsaveis": _UNIDADES,
-        "Executor": ["Analista em Desenvolvimento Regional",
-                     "Técnico em Desenvolvimento Regional",
-                     "Assistente em Desenvolvimento Regional"],
-        "Base_Normativa": "A definir",
-    },
+    "Subprocessos": {"Unidades_Corresponsaveis": _UNIDADES, "Produto": "A definir"},
     "Tarefas": {
         "Unidades_Corresponsaveis": _UNIDADES,
         "Tipo_Tarefa": "Manual",
     },
     "Documentos": {"Observacoes": ""},
     "Riscos": {"Responsavel": "A definir", "Status": "Aberto"},
-    "Indicadores": {"Fonte": "A definir", "Periodicidade": "Mensal"},
+    "PlanoAcao": {"Status": "Não iniciado"},
+    "Indicadores": {"Fonte": "A definir", "Periodicidade": "Mensal", "Observacoes": ""},
     "Repositorio": {"Fonte": "Codevasf"},
 }
 

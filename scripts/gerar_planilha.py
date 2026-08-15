@@ -40,7 +40,9 @@ COR_GUIA = {
     "Macroprocessos": AZUL, "Processos": AZUL, "Subprocessos": AZUL,
     "Atividades": AZUL, "Tarefas": AZUL,
     "Documentos": "168821", "Riscos": "168821", "Indicadores": "168821",
+    "PlanoAcao": "168821",
     "Jornada": "155BCB", "Repositorio": "155BCB", "NUGEP": "155BCB",
+    "Competencias": "155BCB",
     "Glossario": "155BCB", "FAQ": "155BCB", "Siglas": "155BCB",
     "Parametros": "888888", "Listas": "888888",
 }
@@ -406,10 +408,11 @@ cabecalho(pr,
      "M1_Reuniao_Contextualizacao", "M2_Macro_Processo_Modelados",
      "M3_Subprocessos_Modelados", "M4_ASIS_Modelado", "M5_ASIS_Validado",
      "M6_Procedimento_Validado", "M7_Procedimento_Aprovado", "M8_TOBE_Elaborado",
-     "M9_TOBE_Validado", "M10_Publicado_Repositorio", "Proxima_Acao", "Pendencia",
+     "M9_TOBE_Validado", "M10_Publicado_Repositorio", "M10_Processo_Transformado",
+     "Proxima_Acao", "Pendencia",
      "Ultima_Atualizacao", "Unidades_Corresponsaveis"],
     [10, 14, 34, 44, 40, 16, 24, 24, 10, 12, 14, 10, 30, 13, 13, 13,
-     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 28, 13, 30])
+     30, 34, 34, 28, 28, 40, 20, 30, 9, 9, 9, 9, 9, 9, 9, 9, 9, 34, 9, 28, 13, 30])
 S, N = "Sim", "Não"
 # Marco que não se aplica ao processo — ex.: M3 "Subprocessos modelados" num
 # processo que se decompõe direto em atividades, sem nível de subprocesso.
@@ -531,7 +534,16 @@ procs = [
      "Aguardando priorização no ciclo 2027.", "",
      D(2026, 6, 15)],
 ]
-com_colunas(procs, 37, CORRESP_PR)
+# M10_Processo_Transformado (coluna nova, auditoria RES 031/2025): "Sim" só
+# quando os nove marcos anteriores (M1-M9, índices 24-32) não têm nenhum
+# "Não" entre si — mesma regra do Percentual, em que "Não se aplica" não
+# bloqueia. Calculada por linha em vez de reescrever as ~20 linhas de
+# `procs` à mão.
+for _p in procs:
+    while len(_p) < 34:
+        _p.append("")
+    _p.insert(34, N if N in _p[24:33] else S)
+com_colunas(procs, 38, CORRESP_PR)
 escreve(pr, procs,
         wrap_cols={4, 5, 17, 18, 19, 20, 21, 22, 35, 36},
         center_cols={9, 10, 11, 12} | set(range(25, 35)),
@@ -826,6 +838,44 @@ dv(rs, "B", ref("Nivel_Vinculo")); dv(rs, "E", ref("Categoria_Risco"))
 dv(rs, "J", ref("Resposta_Risco")); dv(rs, "M", ref("Status_Risco"))
 
 # ----------------------------------------------------------------------------
+# PLANO DE AÇÃO — 5W2H (RES 031/2025, item 5.5.4)
+# ----------------------------------------------------------------------------
+pa = wb.create_sheet("PlanoAcao")
+cabecalho(pa,
+    ["ID", "Vinculo_Nivel", "Vinculo_Codigo", "Problema", "O_Que", "Por_Que",
+     "Onde", "Quando", "Quem", "Como", "Quanto_Custa", "Status"],
+    [9, 15, 14, 42, 40, 34, 26, 16, 26, 40, 20, 14])
+plano_acao = [
+    ["PA-001", "Processo", "P-06.01",
+     "Estimativas de preço divergentes por falta de padronização na pesquisa (mesma causa-raiz do risco R-001).",
+     "Padronizar o roteiro de pesquisa de preços com no mínimo três fontes e critério único de tratamento estatístico.",
+     "Reduzir sobrepreço e licitações desertas causados por estimativas defasadas.",
+     "Gerência de Licitações e Contratos (AA/GLC).", "30/09/2026",
+     "Ricardo Nogueira (gestor do processo) e equipe de planejamento da AA/GLC",
+     "Atualizar o PRO com o roteiro padronizado (DOC-007) e capacitar a equipe.",
+     "Sem custo adicional — carga horária interna.", "Em andamento"],
+    ["PA-002", "Processo", "P-06.01",
+     "Baixo engajamento das áreas demandantes no preenchimento do DFD, gerando retrabalho.",
+     "Criar modelo simplificado de DFD e oficina de capacitação para novas áreas demandantes.",
+     "Reduzir devoluções por preenchimento incompleto e acelerar o início do processo.",
+     "Todas as unidades demandantes, coordenado pela AA/GLC.", "15/11/2026",
+     "Bruna Souza (UNP) e Carlos Eduardo Lima",
+     "Oficinas trimestrais e modelo simplificado publicado no e-Codevasf.",
+     "R$ 0 — recursos internos.", "Não iniciado"],
+    ["PA-003", "Subprocesso", "SP-06.01.03",
+     "Uso eventual de fontes de preço não admitidas pela IN SEGES nº 65/2021 (mesma causa do risco R-008).",
+     "Implantar checklist de validação da pesquisa antes da aprovação do valor estimado.",
+     "Garantir conformidade legal e evitar questionamentos de órgãos de controle.",
+     "Equipe de planejamento da contratação (AA/GLC).", "31/08/2026",
+     "Carlos Eduardo Lima",
+     "Checklist obrigatório (modelo do DOC-015) antes da homologação do ETP.",
+     "Sem custo — ajuste de procedimento.", "Concluído"],
+]
+escreve(pa, plano_acao, wrap_cols={4, 5, 6, 7, 9, 10}, center_cols={8, 12})
+pa.freeze_panes = "D2"
+dv(pa, "B", ref("Nivel_Vinculo")); dv(pa, "L", ref("Status_Mapeamento"))
+
+# ----------------------------------------------------------------------------
 # INDICADORES (Situacao por fórmula)
 # ----------------------------------------------------------------------------
 ind = wb.create_sheet("Indicadores")
@@ -867,10 +917,14 @@ inds = [
 escreve(ind, inds, wrap_cols={4, 5, 12}, center_cols={6, 7, 8, 9, 10, 11},
         date_cols={13})
 for i in range(2, 2 + len(inds)):
+    # Só dois desfechos além de Sem medição/Sem meta: "Meta atingida" ou
+    # "Meta não atingida" — nunca "Acima/Abaixo da meta", rótulo que lia como
+    # bom fora do contexto de cor (indicador "menor melhor" acima do alvo é
+    # resultado ruim, mas o texto por si soava positivo).
     ind.cell(row=i, column=10,
-             value=(f'=IF(I{i}="","Sem medição",IF(G{i}="Maior melhor",'
-                    f'IF(I{i}>=H{i},"Meta atingida","Abaixo da meta"),'
-                    f'IF(I{i}<=H{i},"Meta atingida","Acima da meta")))'))
+             value=(f'=IF(I{i}="","Sem medição",IF(H{i}="","Sem meta",IF(G{i}="Maior melhor",'
+                    f'IF(I{i}>=H{i},"Meta atingida","Meta não atingida"),'
+                    f'IF(I{i}<=H{i},"Meta atingida","Meta não atingida"))))'))
     c = ind.cell(row=i, column=10)
     c.font = F_CELL; c.border = BORDA; c.fill = FILL_FORM; c.alignment = AL_CENTER
 ind.freeze_panes = "D2"
@@ -1402,6 +1456,15 @@ cabecalho(ng, ["Ordem", "Nome", "Papel", "Unidade_Sigla", "Unidade_Nome", "Email
 escreve(ng, [list(x) for x in CONTEUDO.NUGEP], wrap_cols={3, 5}, center_cols={1, 9})
 ng.freeze_panes = "C2"
 
+# ----------------------------------------------------------------------------
+# COMPETÊNCIAS E ATRIBUIÇÕES (RES 031/2025, item 3)
+# ----------------------------------------------------------------------------
+ct = wb.create_sheet("Competencias")
+cabecalho(ct, ["Ordem", "Instancia", "Item_Normativo", "Atribuicoes"],
+          [7, 46, 14, 90])
+escreve(ct, [list(x) for x in CONTEUDO.COMPETENCIAS], wrap_cols={4}, center_cols={1, 3})
+ct.freeze_panes = "B2"
+
 gl = wb.create_sheet("Glossario")
 cabecalho(gl, ["Termo", "Categoria", "Definicao", "Fonte", "Termos_Relacionados"],
           [34, 22, 80, 18, 40])
@@ -1488,9 +1551,13 @@ abas_desc = [
     ("Indicadores", "Indicadores de desempenho por nível, com meta, resultado e situação calculada."),
     ("Jornada", "Etapas da jornada de mapeamento (Descobrir → Evoluir), exibidas na aba Repositório do painel."),
     ("Repositorio", "Materiais e ferramentas: metodologia e guia oficiais (RES 031/2025), templates, instrumentos por fase do ciclo BPM, ferramentas e referências."),
+    ("PlanoAcao", "Ações do plano 5W2H (O que/Por que/Onde/Quando/Quem/Como/Quanto) da etapa "
+                  "'Analisar o processo' — vincula a um Processo, Subprocesso ou Atividade, como Riscos."),
     ("NUGEP", "Integrantes do Núcleo de Gestão Normativa e de Processos (aba NUGEP do painel). "
               "Foto: URL de imagem pública que aparece no avatar. Hierarquia: 1 = Gerente-Executivo (AE), "
-              "2 = Gerente (AE/GPE), 3 = equipe da Unidade (AE/GPE/UNP), 0 = interlocutor de outra área."),
+              "2 = Gerente (AE/GPE), 3 = equipe da Unidade (AE/GPE/UNP), 0 = ponto focal de outra área."),
+    ("Competencias", "Competências e atribuições de cada instância na gestão de processos "
+                     "(RES 031/2025, item 3) — exibidas na aba NUGEP do painel."),
     ("Glossario", "Termos BPM (CBOK), PMBOK e metodologia Codevasf (aba Glossário)."),
     ("FAQ", "Perguntas e respostas exibidas na aba FAQ."),
     ("Parametros", "Configurações chave/valor: contato do NUGEP e links da metodologia e do guia."),
