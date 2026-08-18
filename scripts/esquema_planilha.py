@@ -40,6 +40,28 @@ Revisão desta versão (auditoria de forma e conteúdo, pedido do usuário):
   - Marcos M1–M10 renomeados para bater 1:1 com a Metodologia (RES 031/2025).
   - Colunas novas: Processos.Maturidade (lista fechada), Riscos
     .Data_Identificacao/.Prazo_Tratamento (lacunas do registro de risco).
+
+Revisão desta versão (rastreabilidade do código, pedido do usuário):
+  - Coluna calculada **Trilha** em Macroprocessos/Processos/Subprocessos/
+    Atividades/Tarefas: concatena o código de cada ancestral até a raiz
+    (ex.: "MS-01 › PP-01 › SP-03 › SP-04"), lida via VLOOKUP na Trilha já
+    calculada do pai (funciona em qualquer profundidade de subprocesso
+    dentro de subprocesso, sem fórmula recursiva). Existe ao lado do
+    Codigo — não dentro dele — de propósito: um código composto (tipo
+    "PP-01.01" ou "MF-01/PP-01") quebra a cada reordenação ou mudança de
+    pai (todo filho teria de ser renomeado em cascata) e deixa de servir
+    como chave estável para virar tabela SQL, que foi exatamente o
+    problema que motivou tirar a composição dos códigos na revisão
+    anterior. Trilha dá a mesma rastreabilidade visual sem esse custo.
+  - Sem lista suspensa (dropdown) em nenhum campo que aceita MAIS DE UM
+    código/sigla separado por ; (Unidades_Organicas_Corresponsaveis,
+    Reutilizado_Em, Vinculo_Codigo, Processos_Relacionados): o Excel só
+    permite escolher UM item por vez de uma lista — usar o dropdown nesses
+    campos substituiria qualquer combinação já digitada, e uma validação
+    de lista comum marca "AA/GLC; AI/GOM" como inválido mesmo quando as
+    duas siglas existem, porque compara a célula inteira com um item da
+    lista. Ponto_Focal_Nugep passou a ter dropdown (lista de nomes da aba
+    NUGEP) por ser campo de valor único.
 """
 
 ESQUEMA = {
@@ -48,6 +70,7 @@ ESQUEMA = {
         ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 30),
         ("Descricao", 46), ("Objetivo", 46), ("Entregas", 40), ("Beneficiarios", 34),
         ("Partes_Interessadas", 34), ("Sistemas", 30), ("Imagem_Bizagi", 30), ("Observacoes", 26),
+        ("Trilha", 14),
     ],
     "Processos": [
         ("Codigo", 9), ("Nome", 34), ("Macroprocesso", 13), ("Descricao", 44), ("Objetivo", 40),
@@ -60,23 +83,25 @@ ESQUEMA = {
         ("M10_Processo_Transformado", 9),
         ("Fornecedores", 30), ("Entradas", 34), ("Saidas", 34), ("Beneficiarios", 28), ("Sistemas", 28),
         ("Processo_ECodevasf", 20), ("Imagem_Bizagi", 30), ("Competencias_Necessarias", 40), ("Fontes_Dados", 30),
-        ("Proxima_Acao", 28), ("Pendencia", 24),
+        ("Proxima_Acao", 28), ("Pendencia", 24), ("Trilha", 20),
     ],
     "Subprocessos": [
         ("Codigo", 9), ("Nome", 32), ("Vinculo_Pai", 12), ("Ordem", 7), ("Descricao", 44), ("Objetivo", 38),
         ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 28),
-        ("Reutilizavel", 12), ("Reutilizado_Em", 24), ("Produto_Principal", 34),
+        ("Reutilizavel", 12), ("Reutilizado_Em", 24),
         ("Entradas", 36), ("Saidas", 36), ("Sistemas", 26), ("Fontes_Dados", 26), ("Imagem_Bizagi", 28),
+        ("Trilha", 26),
     ],
     "Atividades": [
         ("Codigo", 9), ("Nome", 34), ("Vinculo_Pai", 11), ("Ordem", 7), ("Tipo_Atividade", 17),
-        ("Descricao", 44), ("Entradas", 34), ("Saidas", 34), ("Sistemas", 22),
+        ("Descricao", 44), ("Entradas", 34), ("Saidas", 34), ("Sistemas", 22), ("Trilha", 32),
     ],
     "Tarefas": [
         ("Codigo", 9), ("Nome", 34), ("Atividade", 9), ("Ordem", 7), ("Tipo_Tarefa", 15),
         ("Disparador", 32), ("Passos", 44), ("Principios", 28), ("Criterios_Desempenho", 32),
         ("Resultados_Esperados", 30), ("Materiais_Ferramentas", 26), ("Pessoas_Consultar", 26),
         ("Duracao_Estimada", 13), ("Observacoes", 26), ("Unidades_Organicas_Corresponsaveis", 28),
+        ("Trilha", 38),
     ],
     "Documentos": [
         ("ID", 9), ("Titulo", 48), ("Tipo_Documento", 22), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16),
@@ -136,7 +161,11 @@ ESQUEMA = {
 # Colunas que a planilha calcula sozinha (fórmula na célula, fundo cinza).
 # Não recebem dado de demonstração nem devem ser preenchidas à mão.
 CALCULADAS = {
-    "Processos": ["Percentual"],
+    "Macroprocessos": ["Trilha"],
+    "Processos": ["Percentual", "Trilha"],
+    "Subprocessos": ["Trilha"],
+    "Atividades": ["Trilha"],
+    "Tarefas": ["Trilha"],
     "Documentos": ["Vinculo_Nivel"],
     "Riscos": ["Vinculo_Nivel", "Nivel_PxI", "Classificacao"],
     "Metricas": ["Vinculo_Nivel"],

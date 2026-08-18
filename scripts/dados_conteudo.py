@@ -410,9 +410,6 @@ FAQ = [
 # js/app.js, que cai no texto atual quando a chave não existe.
 PARAMETROS = [
  ("Titulo_Inicio", "Mapeamento de processos da Codevasf"),
- ("Subtitulo_Inicio",
-  "Cadeia de valor, portfólio de processos e repositório de materiais "
-  "da Companhia, num só lugar."),
  ("Titulo_Repositorio", "Repositório de materiais e ferramentas"),
  ("Contato_Unidade", "Unidade de Gestão Normativa e de Processos (AE/GPE/UNP)"),
  ("Contato_Email", "ae.gpe.unp@codevasf.gov.br"),

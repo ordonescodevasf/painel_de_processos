@@ -1941,7 +1941,7 @@
     var papeis = vinculados('papeis', nivel, codigo);
     var regras = vinculados('regras', nivel, codigo);
     return (semIndicadores ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
-      '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos (matriz 5×5 · P×I)</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
+      '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
       (papeis.length ? '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Papéis e envolvidos</h3>' + listaPapeisHtml(papeis) + '</div>' : '') +
       (regras.length ? '<div class="pp-card"><h3><i class="fas fa-gavel" aria-hidden="true"></i> Regras de negócio</h3>' + listaRegrasHtml(regras) + '</div>' : '') +
       '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Normativos e documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>';
@@ -1971,7 +1971,6 @@
     if (!itens.length) return '';
     var sim = itens.filter(function (c) { return c.Situacao === 'Sim'; }).length;
     return '<div class="pp-card" style="margin-top:var(--sp5)"><h3><i class="fas fa-people-group" aria-hidden="true"></i> Cultura de processos</h3>' +
-      '<p class="pp-muted" style="margin-bottom:var(--sp2)">Autoavaliação organizacional (CBOK 9.5.6) — ' + sim + ' de ' + itens.length + ' características já presentes. Atualize a situação de cada uma na aba Cultura_Processos da planilha.</p>' +
       '<div class="cultura-lista">' + itens.map(function (c) {
         return '<div class="cultura-item"><span class="br-tag small cultura-' + slug(c.Situacao || 'nao-avaliado') + '">' + esc(c.Situacao || 'Não avaliado') + '</span><span>' + esc(c.Caracteristica) + '</span></div>';
       }).join('') + '</div></div>';
@@ -2011,7 +2010,7 @@
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
         campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop'), false, 'tecnico') +
         (m.Observacoes ? campo('Observações', esc(m.Observacoes), true) : '') + '</dl></div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome) + '</div>' +
         secVinculos('Macroprocesso', cod) +
         '</div><aside>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos vinculados</h3>' +
@@ -2070,7 +2069,7 @@
         '<div class="col"><h4>Beneficiários</h4><ul>' + (listar(p.Beneficiarios || p.Clientes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li class="pp-vazio">—</li>') + '</ul></div>' +
         '</div></div>' +
         '<div class="pp-card"><h3><i class="fas fa-flag-checkered" aria-hidden="true"></i> Marcos do mapeamento (M1–M10)</h3>' + marcosHtml(p) + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama</h3>' + diagramaHtml(p.Imagem_Bizagi, p.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades ligadas direto ao processo</h3>' +
         (subs.length && !ativsDiretas.length
           ? '<p class="pp-vazio">Nenhuma atividade ligada diretamente ao processo — neste caso as atividades ficam dentro dos subprocessos listados ao lado.</p>'
@@ -2130,7 +2129,6 @@
         campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
-        campo('Produto principal', s.Produto_Principal && esc(s.Produto_Principal), false, 'valor') +
         '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
         campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') +
         campo('Fontes de dados', chips(s.Fontes_Dados, 'fa-database'), false, 'tecnico') + '</dl></div>' +
@@ -2144,7 +2142,7 @@
               subsReusados.map(function (sf) { return linhaSubprocesso(sf, true); }).join('')
           })
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
-        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades</h3>' +
         tabelaAtividadesHtml(ativs, undefined, s.Unidade_Organica_Responsavel) + '</div>' +
         secVinculos('Subprocesso', cod) +
@@ -2252,7 +2250,6 @@
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
       campo('Disparador (evento de início)', t.Disparador && esc(t.Disparador), false, 'desc') +
-      campo('Tipo (CBOK 4.0)', t.Tipo_Tarefa && esc(t.Tipo_Tarefa), false, 'tecnico') +
       campo('Passos', listaTexto(t.Passos, true), true, 'desc') +
       campo('Princípios a seguir', listaTexto(t.Principios), true, 'desc') +
       campo('Critérios de desempenho', listaTexto(t.Criterios_Desempenho), false, 'valor') +
@@ -2305,7 +2302,7 @@
   });
 
   /* ── TELAS: documentos · riscos · indicadores · diário ────────────── */
-  var filtroDoc = { tipo: '', q: '', busca: '', ordem: '', dir: '', dens: 'medium', sel: {} };
+  var filtroDoc = { tipo: '', situacao: '', q: '', busca: '', ordem: '', dir: '', dens: 'medium', sel: {} };
   // Campo de busca no padrão Input do DS: rótulo visível, ícone
   // ilustrativo search à esquerda e input dentro do input-group.
   function buscaCampoHtml(id, rotulo, placeholder, valor) {
@@ -2326,9 +2323,12 @@
     var el = $('#viewDocumentos');
     var tipos = {};
     DADOS.docs.forEach(function (x) { if (x.Tipo_Documento) tipos[x.Tipo_Documento] = 1; });
+    var situacoes = {};
+    DADOS.docs.forEach(function (x) { if (x.Situacao) situacoes[x.Situacao] = 1; });
     var bq = filtroDoc.busca.toLowerCase();
     var lista = DADOS.docs.filter(function (x) {
       if (filtroDoc.tipo && x.Tipo_Documento !== filtroDoc.tipo) return false;
+      if (filtroDoc.situacao && x.Situacao !== filtroDoc.situacao) return false;
       // Busca da barra de título: percorre todas as colunas exibidas.
       if (bq && COLS_DOC.map(function (c) { return x[c.k] || ''; }).join(' ').toLowerCase().indexOf(bq) < 0) return false;
       return true;
@@ -2349,12 +2349,19 @@
       selectHtml({ chave: 'tipoDoc', id: 'fTipoDoc', rotulo: 'Tipo de documento',
         placeholder: 'Todos os tipos', selecionados: filtroDoc.tipo ? [filtroDoc.tipo] : [],
         opcoes: Object.keys(tipos).sort().map(function (t) { return { v: t, r: t }; }) }) +
+      selectHtml({ chave: 'situacaoDoc', id: 'fSituacaoDoc', rotulo: 'Situação',
+        placeholder: 'Todas as situações', selecionados: filtroDoc.situacao ? [filtroDoc.situacao] : [],
+        opcoes: Object.keys(situacoes).sort().map(function (t) { return { v: t, r: t }; }) }) +
       '</div>' +
-      (filtroDoc.tipo || filtroDoc.busca
+      (filtroDoc.tipo || filtroDoc.situacao || filtroDoc.busca
         ? '<div class="filtros-rodape"><div class="filtros-ativos">' +
           (filtroDoc.tipo ? '<span class="br-tag interaction" id="fdoc-tipo"><span id="fdoc-tipo-r">Tipo: ' + esc(filtroDoc.tipo) + '</span>' +
             '<button class="br-button circle small" type="button" data-doc-limpar="tipo"' +
             ' aria-label="Remover o filtro de tipo" aria-describedby="fdoc-tipo-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.situacao ? '<span class="br-tag interaction" id="fdoc-situacao"><span id="fdoc-situacao-r">Situação: ' + esc(filtroDoc.situacao) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="situacao"' +
+            ' aria-label="Remover o filtro de situação" aria-describedby="fdoc-situacao-r">' +
             '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
           (filtroDoc.busca ? '<span class="br-tag interaction" id="fdoc-busca"><span id="fdoc-busca-r">Pesquisa: ' + esc(filtroDoc.busca) + '</span>' +
             '<button class="br-button circle small" type="button" data-doc-limpar="busca"' +
@@ -2427,8 +2434,7 @@
           '<td class="column-collapse"><button class="br-button circle small" type="button" data-toggle="collapse" data-target="' + cid + '" aria-expanded="false" aria-controls="' + cid + '" aria-label="Expandir ou retrair ' + esc(x.Titulo) + '"><i class="fas fa-chevron-down" aria-hidden="true"></i></button></td>' +
           '<td><div class="br-checkbox hidden-label"><input id="' + chk + '" name="' + chk + '" type="checkbox" data-doc="' + esc(x.ID) + '" aria-label="Selecionar ' + esc(x.Titulo) + '"' + (marcada ? ' checked' : '') + '><label for="' + chk + '">Selecionar linha</label></div></td>' +
           '<td class="cod" data-th="ID">' + esc(x.ID) + '</td>' +
-          '<td data-th="Documento"><strong>' + tit + '</strong><div class="pp-muted" style="font-size:var(--fs-sm)">' +
-          esc(x.Tipo_Documento || '') + (x.Versao ? ' · v' + esc(x.Versao) : '') + '</div></td>' +
+          '<td data-th="Documento"><strong>' + tit + '</strong></td>' +
           '<td data-th="Vinculado a">' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' +
           '<td data-th="Data">' + fmtData(x.Data) + '</td>' +
           '<td data-th="Situação">' + esc(x.Situacao || '—') + (revisaoVencida(x) ? ' <span class="br-tag revisao-vencida"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Revisão vencida</span>' : '') + '</td></tr>' +
@@ -2436,7 +2442,6 @@
           '<div class="br-list" role="list">' +
           '<div class="br-item" role="listitem"><strong>Tipo:</strong> ' + esc(x.Tipo_Documento || '—') + '</div>' +
           '<div class="br-item" role="listitem"><strong>Versão:</strong> ' + esc(x.Versao || '—') + '</div>' +
-          '<div class="br-item" role="listitem"><strong>Situação:</strong> ' + esc(x.Situacao || '—') + '</div>' +
           (x.Ato_Aprovacao ? '<div class="br-item" role="listitem"><strong>Ato de aprovação:</strong> ' + esc(x.Ato_Aprovacao) + '</div>' : '') +
           '</div></td></tr>';
       }).join('') +
@@ -2450,13 +2455,15 @@
       b.onclick = function () {
         var q = b.getAttribute('data-doc-limpar');
         if (q === 'tipo' || q === 'tudo') filtroDoc.tipo = '';
+        if (q === 'situacao' || q === 'tudo') filtroDoc.situacao = '';
         if (q === 'busca' || q === 'tudo') filtroDoc.busca = '';
         PAG.docs.pag = 1;
         renderDocumentos();
       };
     });
     window.BRSelectInit(el, function (chave, valores) {
-      filtroDoc.tipo = valores[0] || '';
+      if (chave === 'tipoDoc') filtroDoc.tipo = valores[0] || '';
+      else filtroDoc.situacao = valores[0] || '';
       PAG.docs.pag = 1;
       renderDocumentos();
     });

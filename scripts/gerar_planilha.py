@@ -578,12 +578,12 @@ PROCS = [
 ]
 
 SUBS = [
-    ('SP-01', 'Estudo Técnico Preliminar (ETP)', 'PP-01', '1', 'Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.', 'Fundamentar tecnicamente a melhor solução para a necessidade.', 'AA/GLC', 'AI/GOM', None, None, 'Estudo Técnico Preliminar (ETP) aprovado', 'DFD; Levantamento de soluções de mercado', 'ETP aprovado no e-Codevasf', 'e-Codevasf; Compras.gov.br', 'e-Codevasf', None),
-    ('SP-02', 'Termo de Referência (TR)', 'PP-01', '2', 'Definição do objeto, requisitos, modelo de execução e gestão contratual, e critérios de julgamento.', 'Especificar com precisão o objeto e as condições da contratação.', 'AA/GLC', 'AR/GRB', None, None, 'Termo de Referência (TR) aprovado e validado juridicamente', 'ETP aprovado; Modelos padronizados de TR', 'TR aprovado e validado juridicamente', 'e-Codevasf', None, None),
-    ('SP-03', 'Pesquisa de Preços', 'PP-01', '3', 'Levantamento de preços em fontes admitidas (Painel de Preços, PNCP, cotações) e consolidação do valor estimado.', 'Estimar o valor da contratação conforme a IN SEGES nº 65/2021.', 'AA/GLC', 'AG/GGP', None, None, 'Relatório de pesquisa de preços com valor estimado consolidado', 'TR validado; Fontes de preços admitidas', 'Relatório de pesquisa de preços; Mapa comparativo', 'Painel de Preços; PNCP; e-Codevasf', 'Painel de Preços; PNCP', None),
-    ('SP-04', 'Tratamento de Preços Inexequíveis ou Excessivos', 'SP-03', '1', 'Identificação e exclusão de valores discrepantes coletados na pesquisa, com justificativa técnica registrada.', 'Evitar que outliers de preço distorçam o valor estimado da contratação.', 'AA/GLC', 'AG/GGP', 'Sim', 'PP-02; PP-04', 'Amostra de preços tratada estatisticamente, com justificativa de exclusões', 'Amostra de preços coletados na pesquisa', 'Valores discrepantes identificados e justificados', 'Planilha padrão; e-Codevasf', None, None),
-    ('SP-05', 'Condução da Sessão Pública', 'PP-02', '1', 'Abertura da sessão no sistema, fase de lances, julgamento, habilitação e registro em ata.', 'Conduzir o certame com transparência e celeridade.', 'AA/GLC', 'AT/GTI', None, None, 'Ata da sessão pública com resultado do certame por item', 'Edital publicado; Propostas dos licitantes', 'Ata da sessão; Resultado por item', 'Compras.gov.br', None, None),
-    ('SP-06', 'Distribuição de Água aos Irrigantes', 'PP-04', '1', 'Programação semanal, operação de comportas e bombas, e registro de volumes distribuídos.', 'Entregar a água programada com eficiência e equidade.', 'AI/GOM', 'AE/GPE', None, None, 'Programação hídrica semanal executada e registrada', 'Outorga de uso; Demanda de irrigação', 'Programação hídrica executada; Registros de volume', 'SIG-Irrigação (fictício)', None, None),
+    ('SP-01', 'Estudo Técnico Preliminar (ETP)', 'PP-01', '1', 'Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.', 'Fundamentar tecnicamente a melhor solução para a necessidade.', 'AA/GLC', 'AI/GOM', None, None, 'DFD; Levantamento de soluções de mercado', 'ETP aprovado no e-Codevasf', 'e-Codevasf; Compras.gov.br', 'e-Codevasf', None),
+    ('SP-02', 'Termo de Referência (TR)', 'PP-01', '2', 'Definição do objeto, requisitos, modelo de execução e gestão contratual, e critérios de julgamento.', 'Especificar com precisão o objeto e as condições da contratação.', 'AA/GLC', 'AR/GRB', None, None, 'ETP aprovado; Modelos padronizados de TR', 'TR aprovado e validado juridicamente', 'e-Codevasf', None, None),
+    ('SP-03', 'Pesquisa de Preços', 'PP-01', '3', 'Levantamento de preços em fontes admitidas (Painel de Preços, PNCP, cotações) e consolidação do valor estimado.', 'Estimar o valor da contratação conforme a IN SEGES nº 65/2021.', 'AA/GLC', 'AG/GGP', None, None, 'TR validado; Fontes de preços admitidas', 'Relatório de pesquisa de preços; Mapa comparativo', 'Painel de Preços; PNCP; e-Codevasf', 'Painel de Preços; PNCP', None),
+    ('SP-04', 'Tratamento de Preços Inexequíveis ou Excessivos', 'SP-03', '1', 'Identificação e exclusão de valores discrepantes coletados na pesquisa, com justificativa técnica registrada.', 'Evitar que outliers de preço distorçam o valor estimado da contratação.', 'AA/GLC', 'AG/GGP', 'Sim', 'PP-02; PP-04', 'Amostra de preços coletados na pesquisa', 'Valores discrepantes identificados e justificados', 'Planilha padrão; e-Codevasf', None, None),
+    ('SP-05', 'Condução da Sessão Pública', 'PP-02', '1', 'Abertura da sessão no sistema, fase de lances, julgamento, habilitação e registro em ata.', 'Conduzir o certame com transparência e celeridade.', 'AA/GLC', 'AT/GTI', None, None, 'Edital publicado; Propostas dos licitantes', 'Ata da sessão; Resultado por item', 'Compras.gov.br', None, None),
+    ('SP-06', 'Distribuição de Água aos Irrigantes', 'PP-04', '1', 'Programação semanal, operação de comportas e bombas, e registro de volumes distribuídos.', 'Entregar a água programada com eficiência e equidade.', 'AI/GOM', 'AE/GPE', None, None, 'Outorga de uso; Demanda de irrigação', 'Programação hídrica executada; Registros de volume', 'SIG-Irrigação (fictício)', None, None),
 ]
 
 ATIVS = [
@@ -764,21 +764,23 @@ def ref(nome):
 
 
 REF_SIGLAS = f"=Siglas!$A$2:$A${len(SIGLAS) + 1}"
+REF_NUGEP_NOME = f"=NUGEP!$B$2:$B${len(CONTEUDO.NUGEP) + 1}"
 
 # ---- Macroprocessos ----
 mp = wb.create_sheet("Macroprocessos")
-cabecalho(mp, "Macroprocessos")
+cabecalho(mp, "Macroprocessos", formula_cols={ESQ.colunas("Macroprocessos").index("Trilha") + 1})
 escreve(mp, MACROS, wrap_cols={2,6,7,8,9,10,11,12,13,14}, center_cols={1,3,4,5})
 mp.freeze_panes = "B2"
+aplicar_formula(mp, "Macroprocessos", "Trilha", lambda r: f"=A{r}")
 dv(mp, col("Macroprocessos", "Categoria"), ref("Categoria_Macroprocesso"))
 dv(mp, col("Macroprocessos", "Unidade_Organica_Responsavel"), REF_SIGLAS)
-dv(mp, col("Macroprocessos", "Unidades_Organicas_Corresponsaveis"), REF_SIGLAS, strict=False)
 
 # ---- Processos ----
 pr = wb.create_sheet("Processos")
-cabecalho(pr, "Processos", formula_cols={ESQ.colunas("Processos").index("Percentual") + 1})
+cabecalho(pr, "Processos", formula_cols={ESQ.colunas("Processos").index("Percentual") + 1,
+                                          ESQ.colunas("Processos").index("Trilha") + 1})
 escreve(pr, PROCS,
-        wrap_cols={2,4,5,7,8,28,29,30,31,32,34,35,36,37,38},
+        wrap_cols={2,4,5,7,8,28,29,30,31,32,34,35,36,37,38,39},
         center_cols={1,3,6,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,33})
 pr.freeze_panes = "C2"
 _c1 = col("Processos", "M1_Conhecer_Processo")
@@ -791,9 +793,10 @@ def _pct_formula(r):
 
 
 aplicar_formula(pr, "Processos", "Percentual", _pct_formula, number_format="0%")
+aplicar_formula(pr, "Processos", "Trilha", lambda r: f'=C{r}&" › "&A{r}')
 dv(pr, col("Processos", "Macroprocesso"), f"=Macroprocessos!$A$2:$A${len(MACROS) + 1}")
 dv(pr, col("Processos", "Unidade_Organica_Responsavel"), REF_SIGLAS)
-dv(pr, col("Processos", "Unidades_Organicas_Corresponsaveis"), REF_SIGLAS, strict=False)
+dv(pr, col("Processos", "Ponto_Focal_Nugep"), REF_NUGEP_NOME)
 dv(pr, col("Processos", "Prioridade"), ref("Prioridade"))
 dv(pr, col("Processos", "Complexidade"), ref("Complexidade"))
 dv(pr, col("Processos", "Maturidade"), ref("Maturidade_Processo"))
@@ -806,31 +809,43 @@ for _campo_m in ["M1_Conhecer_Processo", "M2_Processo_Modelado", "M3_Subprocesso
 
 # ---- Subprocessos ----
 sp = wb.create_sheet("Subprocessos")
-cabecalho(sp, "Subprocessos")
+cabecalho(sp, "Subprocessos", formula_cols={ESQ.colunas("Subprocessos").index("Trilha") + 1})
 escreve(sp, SUBS, wrap_cols={2,5,6,8,10,11,12,13,14,15,16}, center_cols={1,3,4,7,9})
 sp.freeze_panes = "B2"
+aplicar_formula(sp, "Subprocessos", "Trilha", lambda r: (
+    f'=IF(LEFT(C{r},2)="SP",VLOOKUP(C{r},Subprocessos!$A:${col("Subprocessos","Trilha")},'
+    f'{ESQ.colunas("Subprocessos").index("Trilha") + 1},0),'
+    f'VLOOKUP(C{r},Processos!$A:${col("Processos","Trilha")},{ESQ.colunas("Processos").index("Trilha") + 1},0))'
+    f'&" › "&A{r}'
+))
 dv(sp, col("Subprocessos", "Vinculo_Pai"), ref("FK_Proc_Sub"))
 dv(sp, col("Subprocessos", "Unidade_Organica_Responsavel"), REF_SIGLAS)
-dv(sp, col("Subprocessos", "Unidades_Organicas_Corresponsaveis"), REF_SIGLAS, strict=False)
 dv(sp, col("Subprocessos", "Reutilizavel"), ref("Sim_Nao"))
-dv(sp, col("Subprocessos", "Reutilizado_Em"), ref("FK_Proc_Sub"), strict=False)
 
 # ---- Atividades ----
 at = wb.create_sheet("Atividades")
-cabecalho(at, "Atividades")
-escreve(at, ATIVS, wrap_cols={2,6,7,8,9}, center_cols={1,3,4,5})
+cabecalho(at, "Atividades", formula_cols={ESQ.colunas("Atividades").index("Trilha") + 1})
+escreve(at, ATIVS, wrap_cols={2,6,7,8,9,10}, center_cols={1,3,4,5})
 at.freeze_panes = "B2"
+aplicar_formula(at, "Atividades", "Trilha", lambda r: (
+    f'=IF(LEFT(C{r},2)="SP",VLOOKUP(C{r},Subprocessos!$A:${col("Subprocessos","Trilha")},'
+    f'{ESQ.colunas("Subprocessos").index("Trilha") + 1},0),'
+    f'VLOOKUP(C{r},Processos!$A:${col("Processos","Trilha")},{ESQ.colunas("Processos").index("Trilha") + 1},0))'
+    f'&" › "&A{r}'
+))
 dv(at, col("Atividades", "Vinculo_Pai"), ref("FK_Proc_Sub"))
 dv(at, col("Atividades", "Tipo_Atividade"), ref("Tipo_Atividade"))
 
 # ---- Tarefas ----
 tf = wb.create_sheet("Tarefas")
-cabecalho(tf, "Tarefas")
-escreve(tf, TAREFAS, wrap_cols={2,6,7,8,9,10,11,12,14,15}, center_cols={1,3,4,5,13})
+cabecalho(tf, "Tarefas", formula_cols={ESQ.colunas("Tarefas").index("Trilha") + 1})
+escreve(tf, TAREFAS, wrap_cols={2,6,7,8,9,10,11,12,14,15,16}, center_cols={1,3,4,5,13})
 tf.freeze_panes = "B2"
+aplicar_formula(tf, "Tarefas", "Trilha", lambda r: (
+    f'=VLOOKUP(C{r},Atividades!$A:${col("Atividades","Trilha")},{ESQ.colunas("Atividades").index("Trilha") + 1},0)&" › "&A{r}'
+))
 dv(tf, col("Tarefas", "Atividade"), f"=Atividades!$A$2:$A${len(ATIVS) + 1}")
 dv(tf, col("Tarefas", "Tipo_Tarefa"), ref("Tipo_Tarefa"))
-dv(tf, col("Tarefas", "Unidades_Organicas_Corresponsaveis"), REF_SIGLAS, strict=False)
 
 # ---- Documentos ----
 dc = wb.create_sheet("Documentos")
@@ -840,7 +855,6 @@ dc.freeze_panes = "B2"
 aplicar_formula(dc, "Documentos", "Vinculo_Nivel",
                 lambda r: nivel_formula(f'{col("Documentos", "Vinculo_Codigo")}{r}'))
 dv(dc, col("Documentos", "Tipo_Documento"), ref("Tipo_Documento"))
-dv(dc, col("Documentos", "Vinculo_Codigo"), ref("FK_Todos_Codigos"), strict=False)
 dv(dc, col("Documentos", "Situacao"), ref("Situacao_Documento"))
 
 # ---- Riscos ----
@@ -860,7 +874,6 @@ _cn = col("Riscos", "Nivel_PxI")
 aplicar_formula(rk, "Riscos", "Classificacao", lambda r: (
     f'=IF({_cn}{r}>=20,"Extremo",IF({_cn}{r}>=12,"Alto",IF({_cn}{r}>=5,"Moderado","Baixo")))'
 ))
-dv(rk, col("Riscos", "Vinculo_Codigo"), ref("FK_Todos_Codigos"), strict=False)
 dv(rk, col("Riscos", "Categoria"), ref("Categoria_Risco"))
 dv(rk, col("Riscos", "Resposta"), ref("Resposta_Risco"))
 dv(rk, col("Riscos", "Status"), ref("Status_Risco"))
@@ -871,7 +884,6 @@ cabecalho(mt, "Metricas", formula_cols={ESQ.colunas("Metricas").index("Vinculo_N
 escreve(mt, METRICAS, wrap_cols={2,6,11,12}, center_cols={1,3,4,5,7,8,9,10})
 mt.freeze_panes = "B2"
 aplicar_formula(mt, "Metricas", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Metricas", "Vinculo_Codigo")}{r}'))
-dv(mt, col("Metricas", "Vinculo_Codigo"), ref("FK_Todos_Codigos"), strict=False)
 dv(mt, col("Metricas", "Polaridade"), ref("Polaridade"))
 dv(mt, col("Metricas", "Periodicidade"), ref("Periodicidade"))
 
@@ -888,7 +900,6 @@ cabecalho(pp, "Papeis", formula_cols={ESQ.colunas("Papeis").index("Vinculo_Nivel
 escreve(pp, PAPEIS, wrap_cols={4,6}, center_cols={1,2,3,5})
 pp.freeze_panes = "B2"
 aplicar_formula(pp, "Papeis", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Papeis", "Vinculo_Codigo")}{r}'))
-dv(pp, col("Papeis", "Vinculo_Codigo"), ref("FK_Todos_Codigos"), strict=False)
 dv(pp, col("Papeis", "Envolvimento"), ref("Envolvimento_RACI"))
 
 # ---- Regras ----
@@ -897,7 +908,6 @@ cabecalho(rg, "Regras", formula_cols={ESQ.colunas("Regras").index("Vinculo_Nivel
 escreve(rg, REGRAS, wrap_cols={2,6,7}, center_cols={1,3,4,5})
 rg.freeze_panes = "B2"
 aplicar_formula(rg, "Regras", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Regras", "Vinculo_Codigo")}{r}'))
-dv(rg, col("Regras", "Vinculo_Codigo"), ref("FK_Todos_Codigos"), strict=False)
 dv(rg, col("Regras", "Tipo_Regra"), ref("Tipo_Regra"))
 
 # ---- Cultura_Processos ----
@@ -913,7 +923,6 @@ cabecalho(ini, "Iniciativas")
 escreve(ini, INICIATIVAS, wrap_cols={3,5,6}, center_cols={1,2,4})
 ini.freeze_panes = "B2"
 dv(ini, col("Iniciativas", "Tipo"), ref("Tipo_Iniciativa"))
-dv(ini, col("Iniciativas", "Processos_Relacionados"), ref("FK_Processos"), strict=False)
 
 # ---- Competencias (conteúdo em dados_conteudo.py) ----
 ct = wb.create_sheet("Competencias")

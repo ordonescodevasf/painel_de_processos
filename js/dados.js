@@ -16,7 +16,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Ministério supervisor; Órgãos de controle; Sociedade",
    "Sistemas": "e-Codevasf; Painéis de BI",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MG-01"
   },
   {
    "Codigo": "MG-02",
@@ -32,7 +33,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Auditoria interna; CGU; TCU",
    "Sistemas": "e-Codevasf; Sistema de gestão de riscos",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MG-02"
   },
   {
    "Codigo": "MF-01",
@@ -48,7 +50,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Parlamentares; Entes federados; Entidades parceiras",
    "Sistemas": "TransfereGov; e-Codevasf",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MF-01"
   },
   {
    "Codigo": "MF-02",
@@ -64,7 +67,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "ANA; Agências estaduais; Associações de usuários",
    "Sistemas": "SIG-Irrigação (fictício); e-Codevasf",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MF-02"
   },
   {
    "Codigo": "MF-03",
@@ -80,7 +84,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Comitês de bacia; MMA; Órgãos ambientais",
    "Sistemas": "e-Codevasf; GeoPortal (fictício)",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MF-03"
   },
   {
    "Codigo": "MS-01",
@@ -96,7 +101,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Fornecedores; Assessoria Jurídica; Órgãos de controle; PNCP",
    "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; e-Codevasf",
    "Imagem_Bizagi": null,
-   "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento."
+   "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento.",
+   "Trilha": "MS-01"
   },
   {
    "Codigo": "MS-02",
@@ -112,7 +118,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "Sindicatos; SEST; Ministério supervisor",
    "Sistemas": "SIGEP (fictício); e-Codevasf",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MS-02"
   },
   {
    "Codigo": "MS-03",
@@ -128,7 +135,8 @@ window.PAINEL_DADOS = {
    "Partes_Interessadas": "SGD/MGI; Fornecedores de TI",
    "Sistemas": "e-Codevasf; Service Desk",
    "Imagem_Bizagi": null,
-   "Observacoes": null
+   "Observacoes": null,
+   "Trilha": "MS-03"
   }
  ],
  "Processos": [
@@ -170,7 +178,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Elaboração de estudos técnicos e termos de referência; Conhecimento da Lei nº 14.133/2021; Pesquisa e análise de preços de mercado",
    "Fontes_Dados": "e-Codevasf; Painel de Preços; PNCP",
    "Proxima_Acao": "Monitorar indicadores do processo e revisar o PRO em 12 meses.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Trilha": "MS-01 › PP-01"
   },
   {
    "Codigo": "PP-02",
@@ -210,7 +219,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Condução de sessões públicas de licitação; Julgamento de propostas e habilitação; Uso de plataformas de compras governamentais",
    "Fontes_Dados": "Compras.gov.br",
    "Proxima_Acao": "Validar AS-IS com o dono do processo (reunião marcada).",
-   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos."
+   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos.",
+   "Trilha": "MS-01 › PP-02"
   },
   {
    "Codigo": "PP-03",
@@ -250,7 +260,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Fiscalização técnica e administrativa de contratos; Gestão de medições e pagamentos; Aplicação de sanções administrativas",
    "Fontes_Dados": "e-Codevasf",
    "Proxima_Acao": "Concluir modelagem AS-IS das medições e pagamentos.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Trilha": "MS-01 › PP-03"
   },
   {
    "Codigo": "PP-04",
@@ -290,7 +301,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Operação de sistemas hidráulicos; Manutenção de infraestrutura de irrigação; Relacionamento com associações de irrigantes",
    "Fontes_Dados": "SIG-Irrigação (fictício)",
    "Proxima_Acao": "Agendar oficina de validação do AS-IS com o distrito.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Trilha": "MF-02 › PP-04"
   },
   {
    "Codigo": "PP-05",
@@ -330,7 +342,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Diagnóstico e recuperação de áreas degradadas; Noções de engenharia ambiental; Articulação com comunidades e órgãos ambientais",
    "Fontes_Dados": null,
    "Proxima_Acao": "Enviar formulário de levantamento à área (previsto ago/2026).",
-   "Pendencia": null
+   "Pendencia": null,
+   "Trilha": "MF-03 › PP-05"
   },
   {
    "Codigo": "PP-06",
@@ -370,7 +383,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Planejamento estratégico e gestão por indicadores; Facilitação de oficinas; Análise de dados institucionais",
    "Fontes_Dados": null,
    "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
-   "Pendencia": null
+   "Pendencia": null,
+   "Trilha": "MG-01 › PP-06"
   },
   {
    "Codigo": "PP-07",
@@ -410,7 +424,8 @@ window.PAINEL_DADOS = {
    "Competencias_Necessarias": "Rotinas de admissão e legislação trabalhista (CLT); Condução de processos de integração; Uso de sistemas de gestão de pessoas",
    "Fontes_Dados": null,
    "Proxima_Acao": "Aguardando priorização no ciclo 2027.",
-   "Pendencia": null
+   "Pendencia": null,
+   "Trilha": "MS-02 › PP-07"
   }
  ],
  "Subprocessos": [
@@ -425,12 +440,12 @@ window.PAINEL_DADOS = {
    "Unidades_Organicas_Corresponsaveis": "AI/GOM",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
-   "Produto_Principal": "Estudo Técnico Preliminar (ETP) aprovado",
    "Entradas": "DFD; Levantamento de soluções de mercado",
    "Saidas": "ETP aprovado no e-Codevasf",
    "Sistemas": "e-Codevasf; Compras.gov.br",
    "Fontes_Dados": "e-Codevasf",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Trilha": "MS-01 › PP-01 › SP-01"
   },
   {
    "Codigo": "SP-02",
@@ -443,12 +458,12 @@ window.PAINEL_DADOS = {
    "Unidades_Organicas_Corresponsaveis": "AR/GRB",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
-   "Produto_Principal": "Termo de Referência (TR) aprovado e validado juridicamente",
    "Entradas": "ETP aprovado; Modelos padronizados de TR",
    "Saidas": "TR aprovado e validado juridicamente",
    "Sistemas": "e-Codevasf",
    "Fontes_Dados": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Trilha": "MS-01 › PP-01 › SP-02"
   },
   {
    "Codigo": "SP-03",
@@ -461,12 +476,12 @@ window.PAINEL_DADOS = {
    "Unidades_Organicas_Corresponsaveis": "AG/GGP",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
-   "Produto_Principal": "Relatório de pesquisa de preços com valor estimado consolidado",
    "Entradas": "TR validado; Fontes de preços admitidas",
    "Saidas": "Relatório de pesquisa de preços; Mapa comparativo",
    "Sistemas": "Painel de Preços; PNCP; e-Codevasf",
    "Fontes_Dados": "Painel de Preços; PNCP",
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Trilha": "MS-01 › PP-01 › SP-03"
   },
   {
    "Codigo": "SP-04",
@@ -479,12 +494,12 @@ window.PAINEL_DADOS = {
    "Unidades_Organicas_Corresponsaveis": "AG/GGP",
    "Reutilizavel": "Sim",
    "Reutilizado_Em": "PP-02; PP-04",
-   "Produto_Principal": "Amostra de preços tratada estatisticamente, com justificativa de exclusões",
    "Entradas": "Amostra de preços coletados na pesquisa",
    "Saidas": "Valores discrepantes identificados e justificados",
    "Sistemas": "Planilha padrão; e-Codevasf",
    "Fontes_Dados": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Trilha": "MS-01 › PP-01 › SP-03 › SP-04"
   },
   {
    "Codigo": "SP-05",
@@ -497,12 +512,12 @@ window.PAINEL_DADOS = {
    "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
-   "Produto_Principal": "Ata da sessão pública com resultado do certame por item",
    "Entradas": "Edital publicado; Propostas dos licitantes",
    "Saidas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
    "Fontes_Dados": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Trilha": "MS-01 › PP-02 › SP-05"
   },
   {
    "Codigo": "SP-06",
@@ -515,12 +530,12 @@ window.PAINEL_DADOS = {
    "Unidades_Organicas_Corresponsaveis": "AE/GPE",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
-   "Produto_Principal": "Programação hídrica semanal executada e registrada",
    "Entradas": "Outorga de uso; Demanda de irrigação",
    "Saidas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
    "Fontes_Dados": null,
-   "Imagem_Bizagi": null
+   "Imagem_Bizagi": null,
+   "Trilha": "MF-02 › PP-04 › SP-06"
   }
  ],
  "Atividades": [
@@ -533,7 +548,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A área demandante registra a necessidade de contratação no Documento de Formalização da Demanda (DFD), justificando o objeto e vinculando-o ao Plano de Contratações Anual.",
    "Entradas": "Necessidade identificada; Plano de Contratações Anual",
    "Saidas": "DFD assinado no e-Codevasf",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-01"
   },
   {
    "Codigo": "AT-02",
@@ -544,7 +560,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento pesquisa catálogos, contratações similares no PNCP e alternativas de mercado que atendam à necessidade formalizada no DFD.",
    "Entradas": "DFD; Catálogos; Contratações similares (PNCP)",
    "Saidas": "Levantamento de soluções documentado",
-   "Sistemas": "PNCP; Compras.gov.br"
+   "Sistemas": "PNCP; Compras.gov.br",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-02"
   },
   {
    "Codigo": "AT-03",
@@ -555,7 +572,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento estima quantitativos e resultados pretendidos com base no levantamento de soluções e em séries históricas de consumo.",
    "Entradas": "Levantamento de soluções; Séries históricas",
    "Saidas": "Memória de cálculo de quantitativos",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-03"
   },
   {
    "Codigo": "AT-04",
@@ -566,7 +584,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento consolida os levantamentos no Estudo Técnico Preliminar (ETP) e o submete à aprovação da autoridade competente.",
    "Entradas": "Levantamentos e memórias anteriores",
    "Saidas": "ETP aprovado",
-   "Sistemas": "e-Codevasf; Compras.gov.br"
+   "Sistemas": "e-Codevasf; Compras.gov.br",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-04"
   },
   {
    "Codigo": "AT-05",
@@ -577,7 +596,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento redige a minuta do Termo de Referência a partir do ETP aprovado, utilizando os modelos padronizados da Empresa.",
    "Entradas": "ETP aprovado; Modelos padronizados",
    "Saidas": "Minuta de TR",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-01 › SP-02 › AT-05"
   },
   {
    "Codigo": "AT-06",
@@ -588,7 +608,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A Assessoria Jurídica analisa a minuta do Termo de Referência e emite parecer sobre sua conformidade legal antes da publicação do edital.",
    "Entradas": "Minuta de TR",
    "Saidas": "TR validado; Parecer jurídico",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-01 › SP-02 › AT-06"
   },
   {
    "Codigo": "AT-07",
@@ -599,7 +620,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento coleta preços em ao menos três fontes distintas (Painel de Preços, PNCP e contratações similares) para compor a estimativa de valor.",
    "Entradas": "TR validado; Fontes de preços",
    "Saidas": "Relatório de pesquisa de preços",
-   "Sistemas": "Painel de Preços; PNCP"
+   "Sistemas": "Painel de Preços; PNCP",
+   "Trilha": "MS-01 › PP-01 › SP-03 › AT-07"
   },
   {
    "Codigo": "AT-08",
@@ -610,7 +632,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento consolida os preços coletados e tratados estatisticamente em um valor estimado único para a contratação.",
    "Entradas": "Relatório de pesquisa",
    "Saidas": "Valor estimado consolidado",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-01 › SP-03 › AT-08"
   },
   {
    "Codigo": "AT-09",
@@ -621,7 +644,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de planejamento aplica o critério estatístico definido para excluir da amostra valores inexequíveis ou excessivamente discrepantes, registrando a justificativa.",
    "Entradas": "Amostra de preços coletados",
    "Saidas": "Amostra tratada; Justificativa de exclusão",
-   "Sistemas": "Planilha padrão"
+   "Sistemas": "Planilha padrão",
+   "Trilha": "MS-01 › PP-01 › SP-03 › SP-04 › AT-09"
   },
   {
    "Codigo": "AT-10",
@@ -632,7 +656,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A área responsável publica o edital aprovado e o parecer jurídico no Compras.gov.br e no PNCP, abrindo o certame.",
    "Entradas": "Edital aprovado; Parecer jurídico",
    "Saidas": "Edital publicado (PNCP)",
-   "Sistemas": "Compras.gov.br; PNCP"
+   "Sistemas": "Compras.gov.br; PNCP",
+   "Trilha": "MS-01 › PP-02 › SP-05 › AT-10"
   },
   {
    "Codigo": "AT-11",
@@ -643,7 +668,8 @@ window.PAINEL_DADOS = {
    "Descricao": "O agente de contratação conduz a sessão pública, analisa as propostas recebidas e registra o resultado do julgamento em ata.",
    "Entradas": "Edital publicado; Propostas",
    "Saidas": "Ata da sessão; Resultado do julgamento",
-   "Sistemas": "Compras.gov.br"
+   "Sistemas": "Compras.gov.br",
+   "Trilha": "MS-01 › PP-02 › SP-05 › AT-11"
   },
   {
    "Codigo": "AT-12",
@@ -654,7 +680,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de operação do perímetro programa semanalmente a distribuição de água com base no plano de cultivo e na disponibilidade hídrica.",
    "Entradas": "Plano de cultivo; Disponibilidade hídrica",
    "Saidas": "Programação semanal aprovada",
-   "Sistemas": "SIG-Irrigação (fictício)"
+   "Sistemas": "SIG-Irrigação (fictício)",
+   "Trilha": "MF-02 › PP-04 › SP-06 › AT-12"
   },
   {
    "Codigo": "AT-13",
@@ -665,7 +692,8 @@ window.PAINEL_DADOS = {
    "Descricao": "A equipe de operação executa a distribuição programada e registra volumes e ocorrências no sistema de gestão da irrigação.",
    "Entradas": "Programação semanal",
    "Saidas": "Volumes registrados; Ocorrências",
-   "Sistemas": "SIG-Irrigação (fictício)"
+   "Sistemas": "SIG-Irrigação (fictício)",
+   "Trilha": "MF-02 › PP-04 › SP-06 › AT-13"
   },
   {
    "Codigo": "AT-14",
@@ -676,7 +704,8 @@ window.PAINEL_DADOS = {
    "Descricao": "Formalizar a designação do fiscal técnico, do fiscal administrativo e do gestor do contrato, com ciência dos designados.",
    "Entradas": "Contrato assinado; Minuta de portaria de designação",
    "Saidas": "Portaria de designação publicada",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-03 › AT-14"
   },
   {
    "Codigo": "AT-15",
@@ -687,7 +716,8 @@ window.PAINEL_DADOS = {
    "Descricao": "Conferir o objeto entregue no período, registrar a medição e atestar a nota fiscal para pagamento.",
    "Entradas": "Relatório de execução; Nota fiscal",
    "Saidas": "Medição registrada; Nota fiscal atestada",
-   "Sistemas": "e-Codevasf"
+   "Sistemas": "e-Codevasf",
+   "Trilha": "MS-01 › PP-03 › AT-15"
   }
  ],
  "Tarefas": [
@@ -706,7 +736,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": "Gestor da área demandante; Coordenador de orçamento",
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AA/GLC"
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-01 › TR-01"
   },
   {
    "Codigo": "TR-02",
@@ -723,7 +754,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 4,
    "Observacoes": "Modelo DOC-006/DOC-012.",
-   "Unidades_Organicas_Corresponsaveis": "AG/GGP"
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-01 › TR-02"
   },
   {
    "Codigo": "TR-03",
@@ -740,7 +772,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 8,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AT/GTI"
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
+   "Trilha": "MS-01 › PP-01 › SP-01 › AT-01 › TR-03"
   },
   {
    "Codigo": "TR-04",
@@ -757,7 +790,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": "Equipe de planejamento da contratação",
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AE/GPE"
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE",
+   "Trilha": "MS-01 › PP-01 › SP-03 › AT-07 › TR-04"
   },
   {
    "Codigo": "TR-05",
@@ -774,7 +808,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AE/GAG"
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
+   "Trilha": "MS-01 › PP-01 › SP-03 › AT-07 › TR-05"
   },
   {
    "Codigo": "TR-06",
@@ -791,7 +826,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 24,
    "Observacoes": "Mínimo de 3 fontes (IN 65/2021).",
-   "Unidades_Organicas_Corresponsaveis": "AR/GDT"
+   "Unidades_Organicas_Corresponsaveis": "AR/GDT",
+   "Trilha": "MS-01 › PP-01 › SP-03 › AT-07 › TR-06"
   },
   {
    "Codigo": "TR-07",
@@ -808,7 +844,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AI/GOM"
+   "Unidades_Organicas_Corresponsaveis": "AI/GOM",
+   "Trilha": "MS-01 › PP-01 › SP-03 › AT-07 › TR-07"
   },
   {
    "Codigo": "TR-08",
@@ -825,7 +862,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AR/GRB"
+   "Unidades_Organicas_Corresponsaveis": "AR/GRB",
+   "Trilha": "MS-01 › PP-02 › SP-05 › AT-10 › TR-08"
   },
   {
    "Codigo": "TR-09",
@@ -842,7 +880,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 0,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AA/GLC"
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC",
+   "Trilha": "MS-01 › PP-02 › SP-05 › AT-10 › TR-09"
   },
   {
    "Codigo": "TR-10",
@@ -859,7 +898,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": null,
    "Duracao_Estimada": 8,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AG/GGP"
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP",
+   "Trilha": "MF-02 › PP-04 › SP-06 › AT-12 › TR-10"
   },
   {
    "Codigo": "TR-11",
@@ -876,7 +916,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": "Fiscal técnico do contrato",
    "Duracao_Estimada": 8,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AT/GTI"
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
+   "Trilha": "MS-01 › PP-03 › AT-15 › TR-11"
   },
   {
    "Codigo": "TR-12",
@@ -893,7 +934,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": "Fiscal técnico do contrato",
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Unidades_Organicas_Corresponsaveis": "AE/GPE"
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE",
+   "Trilha": "MS-01 › PP-03 › AT-15 › TR-12"
   },
   {
    "Codigo": "TR-13",
@@ -910,7 +952,8 @@ window.PAINEL_DADOS = {
    "Pessoas_Consultar": "Gestor do contrato",
    "Duracao_Estimada": 4,
    "Observacoes": "O prazo de pagamento conta a partir do ateste.",
-   "Unidades_Organicas_Corresponsaveis": "AE/GAG"
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
+   "Trilha": "MS-01 › PP-03 › AT-15 › TR-13"
   }
  ],
  "Documentos": [
@@ -4735,13 +4778,9 @@ window.PAINEL_DADOS = {
    "Valor": "Mapeamento de processos da Codevasf"
   },
   {
-   "Chave": "Subtitulo_Inicio",
-   "Valor": "Cadeia de valor, portfólio de processos e repositório de materiais da Companhia, num só lugar."
-  },
-  {
    "Chave": "Titulo_Repositorio",
    "Valor": "Repositório de materiais e ferramentas"
   }
  ],
- "_gerado_em": "2026-08-17 16:52"
+ "_gerado_em": "2026-08-18 09:48"
 };
