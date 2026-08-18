@@ -35,7 +35,7 @@ SAIDA = os.path.join(RAIZ, "..", "js", "dados.js")
 # se uma aba nova entrar lá, entre com ela aqui também.
 ABAS = ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
         'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
-        'PlanoAcao', 'Cultura_Processos', 'Iniciativas', 'Competencias',
+        'Cultura_Processos', 'Iniciativas', 'Competencias',
         'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
 
 

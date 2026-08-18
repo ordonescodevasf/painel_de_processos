@@ -83,16 +83,16 @@ COLS = _colunas()
 
 
 def _nivel(codigo: str) -> str:
-    codigo = codigo.strip().upper()
-    if codigo.startswith("MP-"):
+    codigo = codigo.split(";")[0].strip().upper()
+    if codigo.startswith(("MG-", "MF-", "MS-")):
         return "Macroprocesso"
+    if codigo.startswith("PP-"):
+        return "Processo"
     if codigo.startswith("SP-"):
         return "Subprocesso"
-    if codigo.startswith(("PP-", "P-")):
-        return "Processo"
-    if codigo.startswith(("AT-", "A-")):
+    if codigo.startswith("AT-"):
         return "Atividade"
-    if codigo.startswith(("TR-", "T-")):
+    if codigo.startswith("TR-"):
         return "Tarefa"
     return ""
 
@@ -112,24 +112,24 @@ def calcular(aba: str, linhas: list[dict[str, str]]) -> dict[int, dict[str, obje
         fora.setdefault(linha, {})[coluna] = valor
 
     if aba == "Processos":
-        marcos = COLS[COLS.index("Y") : COLS.index("AH") + 1]
+        # M1..M10 = colunas R..AA (18ª a 27ª); Percentual (col. M) ignora
+        # marcos "Não se aplica" — só conta Sim/Não no denominador.
+        marcos = COLS[COLS.index("R") : COLS.index("AA") + 1]
         for linha in linhas[1:]:
-            codigo = linha.get("A", "")
-            por(linha["_r"], "B", "MP-" + codigo[2:4] if codigo.startswith("P-") else "")
             sim = sum(1 for c in marcos if linha.get(c, "") == "Sim")
             nao = sum(1 for c in marcos if linha.get(c, "") == "Não")
-            por(linha["_r"], "L", round(sim / (sim + nao), 4) if sim + nao else "")
+            por(linha["_r"], "M", round(sim / (sim + nao), 4) if sim + nao else 0)
 
     elif aba == "Documentos":
         for linha in linhas[1:]:
-            por(linha["_r"], "B", _nivel(linha.get("C", "")))
+            por(linha["_r"], "D", _nivel(linha.get("E", "")))
 
     elif aba == "Riscos":
         for linha in linhas[1:]:
             por(linha["_r"], "B", _nivel(linha.get("C", "")))
-            p, i = _num(linha.get("F", "")), _num(linha.get("G", ""))
+            p, i = _num(linha.get("I", "")), _num(linha.get("J", ""))
             nivel = "" if p is None or i is None else int(p * i)
-            por(linha["_r"], "H", nivel)
+            por(linha["_r"], "K", nivel)
             if nivel == "":
                 classe = ""
             elif nivel >= 20:
@@ -140,21 +140,17 @@ def calcular(aba: str, linhas: list[dict[str, str]]) -> dict[int, dict[str, obje
                 classe = "Moderado"
             else:
                 classe = "Baixo"
-            por(linha["_r"], "I", classe)
+            por(linha["_r"], "L", classe)
 
-    elif aba == "Indicadores":
+    elif aba == "Metricas":
         for linha in linhas[1:]:
-            por(linha["_r"], "B", _nivel(linha.get("C", "")))
-            meta, resultado = _num(linha.get("H", "")), _num(linha.get("I", ""))
-            if resultado is None:
-                situacao = "Sem medição"
-            elif meta is None:
-                situacao = "Sem meta"
-            elif linha.get("G", "").startswith("Maior"):
-                situacao = "Meta atingida" if resultado >= meta else "Meta não atingida"
-            else:
-                situacao = "Meta atingida" if resultado <= meta else "Meta não atingida"
-            por(linha["_r"], "J", situacao)
+            por(linha["_r"], "C", _nivel(linha.get("D", "")))
+
+    elif aba in ("Papeis", "Regras"):
+        col_codigo = "C" if aba == "Papeis" else "D"
+        col_nivel = "B" if aba == "Papeis" else "C"
+        for linha in linhas[1:]:
+            por(linha["_r"], col_nivel, _nivel(linha.get(col_codigo, "")))
 
     return fora
 
@@ -168,12 +164,12 @@ def cachear(caminho: Path) -> int:
     abas = re.findall(r'<sheet name="([^"]+)"', livro)
     arquivo_da_aba = {a: f"xl/worksheets/sheet{i + 1}.xml" for i, a in enumerate(abas)}
 
-    # Unidade_Nome do NUGEP é um VLOOKUP na aba Listas (V:W)
-    listas, _ = _ler_aba(arquivos[arquivo_da_aba["Listas"]])
-    unidades = {l.get("V", ""): l.get("W", "") for l in listas[1:] if l.get("V")}
+    # Unidade_Nome do NUGEP é um VLOOKUP direto na aba Siglas (A:B).
+    siglas, _ = _ler_aba(arquivos[arquivo_da_aba["Siglas"]])
+    unidades = {l.get("A", ""): l.get("B", "") for l in siglas[1:] if l.get("A")}
 
     gravadas = 0
-    for aba in ("Processos", "Documentos", "Riscos", "Indicadores", "NUGEP"):
+    for aba in ("Processos", "Documentos", "Riscos", "Metricas", "Papeis", "Regras", "NUGEP"):
         if aba not in arquivo_da_aba:
             continue
         alvo = arquivo_da_aba[aba]

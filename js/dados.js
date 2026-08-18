@@ -3,1308 +3,1385 @@
 window.PAINEL_DADOS = {
  "Macroprocessos": [
   {
-   "Codigo": "MP-01",
+   "Codigo": "MG-01",
    "Nome": "Gestão Estratégica e Governança",
    "Categoria": "Gerencial",
    "Ordem": "1",
+   "Unidade_Organica_Responsavel": "AE/GPE",
+   "Unidades_Organicas_Corresponsaveis": "AR/GDT; AI/GOM",
    "Descricao": "Formulação, desdobramento e monitoramento da estratégia corporativa, da governança e do desempenho institucional.",
    "Objetivo": "Garantir que a atuação da Companhia esteja alinhada à estratégia, com decisões baseadas em evidências.",
-   "Unidade_Responsavel": "AE/GPE",
-   "Dono_Processo": "Gerente de Planejamento",
    "Entregas": "Plano Estratégico; Plano de Ação Anual; Relatórios de desempenho",
-   "Clientes_Beneficiarios": "Diretoria Executiva; Conselho de Administração; Unidades internas",
+   "Beneficiarios": "Diretoria Executiva; Conselho de Administração; Unidades internas",
    "Partes_Interessadas": "Ministério supervisor; Órgãos de controle; Sociedade",
    "Sistemas": "e-Codevasf; Painéis de BI",
-   "Normativos_Aplicaveis": "Estatuto Social; Regimento Interno; Lei nº 13.303/2016",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AR/GDT; AI/GOM"
+   "Observacoes": null
   },
   {
-   "Codigo": "MP-02",
+   "Codigo": "MG-02",
    "Nome": "Gestão de Riscos, Integridade e Controles",
    "Categoria": "Gerencial",
    "Ordem": "2",
+   "Unidade_Organica_Responsavel": "AE/GAG",
+   "Unidades_Organicas_Corresponsaveis": "AI/GOM; AR/GRB",
    "Descricao": "Identificação, avaliação e tratamento de riscos corporativos, integridade e controles internos (2ª linha).",
    "Objetivo": "Assegurar razoável segurança para o alcance dos objetivos institucionais.",
-   "Unidade_Responsavel": "AE/GAG",
-   "Dono_Processo": "Gerente de Governança",
    "Entregas": "Política de Gestão de Riscos; Matriz de riscos corporativa; Plano de integridade",
-   "Clientes_Beneficiarios": "Alta administração; Gestores de 1ª linha",
+   "Beneficiarios": "Alta administração; Gestores de 1ª linha",
    "Partes_Interessadas": "Auditoria interna; CGU; TCU",
    "Sistemas": "e-Codevasf; Sistema de gestão de riscos",
-   "Normativos_Aplicaveis": "Política de Gestão de Riscos (fictícia); IN Conjunta MP/CGU nº 01/2016",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AI/GOM; AR/GRB"
+   "Observacoes": null
   },
   {
-   "Codigo": "MP-03",
+   "Codigo": "MF-01",
    "Nome": "Desenvolvimento Territorial e Estruturação Produtiva",
    "Categoria": "Finalístico",
    "Ordem": "3",
+   "Unidade_Organica_Responsavel": "AR/GDT",
+   "Unidades_Organicas_Corresponsaveis": "AR/GRB; AA/GLC",
    "Descricao": "Apoio a arranjos produtivos, inclusão socioeconômica e estruturação de cadeias produtivas nos vales.",
    "Objetivo": "Promover o desenvolvimento regional integrado e sustentável.",
-   "Unidade_Responsavel": "AR/GDT",
-   "Dono_Processo": "Gerente de Desenvolvimento",
    "Entregas": "Projetos de estruturação produtiva; Convênios e instrumentos de repasse",
-   "Clientes_Beneficiarios": "Produtores rurais; Cooperativas; Municípios",
+   "Beneficiarios": "Produtores rurais; Cooperativas; Municípios",
    "Partes_Interessadas": "Parlamentares; Entes federados; Entidades parceiras",
    "Sistemas": "TransfereGov; e-Codevasf",
-   "Normativos_Aplicaveis": "Lei nº 14.133/2021; Portarias de transferências voluntárias",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AR/GRB; AA/GLC"
+   "Observacoes": null
   },
   {
-   "Codigo": "MP-04",
+   "Codigo": "MF-02",
    "Nome": "Gestão de Empreendimentos de Irrigação",
    "Categoria": "Finalístico",
    "Ordem": "4",
+   "Unidade_Organica_Responsavel": "AI/GOM",
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC; AG/GGP",
    "Descricao": "Implantação, operação, manutenção e transferência de gestão de perímetros públicos de irrigação.",
    "Objetivo": "Ampliar a área irrigada produtiva com sustentabilidade hídrica e econômica.",
-   "Unidade_Responsavel": "AI/GOM",
-   "Dono_Processo": "Gerente de Operação",
    "Entregas": "Perímetros em operação; Água distribuída; Relatórios de O&M",
-   "Clientes_Beneficiarios": "Irrigantes; Distritos de irrigação",
+   "Beneficiarios": "Irrigantes; Distritos de irrigação",
    "Partes_Interessadas": "ANA; Agências estaduais; Associações de usuários",
    "Sistemas": "SIG-Irrigação (fictício); e-Codevasf",
-   "Normativos_Aplicaveis": "Lei nº 12.787/2013 (Política Nacional de Irrigação)",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AA/GLC; AG/GGP"
+   "Observacoes": null
   },
   {
-   "Codigo": "MP-05",
+   "Codigo": "MF-03",
    "Nome": "Revitalização de Bacias Hidrográficas",
    "Categoria": "Finalístico",
    "Ordem": "5",
+   "Unidade_Organica_Responsavel": "AR/GRB",
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP; AT/GTI",
    "Descricao": "Ações de recuperação hidroambiental, segurança hídrica e uso sustentável dos recursos naturais.",
    "Objetivo": "Contribuir para a revitalização das bacias dos rios São Francisco e Parnaíba.",
-   "Unidade_Responsavel": "AR/GRB",
-   "Dono_Processo": "Gerente de Revitalização",
    "Entregas": "Nascentes recuperadas; Obras hidroambientais; Sistemas de abastecimento",
-   "Clientes_Beneficiarios": "Comunidades ribeirinhas; Municípios",
+   "Beneficiarios": "Comunidades ribeirinhas; Municípios",
    "Partes_Interessadas": "Comitês de bacia; MMA; Órgãos ambientais",
    "Sistemas": "e-Codevasf; GeoPortal (fictício)",
-   "Normativos_Aplicaveis": "Legislação ambiental aplicável",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AG/GGP; AT/GTI"
+   "Observacoes": null
   },
   {
-   "Codigo": "MP-06",
+   "Codigo": "MS-01",
    "Nome": "Gestão de Licitações e Contratos",
    "Categoria": "Suporte",
    "Ordem": "6",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI; AE/GPE",
    "Descricao": "Planejamento das contratações, seleção de fornecedores e gestão dos contratos administrativos da Companhia.",
    "Objetivo": "Prover contratações tempestivas, vantajosas e conformes à legislação.",
-   "Unidade_Responsavel": "AA/GLC",
-   "Dono_Processo": "Gerente de Licitações",
    "Entregas": "Editais publicados; Contratos firmados; Atas de registro de preços",
-   "Clientes_Beneficiarios": "Todas as unidades demandantes",
+   "Beneficiarios": "Todas as unidades demandantes",
    "Partes_Interessadas": "Fornecedores; Assessoria Jurídica; Órgãos de controle; PNCP",
    "Sistemas": "Compras.gov.br; PNCP; Painel de Preços; e-Codevasf",
-   "Normativos_Aplicaveis": "Lei nº 14.133/2021; Lei nº 13.303/2016; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Imagem_Bizagi": null,
-   "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento.",
-   "Unidades_Corresponsaveis": "AT/GTI; AE/GPE"
+   "Observacoes": "Macroprocesso priorizado no ciclo 2026 de mapeamento."
   },
   {
-   "Codigo": "MP-07",
+   "Codigo": "MS-02",
    "Nome": "Gestão de Pessoas",
    "Categoria": "Suporte",
    "Ordem": "7",
+   "Unidade_Organica_Responsavel": "AG/GGP",
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE; AE/GAG",
    "Descricao": "Provimento, desenvolvimento, remuneração e qualidade de vida do corpo funcional.",
    "Objetivo": "Assegurar pessoas qualificadas e engajadas para a missão institucional.",
-   "Unidade_Responsavel": "AG/GGP",
-   "Dono_Processo": "Gerente de Pessoas",
    "Entregas": "Empregados admitidos e capacitados; Folha de pagamento",
-   "Clientes_Beneficiarios": "Empregados; Gestores",
+   "Beneficiarios": "Empregados; Gestores",
    "Partes_Interessadas": "Sindicatos; SEST; Ministério supervisor",
    "Sistemas": "SIGEP (fictício); e-Codevasf",
-   "Normativos_Aplicaveis": "CLT; Normas internas de pessoal",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AE/GPE; AE/GAG"
+   "Observacoes": null
   },
   {
-   "Codigo": "MP-08",
+   "Codigo": "MS-03",
    "Nome": "Gestão de Tecnologia da Informação",
    "Categoria": "Suporte",
    "Ordem": "8",
+   "Unidade_Organica_Responsavel": "AT/GTI",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG; AR/GDT",
    "Descricao": "Planejamento, desenvolvimento, sustentação e segurança dos serviços de TI.",
    "Objetivo": "Prover soluções digitais seguras que habilitem os processos de negócio.",
-   "Unidade_Responsavel": "AT/GTI",
-   "Dono_Processo": "Gerente de TI",
    "Entregas": "Sistemas em produção; Serviços de infraestrutura; Suporte ao usuário",
-   "Clientes_Beneficiarios": "Todas as unidades",
+   "Beneficiarios": "Todas as unidades",
    "Partes_Interessadas": "SGD/MGI; Fornecedores de TI",
    "Sistemas": "e-Codevasf; Service Desk",
-   "Normativos_Aplicaveis": "IN SGD nº 94/2022; Política de Segurança da Informação (fictícia)",
    "Imagem_Bizagi": null,
-   "Observacoes": null,
-   "Unidades_Corresponsaveis": "AE/GAG; AR/GDT"
+   "Observacoes": null
   }
  ],
  "Processos": [
   {
-   "Codigo": "P-06.01",
-   "Macroprocesso": "MP-06",
+   "Codigo": "PP-01",
    "Nome": "Planejamento da Contratação",
+   "Macroprocesso": "MS-01",
    "Descricao": "Da identificação da necessidade (DFD) até a aprovação do ETP, TR e pesquisa de preços que instruem o certame.",
    "Objetivo": "Instruir as contratações com estudos e artefatos completos, reduzindo retrabalho e impugnações.",
-   "Area_Responsavel": "AA/GLC",
-   "Dono_Processo": "Gerente de Licitações",
-   "Interlocutor": "Carlos Eduardo Lima (UNP)",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Ponto_Focal_Nugep": "Carlos Eduardo Lima (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG; AR/GDT",
    "Prioridade": "Alta",
    "Complexidade": "Alta",
+   "Maturidade": "Definido",
    "Status_Mapeamento": "Concluído",
    "Percentual": 1,
-   "Fase_Ciclo_BPM": "5. Medir o sucesso",
-   "Inicio_Mapeamento": "2026-01-05",
-   "Prazo_Previsto": "2026-05-29",
-   "Data_Conclusao": "2026-05-18",
+   "Inicio_Mapeamento": "05/01/2026",
+   "Prazo_Previsto": "29/05/2026",
+   "Data_Conclusao": "18/05/2026",
+   "Ultima_Atualizacao": "10/07/2026",
+   "M1_Conhecer_Processo": "Sim",
+   "M2_Processo_Modelado": "Sim",
+   "M3_Subprocessos_Modelados": "Sim",
+   "M4_ASIS_Modelado": "Sim",
+   "M5_ASIS_Validado": "Sim",
+   "M6_Procedimento_Aprovado": "Sim",
+   "M7_Processo_Publicado": "Sim",
+   "M8_TOBE_Elaborado": "Sim",
+   "M9_TOBE_Aprovado": "Sim",
+   "M10_Processo_Transformado": "Sim",
    "Fornecedores": "Áreas demandantes; Painel de Preços; Fornecedores (cotações)",
    "Entradas": "DFD; Plano de Contratações Anual; Requisitos da área",
    "Saidas": "ETP aprovado; TR aprovado; Pesquisa de preços validada",
    "Beneficiarios": "AA/GLC (Seleção do Fornecedor); Assessoria Jurídica",
    "Sistemas": "e-Codevasf; Compras.gov.br; Painel de Preços",
-   "Normativos_Relacionados": "Lei nº 14.133/2021; IN SEGES nº 65/2021; NI-027/2024 (fictícia)",
    "Processo_ECodevasf": "59500.000123/2026-11",
    "Imagem_Bizagi": "https://fluxosti.codevasf.gov.br/incidentes/",
-   "M1_Reuniao_Contextualizacao": "Sim",
-   "M2_Macro_Processo_Modelados": "Sim",
-   "M3_Subprocessos_Modelados": "Sim",
-   "M4_ASIS_Modelado": "Sim",
-   "M5_ASIS_Validado": "Sim",
-   "M6_Procedimento_Validado": "Sim",
-   "M7_Procedimento_Aprovado": "Sim",
-   "M8_TOBE_Elaborado": "Sim",
-   "M9_TOBE_Validado": "Sim",
-   "M10_Publicado_Repositorio": "Sim",
-   "Proxima_Acao": "Monitorar indicadores do processo e revisar o PRO em 12 meses.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AE/GAG; AR/GDT",
-   "Maturidade": "Definido",
+   "Competencias_Necessarias": "Elaboração de estudos técnicos e termos de referência; Conhecimento da Lei nº 14.133/2021; Pesquisa e análise de preços de mercado",
    "Fontes_Dados": "e-Codevasf; Painel de Preços; PNCP",
-   "M10_Processo_Transformado": "Sim",
-   "Competencias_Necessarias": "Elaboração de estudos técnicos e termos de referência; Conhecimento da Lei nº 14.133/2021; Pesquisa e análise de preços de mercado"
+   "Proxima_Acao": "Monitorar indicadores do processo e revisar o PRO em 12 meses.",
+   "Pendencia": null
   },
   {
-   "Codigo": "P-06.02",
-   "Macroprocesso": "MP-06",
+   "Codigo": "PP-02",
    "Nome": "Seleção do Fornecedor",
+   "Macroprocesso": "MS-01",
    "Descricao": "Da divulgação do edital à homologação do resultado, incluindo sessão pública, julgamento e recursos.",
    "Objetivo": "Selecionar a proposta mais vantajosa com celeridade e segurança jurídica.",
-   "Area_Responsavel": "AA/GLC",
-   "Dono_Processo": "Gerente de Licitações",
-   "Interlocutor": "Carlos Eduardo Lima (UNP)",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Ponto_Focal_Nugep": "Carlos Eduardo Lima (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AR/GDT; AI/GOM",
    "Prioridade": "Alta",
    "Complexidade": "Média",
+   "Maturidade": "Repetível",
    "Status_Mapeamento": "Em andamento",
    "Percentual": 0.4,
-   "Fase_Ciclo_BPM": "2. Arquitetar mudanças",
-   "Inicio_Mapeamento": "2026-06-01",
-   "Prazo_Previsto": "2026-09-30",
+   "Inicio_Mapeamento": "01/06/2026",
+   "Prazo_Previsto": "30/09/2026",
    "Data_Conclusao": null,
+   "Ultima_Atualizacao": "15/07/2026",
+   "M1_Conhecer_Processo": "Sim",
+   "M2_Processo_Modelado": "Sim",
+   "M3_Subprocessos_Modelados": "Sim",
+   "M4_ASIS_Modelado": "Sim",
+   "M5_ASIS_Validado": "Não",
+   "M6_Procedimento_Aprovado": "Não",
+   "M7_Processo_Publicado": "Não",
+   "M8_TOBE_Elaborado": "Não",
+   "M9_TOBE_Aprovado": "Não",
+   "M10_Processo_Transformado": "Não",
    "Fornecedores": "P-06.01 (artefatos); Compras.gov.br",
    "Entradas": "Edital minutado; Parecer jurídico; ETP/TR",
    "Saidas": "Resultado homologado; Contrato/ata para assinatura",
    "Beneficiarios": "Unidades demandantes; Fornecedores",
    "Sistemas": "Compras.gov.br; PNCP; e-Codevasf",
-   "Normativos_Relacionados": "Lei nº 14.133/2021; NI-027/2024 (fictícia)",
    "Processo_ECodevasf": "59500.000456/2026-22",
    "Imagem_Bizagi": null,
-   "M1_Reuniao_Contextualizacao": "Sim",
-   "M2_Macro_Processo_Modelados": "Sim",
-   "M3_Subprocessos_Modelados": "Sim",
-   "M4_ASIS_Modelado": "Sim",
-   "M5_ASIS_Validado": "Não",
-   "M6_Procedimento_Validado": "Não",
-   "M7_Procedimento_Aprovado": "Não",
-   "M8_TOBE_Elaborado": "Não",
-   "M9_TOBE_Validado": "Não",
-   "M10_Publicado_Repositorio": "Não",
-   "Proxima_Acao": "Validar AS-IS com o dono do processo (reunião marcada).",
-   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos.",
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AR/GDT; AI/GOM",
-   "Maturidade": "Repetível",
+   "Competencias_Necessarias": "Condução de sessões públicas de licitação; Julgamento de propostas e habilitação; Uso de plataformas de compras governamentais",
    "Fontes_Dados": "Compras.gov.br",
-   "M10_Processo_Transformado": "Não",
-   "Competencias_Necessarias": "Condução de sessões públicas de licitação; Julgamento de propostas e habilitação; Uso de plataformas de compras governamentais"
+   "Proxima_Acao": "Validar AS-IS com o dono do processo (reunião marcada).",
+   "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos."
   },
   {
-   "Codigo": "P-06.03",
-   "Macroprocesso": "MP-06",
+   "Codigo": "PP-03",
    "Nome": "Gestão e Fiscalização Contratual",
+   "Macroprocesso": "MS-01",
    "Descricao": "Da assinatura do contrato ao encerramento, incluindo fiscalização, medições, pagamentos e sanções.",
    "Objetivo": "Garantir a entrega do objeto contratado no prazo, custo e qualidade pactuados.",
-   "Area_Responsavel": "AA/GLC",
-   "Dono_Processo": "Gerente de Licitações",
-   "Interlocutor": "Bruna Souza (UNP)",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Ponto_Focal_Nugep": "Bruna Souza (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AI/GOM; AR/GRB",
    "Prioridade": "Alta",
    "Complexidade": "Alta",
+   "Maturidade": "Gerenciado",
    "Status_Mapeamento": "Em andamento",
    "Percentual": 0.2,
-   "Fase_Ciclo_BPM": "2. Arquitetar mudanças",
-   "Inicio_Mapeamento": "2026-06-15",
-   "Prazo_Previsto": "2026-11-30",
+   "Inicio_Mapeamento": "15/06/2026",
+   "Prazo_Previsto": "30/11/2026",
    "Data_Conclusao": null,
+   "Ultima_Atualizacao": "20/07/2026",
+   "M1_Conhecer_Processo": "Sim",
+   "M2_Processo_Modelado": "Sim",
+   "M3_Subprocessos_Modelados": "Não",
+   "M4_ASIS_Modelado": "Não",
+   "M5_ASIS_Validado": "Não",
+   "M6_Procedimento_Aprovado": "Não",
+   "M7_Processo_Publicado": "Não",
+   "M8_TOBE_Elaborado": "Não",
+   "M9_TOBE_Aprovado": "Não",
+   "M10_Processo_Transformado": "Não",
    "Fornecedores": "P-06.02 (contrato); Fornecedores contratados",
    "Entradas": "Contrato assinado; Cronograma; Garantias",
    "Saidas": "Objeto recebido; Pagamentos efetuados; Termo de encerramento",
    "Beneficiarios": "Unidades demandantes; Fornecedores",
    "Sistemas": "e-Codevasf; Compras.gov.br",
-   "Normativos_Relacionados": "Lei nº 14.133/2021; Manual de Fiscalização (fictício)",
    "Processo_ECodevasf": "59500.000789/2026-33",
    "Imagem_Bizagi": null,
-   "M1_Reuniao_Contextualizacao": "Sim",
-   "M2_Macro_Processo_Modelados": "Sim",
-   "M3_Subprocessos_Modelados": "Não",
-   "M4_ASIS_Modelado": "Não",
-   "M5_ASIS_Validado": "Não",
-   "M6_Procedimento_Validado": "Não",
-   "M7_Procedimento_Aprovado": "Não",
-   "M8_TOBE_Elaborado": "Não",
-   "M9_TOBE_Validado": "Não",
-   "M10_Publicado_Repositorio": "Não",
-   "Proxima_Acao": "Concluir modelagem AS-IS das medições e pagamentos.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AI/GOM; AR/GRB",
-   "Maturidade": "Gerenciado",
+   "Competencias_Necessarias": "Fiscalização técnica e administrativa de contratos; Gestão de medições e pagamentos; Aplicação de sanções administrativas",
    "Fontes_Dados": "e-Codevasf",
-   "M10_Processo_Transformado": "Não",
-   "Competencias_Necessarias": "Fiscalização técnica e administrativa de contratos; Gestão de medições e pagamentos; Aplicação de sanções administrativas"
+   "Proxima_Acao": "Concluir modelagem AS-IS das medições e pagamentos.",
+   "Pendencia": null
   },
   {
-   "Codigo": "P-04.01",
-   "Macroprocesso": "MP-04",
+   "Codigo": "PP-04",
    "Nome": "Operação e Manutenção de Perímetros Irrigados",
+   "Macroprocesso": "MF-02",
    "Descricao": "Programação e distribuição de água, manutenção da infraestrutura de uso comum e relacionamento com irrigantes.",
    "Objetivo": "Assegurar a distribuição hídrica confiável e a conservação dos ativos.",
-   "Area_Responsavel": "AI/GOM",
-   "Dono_Processo": "Gerente de Operação",
-   "Interlocutor": "Eduardo Martins (UNP)",
+   "Unidade_Organica_Responsavel": "AI/GOM",
+   "Ponto_Focal_Nugep": "Eduardo Martins (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AR/GRB; AA/GLC",
    "Prioridade": "Média",
    "Complexidade": "Alta",
+   "Maturidade": "Inicial",
    "Status_Mapeamento": "Em andamento",
    "Percentual": 0.3,
-   "Fase_Ciclo_BPM": "2. Arquitetar mudanças",
-   "Inicio_Mapeamento": "2026-05-04",
-   "Prazo_Previsto": "2026-10-30",
+   "Inicio_Mapeamento": "04/05/2026",
+   "Prazo_Previsto": "30/10/2026",
    "Data_Conclusao": null,
+   "Ultima_Atualizacao": "12/07/2026",
+   "M1_Conhecer_Processo": "Sim",
+   "M2_Processo_Modelado": "Sim",
+   "M3_Subprocessos_Modelados": "Sim",
+   "M4_ASIS_Modelado": "Não",
+   "M5_ASIS_Validado": "Não",
+   "M6_Procedimento_Aprovado": "Não",
+   "M7_Processo_Publicado": "Não",
+   "M8_TOBE_Elaborado": "Não",
+   "M9_TOBE_Aprovado": "Não",
+   "M10_Processo_Transformado": "Não",
    "Fornecedores": "ANA (outorgas); Distritos de irrigação",
    "Entradas": "Outorga de uso; Demanda de irrigação; Plano de cultivo",
    "Saidas": "Água distribuída; Infraestrutura mantida; Relatórios de O&M",
    "Beneficiarios": "Irrigantes; Distritos",
    "Sistemas": "SIG-Irrigação (fictício); e-Codevasf",
-   "Normativos_Relacionados": "Lei nº 12.787/2013",
    "Processo_ECodevasf": "59500.000901/2026-44",
    "Imagem_Bizagi": null,
-   "M1_Reuniao_Contextualizacao": "Sim",
-   "M2_Macro_Processo_Modelados": "Sim",
-   "M3_Subprocessos_Modelados": "Sim",
-   "M4_ASIS_Modelado": "Não",
-   "M5_ASIS_Validado": "Não",
-   "M6_Procedimento_Validado": "Não",
-   "M7_Procedimento_Aprovado": "Não",
-   "M8_TOBE_Elaborado": "Não",
-   "M9_TOBE_Validado": "Não",
-   "M10_Publicado_Repositorio": "Não",
-   "Proxima_Acao": "Agendar oficina de validação do AS-IS com o distrito.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AR/GRB; AA/GLC",
-   "Maturidade": "Inicial",
+   "Competencias_Necessarias": "Operação de sistemas hidráulicos; Manutenção de infraestrutura de irrigação; Relacionamento com associações de irrigantes",
    "Fontes_Dados": "SIG-Irrigação (fictício)",
-   "M10_Processo_Transformado": "Não",
-   "Competencias_Necessarias": "Operação de sistemas hidráulicos; Manutenção de infraestrutura de irrigação; Relacionamento com associações de irrigantes"
+   "Proxima_Acao": "Agendar oficina de validação do AS-IS com o distrito.",
+   "Pendencia": null
   },
   {
-   "Codigo": "P-05.01",
-   "Macroprocesso": "MP-05",
+   "Codigo": "PP-05",
    "Nome": "Recuperação de Nascentes e Matas Ciliares",
+   "Macroprocesso": "MF-03",
    "Descricao": "Seleção de áreas, execução de cercamento e plantio, e monitoramento da regeneração.",
    "Objetivo": "Recuperar áreas degradadas prioritárias das bacias.",
-   "Area_Responsavel": "AR/GRB",
-   "Dono_Processo": "Gerente de Revitalização",
-   "Interlocutor": "Eduardo Martins (UNP)",
+   "Unidade_Organica_Responsavel": "AR/GRB",
+   "Ponto_Focal_Nugep": "Eduardo Martins (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC; AG/GGP",
    "Prioridade": "Média",
    "Complexidade": "Média",
+   "Maturidade": "Inicial",
    "Status_Mapeamento": "Não iniciado",
    "Percentual": 0,
-   "Fase_Ciclo_BPM": "1. Alinhamento à estratégia e metas",
    "Inicio_Mapeamento": null,
-   "Prazo_Previsto": "2027-03-31",
+   "Prazo_Previsto": "31/03/2027",
    "Data_Conclusao": null,
+   "Ultima_Atualizacao": "01/07/2026",
+   "M1_Conhecer_Processo": "Não",
+   "M2_Processo_Modelado": "Não",
+   "M3_Subprocessos_Modelados": "Não",
+   "M4_ASIS_Modelado": "Não",
+   "M5_ASIS_Validado": "Não",
+   "M6_Procedimento_Aprovado": "Não",
+   "M7_Processo_Publicado": "Não",
+   "M8_TOBE_Elaborado": "Não",
+   "M9_TOBE_Aprovado": "Não",
+   "M10_Processo_Transformado": "Não",
    "Fornecedores": "Municípios; Comitês de bacia",
    "Entradas": "Diagnóstico hidroambiental; Termos de cooperação",
    "Saidas": "Nascentes recuperadas; Relatórios de monitoramento",
    "Beneficiarios": "Comunidades; Órgãos ambientais",
    "Sistemas": "e-Codevasf; GeoPortal (fictício)",
-   "Normativos_Relacionados": "Legislação ambiental aplicável",
    "Processo_ECodevasf": null,
    "Imagem_Bizagi": null,
-   "M1_Reuniao_Contextualizacao": "Não",
-   "M2_Macro_Processo_Modelados": "Não",
-   "M3_Subprocessos_Modelados": "Não",
-   "M4_ASIS_Modelado": "Não",
-   "M5_ASIS_Validado": "Não",
-   "M6_Procedimento_Validado": "Não",
-   "M7_Procedimento_Aprovado": "Não",
-   "M8_TOBE_Elaborado": "Não",
-   "M9_TOBE_Validado": "Não",
-   "M10_Publicado_Repositorio": "Não",
-   "Proxima_Acao": "Enviar formulário de levantamento à área (previsto ago/2026).",
-   "Pendencia": null,
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AA/GLC; AG/GGP",
-   "Maturidade": null,
+   "Competencias_Necessarias": "Diagnóstico e recuperação de áreas degradadas; Noções de engenharia ambiental; Articulação com comunidades e órgãos ambientais",
    "Fontes_Dados": null,
-   "M10_Processo_Transformado": "Não",
-   "Competencias_Necessarias": "Diagnóstico e recuperação de áreas degradadas; Noções de engenharia ambiental; Articulação com comunidades e órgãos ambientais"
+   "Proxima_Acao": "Enviar formulário de levantamento à área (previsto ago/2026).",
+   "Pendencia": null
   },
   {
-   "Codigo": "P-01.01",
-   "Macroprocesso": "MP-01",
+   "Codigo": "PP-06",
    "Nome": "Formulação e Monitoramento do Planejamento Estratégico",
+   "Macroprocesso": "MG-01",
    "Descricao": "Construção do plano estratégico, desdobramento em planos de ação e monitoramento periódico de resultados.",
    "Objetivo": "Manter a estratégia viva, monitorada e comunicada.",
-   "Area_Responsavel": "AE/GPE",
-   "Dono_Processo": "Gerente de Planejamento",
-   "Interlocutor": "Gustavo Pereira (UNP)",
+   "Unidade_Organica_Responsavel": "AE/GPE",
+   "Ponto_Focal_Nugep": "Gustavo Pereira (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP; AT/GTI",
    "Prioridade": "Alta",
    "Complexidade": "Média",
+   "Maturidade": "Otimizado",
    "Status_Mapeamento": "Concluído",
    "Percentual": 1,
-   "Fase_Ciclo_BPM": "5. Medir o sucesso",
-   "Inicio_Mapeamento": "2025-09-01",
-   "Prazo_Previsto": "2026-02-27",
-   "Data_Conclusao": "2026-02-20",
+   "Inicio_Mapeamento": "01/09/2025",
+   "Prazo_Previsto": "27/02/2026",
+   "Data_Conclusao": "20/02/2026",
+   "Ultima_Atualizacao": "30/06/2026",
+   "M1_Conhecer_Processo": "Sim",
+   "M2_Processo_Modelado": "Sim",
+   "M3_Subprocessos_Modelados": "Sim",
+   "M4_ASIS_Modelado": "Sim",
+   "M5_ASIS_Validado": "Sim",
+   "M6_Procedimento_Aprovado": "Sim",
+   "M7_Processo_Publicado": "Sim",
+   "M8_TOBE_Elaborado": "Sim",
+   "M9_TOBE_Aprovado": "Sim",
+   "M10_Processo_Transformado": "Sim",
    "Fornecedores": "Diretoria; Unidades",
    "Entradas": "Diretrizes de governo; Diagnóstico institucional",
    "Saidas": "Plano Estratégico; Painel de indicadores; RAG",
    "Beneficiarios": "Diretoria Executiva; Conselhos",
    "Sistemas": "e-Codevasf; Painéis de BI",
-   "Normativos_Relacionados": "Lei nº 13.303/2016",
    "Processo_ECodevasf": "59500.000015/2025-77",
    "Imagem_Bizagi": null,
-   "M1_Reuniao_Contextualizacao": "Sim",
-   "M2_Macro_Processo_Modelados": "Sim",
-   "M3_Subprocessos_Modelados": "Sim",
-   "M4_ASIS_Modelado": "Sim",
-   "M5_ASIS_Validado": "Sim",
-   "M6_Procedimento_Validado": "Sim",
-   "M7_Procedimento_Aprovado": "Sim",
-   "M8_TOBE_Elaborado": "Sim",
-   "M9_TOBE_Validado": "Sim",
-   "M10_Publicado_Repositorio": "Sim",
-   "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
-   "Pendencia": null,
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AG/GGP; AT/GTI",
-   "Maturidade": "Otimizado",
+   "Competencias_Necessarias": "Planejamento estratégico e gestão por indicadores; Facilitação de oficinas; Análise de dados institucionais",
    "Fontes_Dados": null,
-   "M10_Processo_Transformado": "Sim",
-   "Competencias_Necessarias": "Planejamento estratégico e gestão por indicadores; Facilitação de oficinas; Análise de dados institucionais"
+   "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
+   "Pendencia": null
   },
   {
-   "Codigo": "P-07.01",
-   "Macroprocesso": "MP-07",
+   "Codigo": "PP-07",
    "Nome": "Admissão e Integração de Empregados",
+   "Macroprocesso": "MS-02",
    "Descricao": "Da homologação do concurso à integração do novo empregado, incluindo exames, posse e ambientação.",
    "Objetivo": "Admitir e integrar novos empregados com agilidade e conformidade.",
-   "Area_Responsavel": "AG/GGP",
-   "Dono_Processo": "Gerente de Pessoas",
-   "Interlocutor": "Bruna Souza (UNP)",
+   "Unidade_Organica_Responsavel": "AG/GGP",
+   "Ponto_Focal_Nugep": "Bruna Souza (UNP)",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI; AE/GPE",
    "Prioridade": "Baixa",
    "Complexidade": "Baixa",
+   "Maturidade": "Inicial",
    "Status_Mapeamento": "Não iniciado",
    "Percentual": 0,
-   "Fase_Ciclo_BPM": "1. Alinhamento à estratégia e metas",
    "Inicio_Mapeamento": null,
-   "Prazo_Previsto": "2027-06-30",
+   "Prazo_Previsto": "30/06/2027",
    "Data_Conclusao": null,
+   "Ultima_Atualizacao": "15/06/2026",
+   "M1_Conhecer_Processo": "Não",
+   "M2_Processo_Modelado": "Não",
+   "M3_Subprocessos_Modelados": "Não",
+   "M4_ASIS_Modelado": "Não",
+   "M5_ASIS_Validado": "Não",
+   "M6_Procedimento_Aprovado": "Não",
+   "M7_Processo_Publicado": "Não",
+   "M8_TOBE_Elaborado": "Não",
+   "M9_TOBE_Aprovado": "Não",
+   "M10_Processo_Transformado": "Não",
    "Fornecedores": "Banca do concurso; Candidatos",
    "Entradas": "Resultado homologado; Documentação do candidato",
    "Saidas": "Empregado admitido e integrado",
    "Beneficiarios": "Novos empregados; Unidades de lotação",
    "Sistemas": "SIGEP (fictício); e-Codevasf",
-   "Normativos_Relacionados": "CLT; Normas internas de pessoal",
    "Processo_ECodevasf": null,
    "Imagem_Bizagi": null,
-   "M1_Reuniao_Contextualizacao": "Não",
-   "M2_Macro_Processo_Modelados": "Não",
-   "M3_Subprocessos_Modelados": "Não",
-   "M4_ASIS_Modelado": "Não",
-   "M5_ASIS_Validado": "Não",
-   "M6_Procedimento_Validado": "Não",
-   "M7_Procedimento_Aprovado": "Não",
-   "M8_TOBE_Elaborado": "Não",
-   "M9_TOBE_Validado": "Não",
-   "M10_Publicado_Repositorio": "Não",
-   "Proxima_Acao": "Aguardando priorização no ciclo 2027.",
-   "Pendencia": null,
-   "Ultima_Atualizacao": null,
-   "Unidades_Corresponsaveis": "AT/GTI; AE/GPE",
-   "Maturidade": null,
+   "Competencias_Necessarias": "Rotinas de admissão e legislação trabalhista (CLT); Condução de processos de integração; Uso de sistemas de gestão de pessoas",
    "Fontes_Dados": null,
-   "M10_Processo_Transformado": "Não",
-   "Competencias_Necessarias": "Rotinas de admissão e legislação trabalhista (CLT); Condução de processos de integração; Uso de sistemas de gestão de pessoas"
+   "Proxima_Acao": "Aguardando priorização no ciclo 2027.",
+   "Pendencia": null
   }
  ],
  "Subprocessos": [
   {
-   "Codigo": "SP-06.01.01",
-   "Vinculo_Pai": "P-06.01",
-   "Ordem": "1",
+   "Codigo": "SP-01",
    "Nome": "Estudo Técnico Preliminar (ETP)",
+   "Vinculo_Pai": "PP-01",
+   "Ordem": "1",
    "Descricao": "Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.",
    "Objetivo": "Fundamentar tecnicamente a melhor solução para a necessidade.",
-   "Unidade_Responsavel": "AA/GLC",
-   "Dono": "Gerente de Licitações",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AI/GOM",
+   "Reutilizavel": null,
+   "Reutilizado_Em": null,
+   "Produto_Principal": "Estudo Técnico Preliminar (ETP) aprovado",
    "Entradas": "DFD; Levantamento de soluções de mercado",
    "Saidas": "ETP aprovado no e-Codevasf",
    "Sistemas": "e-Codevasf; Compras.gov.br",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AI/GOM",
-   "Reutilizavel": null,
-   "Reutilizado_Em": null,
    "Fontes_Dados": "e-Codevasf",
-   "Produto": "Estudo Técnico Preliminar (ETP) aprovado",
-   "Cronograma_Proposto_Dias": 10
+   "Imagem_Bizagi": null
   },
   {
-   "Codigo": "SP-06.01.02",
-   "Vinculo_Pai": "P-06.01",
-   "Ordem": "2",
+   "Codigo": "SP-02",
    "Nome": "Termo de Referência (TR)",
+   "Vinculo_Pai": "PP-01",
+   "Ordem": "2",
    "Descricao": "Definição do objeto, requisitos, modelo de execução e gestão contratual, e critérios de julgamento.",
    "Objetivo": "Especificar com precisão o objeto e as condições da contratação.",
-   "Unidade_Responsavel": "AA/GLC",
-   "Dono": "Gerente de Licitações",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AR/GRB",
+   "Reutilizavel": null,
+   "Reutilizado_Em": null,
+   "Produto_Principal": "Termo de Referência (TR) aprovado e validado juridicamente",
    "Entradas": "ETP aprovado; Modelos padronizados de TR",
    "Saidas": "TR aprovado e validado juridicamente",
    "Sistemas": "e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AR/GRB",
-   "Reutilizavel": null,
-   "Reutilizado_Em": null,
    "Fontes_Dados": null,
-   "Produto": "Termo de Referência (TR) aprovado e validado juridicamente",
-   "Cronograma_Proposto_Dias": 8
+   "Imagem_Bizagi": null
   },
   {
-   "Codigo": "SP-06.01.03",
-   "Vinculo_Pai": "P-06.01",
-   "Ordem": "3",
+   "Codigo": "SP-03",
    "Nome": "Pesquisa de Preços",
+   "Vinculo_Pai": "PP-01",
+   "Ordem": "3",
    "Descricao": "Levantamento de preços em fontes admitidas (Painel de Preços, PNCP, cotações) e consolidação do valor estimado.",
    "Objetivo": "Estimar o valor da contratação conforme a IN SEGES nº 65/2021.",
-   "Unidade_Responsavel": "AA/GLC",
-   "Dono": "Gerente de Licitações",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP",
+   "Reutilizavel": null,
+   "Reutilizado_Em": null,
+   "Produto_Principal": "Relatório de pesquisa de preços com valor estimado consolidado",
    "Entradas": "TR validado; Fontes de preços admitidas",
    "Saidas": "Relatório de pesquisa de preços; Mapa comparativo",
    "Sistemas": "Painel de Preços; PNCP; e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP",
-   "Reutilizavel": null,
-   "Reutilizado_Em": null,
    "Fontes_Dados": "Painel de Preços; PNCP",
-   "Produto": "Relatório de pesquisa de preços com valor estimado consolidado",
-   "Cronograma_Proposto_Dias": 12
+   "Imagem_Bizagi": null
   },
   {
-   "Codigo": "SP-06.01.03.01",
-   "Vinculo_Pai": "SP-06.01.03",
-   "Ordem": "1",
+   "Codigo": "SP-04",
    "Nome": "Tratamento de Preços Inexequíveis ou Excessivos",
+   "Vinculo_Pai": "SP-03",
+   "Ordem": "1",
    "Descricao": "Identificação e exclusão de valores discrepantes coletados na pesquisa, com justificativa técnica registrada.",
    "Objetivo": "Evitar que outliers de preço distorçam o valor estimado da contratação.",
-   "Unidade_Responsavel": "AA/GLC",
-   "Dono": "Gerente de Licitações",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP",
+   "Reutilizavel": "Sim",
+   "Reutilizado_Em": "PP-02; PP-04",
+   "Produto_Principal": "Amostra de preços tratada estatisticamente, com justificativa de exclusões",
    "Entradas": "Amostra de preços coletados na pesquisa",
    "Saidas": "Valores discrepantes identificados e justificados",
    "Sistemas": "Planilha padrão; e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP",
-   "Reutilizavel": "Sim",
-   "Reutilizado_Em": "P-06.02; P-04.01",
    "Fontes_Dados": null,
-   "Produto": "Amostra de preços tratada estatisticamente, com justificativa de exclusões",
-   "Cronograma_Proposto_Dias": 2
+   "Imagem_Bizagi": null
   },
   {
-   "Codigo": "SP-06.02.01",
-   "Vinculo_Pai": "P-06.02",
-   "Ordem": "1",
+   "Codigo": "SP-05",
    "Nome": "Condução da Sessão Pública",
+   "Vinculo_Pai": "PP-02",
+   "Ordem": "1",
    "Descricao": "Abertura da sessão no sistema, fase de lances, julgamento, habilitação e registro em ata.",
    "Objetivo": "Conduzir o certame com transparência e celeridade.",
-   "Unidade_Responsavel": "AA/GLC",
-   "Dono": "Gerente de Licitações",
+   "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
+   "Reutilizavel": null,
+   "Reutilizado_Em": null,
+   "Produto_Principal": "Ata da sessão pública com resultado do certame por item",
    "Entradas": "Edital publicado; Propostas dos licitantes",
    "Saidas": "Ata da sessão; Resultado por item",
    "Sistemas": "Compras.gov.br",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AT/GTI",
-   "Reutilizavel": null,
-   "Reutilizado_Em": null,
    "Fontes_Dados": null,
-   "Produto": "Ata da sessão pública com resultado do certame por item",
-   "Cronograma_Proposto_Dias": 5
+   "Imagem_Bizagi": null
   },
   {
-   "Codigo": "SP-04.01.01",
-   "Vinculo_Pai": "P-04.01",
-   "Ordem": "1",
+   "Codigo": "SP-06",
    "Nome": "Distribuição de Água aos Irrigantes",
+   "Vinculo_Pai": "PP-04",
+   "Ordem": "1",
    "Descricao": "Programação semanal, operação de comportas e bombas, e registro de volumes distribuídos.",
    "Objetivo": "Entregar a água programada com eficiência e equidade.",
-   "Unidade_Responsavel": "AI/GOM",
-   "Dono": "Gerente de Operação",
+   "Unidade_Organica_Responsavel": "AI/GOM",
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE",
+   "Reutilizavel": null,
+   "Reutilizado_Em": null,
+   "Produto_Principal": "Programação hídrica semanal executada e registrada",
    "Entradas": "Outorga de uso; Demanda de irrigação",
    "Saidas": "Programação hídrica executada; Registros de volume",
    "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AE/GPE",
-   "Reutilizavel": null,
-   "Reutilizado_Em": null,
    "Fontes_Dados": null,
-   "Produto": "Programação hídrica semanal executada e registrada",
-   "Cronograma_Proposto_Dias": 5
+   "Imagem_Bizagi": null
   }
  ],
  "Atividades": [
   {
-   "Codigo": "A-06.01.01.01",
-   "Vinculo_Pai": "SP-06.01.01",
-   "Ordem": "1",
+   "Codigo": "AT-01",
    "Nome": "Formalizar a necessidade (DFD)",
+   "Vinculo_Pai": "SP-01",
+   "Ordem": "1",
+   "Tipo_Atividade": "Agregação de Valor",
+   "Descricao": "A área demandante registra a necessidade de contratação no Documento de Formalização da Demanda (DFD), justificando o objeto e vinculando-o ao Plano de Contratações Anual.",
    "Entradas": "Necessidade identificada; Plano de Contratações Anual",
    "Saidas": "DFD assinado no e-Codevasf",
-   "Sistemas": "e-Codevasf",
-   "Imagem_Bizagi": "https://placehold.co/960x420/155bcb/ffffff?text=Diagrama+BPMN+A-06.01.01.01",
-   "Tipo_Atividade": "Agregação de Valor",
-   "Responsavel": null,
-   "Descricao": "A área demandante registra a necessidade de contratação no Documento de Formalização da Demanda (DFD), justificando o objeto e vinculando-o ao Plano de Contratações Anual."
+   "Sistemas": "e-Codevasf"
   },
   {
-   "Codigo": "A-06.01.01.02",
-   "Vinculo_Pai": "SP-06.01.01",
-   "Ordem": "2",
+   "Codigo": "AT-02",
    "Nome": "Levantar soluções de mercado",
+   "Vinculo_Pai": "SP-01",
+   "Ordem": "2",
+   "Tipo_Atividade": null,
+   "Descricao": "A equipe de planejamento pesquisa catálogos, contratações similares no PNCP e alternativas de mercado que atendam à necessidade formalizada no DFD.",
    "Entradas": "DFD; Catálogos; Contratações similares (PNCP)",
    "Saidas": "Levantamento de soluções documentado",
-   "Sistemas": "PNCP; Compras.gov.br",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": null,
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento pesquisa catálogos, contratações similares no PNCP e alternativas de mercado que atendam à necessidade formalizada no DFD."
+   "Sistemas": "PNCP; Compras.gov.br"
   },
   {
-   "Codigo": "A-06.01.01.03",
-   "Vinculo_Pai": "SP-06.01.01",
-   "Ordem": "3",
+   "Codigo": "AT-03",
    "Nome": "Estimar quantidades e resultados",
+   "Vinculo_Pai": "SP-01",
+   "Ordem": "3",
+   "Tipo_Atividade": null,
+   "Descricao": "A equipe de planejamento estima quantitativos e resultados pretendidos com base no levantamento de soluções e em séries históricas de consumo.",
    "Entradas": "Levantamento de soluções; Séries históricas",
    "Saidas": "Memória de cálculo de quantitativos",
-   "Sistemas": "e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": null,
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento estima quantitativos e resultados pretendidos com base no levantamento de soluções e em séries históricas de consumo."
+   "Sistemas": "e-Codevasf"
   },
   {
-   "Codigo": "A-06.01.01.04",
-   "Vinculo_Pai": "SP-06.01.01",
-   "Ordem": "4",
+   "Codigo": "AT-04",
    "Nome": "Elaborar e aprovar o ETP",
+   "Vinculo_Pai": "SP-01",
+   "Ordem": "4",
+   "Tipo_Atividade": "Controle",
+   "Descricao": "A equipe de planejamento consolida os levantamentos no Estudo Técnico Preliminar (ETP) e o submete à aprovação da autoridade competente.",
    "Entradas": "Levantamentos e memórias anteriores",
    "Saidas": "ETP aprovado",
-   "Sistemas": "e-Codevasf; Compras.gov.br",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": "Controle",
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento consolida os levantamentos no Estudo Técnico Preliminar (ETP) e o submete à aprovação da autoridade competente."
+   "Sistemas": "e-Codevasf; Compras.gov.br"
   },
   {
-   "Codigo": "A-06.01.02.01",
-   "Vinculo_Pai": "SP-06.01.02",
-   "Ordem": "1",
+   "Codigo": "AT-05",
    "Nome": "Redigir o Termo de Referência",
+   "Vinculo_Pai": "SP-02",
+   "Ordem": "1",
+   "Tipo_Atividade": null,
+   "Descricao": "A equipe de planejamento redige a minuta do Termo de Referência a partir do ETP aprovado, utilizando os modelos padronizados da Empresa.",
    "Entradas": "ETP aprovado; Modelos padronizados",
    "Saidas": "Minuta de TR",
-   "Sistemas": "e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": null,
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento redige a minuta do Termo de Referência a partir do ETP aprovado, utilizando os modelos padronizados da Empresa."
+   "Sistemas": "e-Codevasf"
   },
   {
-   "Codigo": "A-06.01.02.02",
-   "Vinculo_Pai": "SP-06.01.02",
-   "Ordem": "2",
+   "Codigo": "AT-06",
    "Nome": "Validar o TR com a Assessoria Jurídica",
+   "Vinculo_Pai": "SP-02",
+   "Ordem": "2",
+   "Tipo_Atividade": "Controle",
+   "Descricao": "A Assessoria Jurídica analisa a minuta do Termo de Referência e emite parecer sobre sua conformidade legal antes da publicação do edital.",
    "Entradas": "Minuta de TR",
    "Saidas": "TR validado; Parecer jurídico",
-   "Sistemas": "e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": "Controle",
-   "Responsavel": null,
-   "Descricao": "A Assessoria Jurídica analisa a minuta do Termo de Referência e emite parecer sobre sua conformidade legal antes da publicação do edital."
+   "Sistemas": "e-Codevasf"
   },
   {
-   "Codigo": "A-06.01.03.01",
-   "Vinculo_Pai": "SP-06.01.03",
-   "Ordem": "1",
+   "Codigo": "AT-07",
    "Nome": "Realizar a pesquisa de preços",
+   "Vinculo_Pai": "SP-03",
+   "Ordem": "1",
+   "Tipo_Atividade": "Agregação de Valor",
+   "Descricao": "A equipe de planejamento coleta preços em ao menos três fontes distintas (Painel de Preços, PNCP e contratações similares) para compor a estimativa de valor.",
    "Entradas": "TR validado; Fontes de preços",
    "Saidas": "Relatório de pesquisa de preços",
-   "Sistemas": "Painel de Preços; PNCP",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": "Agregação de Valor",
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento coleta preços em ao menos três fontes distintas (Painel de Preços, PNCP e contratações similares) para compor a estimativa de valor."
+   "Sistemas": "Painel de Preços; PNCP"
   },
   {
-   "Codigo": "A-06.01.03.02",
-   "Vinculo_Pai": "SP-06.01.03",
-   "Ordem": "2",
+   "Codigo": "AT-08",
    "Nome": "Consolidar o valor estimado",
+   "Vinculo_Pai": "SP-03",
+   "Ordem": "2",
+   "Tipo_Atividade": null,
+   "Descricao": "A equipe de planejamento consolida os preços coletados e tratados estatisticamente em um valor estimado único para a contratação.",
    "Entradas": "Relatório de pesquisa",
    "Saidas": "Valor estimado consolidado",
-   "Sistemas": "e-Codevasf",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": null,
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento consolida os preços coletados e tratados estatisticamente em um valor estimado único para a contratação."
+   "Sistemas": "e-Codevasf"
   },
   {
-   "Codigo": "A-06.01.03.01.01",
-   "Vinculo_Pai": "SP-06.01.03.01",
-   "Ordem": "1",
+   "Codigo": "AT-09",
    "Nome": "Aplicar critério de exclusão de valores discrepantes",
+   "Vinculo_Pai": "SP-04",
+   "Ordem": "1",
+   "Tipo_Atividade": null,
+   "Descricao": "A equipe de planejamento aplica o critério estatístico definido para excluir da amostra valores inexequíveis ou excessivamente discrepantes, registrando a justificativa.",
    "Entradas": "Amostra de preços coletados",
    "Saidas": "Amostra tratada; Justificativa de exclusão",
-   "Sistemas": "Planilha padrão",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": null,
-   "Responsavel": null,
-   "Descricao": "A equipe de planejamento aplica o critério estatístico definido para excluir da amostra valores inexequíveis ou excessivamente discrepantes, registrando a justificativa."
+   "Sistemas": "Planilha padrão"
   },
   {
-   "Codigo": "A-06.02.01.01",
-   "Vinculo_Pai": "SP-06.02.01",
-   "Ordem": "1",
+   "Codigo": "AT-10",
    "Nome": "Publicar o edital",
+   "Vinculo_Pai": "SP-05",
+   "Ordem": "1",
+   "Tipo_Atividade": "Transferência",
+   "Descricao": "A área responsável publica o edital aprovado e o parecer jurídico no Compras.gov.br e no PNCP, abrindo o certame.",
    "Entradas": "Edital aprovado; Parecer jurídico",
    "Saidas": "Edital publicado (PNCP)",
-   "Sistemas": "Compras.gov.br; PNCP",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": "Transferência",
-   "Responsavel": null,
-   "Descricao": "A área responsável publica o edital aprovado e o parecer jurídico no Compras.gov.br e no PNCP, abrindo o certame."
+   "Sistemas": "Compras.gov.br; PNCP"
   },
   {
-   "Codigo": "A-06.02.01.02",
-   "Vinculo_Pai": "SP-06.02.01",
-   "Ordem": "2",
+   "Codigo": "AT-11",
    "Nome": "Conduzir a sessão e julgar propostas",
+   "Vinculo_Pai": "SP-05",
+   "Ordem": "2",
+   "Tipo_Atividade": null,
+   "Descricao": "O agente de contratação conduz a sessão pública, analisa as propostas recebidas e registra o resultado do julgamento em ata.",
    "Entradas": "Edital publicado; Propostas",
    "Saidas": "Ata da sessão; Resultado do julgamento",
-   "Sistemas": "Compras.gov.br",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": null,
-   "Responsavel": null,
-   "Descricao": "O agente de contratação conduz a sessão pública, analisa as propostas recebidas e registra o resultado do julgamento em ata."
+   "Sistemas": "Compras.gov.br"
   },
   {
-   "Codigo": "A-04.01.01.01",
-   "Vinculo_Pai": "SP-04.01.01",
-   "Ordem": "1",
+   "Codigo": "AT-12",
    "Nome": "Programar a distribuição hídrica",
+   "Vinculo_Pai": "SP-06",
+   "Ordem": "1",
+   "Tipo_Atividade": "Agregação de Valor",
+   "Descricao": "A equipe de operação do perímetro programa semanalmente a distribuição de água com base no plano de cultivo e na disponibilidade hídrica.",
    "Entradas": "Plano de cultivo; Disponibilidade hídrica",
    "Saidas": "Programação semanal aprovada",
-   "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": null,
-   "Tipo_Atividade": "Agregação de Valor",
-   "Responsavel": null,
-   "Descricao": "A equipe de operação do perímetro programa semanalmente a distribuição de água com base no plano de cultivo e na disponibilidade hídrica."
+   "Sistemas": "SIG-Irrigação (fictício)"
   },
   {
-   "Codigo": "A-04.01.01.02",
-   "Vinculo_Pai": "SP-04.01.01",
-   "Ordem": "2",
+   "Codigo": "AT-13",
    "Nome": "Operar e registrar a distribuição",
+   "Vinculo_Pai": "SP-06",
+   "Ordem": "2",
+   "Tipo_Atividade": "Agregação de Valor",
+   "Descricao": "A equipe de operação executa a distribuição programada e registra volumes e ocorrências no sistema de gestão da irrigação.",
    "Entradas": "Programação semanal",
    "Saidas": "Volumes registrados; Ocorrências",
-   "Sistemas": "SIG-Irrigação (fictício)",
-   "Imagem_Bizagi": null,
+   "Sistemas": "SIG-Irrigação (fictício)"
+  },
+  {
+   "Codigo": "AT-14",
+   "Nome": "Designar fiscais e gestor do contrato",
+   "Vinculo_Pai": "PP-03",
+   "Ordem": "1",
+   "Tipo_Atividade": "Controle",
+   "Descricao": "Formalizar a designação do fiscal técnico, do fiscal administrativo e do gestor do contrato, com ciência dos designados.",
+   "Entradas": "Contrato assinado; Minuta de portaria de designação",
+   "Saidas": "Portaria de designação publicada",
+   "Sistemas": "e-Codevasf"
+  },
+  {
+   "Codigo": "AT-15",
+   "Nome": "Registrar medição e atestar a execução",
+   "Vinculo_Pai": "PP-03",
+   "Ordem": "2",
    "Tipo_Atividade": "Agregação de Valor",
-   "Responsavel": null,
-   "Descricao": "A equipe de operação executa a distribuição programada e registra volumes e ocorrências no sistema de gestão da irrigação."
+   "Descricao": "Conferir o objeto entregue no período, registrar a medição e atestar a nota fiscal para pagamento.",
+   "Entradas": "Relatório de execução; Nota fiscal",
+   "Saidas": "Medição registrada; Nota fiscal atestada",
+   "Sistemas": "e-Codevasf"
   }
  ],
  "Tarefas": [
   {
-   "Codigo": "T-06.01.01.01.01",
-   "Atividade": "A-06.01.01.01",
-   "Ordem": "1",
+   "Codigo": "TR-01",
    "Nome": "Reunir informações da demanda",
+   "Atividade": "AT-01",
+   "Ordem": "1",
    "Tipo_Tarefa": "Manual",
-   "Duracao_Estimada": 4,
-   "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AA/GLC",
    "Disparador": "Área demandante identifica necessidade de contratação",
    "Passos": "Levantar justificativa da necessidade; Consultar o PCA vigente; Reunir quantitativos preliminares com a área demandante",
-   "Criterios_Desempenho": "Informações completas e alinhadas ao PCA; prazo de até 3 dias úteis",
    "Principios": "Transparência; Economicidade",
-   "Materiais_Ferramentas": "e-Codevasf; Modelo de DFD",
+   "Criterios_Desempenho": "Informações completas e alinhadas ao PCA; prazo de até 3 dias úteis",
    "Resultados_Esperados": "Justificativa e quantitativos preliminares documentados",
-   "Pessoas_Consultar": "Gestor da área demandante; Coordenador de orçamento"
+   "Materiais_Ferramentas": "e-Codevasf; Modelo de DFD",
+   "Pessoas_Consultar": "Gestor da área demandante; Coordenador de orçamento",
+   "Duracao_Estimada": 4,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC"
   },
   {
-   "Codigo": "T-06.01.01.01.02",
-   "Atividade": "A-06.01.01.01",
-   "Ordem": "2",
+   "Codigo": "TR-02",
    "Nome": "Preencher o formulário DFD no e-Codevasf",
+   "Atividade": "AT-01",
+   "Ordem": "2",
    "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
    "Duracao_Estimada": 4,
    "Observacoes": "Modelo DOC-006/DOC-012.",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP",
-   "Disparador": null,
-   "Passos": null,
-   "Criterios_Desempenho": null,
-   "Principios": null,
-   "Materiais_Ferramentas": null,
-   "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP"
   },
   {
-   "Codigo": "T-06.01.01.01.03",
-   "Atividade": "A-06.01.01.01",
-   "Ordem": "3",
+   "Codigo": "TR-03",
    "Nome": "Colher assinatura eletrônica do gestor",
+   "Atividade": "AT-01",
+   "Ordem": "3",
    "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
    "Duracao_Estimada": 8,
    "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AT/GTI",
-   "Disparador": null,
-   "Passos": null,
-   "Criterios_Desempenho": null,
-   "Principios": null,
-   "Materiais_Ferramentas": null,
-   "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI"
   },
   {
-   "Codigo": "T-06.01.03.01.01",
-   "Atividade": "A-06.01.03.01",
-   "Ordem": "1",
+   "Codigo": "TR-04",
    "Nome": "Consultar o Painel de Preços",
+   "Atividade": "AT-07",
+   "Ordem": "1",
    "Tipo_Tarefa": "Manual",
-   "Duracao_Estimada": 4,
-   "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AE/GPE",
    "Disparador": "Termo de Referência validado pela Assessoria Jurídica",
    "Passos": "Consultar Painel de Preços, PNCP e contratações similares; Registrar as fontes e os valores coletados; Aplicar o método de tratamento estatístico definido",
-   "Criterios_Desempenho": "No mínimo 3 fontes distintas; amostra sem valores inexequíveis não tratados",
    "Principios": "Isonomia; Economicidade; Ampla concorrência",
-   "Materiais_Ferramentas": "Painel de Preços; PNCP; Planilha padrão de pesquisa",
+   "Criterios_Desempenho": "No mínimo 3 fontes distintas; amostra sem valores inexequíveis não tratados",
    "Resultados_Esperados": "Amostra de preços coletada e tratada, pronta para consolidação do valor estimado",
-   "Pessoas_Consultar": "Equipe de planejamento da contratação"
-  },
-  {
-   "Codigo": "T-06.01.03.01.02",
-   "Atividade": "A-06.01.03.01",
-   "Ordem": "2",
-   "Nome": "Consultar contratações no PNCP",
-   "Tipo_Tarefa": "Manual",
+   "Materiais_Ferramentas": "Painel de Preços; PNCP; Planilha padrão de pesquisa",
+   "Pessoas_Consultar": "Equipe de planejamento da contratação",
    "Duracao_Estimada": 4,
    "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AE/GAG",
-   "Disparador": null,
-   "Passos": null,
-   "Criterios_Desempenho": null,
-   "Principios": null,
-   "Materiais_Ferramentas": null,
-   "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE"
   },
   {
-   "Codigo": "T-06.01.03.01.03",
-   "Atividade": "A-06.01.03.01",
-   "Ordem": "3",
-   "Nome": "Registrar cotações de fornecedores",
+   "Codigo": "TR-05",
+   "Nome": "Consultar contratações no PNCP",
+   "Atividade": "AT-07",
+   "Ordem": "2",
    "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
+   "Duracao_Estimada": 4,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG"
+  },
+  {
+   "Codigo": "TR-06",
+   "Nome": "Registrar cotações de fornecedores",
+   "Atividade": "AT-07",
+   "Ordem": "3",
+   "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
    "Duracao_Estimada": 24,
    "Observacoes": "Mínimo de 3 fontes (IN 65/2021).",
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AR/GDT",
-   "Disparador": null,
-   "Passos": null,
-   "Criterios_Desempenho": null,
-   "Principios": null,
-   "Materiais_Ferramentas": null,
-   "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Unidades_Organicas_Corresponsaveis": "AR/GDT"
   },
   {
-   "Codigo": "T-06.01.03.01.04",
-   "Atividade": "A-06.01.03.01",
-   "Ordem": "4",
+   "Codigo": "TR-07",
    "Nome": "Aplicar tratamento estatístico",
+   "Atividade": "AT-07",
+   "Ordem": "4",
    "Tipo_Tarefa": "Regra de negócio",
-   "Duracao_Estimada": 4,
-   "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AI/GOM",
    "Disparador": null,
    "Passos": null,
-   "Criterios_Desempenho": null,
    "Principios": null,
-   "Materiais_Ferramentas": null,
+   "Criterios_Desempenho": null,
    "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
+   "Duracao_Estimada": 4,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AI/GOM"
   },
   {
-   "Codigo": "T-06.02.01.01.01",
-   "Atividade": "A-06.02.01.01",
-   "Ordem": "1",
+   "Codigo": "TR-08",
    "Nome": "Cadastrar o edital no Compras.gov.br",
+   "Atividade": "AT-10",
+   "Ordem": "1",
    "Tipo_Tarefa": "Manual",
-   "Duracao_Estimada": 4,
-   "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AR/GRB",
    "Disparador": null,
    "Passos": null,
-   "Criterios_Desempenho": null,
    "Principios": null,
-   "Materiais_Ferramentas": null,
+   "Criterios_Desempenho": null,
    "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
+   "Duracao_Estimada": 4,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AR/GRB"
   },
   {
-   "Codigo": "T-06.02.01.01.02",
-   "Atividade": "A-06.02.01.01",
-   "Ordem": "2",
+   "Codigo": "TR-09",
    "Nome": "Publicar o aviso no PNCP",
+   "Atividade": "AT-10",
+   "Ordem": "2",
    "Tipo_Tarefa": "Automatizada",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
    "Duracao_Estimada": 0,
    "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AA/GLC",
-   "Disparador": null,
-   "Passos": null,
-   "Criterios_Desempenho": null,
-   "Principios": null,
-   "Materiais_Ferramentas": null,
-   "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC"
   },
   {
-   "Codigo": "T-04.01.01.01.01",
-   "Atividade": "A-04.01.01.01",
-   "Ordem": "1",
+   "Codigo": "TR-10",
    "Nome": "Consolidar demandas semanais dos lotes",
+   "Atividade": "AT-12",
+   "Ordem": "1",
    "Tipo_Tarefa": "Manual",
-   "Duracao_Estimada": 8,
-   "Observacoes": null,
-   "Imagem_Bizagi": null,
-   "Unidades_Corresponsaveis": "AG/GGP",
    "Disparador": null,
    "Passos": null,
-   "Criterios_Desempenho": null,
    "Principios": null,
-   "Materiais_Ferramentas": null,
+   "Criterios_Desempenho": null,
    "Resultados_Esperados": null,
-   "Pessoas_Consultar": null
+   "Materiais_Ferramentas": null,
+   "Pessoas_Consultar": null,
+   "Duracao_Estimada": 8,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AG/GGP"
+  },
+  {
+   "Codigo": "TR-11",
+   "Nome": "Conferir o objeto entregue",
+   "Atividade": "AT-15",
+   "Ordem": "1",
+   "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": "e-Codevasf",
+   "Pessoas_Consultar": "Fiscal técnico do contrato",
+   "Duracao_Estimada": 8,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI"
+  },
+  {
+   "Codigo": "TR-12",
+   "Nome": "Registrar a medição no processo",
+   "Atividade": "AT-15",
+   "Ordem": "2",
+   "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": "e-Codevasf",
+   "Pessoas_Consultar": "Fiscal técnico do contrato",
+   "Duracao_Estimada": 4,
+   "Observacoes": null,
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE"
+  },
+  {
+   "Codigo": "TR-13",
+   "Nome": "Atestar a nota fiscal",
+   "Atividade": "AT-15",
+   "Ordem": "3",
+   "Tipo_Tarefa": "Manual",
+   "Disparador": null,
+   "Passos": null,
+   "Principios": null,
+   "Criterios_Desempenho": null,
+   "Resultados_Esperados": null,
+   "Materiais_Ferramentas": "e-Codevasf",
+   "Pessoas_Consultar": "Gestor do contrato",
+   "Duracao_Estimada": 4,
+   "Observacoes": "O prazo de pagamento conta a partir do ateste.",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG"
   }
  ],
  "Documentos": [
   {
    "ID": "DOC-001",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Procedimento (PRO)",
    "Titulo": "PRO 06.01 — Planejamento da Contratação",
+   "Tipo_Documento": "Procedimento (PRO)",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Versao": "2.0",
-   "Data": "2026-05-18",
+   "Data": "18/05/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": "Resolução nº 812, de 18/05/2026 (Diretoria Executiva)",
    "Link": "https://exemplo.codevasf.gov.br/repositorio/pop-06-01.pdf",
-   "Observacoes": "Publicado após validação do TO-BE.",
-   "Ato_Aprovacao": "Resolução nº 812, de 18/05/2026 (Diretoria Executiva)"
+   "Observacoes": "Publicado após validação do TO-BE."
   },
   {
    "ID": "DOC-002",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Diagrama BPMN",
    "Titulo": "Diagrama AS-IS — Planejamento da Contratação (Bizagi)",
+   "Tipo_Documento": "Diagrama BPMN",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Versao": "1.0",
-   "Data": "2026-03-02",
+   "Data": "02/03/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://fluxosti.codevasf.gov.br/incidentes/",
-   "Observacoes": "Exportado do Bizagi Modeler. Mesmo link da ficha do processo (P-06.01).",
-   "Ato_Aprovacao": null
+   "Observacoes": "Exportado do Bizagi Modeler. Mesmo link da ficha do processo (P-06.01)."
   },
   {
    "ID": "DOC-003",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Diagrama BPMN",
    "Titulo": "Diagrama TO-BE — Planejamento da Contratação (Bizagi)",
+   "Tipo_Documento": "Diagrama BPMN",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Versao": "1.0",
-   "Data": "2026-05-04",
+   "Data": "04/05/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/repositorio/p-06-01-tobe.pdf",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-004",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Ata de reunião",
    "Titulo": "Ata — Reunião de contextualização com a GLC",
+   "Tipo_Documento": "Ata de reunião",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Versao": "1.0",
-   "Data": "2026-01-12",
+   "Data": "12/01/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0601",
-   "Observacoes": "e-Codevasf 59500.000123/2026-11.",
-   "Ato_Aprovacao": null
+   "Observacoes": "e-Codevasf 59500.000123/2026-11."
   },
   {
    "ID": "DOC-005",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01;SP-06.01.03",
-   "Tipo_Documento": "Relatório",
    "Titulo": "Relatório de oportunidades de melhoria (AS-IS → TO-BE)",
+   "Tipo_Documento": "Relatório",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01; SP-03",
    "Versao": "1.0",
-   "Data": "2026-04-13",
+   "Data": "13/04/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/repositorio/rel-melhorias-p0601.pdf",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-006",
-   "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.01",
-   "Tipo_Documento": "Formulário/Modelo",
    "Titulo": "Modelo de DFD — Documento de Formalização da Demanda",
+   "Tipo_Documento": "Formulário/Modelo",
+   "Vinculo_Nivel": "Subprocesso",
+   "Vinculo_Codigo": "SP-01",
    "Versao": "3.1",
-   "Data": "2026-02-10",
+   "Data": "10/02/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/modelos/dfd.docx",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-007",
-   "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.03;SP-06.01.03.01",
-   "Tipo_Documento": "Procedimento (PRO)",
    "Titulo": "Roteiro de pesquisa de preços (IN SEGES nº 65/2021)",
+   "Tipo_Documento": "Procedimento (PRO)",
+   "Vinculo_Nivel": "Subprocesso",
+   "Vinculo_Codigo": "SP-03; SP-04",
    "Versao": "1.2",
-   "Data": "2026-04-27",
+   "Data": "27/04/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": "Resolução nº 845, de 27/04/2026 (Diretor da Área de Aquisições)",
    "Link": "https://exemplo.codevasf.gov.br/repositorio/roteiro-precos.pdf",
-   "Observacoes": null,
-   "Ato_Aprovacao": "Resolução nº 845, de 27/04/2026 (Diretor da Área de Aquisições)"
+   "Observacoes": null
   },
   {
    "ID": "DOC-008",
-   "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-06",
-   "Tipo_Documento": "Norma interna",
    "Titulo": "NI-027/2024 — Norma de Licitações e Contratos (fictícia)",
+   "Tipo_Documento": "Norma interna",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-01",
    "Versao": "4.0",
-   "Data": "2024-11-20",
+   "Data": "20/11/2024",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": "Resolução nº 621, de 20/11/2024 (Diretoria Executiva)",
    "Link": "https://exemplo.codevasf.gov.br/normativos/ni-027",
-   "Observacoes": null,
-   "Ato_Aprovacao": "Resolução nº 621, de 20/11/2024 (Diretoria Executiva)"
+   "Observacoes": null
   },
   {
    "ID": "DOC-009",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01;P-06.03",
-   "Tipo_Documento": "Manual",
    "Titulo": "Manual de Gestão e Fiscalização de Contratos (fictício)",
+   "Tipo_Documento": "Manual",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01; PP-03",
    "Versao": "2.3",
-   "Data": "2025-08-14",
+   "Data": "14/08/2025",
    "Situacao": "Em revisão",
+   "Ato_Aprovacao": "Resolução nº 703, de 14/08/2025 (Diretoria Executiva)",
    "Link": "https://exemplo.codevasf.gov.br/normativos/manual-fiscalizacao",
-   "Observacoes": null,
-   "Ato_Aprovacao": "Resolução nº 703, de 14/08/2025 (Diretoria Executiva)"
+   "Observacoes": null
   },
   {
    "ID": "DOC-010",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.02",
-   "Tipo_Documento": "Ata de reunião",
    "Titulo": "Ata — Contextualização do processo Seleção do Fornecedor",
+   "Tipo_Documento": "Ata de reunião",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-02",
    "Versao": "1.0",
-   "Data": "2026-06-02",
+   "Data": "02/06/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/sei/ata-contextualizacao-p0602",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-011",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-04.01",
-   "Tipo_Documento": "Diagrama BPMN",
    "Titulo": "Diagrama AS-IS parcial — O&M de Perímetros (Bizagi)",
+   "Tipo_Documento": "Diagrama BPMN",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-04",
    "Versao": "0.3",
-   "Data": "2026-07-08",
+   "Data": "08/07/2026",
    "Situacao": "Em elaboração",
+   "Ato_Aprovacao": null,
    "Link": null,
-   "Observacoes": "Modelagem em curso.",
-   "Ato_Aprovacao": null
+   "Observacoes": "Modelagem em curso."
   },
   {
    "ID": "DOC-012",
-   "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "A-06.01.01.01",
-   "Tipo_Documento": "Formulário/Modelo",
    "Titulo": "Passo a passo do DFD no e-Codevasf",
+   "Tipo_Documento": "Formulário/Modelo",
+   "Vinculo_Nivel": "Atividade",
+   "Vinculo_Codigo": "AT-01",
    "Versao": "1.0",
-   "Data": "2026-02-12",
+   "Data": "12/02/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/modelos/dfd-sei-passoapasso.pdf",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-013",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-01.01",
-   "Tipo_Documento": "Relatório",
    "Titulo": "Caderno de Indicadores Estratégicos 2026",
+   "Tipo_Documento": "Relatório",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-06",
    "Versao": "1.0",
-   "Data": "2026-03-31",
+   "Data": "31/03/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/estrategia/caderno-2026.pdf",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-014",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Plano",
    "Titulo": "Plano de implantação do TO-BE (PMBOK — plano do projeto)",
+   "Tipo_Documento": "Plano",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Versao": "1.0",
-   "Data": "2026-05-06",
+   "Data": "06/05/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/repositorio/plano-tobe-p0601.pdf",
-   "Observacoes": null,
-   "Ato_Aprovacao": null
+   "Observacoes": null
   },
   {
    "ID": "DOC-015",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Tipo_Documento": "Checklist",
    "Titulo": "Checklist de Conformidade — Planejamento da Contratação",
+   "Tipo_Documento": "Checklist",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Versao": "1.0",
-   "Data": "2026-05-18",
+   "Data": "18/05/2026",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
    "Link": "https://exemplo.codevasf.gov.br/repositorio/checklist-p0601.pdf",
-   "Observacoes": "Exemplo — checklist ainda não padronizado para os demais processos da carteira.",
-   "Ato_Aprovacao": null
+   "Observacoes": "Exemplo — checklist ainda não padronizado para os demais processos da carteira."
   },
   {
    "ID": "DOC-016",
-   "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-07",
-   "Tipo_Documento": "Norma interna",
    "Titulo": "NI-014/2019 — Norma de Administração de Pessoal (fictícia)",
+   "Tipo_Documento": "Norma interna",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-02",
    "Versao": "3.0",
-   "Data": "2019-06-10",
+   "Data": "10/06/2019",
    "Situacao": "Vigente",
+   "Ato_Aprovacao": "Resolução nº 512, de 10/06/2019 (Diretoria Executiva)",
    "Link": "https://exemplo.codevasf.gov.br/normativos/ni-014",
-   "Observacoes": "Exemplo — norma com revisão trienal vencida (N-000, item 4.2.3), ainda não atualizada.",
-   "Ato_Aprovacao": "Resolução nº 512, de 10/06/2019 (Diretoria Executiva)"
+   "Observacoes": "Exemplo — norma com revisão trienal vencida (N-000, item 4.2.3), ainda não atualizada."
+  },
+  {
+   "ID": "DOC-017",
+   "Titulo": "Lei nº 13.303/2016 — Estatuto Jurídico das Estatais",
+   "Tipo_Documento": "Legislação externa",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MG-01",
+   "Versao": "—",
+   "Data": "30/06/2016",
+   "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
+   "Link": "http://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/lei/l13303.htm",
+   "Observacoes": "Migrado da coluna Normativos_Aplicaveis do macroprocesso."
+  },
+  {
+   "ID": "DOC-018",
+   "Titulo": "Lei nº 14.133/2021 — Nova Lei de Licitações e Contratos",
+   "Tipo_Documento": "Legislação externa",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-01",
+   "Versao": "—",
+   "Data": "01/04/2021",
+   "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
+   "Link": "http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/L14133.htm",
+   "Observacoes": "Migrado da coluna Normativos_Aplicaveis/Normativos_Relacionados."
+  },
+  {
+   "ID": "DOC-019",
+   "Titulo": "Lei nº 12.787/2013 — Política Nacional de Irrigação",
+   "Tipo_Documento": "Legislação externa",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MF-02",
+   "Versao": "—",
+   "Data": "11/01/2013",
+   "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
+   "Link": "http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12787.htm",
+   "Observacoes": "Migrado da coluna Normativos_Aplicaveis do macroprocesso."
+  },
+  {
+   "ID": "DOC-020",
+   "Titulo": "CLT — Consolidação das Leis do Trabalho",
+   "Tipo_Documento": "Legislação externa",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-02",
+   "Versao": "—",
+   "Data": "01/05/1943",
+   "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
+   "Link": "http://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm",
+   "Observacoes": "Migrado da coluna Normativos_Aplicaveis do macroprocesso."
+  },
+  {
+   "ID": "DOC-021",
+   "Titulo": "Estatuto Social da Codevasf",
+   "Tipo_Documento": "Norma interna",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MG-01",
+   "Versao": "—",
+   "Data": null,
+   "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
+   "Link": "https://exemplo.codevasf.gov.br/normativos/estatuto-social",
+   "Observacoes": "Migrado da coluna Normativos_Aplicaveis do macroprocesso."
+  },
+  {
+   "ID": "DOC-022",
+   "Titulo": "Regimento Interno da Codevasf",
+   "Tipo_Documento": "Norma interna",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MG-01",
+   "Versao": "—",
+   "Data": null,
+   "Situacao": "Vigente",
+   "Ato_Aprovacao": null,
+   "Link": "https://exemplo.codevasf.gov.br/normativos/regimento-interno",
+   "Observacoes": "Migrado da coluna Normativos_Aplicaveis do macroprocesso."
   }
  ],
  "Riscos": [
   {
    "ID": "RIS-001",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Descricao_Risco": "Estimativas de preço defasadas gerando sobrepreço ou licitação deserta.",
    "Categoria": "Operacional",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "05/01/2026",
    "Probabilidade_1a5": "4",
    "Impacto_1a5": "4",
    "Nivel_PxI": 16,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Roteiro de pesquisa com múltiplas fontes (Painel de Preços, PNCP) e revisão pela UNP.",
+   "Prazo_Tratamento": "30/09/2026",
    "Responsavel": "Ricardo Nogueira",
-   "Status": "Em tratamento",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Em tratamento"
   },
   {
    "ID": "RIS-002",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Descricao_Risco": "TR genérico ou restritivo provocando impugnações e atrasos no certame.",
    "Categoria": "Legal/Conformidade",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "05/01/2026",
    "Probabilidade_1a5": "3",
    "Impacto_1a5": "4",
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Checklist de revisão e validação obrigatória pela Assessoria Jurídica.",
+   "Prazo_Tratamento": "30/09/2026",
    "Responsavel": "Ricardo Nogueira",
-   "Status": "Em tratamento",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Em tratamento"
   },
   {
    "ID": "RIS-003",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.03",
+   "Vinculo_Codigo": "PP-03",
    "Descricao_Risco": "Fiscalização intempestiva de contratos, com medições e pagamentos atrasados.",
    "Categoria": "Operacional",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "15/06/2026",
    "Probabilidade_1a5": "3",
    "Impacto_1a5": "5",
    "Nivel_PxI": 15,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Designação formal de fiscais, agenda de medições e alertas no e-Codevasf.",
+   "Prazo_Tratamento": "30/11/2026",
    "Responsavel": "Ricardo Nogueira",
-   "Status": "Aberto",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Aberto"
   },
   {
    "ID": "RIS-004",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.01",
+   "Vinculo_Codigo": "SP-01",
    "Descricao_Risco": "Conhecimento concentrado em um único empregado (pessoa-chave) na elaboração de ETP.",
    "Categoria": "Pessoas",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "10/02/2026",
    "Probabilidade_1a5": "4",
    "Impacto_1a5": "3",
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Publicar o PRO, treinar substitutos e revezar a equipe de planejamento.",
+   "Prazo_Tratamento": "31/10/2026",
    "Responsavel": "Patrícia Ramos",
-   "Status": "Em tratamento",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Em tratamento"
   },
   {
    "ID": "RIS-005",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-04.01",
+   "Vinculo_Codigo": "PP-04",
    "Descricao_Risco": "Indisponibilidade hídrica comprometendo a programação de distribuição.",
    "Categoria": "Operacional",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "04/05/2026",
    "Probabilidade_1a5": "2",
    "Impacto_1a5": "5",
    "Nivel_PxI": 10,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Plano de contingência hídrica e priorização de culturas conforme regras do perímetro.",
+   "Prazo_Tratamento": null,
    "Responsavel": "Marcos Vinícius",
-   "Status": "Aberto",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Aberto"
   },
   {
    "ID": "RIS-006",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.02",
+   "Vinculo_Codigo": "PP-02",
    "Descricao_Risco": "Instabilidade do Compras.gov.br durante a sessão pública.",
    "Categoria": "Tecnologia da Informação",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "01/06/2026",
    "Probabilidade_1a5": "2",
    "Impacto_1a5": "4",
    "Nivel_PxI": 8,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Protocolo de suspensão formal da sessão e comunicação imediata aos licitantes.",
+   "Prazo_Tratamento": null,
    "Responsavel": "Daniela Ribeiro",
-   "Status": "Aberto",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Aberto"
   },
   {
    "ID": "RIS-007",
    "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-06",
+   "Vinculo_Codigo": "MS-01",
    "Descricao_Risco": "Alterações normativas frequentes exigindo atualização contínua de procedimentos.",
    "Categoria": "Legal/Conformidade",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "12/01/2026",
    "Probabilidade_1a5": "4",
    "Impacto_1a5": "2",
    "Nivel_PxI": 8,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Monitoramento normativo mensal (resenha) e revisão programada dos PROs.",
+   "Prazo_Tratamento": "31/12/2026",
    "Responsavel": "Bruna Souza",
-   "Status": "Em tratamento",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Em tratamento"
   },
   {
    "ID": "RIS-008",
    "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "A-06.01.03.01",
+   "Vinculo_Codigo": "AT-07",
    "Descricao_Risco": "Uso de fontes de preço não admitidas pela IN SEGES nº 65/2021.",
    "Categoria": "Legal/Conformidade",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "10/01/2026",
    "Probabilidade_1a5": "2",
    "Impacto_1a5": "3",
    "Nivel_PxI": 6,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Validação da pesquisa pela UNP antes da aprovação do valor estimado.",
+   "Prazo_Tratamento": "27/04/2026",
    "Responsavel": "Carlos Eduardo Lima",
-   "Status": "Encerrado",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Encerrado"
   },
   {
    "ID": "RIS-009",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Descricao_Risco": "Baixo engajamento das áreas demandantes no preenchimento do DFD.",
    "Categoria": "Pessoas",
+   "Fatores": null,
+   "Cronograma_Risco": null,
+   "Data_Identificacao": "05/01/2026",
    "Probabilidade_1a5": "3",
    "Impacto_1a5": "3",
    "Nivel_PxI": 9,
    "Classificacao": "Moderado",
    "Resposta": "Mitigar",
    "Controles_Tratamento": "Oficinas de capacitação e modelo simplificado de DFD no e-Codevasf.",
+   "Prazo_Tratamento": "31/08/2026",
    "Responsavel": "Bruna Souza",
-   "Status": "Encerrado",
-   "Cronograma_Risco": null,
-   "Fatores": null
+   "Status": "Encerrado"
   }
  ],
  "Metricas": [
   {
    "ID": "IND-001",
-   "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-06",
    "Nome": "Tempo médio do ciclo de contratação",
-   "Descricao_Formula": "Média de dias entre o DFD e a homologação do certame.",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-01",
    "Categoria": "Processo",
+   "Descricao_Formula": "Média de dias entre o DFD e a homologação do certame.",
    "Unidade": "dias",
    "Polaridade": "Menor melhor",
    "Meta": "120",
@@ -1314,11 +1391,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-002",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
    "Nome": "Prazo médio de elaboração do ETP",
-   "Descricao_Formula": "Média de dias úteis entre o DFD e a aprovação do ETP.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Categoria": "Processo",
+   "Descricao_Formula": "Média de dias úteis entre o DFD e a aprovação do ETP.",
    "Unidade": "dias",
    "Polaridade": "Menor melhor",
    "Meta": "30",
@@ -1328,11 +1405,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-003",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.02",
    "Nome": "Impugnações por edital",
-   "Descricao_Formula": "Nº médio de impugnações recebidas por edital publicado.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-02",
    "Categoria": "Processo",
+   "Descricao_Formula": "Nº médio de impugnações recebidas por edital publicado.",
    "Unidade": "nº",
    "Polaridade": "Menor melhor",
    "Meta": "1",
@@ -1342,11 +1419,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-004",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.03",
    "Nome": "Contratos com fiscal designado",
-   "Descricao_Formula": "% de contratos vigentes com fiscal formalmente designado.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-03",
    "Categoria": "Processo",
+   "Descricao_Formula": "% de contratos vigentes com fiscal formalmente designado.",
    "Unidade": "%",
    "Polaridade": "Maior melhor",
    "Meta": "100",
@@ -1356,11 +1433,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-005",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-04.01",
    "Nome": "Eficiência no uso da água",
-   "Descricao_Formula": "Relação % entre volume faturado e volume captado no perímetro.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-04",
    "Categoria": "Processo",
+   "Descricao_Formula": "Relação % entre volume faturado e volume captado no perímetro.",
    "Unidade": "%",
    "Polaridade": "Maior melhor",
    "Meta": "75",
@@ -1370,11 +1447,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-006",
-   "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-06",
    "Nome": "Processos com mapeamento concluído",
-   "Descricao_Formula": "% de processos do macroprocesso com marco M9 concluído.",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-01",
    "Categoria": "Processo",
+   "Descricao_Formula": "% de processos do macroprocesso com marco M9 concluído.",
    "Unidade": "%",
    "Polaridade": "Maior melhor",
    "Meta": "100",
@@ -1384,11 +1461,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-007",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-01.01",
    "Nome": "Ações estratégicas monitoradas no prazo",
-   "Descricao_Formula": "% de ações do plano com status atualizado no ciclo.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-06",
    "Categoria": "Processo",
+   "Descricao_Formula": "% de ações do plano com status atualizado no ciclo.",
    "Unidade": "%",
    "Polaridade": "Maior melhor",
    "Meta": "95",
@@ -1398,11 +1475,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-008",
-   "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.03",
    "Nome": "Pesquisas de preço com 3+ fontes",
-   "Descricao_Formula": "% de pesquisas de preços com três ou mais fontes admitidas.",
+   "Vinculo_Nivel": "Subprocesso",
+   "Vinculo_Codigo": "SP-03",
    "Categoria": "Processo",
+   "Descricao_Formula": "% de pesquisas de preços com três ou mais fontes admitidas.",
    "Unidade": "%",
    "Polaridade": "Maior melhor",
    "Meta": "100",
@@ -1412,11 +1489,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "IND-009",
-   "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-05",
    "Nome": "Nascentes recuperadas no ano",
-   "Descricao_Formula": "Nº de nascentes com recuperação concluída no exercício.",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MF-03",
    "Categoria": "Processo",
+   "Descricao_Formula": "Nº de nascentes com recuperação concluída no exercício.",
    "Unidade": "nº",
    "Polaridade": "Maior melhor",
    "Meta": "120",
@@ -1426,11 +1503,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "MET-010",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
    "Nome": "SLA — Tempo de resposta ao demandante",
-   "Descricao_Formula": "Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Categoria": "Nível de Serviço (SLA)",
+   "Descricao_Formula": "Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.",
    "Unidade": "dias úteis",
    "Polaridade": "Menor melhor",
    "Meta": 5,
@@ -1440,11 +1517,11 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "MET-011",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
    "Nome": "ROI — Automatização da pesquisa de preços",
-   "Descricao_Formula": "(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Categoria": "Financeiro (ROI)",
+   "Descricao_Formula": "(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.",
    "Unidade": "%",
    "Polaridade": "Maior melhor",
    "Meta": 150,
@@ -1457,91 +1534,91 @@ window.PAINEL_DADOS = {
   {
    "ID": "MED-001",
    "Metrica_ID": "IND-001",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "148",
    "Observacao": null
   },
   {
    "ID": "MED-002",
    "Metrica_ID": "IND-002",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "26",
    "Observacao": null
   },
   {
    "ID": "MED-003",
    "Metrica_ID": "IND-003",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "0.8",
    "Observacao": null
   },
   {
    "ID": "MED-004",
    "Metrica_ID": "IND-004",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "92",
    "Observacao": null
   },
   {
    "ID": "MED-005",
    "Metrica_ID": "IND-005",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "71",
    "Observacao": null
   },
   {
    "ID": "MED-006",
    "Metrica_ID": "IND-006",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "33",
    "Observacao": null
   },
   {
    "ID": "MED-007",
    "Metrica_ID": "IND-007",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "97",
    "Observacao": null
   },
   {
    "ID": "MED-008",
    "Metrica_ID": "IND-008",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": "88",
    "Observacao": null
   },
   {
    "ID": "MED-901",
    "Metrica_ID": "IND-002",
-   "Data_Medicao": "2026-03-31",
+   "Data_Medicao": "31/03/2026",
    "Valor": 165,
    "Observacao": "Primeira apuração do trimestre."
   },
   {
    "ID": "MED-902",
    "Metrica_ID": "IND-002",
-   "Data_Medicao": "2025-12-31",
+   "Data_Medicao": "31/12/2025",
    "Valor": 178,
    "Observacao": null
   },
   {
    "ID": "MED-903",
    "Metrica_ID": "MET-010",
-   "Data_Medicao": "2026-07-31",
+   "Data_Medicao": "31/07/2026",
    "Valor": 4,
    "Observacao": null
   },
   {
    "ID": "MED-904",
    "Metrica_ID": "MET-010",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": 6,
    "Observacao": "Acúmulo de demandas no fim do semestre."
   },
   {
    "ID": "MED-905",
    "Metrica_ID": "MET-011",
-   "Data_Medicao": "2026-06-30",
+   "Data_Medicao": "30/06/2026",
    "Valor": 132,
    "Observacao": null
   }
@@ -1550,7 +1627,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-001",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "AE/GAG"
@@ -1558,7 +1635,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-002",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Papel": "Equipe de planejamento da contratação",
    "Envolvimento": "Executa (R)",
    "Unidade_Pessoa": "AR/GDT"
@@ -1566,7 +1643,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-003",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Papel": "Assessoria Jurídica",
    "Envolvimento": "Consultado (C)",
    "Unidade_Pessoa": "AA/GLC"
@@ -1574,7 +1651,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-004",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
+   "Vinculo_Codigo": "PP-01",
    "Papel": "UNP",
    "Envolvimento": "Informado (I)",
    "Unidade_Pessoa": "AE/GPE/UNP"
@@ -1582,7 +1659,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-005",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.03",
+   "Vinculo_Codigo": "SP-03",
    "Papel": "Equipe de planejamento da contratação",
    "Envolvimento": "Executa (R)",
    "Unidade_Pessoa": "AR/GDT"
@@ -1590,7 +1667,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-006",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.03",
+   "Vinculo_Codigo": "SP-03",
    "Papel": "UNP",
    "Envolvimento": "Consultado (C)",
    "Unidade_Pessoa": "AE/GPE/UNP"
@@ -1598,92 +1675,96 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-007",
    "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "A-06.01.03.01",
+   "Vinculo_Codigo": "AT-07",
    "Papel": "Analista de planejamento da contratação",
    "Envolvimento": "Executa (R)",
    "Unidade_Pessoa": "AR/GDT"
+  },
+  {
+   "ID": "PAP-008",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-02",
+   "Papel": "Gestor do processo",
+   "Envolvimento": "Aprova (A)",
+   "Unidade_Pessoa": "Gerente de Licitações"
+  },
+  {
+   "ID": "PAP-009",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-03",
+   "Papel": "Gestor do processo",
+   "Envolvimento": "Aprova (A)",
+   "Unidade_Pessoa": "Gerente de Licitações"
+  },
+  {
+   "ID": "PAP-010",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-04",
+   "Papel": "Gestor do processo",
+   "Envolvimento": "Aprova (A)",
+   "Unidade_Pessoa": "Gerente de Operação"
+  },
+  {
+   "ID": "PAP-011",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-05",
+   "Papel": "Gestor do processo",
+   "Envolvimento": "Aprova (A)",
+   "Unidade_Pessoa": "Gerente de Revitalização"
+  },
+  {
+   "ID": "PAP-012",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-06",
+   "Papel": "Gestor do processo",
+   "Envolvimento": "Aprova (A)",
+   "Unidade_Pessoa": "Gerente de Planejamento"
+  },
+  {
+   "ID": "PAP-013",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-07",
+   "Papel": "Gestor do processo",
+   "Envolvimento": "Aprova (A)",
+   "Unidade_Pessoa": "Gerente de Pessoas"
   }
  ],
  "Regras": [
   {
    "ID": "REG-001",
-   "Vinculo_Nivel": "Macroprocesso",
-   "Vinculo_Codigo": "MP-06",
    "Nome": "Alçada de aprovação por valor",
+   "Vinculo_Nivel": "Macroprocesso",
+   "Vinculo_Codigo": "MS-01",
    "Tipo_Regra": "Operação",
    "Descricao": "Contratações acima de R$ 50.000 exigem aprovação da autoridade competente.",
    "Fonte_Normativa": "Lei nº 14.133/2021"
   },
   {
    "ID": "REG-002",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
    "Nome": "Pesquisa de preços obrigatória",
+   "Vinculo_Nivel": "Processo",
+   "Vinculo_Codigo": "PP-01",
    "Tipo_Regra": "Regulatória",
    "Descricao": "Toda contratação exige pesquisa de preços prévia, conforme métodos definidos em norma.",
    "Fonte_Normativa": "IN SEGES nº 65/2021"
   },
   {
    "ID": "REG-003",
-   "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.03",
    "Nome": "Exclusão de valores discrepantes",
+   "Vinculo_Nivel": "Subprocesso",
+   "Vinculo_Codigo": "SP-03",
    "Tipo_Regra": "Decisão",
    "Descricao": "Valores inexequíveis ou excessivos devem ser excluídos da amostra, com justificativa registrada.",
    "Fonte_Normativa": "IN SEGES nº 65/2021, art. 6º"
   },
   {
    "ID": "REG-004",
-   "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "A-06.01.02.02",
    "Nome": "Validação jurídica obrigatória",
+   "Vinculo_Nivel": "Atividade",
+   "Vinculo_Codigo": "AT-06",
    "Tipo_Regra": "Procedimento e política",
    "Descricao": "Toda minuta de Termo de Referência deve ser submetida à Assessoria Jurídica antes da publicação do edital.",
    "Fonte_Normativa": "Lei nº 14.133/2021, art. 53"
-  }
- ],
- "PlanoAcao": [
-  {
-   "ID": "PA-001",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Problema": "Estimativas de preço divergentes por falta de padronização na pesquisa (mesma causa-raiz do risco R-001).",
-   "O_Que": "Padronizar o roteiro de pesquisa de preços com no mínimo três fontes e critério único de tratamento estatístico.",
-   "Por_Que": "Reduzir sobrepreço e licitações desertas causados por estimativas defasadas.",
-   "Onde": "Gerência de Licitações e Contratos (AA/GLC).",
-   "Quando": "30/09/2026",
-   "Quem": "Ricardo Nogueira (gestor do processo) e equipe de planejamento da AA/GLC",
-   "Como": "Atualizar o PRO com o roteiro padronizado (DOC-007) e capacitar a equipe.",
-   "Quanto_Custa": "Sem custo adicional — carga horária interna.",
-   "Status": "Em andamento"
-  },
-  {
-   "ID": "PA-002",
-   "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "P-06.01",
-   "Problema": "Baixo engajamento das áreas demandantes no preenchimento do DFD, gerando retrabalho.",
-   "O_Que": "Criar modelo simplificado de DFD e oficina de capacitação para novas áreas demandantes.",
-   "Por_Que": "Reduzir devoluções por preenchimento incompleto e acelerar o início do processo.",
-   "Onde": "Todas as unidades demandantes, coordenado pela AA/GLC.",
-   "Quando": "15/11/2026",
-   "Quem": "Bruna Souza (UNP) e Carlos Eduardo Lima",
-   "Como": "Oficinas trimestrais e modelo simplificado publicado no e-Codevasf.",
-   "Quanto_Custa": "R$ 0 — recursos internos.",
-   "Status": "Não iniciado"
-  },
-  {
-   "ID": "PA-003",
-   "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "SP-06.01.03",
-   "Problema": "Uso eventual de fontes de preço não admitidas pela IN SEGES nº 65/2021 (mesma causa do risco R-008).",
-   "O_Que": "Implantar checklist de validação da pesquisa antes da aprovação do valor estimado.",
-   "Por_Que": "Garantir conformidade legal e evitar questionamentos de órgãos de controle.",
-   "Onde": "Equipe de planejamento da contratação (AA/GLC).",
-   "Quando": "31/08/2026",
-   "Quem": "Carlos Eduardo Lima",
-   "Como": "Checklist obrigatório (modelo do DOC-015) antes da homologação do ETP.",
-   "Quanto_Custa": "Sem custo — ajuste de procedimento.",
-   "Status": "Concluído"
   }
  ],
  "Cultura_Processos": [
@@ -1751,7 +1832,32 @@ window.PAINEL_DADOS = {
    "Observacao": null
   }
  ],
- "Iniciativas": [],
+ "Iniciativas": [
+  {
+   "ID": "INI-001",
+   "Data": "20/05/2026",
+   "Titulo": "Automação da conferência de preços na pesquisa (PP-01)",
+   "Descricao": "A equipe de TI usou o PRO e o roteiro de pesquisa de preços publicados no repositório (DOC-007) para especificar uma rotina que já sinaliza valores fora da faixa de mercado antes da aprovação do ETP.",
+   "Tipo": "Automação",
+   "Processos_Relacionados": "PP-01"
+  },
+  {
+   "ID": "INI-002",
+   "Data": "10/06/2026",
+   "Titulo": "Nova gerência reaproveitou o modelo de DFD para abrir seu próprio mapeamento",
+   "Descricao": "A Gerência de Pessoas usou o Modelo de DFD (DOC-006) e o roteiro de contextualização do repositório para estruturar o levantamento do processo de Admissão e Integração (PP-07), sem precisar da UNP para montar os artefatos do zero.",
+   "Tipo": "Reaproveitamento de modelo",
+   "Processos_Relacionados": "PP-07"
+  },
+  {
+   "ID": "INI-003",
+   "Data": "02/07/2026",
+   "Titulo": "Checklist de conformidade virou exigência do comitê de contratações",
+   "Descricao": "O Checklist de Conformidade (DOC-015), criado para o PP-01, foi adotado pelo comitê interno de contratações como item obrigatório de pauta antes da homologação de qualquer certame acima de R$ 100 mil.",
+   "Tipo": "Decisão de governança",
+   "Processos_Relacionados": "PP-01; PP-02"
+  }
+ ],
  "Competencias": [
   {
    "Ordem": 1,
@@ -1902,7 +2008,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-001",
    "Categoria": "Documento oficial",
    "Fase_Ciclo": null,
-   "Codigo": "RES 031/2025",
    "Titulo": "Metodologia de Gerenciamento de Processos da Codevasf",
    "Descricao": "Documento normativo que institui a metodologia corporativa de gerenciamento de processos (disponível na intranet/e-Codevasf).",
    "Fonte": "Codevasf",
@@ -1913,7 +2018,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-002",
    "Categoria": "Documento oficial",
    "Fase_Ciclo": null,
-   "Codigo": "RES 031/2025",
    "Titulo": "Guia de Gerenciamento de Processos da Codevasf",
    "Descricao": "Guia prático que detalha etapas, papéis, artefatos e padrões do mapeamento (disponível na intranet/e-Codevasf).",
    "Fonte": "Codevasf",
@@ -1924,7 +2028,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-005",
    "Categoria": "Template",
    "Fase_Ciclo": "Desenho",
-   "Codigo": null,
    "Titulo": "Modelo de Diagramas BPMN",
    "Descricao": "Template padrão para modelagem em BPMN 2.0 (pools, lanes, eventos, atividades e gateways), em formato Bizagi e draw.io.",
    "Fonte": "Codevasf",
@@ -1935,7 +2038,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-006",
    "Categoria": "Template",
    "Fase_Ciclo": "Análise",
-   "Codigo": null,
    "Titulo": "Roteiro de Reunião de Contextualização",
    "Descricao": "Guia para conduzir a reunião de contextualização: perguntas-guia, dinâmicas de elicitação e checklist de tópicos.",
    "Fonte": "Codevasf",
@@ -1946,7 +2048,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-011",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Desenho",
-   "Codigo": "BPMN-01",
    "Titulo": "Checklist BPMN 2.0 (notação)",
    "Descricao": "Lista de verificação dos elementos mínimos para um diagrama BPMN aderente ao padrão.",
    "Fonte": "CBOK 4.0",
@@ -1957,7 +2058,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-012",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Desenho",
-   "Codigo": "RACI-01",
    "Titulo": "Matriz RACI",
    "Descricao": "Atribui Responsável (R), Aprovador (A), Consultado (C) e Informado (I) por atividade.",
    "Fonte": "PMBOK",
@@ -1968,7 +2068,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-013",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Monitoramento",
-   "Codigo": "KPI-01",
    "Titulo": "Canvas de Indicador (KPI)",
    "Descricao": "Define nome, fórmula, fonte, meta, periodicidade e responsável de um indicador.",
    "Fonte": "Codevasf",
@@ -1979,7 +2078,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-014",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Análise",
-   "Codigo": "RISK-01",
    "Titulo": "Registro de Riscos (ISO 31000)",
    "Descricao": "Identifica risco, causa, efeito, probabilidade, impacto, resposta e responsável.",
    "Fonte": "ISO 31000",
@@ -1990,7 +2088,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-015",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Análise",
-   "Codigo": "AS-IS-01",
    "Titulo": "Roteiro de entrevista AS-IS",
    "Descricao": "Perguntas-guia para levantar o processo como ele é hoje com quem executa.",
    "Fonte": "CBOK 4.0",
@@ -2001,7 +2098,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-016",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Implementação",
-   "Codigo": "TO-BE-01",
    "Titulo": "Plano de transição AS-IS → TO-BE",
    "Descricao": "Compara o processo atual e o futuro e organiza as ações de migração.",
    "Fonte": "CBOK 4.0",
@@ -2012,7 +2108,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-017",
    "Categoria": "Instrumento",
    "Fase_Ciclo": "Refinamento",
-   "Codigo": "MAT-01",
    "Titulo": "Diagnóstico rápido de maturidade (PEMM)",
    "Descricao": "Autoavaliação em 5 dimensões: desenho, executores, dono, infraestrutura e indicadores.",
    "Fonte": "CBOK 4.0",
@@ -2023,7 +2118,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-018",
    "Categoria": "Ferramenta",
    "Fase_Ciclo": "Desenho",
-   "Codigo": null,
    "Titulo": "Bizagi Modeler",
    "Descricao": "Ferramenta gratuita de modelagem BPMN 2.0, recomendada pela UNP para os diagramas AS-IS e TO-BE.",
    "Fonte": "Bizagi",
@@ -2034,7 +2128,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-022",
    "Categoria": "Referência",
    "Fase_Ciclo": null,
-   "Codigo": null,
    "Titulo": "BPM CBOK 4.0 — ABPMP International",
    "Descricao": "Guia de referência em gerenciamento de processos de negócio; padrão metodológico principal da UNP.",
    "Fonte": "ABPMP",
@@ -2045,7 +2138,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-033",
    "Categoria": "Referência",
    "Fase_Ciclo": null,
-   "Codigo": null,
    "Titulo": "BPMN 2.0 — Business Process Model and Notation",
    "Descricao": "Especificação oficial da notação usada nos diagramas (Bizagi e demais ferramentas de modelagem): símbolos, semântica de execução e serialização XML.",
    "Fonte": "OMG (Object Management Group)",
@@ -2056,7 +2148,6 @@ window.PAINEL_DADOS = {
    "ID": "REP-025",
    "Categoria": "Template",
    "Fase_Ciclo": "Análise",
-   "Codigo": null,
    "Titulo": "Mapa de Partes Interessadas (modelo)",
    "Descricao": "Identifica e classifica stakeholders por interesse e influência, com estratégia de engajamento por grupo.",
    "Fonte": "PMBOK",
@@ -2201,829 +2292,593 @@ window.PAINEL_DADOS = {
  "Glossario": [
   {
    "Termo": "ABPMP",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Association of Business Process Management Professionals — entidade internacional sem fins lucrativos que mantém o CBOK e certificações como CBPP (Certified Business Process Professional).",
-   "Fonte": "ABPMP",
-   "Termos_Relacionados": "CBOK; BPM"
+   "Fonte": "ABPMP"
   },
   {
    "Termo": "Atividade",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Conjunto de tarefas executadas para transformar entradas em saídas dentro de um processo. É o nível operacional mapeado em diagramas BPMN.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Tarefa; Subprocesso; BPMN"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Arquitetura de Processos",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Visão estruturada e hierárquica de todos os processos da organização, do macroprocesso à tarefa, mostrando relações, donos e contribuição para a estratégia.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Cadeia de Valor; Macroprocesso"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "AS-IS",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Modelo do processo no estado atual (como ele realmente é executado hoje), usado como base de diagnóstico antes de propor melhorias.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "TO-BE; Análise de Processos"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Análise de Processos",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Estudo do processo AS-IS para identificar gargalos, retrabalho, desperdícios e oportunidades de melhoria. Usa ferramentas como Ishikawa, 5 porquês e análise de valor agregado.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "AS-IS; Melhoria Contínua; Gargalo"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Agile",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Abordagem iterativa e incremental de gerenciamento, baseada no Manifesto Ágil, com entregas frequentes e adaptação contínua.",
-   "Fonte": "Manifesto Ágil",
-   "Termos_Relacionados": "Scrum; Kanban; Sprint"
+   "Fonte": "Manifesto Ágil"
   },
   {
    "Termo": "AE",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Área de Estratégia e Finanças da Codevasf, instância superior da GPE/UNP.",
-   "Fonte": "Codevasf",
-   "Termos_Relacionados": "GPE; UNP"
+   "Fonte": "Codevasf"
   },
   {
    "Termo": "Accountability",
-   "Categoria": "Governança e Papéis",
    "Definicao": "Obrigação de prestar contas e responder pelos resultados, especialmente no setor público.",
-   "Fonte": "TCU",
-   "Termos_Relacionados": "Governança Pública"
+   "Fonte": "TCU"
   },
   {
    "Termo": "BPM",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Business Process Management — disciplina gerencial integrada que combina técnicas, métodos e ferramentas para identificar, modelar, executar, monitorar e melhorar continuamente os processos de negócio, alinhando-os à estratégia e à entrega de valor ao cliente.",
-   "Fonte": "ABPMP CBOK 4.0",
-   "Termos_Relacionados": "Processo de Negócio; Ciclo de Vida BPM; Governança de Processos"
+   "Fonte": "ABPMP CBOK 4.0"
   },
   {
    "Termo": "BPMN",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Business Process Model and Notation — padrão da OMG para modelagem gráfica de processos de negócio. Define símbolos para atividades, eventos, gateways, fluxos e raias.",
-   "Fonte": "OMG / CBOK 4.0",
-   "Termos_Relacionados": "Notação; Raia (Swimlane); Pool"
+   "Fonte": "OMG / CBOK 4.0"
   },
   {
    "Termo": "Beneficiário / Cidadão-usuário",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Destinatário da saída do processo no setor público. Pode ser interno (outra unidade da Codevasf) ou externo — cidadão, irrigante, comunidade beneficiária, ente federativo ou órgão parceiro.",
-   "Fonte": "SIPOC",
-   "Termos_Relacionados": "SIPOC"
+   "Fonte": "SIPOC"
   },
   {
    "Termo": "Linha de Base (Indicador)",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Valor de referência inicial de um indicador, usado como base para comparar resultados futuros.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Indicador; Meta"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Burndown",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Gráfico que mostra a quantidade de trabalho restante ao longo do tempo, comum em métodos ágeis.",
-   "Fonte": "Scrum",
-   "Termos_Relacionados": "Agile; Sprint"
+   "Fonte": "Scrum"
   },
   {
    "Termo": "Burnup",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Gráfico que mostra o trabalho concluído acumulado ao longo do tempo, comparando com o escopo total.",
-   "Fonte": "Agile",
-   "Termos_Relacionados": "Burndown; Agile"
+   "Fonte": "Agile"
   },
   {
    "Termo": "CBOK",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Guide to the Business Process Management Common Body of Knowledge — referência da ABPMP que consolida conceitos, práticas e competências essenciais de BPM. A versão 4.0 reorganiza o conteúdo em 9 áreas de conhecimento.",
-   "Fonte": "ABPMP CBOK 4.0",
-   "Termos_Relacionados": "BPM; ABPMP"
+   "Fonte": "ABPMP CBOK 4.0"
   },
   {
    "Termo": "Cadeia de Valor",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Representação visual dos macroprocessos de uma organização ordenados segundo sua contribuição para a entrega de valor. Permite visão sistêmica e priorização do mapeamento.",
-   "Fonte": "Porter / CBOK 4.0",
-   "Termos_Relacionados": "Macroprocesso; Arquitetura de Processos"
+   "Fonte": "Porter / CBOK 4.0"
   },
   {
    "Termo": "Ciclo de Vida BPM",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Sequência iterativa de fases para gerenciar processos: planejar, analisar, desenhar, implementar, monitorar e refinar (PDCA aplicado a processos).",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "BPM; Análise de Processos"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Cronograma",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Modelo que apresenta a sequência, datas e durações das atividades do projeto.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Gantt"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Caminho Crítico",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Sequência de atividades que determina a menor duração possível do projeto. Atrasos em qualquer atividade do caminho crítico atrasam o projeto.",
-   "Fonte": "PMBOK / CPM",
-   "Termos_Relacionados": "Cronograma"
+   "Fonte": "PMBOK / CPM"
   },
   {
    "Termo": "CPI",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Cost Performance Index — índice de desempenho de custo. CPI < 1 indica estouro de orçamento.",
-   "Fonte": "EVM",
-   "Termos_Relacionados": "EVM; SPI"
+   "Fonte": "EVM"
   },
   {
    "Termo": "Compliance",
-   "Categoria": "Governança e Papéis",
    "Definicao": "Conformidade com leis, regulamentos, normas e políticas internas. Inclui prevenção a fraudes e corrupção.",
-   "Fonte": "Lei 12.846/2013",
-   "Termos_Relacionados": "Governança Pública; Controle Interno"
+   "Fonte": "Lei 12.846/2013"
   },
   {
    "Termo": "Controle Interno",
-   "Categoria": "Governança e Papéis",
    "Definicao": "Conjunto de atividades, planos e métodos adotados para salvaguardar ativos, conferir exatidão e segurança aos dados e promover a eficiência operacional.",
-   "Fonte": "INTOSAI / IN 03/2017",
-   "Termos_Relacionados": "Compliance"
+   "Fonte": "INTOSAI / IN 03/2017"
   },
   {
    "Termo": "Desperdício (Muda)",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Toda atividade que consome recursos sem agregar valor ao cliente. Os 7+1 desperdícios clássicos: superprodução, espera, transporte, processamento excessivo, estoque, movimento, defeito e talento não utilizado.",
-   "Fonte": "Lean",
-   "Termos_Relacionados": "Lean; Valor Agregado"
+   "Fonte": "Lean"
   },
   {
    "Termo": "Dono do Processo",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Pessoa formalmente responsável pelo desempenho, integridade e melhoria contínua de um processo de ponta a ponta, independentemente da estrutura hierárquica.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Governança de Processos"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Diagrama de Tartaruga",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Ferramenta de modelagem que detalha um processo por entradas, saídas, recursos, métodos, pessoas e indicadores, formando o desenho de uma tartaruga.",
-   "Fonte": "ISO 9001",
-   "Termos_Relacionados": "SIPOC"
+   "Fonte": "ISO 9001"
   },
   {
    "Termo": "Evento",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Acontecimento que afeta o fluxo do processo: início, fim, intermediário, de tempo, mensagem ou erro.",
-   "Fonte": "BPMN",
-   "Termos_Relacionados": "BPMN"
+   "Fonte": "BPMN"
   },
   {
    "Termo": "Escritório de Processos (BPM Office)",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Unidade organizacional responsável por orientar metodologia, manter o repositório de processos e apoiar áreas no mapeamento. Na Codevasf, esse papel é da UNP/GPE.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "UNP; Governança de Processos"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Entrada",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Insumo, informação, documento ou recurso necessário para iniciar ou executar uma atividade do processo.",
-   "Fonte": "SIPOC",
-   "Termos_Relacionados": "SIPOC"
+   "Fonte": "SIPOC"
   },
   {
    "Termo": "Eficiência",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Relação entre o que foi produzido (saída) e os recursos consumidos (entrada). “Fazer certo as coisas”.",
-   "Fonte": "CBOK",
-   "Termos_Relacionados": "Eficácia; Efetividade"
+   "Fonte": "CBOK"
   },
   {
    "Termo": "Eficácia",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Grau em que os resultados pretendidos foram alcançados. “Fazer as coisas certas”.",
-   "Fonte": "CBOK",
-   "Termos_Relacionados": "Eficiência; Efetividade"
+   "Fonte": "CBOK"
   },
   {
    "Termo": "Efetividade",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Impacto real e duradouro do processo no público-alvo ou na sociedade. Combina eficiência e eficácia com sustentabilidade.",
-   "Fonte": "Gestão Pública",
-   "Termos_Relacionados": "Eficiência; Eficácia"
+   "Fonte": "Gestão Pública"
   },
   {
    "Termo": "Escopo",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Soma dos produtos, serviços e resultados a serem entregues no projeto. Inclui escopo do produto e escopo do trabalho.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "EAP; Entrega"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "EAP",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Estrutura Analítica do Projeto (Work Breakdown Structure — WBS) — decomposição hierárquica do escopo em entregas e pacotes de trabalho.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Escopo; Entrega; Pacote de Trabalho"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Entrega",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Produto, resultado ou capacidade único e verificável, obtido a partir de uma fase ou de todo o projeto.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Escopo"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "EVM",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Earned Value Management — técnica que integra escopo, prazo e custo para medir o desempenho do projeto (SPI, CPI).",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "SPI; CPI; Cronograma"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Fornecedor",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Pessoa, área ou sistema que fornece insumos (entradas) ao processo.",
-   "Fonte": "SIPOC",
-   "Termos_Relacionados": "SIPOC"
+   "Fonte": "SIPOC"
   },
   {
    "Termo": "Fluxograma",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Representação gráfica sequencial das etapas de um processo, usando símbolos padronizados para atividade, decisão, início e fim.",
-   "Fonte": "ASME / ISO",
-   "Termos_Relacionados": "BPMN"
+   "Fonte": "ASME / ISO"
   },
   {
    "Termo": "Gateway",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Elemento BPMN que controla a divergência ou convergência do fluxo: decisão exclusiva, paralela ou inclusiva.",
-   "Fonte": "BPMN",
-   "Termos_Relacionados": "BPMN"
+   "Fonte": "BPMN"
   },
   {
    "Termo": "Gargalo",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Ponto do processo onde a capacidade é menor que a demanda, restringindo a vazão de todo o fluxo. Identificado por filas, atrasos e acúmulo de trabalho.",
-   "Fonte": "Teoria das Restrições",
-   "Termos_Relacionados": "Análise de Processos"
+   "Fonte": "Teoria das Restrições"
   },
   {
    "Termo": "Governança de Processos",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Estrutura de papéis, responsabilidades, políticas e instâncias decisórias que garante que os processos sejam executados, monitorados e melhorados conforme a estratégia.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Dono do Processo"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Gantt",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Gráfico de barras horizontais que representa o cronograma do projeto ao longo do tempo, com início, duração e fim de cada atividade.",
-   "Fonte": "Henry Gantt",
-   "Termos_Relacionados": "Cronograma"
+   "Fonte": "Henry Gantt"
   },
   {
    "Termo": "GPE",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Gerência de Planejamento Estratégico da Codevasf, à qual a UNP está subordinada.",
-   "Fonte": "Codevasf",
-   "Termos_Relacionados": "UNP; AE"
+   "Fonte": "Codevasf"
   },
   {
    "Termo": "Governança Pública",
-   "Categoria": "Governança e Papéis",
    "Definicao": "Conjunto de mecanismos de liderança, estratégia e controle postos em prática para avaliar, direcionar e monitorar a gestão pública.",
-   "Fonte": "Decreto 9.203/2017",
-   "Termos_Relacionados": "Accountability; Governança de Processos"
+   "Fonte": "Decreto 9.203/2017"
   },
   {
    "Termo": "Handoff",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Transferência de responsabilidade entre áreas, sistemas ou pessoas no fluxo do processo. Cada handoff é ponto crítico de falha e atraso.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Processo Ponta a Ponta"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Indicador",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Representação simples ou intuitiva de uma medição ou métrica, para facilitar a interpretação em relação a uma referência ou meta — por exemplo, um selo verde (meta atingida) ou vermelho (meta não atingida). É a leitura, não o dado nem o cálculo: ver Medição e Métrica.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Métrica; Medição"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Impacto",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Magnitude das consequências de um evento de risco caso ele se concretize, normalmente avaliado em escala.",
-   "Fonte": "ISO 31000",
-   "Termos_Relacionados": "Risco; Probabilidade"
+   "Fonte": "ISO 31000"
   },
   {
    "Termo": "Kaizen",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Filosofia japonesa de melhoria contínua que promove pequenas mudanças incrementais com participação de toda a equipe.",
-   "Fonte": "Lean",
-   "Termos_Relacionados": "PDCA; Melhoria Contínua"
+   "Fonte": "Lean"
   },
   {
    "Termo": "KPI",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Key Performance Indicator — indicador-chave de desempenho. Métrica quantificável usada para avaliar o sucesso de um processo, projeto ou objetivo estratégico.",
-   "Fonte": "BSC / CBOK",
-   "Termos_Relacionados": "Indicador; Meta; SLA"
+   "Fonte": "BSC / CBOK"
   },
   {
    "Termo": "Kanban",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Método visual de gestão do fluxo de trabalho, com cartões e colunas (To Do, Doing, Done) e limites de WIP.",
-   "Fonte": "Toyota / Kanban Method",
-   "Termos_Relacionados": "Agile; WIP"
+   "Fonte": "Toyota / Kanban Method"
   },
   {
    "Termo": "Lean",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Conjunto de práticas focadas na eliminação de desperdícios (muda) e maximização de valor para o cliente, oriundas do Sistema Toyota de Produção.",
-   "Fonte": "Toyota / Lean",
-   "Termos_Relacionados": "Valor Agregado; Desperdício (Muda)"
+   "Fonte": "Toyota / Lean"
   },
   {
    "Termo": "Linha de Base (Projeto)",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Versão aprovada do escopo, prazo ou custo, usada como referência para comparação com o desempenho real.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Baseline; Escopo; Cronograma"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Lições Aprendidas",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Conhecimento adquirido durante o projeto, registrado para uso em projetos futuros. Inclui o que deu certo, o que deu errado e recomendações.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": null
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "LGPD",
-   "Categoria": "Governança e Papéis",
    "Definicao": "Lei Geral de Proteção de Dados Pessoais (Lei 13.709/2018) — disciplina o tratamento de dados pessoais por pessoas físicas e jurídicas, públicas e privadas.",
-   "Fonte": "Lei 13.709/2018",
-   "Termos_Relacionados": "Controle Interno"
+   "Fonte": "Lei 13.709/2018"
   },
   {
    "Termo": "Macroprocesso",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Agrupamento dos grandes processos de uma organização que atravessam várias áreas e contribuem de forma estratégica para a cadeia de valor. Na Codevasf, são classificados em gerenciais, finalísticos e de suporte.",
-   "Fonte": "CBOK 4.0 / Codevasf",
-   "Termos_Relacionados": "Cadeia de Valor; Processo de Negócio; Subprocesso"
+   "Fonte": "CBOK 4.0 / Codevasf"
   },
   {
    "Termo": "Modelagem de Processos",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Representação gráfica e textual de um processo, mostrando atividades, papéis, fluxos, decisões e eventos. Geralmente utiliza notação BPMN.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "BPMN; AS-IS; TO-BE; SIPOC"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Melhoria Contínua",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Esforço sistemático e incremental para aperfeiçoar processos, fundamentado em ciclos PDCA e Kaizen.",
-   "Fonte": "Deming / CBOK 4.0",
-   "Termos_Relacionados": "PDCA; Kaizen; Ciclo de Vida BPM"
+   "Fonte": "Deming / CBOK 4.0"
   },
   {
    "Termo": "Maturidade em Processos",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Grau de evolução da gestão por processos de uma organização ou de um processo específico. Este repositório usa uma escala de cinco níveis, do menos ao mais maduro: Inicial (processo não documentado nem padronizado), Repetível (executado de forma consistente, mas pouco documentado), Definido (documentado e padronizado), Gerenciado (medido e controlado com indicadores) e Otimizado (em melhoria contínua com base em dados). Preenchimento manual na ficha do processo — o CBOK não fixa uma fórmula única de cálculo.",
-   "Fonte": "CMMI / BPM-MM",
-   "Termos_Relacionados": "Indicador; Métrica"
+   "Fonte": "CMMI / BPM-MM"
   },
   {
    "Termo": "Meta",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Valor numérico que se deseja alcançar para um indicador em um prazo determinado, geralmente desafiador e mensurável.",
-   "Fonte": "BSC",
-   "Termos_Relacionados": "Indicador; KPI"
+   "Fonte": "BSC"
   },
   {
    "Termo": "Matriz de Risco",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Ferramenta que cruza probabilidade e impacto para classificar e priorizar riscos (baixo, moderado, alto, extremo).",
-   "Fonte": "ISO 31000",
-   "Termos_Relacionados": "Risco; Probabilidade; Impacto"
+   "Fonte": "ISO 31000"
   },
   {
    "Termo": "Mitigação",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Ação para reduzir a probabilidade ou o impacto de um risco, ou para tratar suas consequências.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Risco; Plano de Mitigação"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Marco",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Ponto significativo no cronograma, normalmente a conclusão de uma entrega importante. Não consome tempo.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Cronograma; Entrega"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Matriz RACI",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Matriz de responsabilidades que define quem é Responsável (executa), Accountable (responde), Consultado e Informado em cada atividade.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Stakeholder; Dono do Processo"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Mapeamento de Processos (Codevasf)",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Trabalho conduzido pela UNP em parceria com as unidades gestoras para documentar processos em formato padronizado (SIPOC, BPMN, indicadores e riscos), conforme a RES 031/2025.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "SIPOC; BPMN; Metodologia Codevasf"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Metodologia Codevasf",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Conjunto de etapas, artefatos e padrões definidos na Metodologia e no Guia de Gerenciamento de Processos (RES 031/2025) para conduzir o mapeamento e a melhoria dos processos.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Mapeamento de Processos (Codevasf); UNP"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Notação",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Conjunto padronizado de símbolos para representar processos. BPMN é a mais usada em BPM.",
-   "Fonte": "CBOK",
-   "Termos_Relacionados": "BPMN; Fluxograma"
+   "Fonte": "CBOK"
   },
   {
    "Termo": "Processo de Negócio",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Conjunto definido de atividades, executadas por pessoas ou sistemas, que entrega um resultado de valor a um cliente interno ou externo. Tem início, fim, entradas, saídas e mensuração claros.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Macroprocesso; Subprocesso; Atividade; Tarefa"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Pool",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Contêiner BPMN que representa um participante (organização, sistema ou área) e agrupa raias.",
-   "Fonte": "BPMN",
-   "Termos_Relacionados": "BPMN; Raia (Swimlane)"
+   "Fonte": "BPMN"
   },
   {
    "Termo": "PDCA",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Plan-Do-Check-Act — ciclo de melhoria contínua atribuído a Deming/Shewhart: planejar, executar, verificar e agir corretivamente.",
-   "Fonte": "Deming",
-   "Termos_Relacionados": "Melhoria Contínua; Kaizen"
+   "Fonte": "Deming"
   },
   {
    "Termo": "Processo de Trabalho",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Expressão usual na administração pública brasileira para o conjunto de atividades executadas por uma unidade. Não é um nível da hierarquia do CBOK 4.0, que adota processo de negócio → subprocesso → atividade → tarefa — nomenclatura seguida por este painel.",
-   "Fonte": "Adm. Pública / CBOK 4.0",
-   "Termos_Relacionados": "Processo de Negócio; Subprocesso; Atividade; Tarefa"
+   "Fonte": "Adm. Pública / CBOK 4.0"
   },
   {
    "Termo": "Processo Ponta a Ponta",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Visão completa do processo, do primeiro evento desencadeador até a entrega final ao cliente, atravessando todas as áreas envolvidas.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Processo de Negócio; Handoff"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Probabilidade",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Estimativa da chance de ocorrência de um evento de risco, geralmente em escala (muito baixa, baixa, média, alta, muito alta).",
-   "Fonte": "ISO 31000",
-   "Termos_Relacionados": "Risco; Impacto"
+   "Fonte": "ISO 31000"
   },
   {
    "Termo": "Plano de Mitigação",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Conjunto estruturado de ações, prazos e responsáveis para tratar um risco específico.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Mitigação; Risco"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "PMBOK",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Project Management Body of Knowledge — guia do PMI que consolida boas práticas, princípios e domínios de desempenho em gerenciamento de projetos.",
-   "Fonte": "PMI",
-   "Termos_Relacionados": "PMI; Projeto"
+   "Fonte": "PMI"
   },
   {
    "Termo": "PMI",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Project Management Institute — instituto internacional que mantém o PMBOK e certificações como PMP.",
-   "Fonte": "PMI",
-   "Termos_Relacionados": "PMBOK"
+   "Fonte": "PMI"
   },
   {
    "Termo": "Projeto",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Esforço temporário empreendido para criar um produto, serviço ou resultado único. Tem início e fim definidos.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Programa; Portfólio; Entrega"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Programa",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Conjunto de projetos relacionados, gerenciados de forma coordenada para obter benefícios que não seriam alcançados se gerenciados individualmente.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Projeto; Portfólio"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Portfólio",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Conjunto de projetos, programas e operações gerenciados em grupo para atingir objetivos estratégicos.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Projeto; Programa"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Pacote de Trabalho",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Componente de menor nível da EAP, para o qual se pode estimar custo, prazo e responsável.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "EAP; Escopo"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Plano de Ações AE/GPE",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Plano de Ações 2026 conduzido pela AE/GPE/UNP para estruturar o escritório de processos, mapear processos prioritários e implantar a governança.",
-   "Fonte": "Codevasf 2026",
-   "Termos_Relacionados": "UNP; GPE; AE"
+   "Fonte": "Codevasf 2026"
   },
   {
    "Termo": "Raia (Swimlane)",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Faixa horizontal ou vertical no diagrama BPMN que indica o papel, área ou sistema responsável pelas atividades nela contidas.",
-   "Fonte": "BPMN",
-   "Termos_Relacionados": "BPMN; Pool"
+   "Fonte": "BPMN"
   },
   {
    "Termo": "Reengenharia",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Repensar e redesenhar radicalmente processos para obter ganhos expressivos em custo, qualidade, serviço e velocidade. Diferente da melhoria contínua incremental.",
-   "Fonte": "Hammer & Champy",
-   "Termos_Relacionados": "TO-BE; Melhoria Contínua"
+   "Fonte": "Hammer & Champy"
   },
   {
    "Termo": "Risco",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Efeito da incerteza sobre os objetivos. Pode ser ameaça (negativo) ou oportunidade (positivo). Tem causa, evento e consequência.",
-   "Fonte": "ISO 31000 / PMBOK",
-   "Termos_Relacionados": "Probabilidade; Impacto; Mitigação"
+   "Fonte": "ISO 31000 / PMBOK"
   },
   {
    "Termo": "Subprocesso",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Recorte de um processo, com objetivo específico, que pode ser detalhado em atividades e tarefas. Permite gerenciar partes complexas do processo separadamente.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Processo de Negócio; Atividade"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "SIPOC",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Ferramenta visual que descreve um processo em alto nível por meio de cinco elementos: Fornecedores, Entradas, Processo, Saídas e Beneficiários.",
-   "Fonte": "Six Sigma / CBOK",
-   "Termos_Relacionados": "Fornecedor; Entrada; Saída"
+   "Fonte": "Six Sigma / CBOK"
   },
   {
    "Termo": "Saída",
-   "Categoria": "SIPOC e Modelagem",
    "Definicao": "Produto, serviço, informação ou decisão gerada pelo processo e entregue a um cliente.",
-   "Fonte": "SIPOC",
-   "Termos_Relacionados": "SIPOC"
+   "Fonte": "SIPOC"
   },
   {
    "Termo": "SLA",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Service Level Agreement — acordo formal entre prestador e cliente que define níveis de serviço, prazos, qualidade e penalidades.",
-   "Fonte": "ITIL",
-   "Termos_Relacionados": "KPI; Indicador"
+   "Fonte": "ITIL"
   },
   {
    "Termo": "Stakeholder",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Parte interessada — pessoa, grupo ou organização que afeta ou é afetada pelo projeto.",
-   "Fonte": "PMBOK",
-   "Termos_Relacionados": "Matriz RACI"
+   "Fonte": "PMBOK"
   },
   {
    "Termo": "Scrum",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Framework ágil baseado em sprints curtas, papéis definidos (Product Owner, Scrum Master, Time) e cerimônias (planning, daily, review, retro).",
-   "Fonte": "Schwaber & Sutherland",
-   "Termos_Relacionados": "Agile; Sprint"
+   "Fonte": "Schwaber & Sutherland"
   },
   {
    "Termo": "Sprint",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Iteração de duração fixa (geralmente 1 a 4 semanas) em Scrum, ao final da qual se entrega um incremento potencialmente utilizável.",
-   "Fonte": "Scrum",
-   "Termos_Relacionados": "Scrum; Agile"
+   "Fonte": "Scrum"
   },
   {
    "Termo": "SPI",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Schedule Performance Index — índice de desempenho de prazo do projeto. SPI < 1 indica atraso.",
-   "Fonte": "EVM",
-   "Termos_Relacionados": "EVM; CPI"
+   "Fonte": "EVM"
   },
   {
    "Termo": "Status de Mapeamento",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Indicador do estágio em que se encontra o mapeamento de um processo: Não iniciado, Em andamento, Concluído ou Suspenso.",
-   "Fonte": "Codevasf",
-   "Termos_Relacionados": "Semáforo do Processo"
+   "Fonte": "Codevasf"
   },
   {
    "Termo": "Semáforo do Processo",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Sinal visual (verde, amarelo, vermelho) que combina prazo e percentual de execução do mapeamento.",
-   "Fonte": "Codevasf",
-   "Termos_Relacionados": "Status de Mapeamento"
+   "Fonte": "Codevasf"
   },
   {
    "Termo": "Tarefa",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Menor unidade de trabalho identificada em uma atividade. Pode ser manual, automatizada ou de regra de negócio.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Atividade"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "TO-BE",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Modelo do processo no estado futuro desejado, após análise e proposta de melhorias. Serve de referência para a implementação.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "AS-IS; Melhoria Contínua"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "UNP",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Unidade de Gestão Normativa e de Processos da Codevasf — vinculada à GPE/AE. Responsável por conduzir a metodologia de mapeamento e a governança dos processos da Empresa.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "GPE; AE"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Unidade Gestora",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Área da Codevasf responsável pelo processo, por seus resultados e pela manutenção da documentação atualizada.",
-   "Fonte": "Metodologia Codevasf",
-   "Termos_Relacionados": "Dono do Processo"
+   "Fonte": "Metodologia Codevasf"
   },
   {
    "Termo": "Valor Agregado",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Atributo de uma atividade que transforma a entrada de forma percebida como valiosa pelo cliente. Atividades sem valor agregado devem ser eliminadas ou reduzidas.",
-   "Fonte": "Lean / CBOK",
-   "Termos_Relacionados": "Análise de Processos"
+   "Fonte": "Lean / CBOK"
   },
   {
    "Termo": "WIP",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Work in Progress — quantidade de trabalho em andamento. Limitar o WIP reduz multitarefa e acelera entregas.",
-   "Fonte": "Kanban / Lean",
-   "Termos_Relacionados": "Kanban; Lean"
+   "Fonte": "Kanban / Lean"
   },
   {
    "Termo": "Métrica",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Medida quantitativa derivada de um cálculo matemático sobre uma ou mais medições — por exemplo, número de defeitos dividido pela produção total. Divide-se em três categorias: métricas de produto (características do produto), de processo (resultados do processo, como satisfação do Cliente) e de projeto (execução do projeto, como custo e prazo). Neste repositório, cada métrica tem uma meta e um histórico de medições ao longo do tempo.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Medição; Indicador"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Medição",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Quantificação de um dado, num padrão e qualidade aceitáveis (precisão, completude, consistência, atualidade) — o dado bruto de um único momento no tempo. Uma métrica é calculada a partir de uma ou mais medições.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Métrica; Indicador"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Agregação de Valor",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Tipo de atividade que contribui para o resultado do processo de forma positiva — por exemplo, confirmar com o Cliente se ficou satisfeito após um serviço. Um dos três tipos de atividade do CBOK, junto com Transferência e Controle.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Transferência; Atividade de Controle"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Transferência",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Tipo de atividade que passa o controle do processo para outro departamento ou organização — por exemplo, encaminhar um Cliente para o setor responsável por resolver seu problema. Também chamada de handoff. Um dos três tipos de atividade do CBOK.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Agregação de Valor; Atividade de Controle; Handoffs"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "Atividade de Controle",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Ponto de verificação específico num processo, que assegura que ele se comporta dentro das tolerâncias desejadas e adere a padrões, requisitos legais ou regulamentares. Pode prevenir, detectar ou corrigir condições indesejadas. Um dos três tipos de atividade do CBOK.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "Agregação de Valor; Transferência"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "RACI",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Modelo para registrar os papéis envolvidos numa atividade ou processo: Responsável/Executa (quem faz o trabalho), Aprova (quem responde pelo resultado), Consultado (quem contribui antes da decisão) e Informado (quem é avisado do resultado). Usado neste repositório na seção \"Papéis e envolvidos\".",
-   "Fonte": "Prática de gestão de projetos e processos",
-   "Termos_Relacionados": null
+   "Fonte": "Prática de gestão de projetos e processos"
   },
   {
    "Termo": "ROI (Retorno sobre o Investimento)",
-   "Categoria": "Indicadores e Riscos",
    "Definicao": "Relação entre o ganho obtido com uma iniciativa (por exemplo, economia de tempo ou de custo com a automatização de um processo) e o valor investido nela. Neste repositório é tratado como uma categoria de métrica, ao lado de SLA, produto, processo e projeto.",
-   "Fonte": "CBOK 4.0",
-   "Termos_Relacionados": "SLA; Métrica"
+   "Fonte": "CBOK 4.0"
   },
   {
    "Termo": "5W2H",
-   "Categoria": "Projetos (PMBOK)",
    "Definicao": "Checklist de atividades, prazos e responsabilidades usado no plano de ação da etapa de análise: o que, por que, onde, quando, por quem, como e quanto vai custar.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Plano de Gerenciamento do Processo (PGP)"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Ator do Processo",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Empregado que participa, em algum momento, da execução do processo.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Gestor do Processo; Equipe de Gerenciamento de Processo"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Diagrama",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Representação gráfica que demonstra os principais elementos do fluxo do processo, ajudando a identificar e entender rapidamente suas atividades.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "BPMN; Fluxograma; Mapa; Modelo"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Equipe de Gerenciamento de Processo",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Grupo formado pelo ponto focal do Nugep, pelo gestor do processo e por atores do processo, responsável por gerenciar o processo priorizado.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Ponto Focal do Nugep; Gestor do Processo; Ator do Processo"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Gestor do Processo",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Titular da unidade orgânica responsável pela execução do processo ou, na sua ausência, o demandante do processo. Aprova os processos mapeados pelo ponto focal, forma a equipe de gerenciamento e responde pelos resultados perante a UNP.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Dono do Processo; Unidade Orgânica"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Hierarquia de Processos",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Forma de visualizar como os processos se desdobram do nível mais alto — a cadeia de valor — até o mais baixo — as tarefas.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Arquitetura de Processos; Cadeia de Valor"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Plano de Gerenciamento do Processo (PGP)",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Documento da etapa de planejamento, com o cronograma das etapas de conhecimento, análise, transformação, gerenciamento de desempenho, monitoramento e reavaliação do processo.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Equipe de Gerenciamento de Processo; Cronograma"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Ponto Focal do Nugep",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Empregado que conduz e coordena os trabalhos de gerenciamento de processos na própria unidade orgânica, como agente multiplicador do Nugep.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Equipe de Gerenciamento de Processo"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Procedimento (PRO)",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Documento que reúne objetivo, diagramas, referências legais, classificação na cadeia de valor, unidade responsável, sistemas, produtos, atores, tarefas, regras de negócio, cronograma e indicadores do processo.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Regras de Negócio; Diagrama"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Regras de Negócio",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Premissas e restrições que garantem o funcionamento adequado da organização: definem o que, onde, por que e como algo será feito, e como será gerenciado e governado.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Procedimento (PRO)"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Unidade Orgânica",
-   "Categoria": "Metodologia Codevasf",
    "Definicao": "Toda e qualquer unidade com representação formal na estrutura orgânica da Empresa.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Gestor do Processo; Unidade Gestora"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Mapa",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Nível intermediário de detalhamento de um processo: evolução do diagrama que soma atores, eventos, regras e resultados. Usado para representar subprocessos, de preferência pelo “caminho feliz” — as exceções ficam na Tabela de Descrição das Atividades.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Diagrama; Modelo"
+   "Fonte": "RES 031/2025"
   },
   {
    "Termo": "Modelo",
-   "Categoria": "BPM (CBOK)",
    "Definicao": "Nível mais analítico de detalhamento de um processo, usado quando o mapa não é suficiente. Tem alto grau de precisão, mas exige cuidado para não poluir a leitura.",
-   "Fonte": "RES 031/2025",
-   "Termos_Relacionados": "Diagrama; Mapa"
+   "Fonte": "RES 031/2025"
   }
  ],
  "FAQ": [
@@ -4888,5 +4743,5 @@ window.PAINEL_DADOS = {
    "Valor": "Repositório de materiais e ferramentas"
   }
  ],
- "_gerado_em": "2026-08-15 09:41"
+ "_gerado_em": "2026-08-17 16:52"
 };

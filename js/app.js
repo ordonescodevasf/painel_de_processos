@@ -22,7 +22,7 @@
     // embutido cobria o buraco, escondendo o problema em qualquer preview).
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
            'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
-           'PlanoAcao', 'Cultura_Processos', 'Iniciativas', 'Competencias',
+           'Cultura_Processos', 'Iniciativas', 'Competencias',
            'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
@@ -222,7 +222,6 @@
       medicoes: pega('Medicoes'),
       papeis: pega('Papeis'),
       regras: pega('Regras'),
-      planoAcao: pega('PlanoAcao'),
       culturaProcessos: pega('Cultura_Processos'),
       iniciativas: pega('Iniciativas'),
       competencias: pega('Competencias'),
@@ -304,7 +303,7 @@
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
     var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorPai: {}, tarefasPorAtiv: {},
-      reusoPorAlvo: {}, vinc: { docs: {}, riscos: {}, metricas: {}, papeis: {}, regras: {}, planoAcao: {} } };
+      reusoPorAlvo: {}, vinc: { docs: {}, riscos: {}, metricas: {}, papeis: {}, regras: {} } };
     idx.ativsPorSub = idx.ativsPorPai;   // nome antigo do índice, mantido por compatibilidade
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     // Codificação exibida dos macroprocessos, por tipo: gerencial = MG,
@@ -373,7 +372,6 @@
     dd.metricas.forEach(function (x) { vincula(idx.vinc.metricas, x); });
     dd.papeis.forEach(function (x) { vincula(idx.vinc.papeis, x); });
     dd.regras.forEach(function (x) { vincula(idx.vinc.regras, x); });
-    dd.planoAcao.forEach(function (x) { vincula(idx.vinc.planoAcao, x); });
     DADOS = dd; IDX = idx;
     return dd;
   }
@@ -598,6 +596,10 @@
   // tempo: Vinculo_Nivel e Vinculo_Codigo aceitam listas paralelas separadas por ';'.
   function listaVinculoPares(nivelStr, codigoStr) {
     var niveis = listar(nivelStr), codigos = listar(codigoStr), pares = [];
+    // Um só Vinculo_Nivel com vários códigos em Vinculo_Codigo é o caso comum
+    // (mesmo nível repetido) — repete o nível para não descartar os códigos
+    // além do primeiro.
+    if (niveis.length === 1 && codigos.length > 1) niveis = codigos.map(function () { return niveis[0]; });
     for (var i = 0; i < Math.max(niveis.length, codigos.length); i++) {
       if (niveis[i] && codigos[i]) pares.push([niveis[i], codigos[i]]);
     }
@@ -670,21 +672,15 @@
     });
   });
   /* ── Marcos do mapeamento (M1–M10) ──
-     Cada marco lê a coluna real do esquema atual (ver esquema_planilha.py).
-     Até esta auditoria contra a RES 031/2025, três marcos apontavam para
-     nomes de coluna que não existem mais (M1_Conhecer_Processo,
-     M6_Procedimento_Aprovado, M7_Processo_Publicado, M9_TOBE_Aprovado) —
-     "apelidos antigos" de rodadas anteriores que nunca foram atualizados
-     junto com o esquema. Na prática, M7 acabava lendo por acidente
-     M10_Publicado_Repositorio (a única coluna real que sobrava na lista de
-     fallback), e M10 não tinha coluna nenhuma: ficava pendente para sempre,
-     mesmo em processos 100% concluídos. Corrigido: cada marco tem exatamente
-     uma coluna real, e M10_Processo_Transformado (nova, ver esquema) fecha
-     de fato o décimo marco. */
+     Cada marco lê exatamente uma coluna real da aba Processos, na mesma
+     ordem e com os mesmos dez nomes da Metodologia (RES 031/2025): Conhecer
+     o processo, Processo modelado, Subprocessos modelados, AS-IS modelado,
+     AS-IS validado, Procedimento aprovado, Processo publicado, TO-BE
+     elaborado, TO-BE aprovado, Processo transformado. */
   var MARCOS = [
-    { rot: 'Conhecer o processo', campos: ['M1_Reuniao_Contextualizacao'],
+    { rot: 'Conhecer o processo', campos: ['M1_Conhecer_Processo'],
       desc: 'Primeira reunião com a área para conhecer o processo: apresentar a metodologia, entender o contexto e coletar o formulário de levantamento.' },
-    { rot: 'Processo modelado', campos: ['M2_Macro_Processo_Modelados'],
+    { rot: 'Processo modelado', campos: ['M2_Processo_Modelado'],
       desc: 'Oficinas de modelagem do macroprocesso e do processo em BPMN, com a equipe de mapeamento e a área.' },
     { rot: 'Subprocessos modelados', campos: ['M3_Subprocessos_Modelados'],
       desc: 'Oficinas de modelagem dos subprocessos — podendo aprofundar vários níveis (subprocesso dentro de subprocesso) — inclusive identificando subprocessos ainda não mapeados.' },
@@ -692,13 +688,13 @@
       desc: 'O conjunto de diagramas AS-IS (macroprocesso, processo, subprocessos e atividades) está consolidado.' },
     { rot: 'AS-IS validado', campos: ['M5_ASIS_Validado'],
       desc: 'O dono do processo validou formalmente o AS-IS como retrato da realidade atual.' },
-    { rot: 'Procedimento aprovado', campos: ['M7_Procedimento_Aprovado'],
+    { rot: 'Procedimento aprovado', campos: ['M6_Procedimento_Aprovado'],
       desc: 'O procedimento (PRO) foi aprovado pela Diretoria Executiva (DEX) — pronto para orientar a execução do processo.' },
-    { rot: 'Processo publicado', campos: ['M10_Publicado_Repositorio'],
+    { rot: 'Processo publicado', campos: ['M7_Processo_Publicado'],
       desc: 'O processo, seus diagramas e o PRO foram publicados no repositório institucional, disponíveis para consulta de toda a Empresa.' },
     { rot: 'TO-BE elaborado', campos: ['M8_TOBE_Elaborado'],
       desc: 'O redesenho (TO-BE) do processo foi elaborado, com melhorias, riscos residuais e indicadores propostos.' },
-    { rot: 'TO-BE aprovado', campos: ['M9_TOBE_Validado'],
+    { rot: 'TO-BE aprovado', campos: ['M9_TOBE_Aprovado'],
       desc: 'O dono do processo validou o TO-BE, que foi aprovado pela Diretoria Executiva (DEX).' },
     { rot: 'Processo transformado', campos: ['M10_Processo_Transformado'],
       desc: 'O redesenho aprovado foi implantado: o processo passou a ser executado na forma TO-BE, com os ganhos acompanhados pelos indicadores.' }
@@ -931,7 +927,7 @@
         ['Entradas', listar(sf.Entradas).map(esc).join('; ')],
         ['Saídas', listar(sf.Saidas).map(esc).join('; ')],
         ['Sistemas', listar(sf.Sistemas).map(esc).join('; ')],
-        ['Unidade responsável', esc(sf.Unidade_Responsavel || '')]
+        ['Unidade responsável', esc(sf.Unidade_Organica_Responsavel || '')]
       ]);
   }
   // Todo lugar que chama um subprocesso reutilizável: o pai nativo
@@ -1138,7 +1134,9 @@
             ['Categoria', esc(r.Categoria || '')],
             ['Responsável', esc(r.Responsavel || '')],
             ['Cronograma do risco', esc(r.Cronograma_Risco || '')],
-            ['Fatores (o que pode acionar o risco)', esc(r.Fatores || '')]
+            ['Fatores (o que pode acionar o risco)', esc(r.Fatores || '')],
+            ['Identificado em', fmtData(r.Data_Identificacao)],
+            ['Prazo do tratamento', r.Prazo_Tratamento ? fmtData(r.Prazo_Tratamento) : '']
           ]);
       }).join('')
     });
@@ -1517,8 +1515,8 @@
   function ligarAcoesCabecalho() {
     var exp = $('#actExportCsv');
     if (exp) exp.onclick = function () {
-      var cab = ['Codigo', 'Macroprocesso', 'Nome', 'Status_Mapeamento', 'Percentual', 'Fase_Ciclo_BPM',
-        'Area_Responsavel', 'Dono_Processo', 'Prazo_Previsto'];
+      var cab = ['Codigo', 'Macroprocesso', 'Nome', 'Status_Mapeamento', 'Percentual',
+        'Unidade_Organica_Responsavel', 'Ponto_Focal_Nugep', 'Prazo_Previsto'];
       // O CSV leva a sigla de exibição (PP-/AT-/TR-), a mesma que aparece na
       // tela — quem exporta compara com o painel, não com a planilha.
       var codigos = { Codigo: 1, Macroprocesso: 1, Vinculo_Pai: 1 };
@@ -1560,9 +1558,9 @@
     valores: ['Foco na sociedade', 'Excelência', 'Transparência', 'Valorização dos Colaboradores',
       'Sustentabilidade', 'Ética', 'Comprometimento', 'Estímulo à Diversidade', 'Inovação']
   };
-  var MP_ICONES = { 'MP-01': 'fa-bullseye', 'MP-02': 'fa-shield-halved', 'MP-03': 'fa-seedling',
-    'MP-04': 'fa-droplet', 'MP-05': 'fa-water', 'MP-06': 'fa-file-contract',
-    'MP-07': 'fa-users', 'MP-08': 'fa-laptop-code' };
+  var MP_ICONES = { 'MG-01': 'fa-bullseye', 'MG-02': 'fa-shield-halved', 'MF-01': 'fa-seedling',
+    'MF-02': 'fa-droplet', 'MF-03': 'fa-water', 'MS-01': 'fa-file-contract',
+    'MS-02': 'fa-users', 'MS-03': 'fa-laptop-code' };
   function statsMacro(cod) {
     var ps = IDX.procsPorMacro[cod] || [];
     if (!ps.length) return 'sem processos cadastrados';
@@ -1616,7 +1614,8 @@
       '<aside class="cv-aside cv-proposito"><h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Propósito</h3><p>' + esc(INSTITUCIONAL.proposito) + '</p></aside>' +
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
       '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
-      '</div></section>';
+      '</div></section>' +
+      cardCulturaProcessos();
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
@@ -1762,7 +1761,7 @@
       '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(codDisp(p.Codigo)) + '</span>' +
       '<div class="nome">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
       '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' +
-      [p.Area_Responsavel || '', marcoRotulo(marcoAtual(p))].filter(Boolean).map(esc).join(' · ') + '</div>' +
+      [p.Unidade_Organica_Responsavel || '', marcoRotulo(marcoAtual(p))].filter(Boolean).map(esc).join(' · ') + '</div>' +
       '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
   }
   function catFiltrada() {
@@ -1941,10 +1940,8 @@
     var inds = semIndicadores ? [] : vinculados('metricas', nivel, codigo);
     var papeis = vinculados('papeis', nivel, codigo);
     var regras = vinculados('regras', nivel, codigo);
-    var planoAcao = vinculados('planoAcao', nivel, codigo);
     return (semIndicadores ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos (matriz 5×5 · P×I)</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
-      (planoAcao.length ? '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Plano de ação (5W2H)</h3>' + listaPlanoAcaoHtml(planoAcao) + '</div>' : '') +
       (papeis.length ? '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Papéis e envolvidos</h3>' + listaPapeisHtml(papeis) + '</div>' : '') +
       (regras.length ? '<div class="pp-card"><h3><i class="fas fa-gavel" aria-hidden="true"></i> Regras de negócio</h3>' + listaRegrasHtml(regras) + '</div>' : '') +
       '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Normativos e documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>';
@@ -1966,22 +1963,6 @@
         (r.Descricao ? '<p class="regra-desc">' + esc(r.Descricao) + '</p>' : '') + '</div>';
     }).join('') + '</div>';
   }
-  // Plano de Ação 5W2H (RES 031/2025, item 5.5.4) — entregável da etapa
-  // "Analisar o processo" da Jornada; mesmo padrão de card que Regras.
-  function listaPlanoAcaoHtml(itens) {
-    if (!itens.length) return '<p class="pp-vazio">Nenhuma ação de melhoria registrada.</p>';
-    return '<div class="br-list plano-lista" role="list">' + itens.map(function (a) {
-      var cls = a.Status === 'Concluído' ? ' success' : a.Status === 'Em andamento' ? ' info' : '';
-      return '<div class="br-item plano-item" role="listitem">' +
-        '<div class="plano-topo"><strong>' + esc(a.Problema) + '</strong>' +
-        '<span class="br-tag small' + cls + '">' + esc(a.Status || 'Não iniciado') + '</span></div>' +
-        '<dl class="plano-grid">' + [['O que', a.O_Que], ['Por que', a.Por_Que], ['Onde', a.Onde],
-          ['Quando', a.Quando], ['Quem', a.Quem], ['Como', a.Como], ['Quanto custa', a.Quanto_Custa]]
-          .filter(function (p) { return p[1]; })
-          .map(function (p) { return '<dt>' + p[0] + '</dt><dd>' + esc(p[1]) + '</dd>'; }).join('') +
-        '</dl></div>';
-    }).join('') + '</div>';
-  }
   // Cultura de Processos (CBOK 9.5.6) é autoavaliação ORGANIZACIONAL, não por
   // processo — fica no dashboard gerencial. Vem "Não avaliado" por padrão:
   // só a equipe pode dizer se cada característica já é realidade.
@@ -1989,7 +1970,7 @@
     var itens = DADOS.culturaProcessos || [];
     if (!itens.length) return '';
     var sim = itens.filter(function (c) { return c.Situacao === 'Sim'; }).length;
-    return '<div class="pp-card"><h3><i class="fas fa-people-group" aria-hidden="true"></i> Cultura de processos</h3>' +
+    return '<div class="pp-card" style="margin-top:var(--sp5)"><h3><i class="fas fa-people-group" aria-hidden="true"></i> Cultura de processos</h3>' +
       '<p class="pp-muted" style="margin-bottom:var(--sp2)">Autoavaliação organizacional (CBOK 9.5.6) — ' + sim + ' de ' + itens.length + ' características já presentes. Atualize a situação de cada uma na aba Cultura_Processos da planilha.</p>' +
       '<div class="cultura-lista">' + itens.map(function (c) {
         return '<div class="cultura-item"><span class="br-tag small cultura-' + slug(c.Situacao || 'nao-avaliado') + '">' + esc(c.Situacao || 'Não avaliado') + '</span><span>' + esc(c.Caracteristica) + '</span></div>';
@@ -2023,10 +2004,10 @@
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
         campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
-        campo('Unidade Orgânica responsável', m.Unidade_Responsavel && siglaTag(m.Unidade_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(m.Unidades_Corresponsaveis, null, true), false, 'quem') +
+        campo('Unidade Orgânica responsável', m.Unidade_Organica_Responsavel && siglaTag(m.Unidade_Organica_Responsavel), false, 'quem') +
+        campo('Unidades orgânicas corresponsáveis', chips(m.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
         campo('Entregas (produtos/serviços)', chips(m.Entregas), true, 'valor') +
-        campo('Beneficiários', chips(m.Clientes_Beneficiarios), false, 'valor') +
+        campo('Beneficiários', chips(m.Beneficiarios), false, 'valor') +
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
         campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop'), false, 'tecnico') +
         (m.Observacoes ? campo('Observações', esc(m.Observacoes), true) : '') + '</dl></div>' +
@@ -2064,16 +2045,16 @@
         '<span>Mapeamento em <strong>' + p.Percentual + '%</strong></span>' +
         '<span>· ' + plural(contarSubprocessosRecursivo(cod), 'subprocesso', 'subprocessos') + ' · ' +
         plural(totalAtivs, 'atividade', 'atividades') + ' · ' + plural(totalTarefas, 'tarefa', 'tarefas') + '</span>' +
-        (p.Area_Responsavel ? '<span>' + esc(p.Area_Responsavel) + '</span>' : '') +
+        (p.Unidade_Organica_Responsavel ? '<span>' + esc(p.Unidade_Organica_Responsavel) + '</span>' : '') +
         (p.Processo_ECodevasf ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> e-Codevasf ' + esc(p.Processo_ECodevasf) + '</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do processo</h3><dl class="ficha-dl">' +
         campo('Objetivo', p.Objetivo && esc(p.Objetivo), false, 'desc') +
         campo('Descrição', p.Descricao && esc(p.Descricao), false, 'desc') +
-        campo('Unidade Orgânica responsável', p.Area_Responsavel && siglaTag(p.Area_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(p.Unidades_Corresponsaveis, null, true), false, 'quem') +
-        campo('Ponto focal do Nugep', p.Interlocutor && esc(p.Interlocutor), false, 'quem') +
+        campo('Unidade Orgânica responsável', p.Unidade_Organica_Responsavel && siglaTag(p.Unidade_Organica_Responsavel), false, 'quem') +
+        campo('Unidades orgânicas corresponsáveis', chips(p.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
+        campo('Ponto focal do Nugep', p.Ponto_Focal_Nugep && esc(p.Ponto_Focal_Nugep), false, 'quem') +
         campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
         campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
         campo('Maturidade do processo', p.Maturidade && tagMaturidade(p.Maturidade), false, 'quem') +
@@ -2093,7 +2074,7 @@
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades ligadas direto ao processo</h3>' +
         (subs.length && !ativsDiretas.length
           ? '<p class="pp-vazio">Nenhuma atividade ligada diretamente ao processo — neste caso as atividades ficam dentro dos subprocessos listados ao lado.</p>'
-          : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.', p.Area_Responsavel)) + '</div>' +
+          : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.', p.Unidade_Organica_Responsavel)) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
         cardHierarquia(mp ? [{ tipo: 'mp', cat: mp._cat, codigo: mp._cod || mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
@@ -2137,7 +2118,7 @@
         eyebrowFicha('Subprocesso', s.Codigo) +
         '<h1>' + esc(codDisp(s.Codigo)) + ' — ' + esc(s.Nome) + '</h1>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
-        (s.Unidade_Responsavel ? '<span>· ' + esc(s.Unidade_Responsavel) + '</span>' : '') +
+        (s.Unidade_Organica_Responsavel ? '<span>· ' + esc(s.Unidade_Organica_Responsavel) + '</span>' : '') +
         '<span>· Subprocesso de ' + (cadeiaSp.length + 1) + 'º nível' + (cadeiaSp.length > 0 ? ' (aninhado)' : '') + '</span>' +
         (s.Reutilizavel === 'Sim' ? '<span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' : '') +
         '</div></section>' +
@@ -2145,13 +2126,12 @@
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do subprocesso</h3><dl class="ficha-dl">' +
         campo('Descrição', s.Descricao && esc(s.Descricao), true, 'desc') +
         campo('Objetivo', s.Objetivo && esc(s.Objetivo), true, 'desc') +
-        campo('Unidade Orgânica responsável', s.Unidade_Responsavel && siglaTag(s.Unidade_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Corresponsaveis, null, true), false, 'quem') +
+        campo('Unidade Orgânica responsável', s.Unidade_Organica_Responsavel && siglaTag(s.Unidade_Organica_Responsavel), false, 'quem') +
+        campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
-        campo('Produto principal', s.Produto && esc(s.Produto), false, 'valor') +
+        campo('Produto principal', s.Produto_Principal && esc(s.Produto_Principal), false, 'valor') +
         '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
-        campo('Cronograma proposto', s.Cronograma_Proposto_Dias && (esc(s.Cronograma_Proposto_Dias) + ' dias úteis'), false, 'tecnico') +
         campo('Sistemas', chips(s.Sistemas, 'fa-desktop'), false, 'tecnico') +
         campo('Fontes de dados', chips(s.Fontes_Dados, 'fa-database'), false, 'tecnico') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Subprocessos deste subprocesso</h3>' +
@@ -2166,7 +2146,7 @@
           : '<p class="pp-vazio">Nenhum subprocesso cadastrado dentro deste subprocesso.</p>') + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama (Bizagi · BPMN)</h3>' + diagramaHtml(s.Imagem_Bizagi, s.Nome) + '</div>' +
         '<div class="pp-card"><h3><i class="fas fa-list-check" aria-hidden="true"></i> Atividades</h3>' +
-        tabelaAtividadesHtml(ativs, undefined, s.Unidade_Responsavel) + '</div>' +
+        tabelaAtividadesHtml(ativs, undefined, s.Unidade_Organica_Responsavel) + '</div>' +
         secVinculos('Subprocesso', cod) +
         '</div><aside>' +
         cardHierarquia(
@@ -2202,7 +2182,7 @@
     var tf3 = IDX.tarefasPorAtiv[cod] || [];
     // Mesma regra da tabela: a atividade não tem unidade própria, herda a
     // do pai (subprocesso ou, na ausência dele, o processo direto).
-    var unidadeAtiv = sp2 ? sp2.Unidade_Responsavel : (p2 ? p2.Area_Responsavel : null);
+    var unidadeAtiv = sp2 ? sp2.Unidade_Organica_Responsavel : (p2 ? p2.Unidade_Organica_Responsavel : null);
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp2 ? [{ rotulo: mp2._cod || mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
@@ -2219,7 +2199,6 @@
       campo('Descrição', a.Descricao && esc(a.Descricao), true, 'desc') +
       campo('Tipo de atividade', a.Tipo_Atividade && tagTipoAtividade(a.Tipo_Atividade), false, 'tecnico') +
       campo('Unidade Orgânica Responsável', unidadeAtiv && siglaTag(unidadeAtiv), false, 'quem') +
-      (a.Responsavel ? campo('Responsável pela execução', esc(a.Responsavel), false, 'quem') : '') +
       campo('Entradas (insumos)', chips(a.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
       campo('Saídas (produtos)', chips(a.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
       campo('Sistemas', chips(a.Sistemas, 'fa-desktop'), false, 'tecnico') + '</dl></div>' +
@@ -2783,7 +2762,6 @@
       '<div class="kpi"><span class="num">' + VISITAS_NAVEGADOR + '</span><span class="lbl">Visitas ao repositório' + dica('Utilização é a métrica chave de um bom repositório de processos (CBOK). Contador local deste navegador — o painel é um site estático sem login, não soma visitas de outras pessoas nem de outros dispositivos.') + '</span><span class="sub">neste navegador</span></div>' +
       '<div class="kpi"><span class="num">' + txAtualizPct + '%</span><span class="lbl">Taxa de atualização' + dica('Uma das três métricas de repositório do CBOK (4.2.11): percentual de processos atualizados nos últimos 90 dias.') + '</span><span class="sub">processos atualizados nos últimos 90 dias</span></div>' +
       '</div>' +
-      cardCulturaProcessos() +
       '<div class="graf-grid">' +
       grafGauge('Avanço médio geral do portfólio', media, 100, [
         { ate: 40, cor: '#b50909' }, { ate: 70, cor: '#947100' }, { ate: 100, cor: '#168821' }],
@@ -2826,7 +2804,7 @@
         colunas: [{ r: 'Código', curta: true }, { r: 'Processo', principal: true }, { r: 'Responsável' }, { r: 'Prazo', curta: true }, { r: 'Avanço', curta: true }],
         linhas: atrasados.map(function (p) {
           return '<tr data-link><td class="cod">' + esc(codDisp(p.Codigo)) + '</td><td><a href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
-            '<td>' + esc(p.Dono_Processo || '—') + '</td><td class="text-nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
+            '<td>' + esc(p.Ponto_Focal_Nugep || '—') + '</td><td class="text-nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
             '<td style="min-width:120px">' + barraPct(p.Percentual) + '</td></tr>';
         }).join('')
       }) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum processo com prazo vencido.</span></div></div>') + '</div>' +
@@ -2887,8 +2865,7 @@
       'Instrumento': 'fa-toolbox', 'Ferramenta': 'fa-screwdriver-wrench', 'Referência': 'fa-book' }[it.Categoria] || 'fa-file';
     return '<article class="repo-card"><div class="repo-topo">' +
       '<span class="repo-ico"><i class="fas ' + icone + '" aria-hidden="true"></i></span>' +
-      '<div><span class="repo-cat">' + esc(it.Categoria || '') + (it.Fase_Ciclo ? ' · ' + esc(it.Fase_Ciclo) : '') + '</span>' +
-      (it.Codigo ? '<span class="cod">' + esc(it.Codigo) + '</span>' : '') + '</div></div>' +
+      '<div><span class="repo-cat">' + esc(it.Categoria || '') + (it.Fase_Ciclo ? ' · ' + esc(it.Fase_Ciclo) : '') + '</span></div></div>' +
       '<h4>' + esc(it.Titulo) + '</h4><p>' + esc(it.Descricao || '') + '</p>' +
       '<div class="repo-rodape"><span class="repo-fonte">Fonte: ' + esc(it.Fonte || '—') + '</span>' +
       (it.Link ? '<a class="br-button secondary small" href="' + esc(it.Link) + '"' +
@@ -2906,7 +2883,7 @@
     var lista = repo.filter(function (i) {
       return (!filtroRepo.cat || i.Categoria === filtroRepo.cat) &&
         (!filtroRepo.fase || i.Fase_Ciclo === filtroRepo.fase) &&
-        (!ql || String((i.Titulo || '') + ' ' + (i.Descricao || '') + ' ' + (i.Codigo || '')).toLowerCase().indexOf(ql) >= 0);
+        (!ql || String((i.Titulo || '') + ' ' + (i.Descricao || '')).toLowerCase().indexOf(ql) >= 0);
     });
     var met = DADOS.params.Link_Metodologia, guia = DADOS.params.Link_Guia;
     el.innerHTML =
@@ -3016,7 +2993,7 @@
     var alvo = String(nome || '').trim().toLowerCase();
     if (!alvo) return [];
     return DADOS.procs.filter(function (p) {
-      return String(p.Interlocutor || '').toLowerCase().indexOf(alvo) === 0;
+      return String(p.Ponto_Focal_Nugep || '').toLowerCase().indexOf(alvo) === 0;
     });
   }
   /* Avatar (Componente Avatar, gov.br DS): a foto da planilha (coluna Foto)
@@ -3110,7 +3087,7 @@
   }
 
   /* ── TELA: glossário ──────────────────────────────────────────────── */
-  var filtroGloss = { q: '', cat: '', letra: '', aba: 'termos' };
+  var filtroGloss = { q: '', letra: '', aba: 'termos' };
   var filtroSiglas = { q: '' };
   function renderGlossario() {
     var el = $('#viewGlossario');
@@ -3136,13 +3113,11 @@
   }
   function renderTermosGlossario(el) {
     var todos = DADOS.glossario;
-    var cats = []; todos.forEach(function (t) { if (t.Categoria && cats.indexOf(t.Categoria) < 0) cats.push(t.Categoria); });
     var ql = filtroGloss.q.toLowerCase();
     var lista = todos.filter(function (t) {
       var letra = String(t.Termo || '').charAt(0).toUpperCase();
-      return (!filtroGloss.cat || t.Categoria === filtroGloss.cat) &&
-        (!filtroGloss.letra || letra === filtroGloss.letra) &&
-        (!ql || String((t.Termo || '') + ' ' + (t.Definicao || '') + ' ' + (t.Termos_Relacionados || '')).toLowerCase().indexOf(ql) >= 0);
+      return (!filtroGloss.letra || letra === filtroGloss.letra) &&
+        (!ql || String((t.Termo || '') + ' ' + (t.Definicao || '')).toLowerCase().indexOf(ql) >= 0);
     });
     var letrasDisp = {}; todos.forEach(function (t) { letrasDisp[String(t.Termo || '').charAt(0).toUpperCase()] = 1; });
     var abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -3153,16 +3128,9 @@
       '<section class="pp-filtros-painel" role="search" aria-label="Filtros do glossário">' +
       '<div class="filtros-campos">' +
       buscaCampoHtml('glossQ', 'Pesquisar termo', 'Termo, sigla ou conceito (ex.: SIPOC, KPI, raia)', filtroGloss.q) +
-      selectHtml({ chave: 'glossCat', id: 'glossCat', rotulo: 'Categoria',
-        placeholder: 'Todas as categorias (' + todos.length + ')', selecionados: filtroGloss.cat ? [filtroGloss.cat] : [],
-        opcoes: cats.map(function (c) {
-          var n = todos.filter(function (t) { return t.Categoria === c; }).length;
-          return { v: c, r: c + ' (' + n + ')' };
-        }) }) +
       '</div>' +
       rodapeFiltrosHtml('gloss', [
         ['q', filtroGloss.q ? 'Pesquisa: ' + filtroGloss.q : ''],
-        ['cat', filtroGloss.cat ? 'Categoria: ' + filtroGloss.cat : ''],
         ['letra', filtroGloss.letra ? 'Letra: ' + filtroGloss.letra : '']
       ]) +
       '<span class="br-divider" role="presentation"></span>' +
@@ -3171,28 +3139,20 @@
       '</section>' +
       (lista.length ? Object.keys(porLetra).sort().map(function (L) {
         return '<h3 class="gloss-letra">' + L + '</h3><div class="gloss-grid">' + porLetra[L].map(function (t) {
-          return '<article class="gloss-card"><div class="gloss-topo"><h4>' + esc(t.Termo) + '</h4><span class="gloss-cat">' + esc(t.Categoria || '') + '</span></div>' +
+          return '<article class="gloss-card"><div class="gloss-topo"><h4>' + esc(t.Termo) + '</h4></div>' +
             '<p>' + esc(t.Definicao || '') + '</p>' +
             '<div class="gloss-rodape">' + (t.Fonte ? '<span class="repo-fonte">Fonte: ' + esc(t.Fonte) + '</span>' : '') +
-            (t.Termos_Relacionados ? '<span class="chip-lista">' + listar(t.Termos_Relacionados).map(function (r) { return '<button type="button" class="chip gloss-rel" data-termo="' + esc(r) + '">' + esc(r) + '</button>'; }).join('') + '</span>' : '') +
             '</div></article>';
         }).join('') + '</div>';
       }).join('') : vazio('Nenhum termo encontrado',
         'Revise o termo buscado ou a letra selecionada para ver o glossário completo.')) +
       paginacaoHtml('gloss', lista.length, 'termos', [12, 24, 48, 96]);
     ligarPaginacao(el, function () { renderTermosGlossario(el); });
-    window.BRSelectInit(el, function (chave, valores) {
-      filtroGloss.cat = valores[0] || '';
-      PAG.gloss.pag = 1;
-      renderTermosGlossario(el);
-    });
     var q = $('#glossQ');
     if (q) q.oninput = function () { filtroGloss.q = this.value; filtroGloss.letra = ''; PAG.gloss.pag = 1; renderTermosGlossario(el); var n = $('#glossQ'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } };
     $all('.gloss-abc button', el).forEach(function (b) { b.onclick = function () { filtroGloss.letra = b.getAttribute('data-letra'); renderTermosGlossario(el); }; });
-    $all('.gloss-rel', el).forEach(function (b) { b.onclick = function () { filtroGloss.q = b.getAttribute('data-termo'); filtroGloss.letra = ''; filtroGloss.cat = ''; renderTermosGlossario(el); }; });
     ligarRodapeFiltros(el, 'gloss', function (qual) {
       if (qual === 'q' || qual === 'tudo') filtroGloss.q = '';
-      if (qual === 'cat' || qual === 'tudo') filtroGloss.cat = '';
       if (qual === 'letra' || qual === 'tudo') filtroGloss.letra = '';
       PAG.gloss.pag = 1;
       renderTermosGlossario(el);
@@ -3269,7 +3229,7 @@
       t: DADOS.tarefas.filter(function (t) { return bate(t.Codigo) || bate(t.Nome); }),
       doc: DADOS.docs.filter(function (x) { return bate(x.ID) || bate(x.Titulo); }),
       gl: DADOS.glossario.filter(function (t) { return bate(t.Termo) || bate(t.Definicao); }),
-      rp: DADOS.repo.filter(function (i) { return bate(i.Titulo) || bate(i.Descricao) || bate(i.Codigo); })
+      rp: DADOS.repo.filter(function (i) { return bate(i.Titulo) || bate(i.Descricao); })
     };
     var total = r.mp.length + r.p.length + r.sp.length + r.a.length + r.doc.length + r.gl.length + r.rp.length + r.t.length;
     function linha(href, cod, nome, extra) {
