@@ -256,6 +256,8 @@ body.contraste-alto .ficha-hero{background:#000;border:1px solid var(--gold-vivi
   text-transform:uppercase;opacity:.85;}
 .ficha-hero h1{font:700 clamp(1.25rem,2.4vw,1.7rem)/1.25 var(--font);margin:var(--sp1) 0 var(--sp2);}
 .ficha-hero .meta{display:flex;flex-wrap:wrap;gap:var(--sp2);align-items:center;font-size:var(--fs-base);}
+.ficha-hero .meta a{color:var(--pure-0);text-decoration:underline;text-decoration-color:rgba(255,255,255,.6);}
+.ficha-hero .meta a:hover,.ficha-hero .meta a:focus-visible{color:var(--pure-0);text-decoration-color:var(--pure-0);}
 /* Sem borda: a sombra é o que separa o card do fundo, igual ao .br-card
    oficial do DS (govbr-ds.css) — "sem borda visível" é a regra do
    Fundamento Cor para superfícies de card. */
@@ -966,6 +968,14 @@ body.contraste-alto .ficha-dl > div[class*="campo-"] dt{color:#fff;}
 .marcos li.na{opacity:.7;}
 .marcos li.na i,.marcos li.na::before{color:var(--gray-40);}
 body.contraste-alto .marcos li.na{opacity:1;}
+
+/* Marco "Em andamento": meia nota no Percentual — mesmo tom âmbar já usado
+   em tag-status.em-andamento, para o mesmo estado ter a mesma cor em toda
+   a interface. */
+.marcos-step .step-progress-btn.is-andamento{background:#fff5d2;border-color:#f2dd9c;}
+.marcos-step .step-progress-btn.is-andamento .step-info{color:#8a6d00;}
+body.contraste-alto .marcos-step .step-progress-btn.is-andamento{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
+body.contraste-alto .marcos-step .step-progress-btn.is-andamento .step-info{color:var(--gold-vivid-20,#ffbe2e);}
 
 
 /* ═══════════════════════════════════════════════════════════════════════

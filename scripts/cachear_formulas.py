@@ -104,6 +104,24 @@ def _num(texto: str) -> float | None:
         return None
 
 
+LITERAL = re.compile(rb'^="(.*)"$', re.S)
+
+
+def _valor_literal(bruto_celula: bytes) -> str | None:
+    """Para colunas gravadas como fórmula autocontida ='"texto"' (Trilha e os
+    rollups Macroprocesso/Processo/Subprocesso/Atividade, que não podem ser
+    um VLOOKUP por código porque o código reinicia a cada pai e deixou de
+    ser único) — o valor cacheado é o próprio texto entre aspas."""
+    m = FORMULA.search(bruto_celula)
+    if not m:
+        return None
+    conteudo = m.group(0)[3:-4]  # tira <f> e </f>
+    lit = LITERAL.match(conteudo)
+    if not lit:
+        return None
+    return lit.group(1).decode("utf-8").replace('""', '"')
+
+
 def calcular(aba: str, linhas: list[dict[str, str]]) -> dict[int, dict[str, object]]:
     """Recalcula, por aba, as colunas que a planilha define como fórmula."""
     fora: dict[int, dict[str, object]] = {}
@@ -112,13 +130,20 @@ def calcular(aba: str, linhas: list[dict[str, str]]) -> dict[int, dict[str, obje
         fora.setdefault(linha, {})[coluna] = valor
 
     if aba == "Processos":
-        # M1..M10 = colunas R..AA (18ª a 27ª); Percentual (col. M) ignora
-        # marcos "Não se aplica" — só conta Sim/Não no denominador.
+        # M1..M10 = colunas R..AA (18ª a 27ª). Percentual (col. M) pondera:
+        # Sim=1, Em andamento=0,5, Não=0; Não se aplica fica fora do total.
         marcos = COLS[COLS.index("R") : COLS.index("AA") + 1]
         for linha in linhas[1:]:
-            sim = sum(1 for c in marcos if linha.get(c, "") == "Sim")
-            nao = sum(1 for c in marcos if linha.get(c, "") == "Não")
-            por(linha["_r"], "M", round(sim / (sim + nao), 4) if sim + nao else 0)
+            pontos = total = 0
+            for c in marcos:
+                v = linha.get(c, "")
+                if v == "Sim":
+                    pontos += 1; total += 1
+                elif v == "Em andamento":
+                    pontos += 0.5; total += 1
+                elif v == "Não":
+                    total += 1
+            por(linha["_r"], "M", round(pontos / total, 4) if total else 0)
 
     elif aba == "Documentos":
         for linha in linhas[1:]:
@@ -169,6 +194,55 @@ def cachear(caminho: Path) -> int:
     unidades = {l.get("A", ""): l.get("B", "") for l in siglas[1:] if l.get("A")}
 
     gravadas = 0
+    # Trilha (e os rollups Macroprocesso/Processo/Subprocesso/Atividade, onde
+    # existirem) usam fórmula autocontida ='"texto"' — caching genérico por
+    # coluna de cabeçalho, sem precisar saber a posição em cada aba.
+    for aba, alvo in arquivo_da_aba.items():
+        linhas, _ = _ler_aba(arquivos[alvo])
+        if not linhas:
+            continue
+        cabecalho = linhas[0]
+        cols_literal = [c for c, nome in cabecalho.items() if c != "_r" and nome in ("Trilha", "Macroprocesso", "Processo", "Subprocesso", "Atividade")]
+        if not cols_literal:
+            continue
+        _, cruas = _ler_aba(arquivos[alvo])
+        calculado = {}
+        for numero, celulas in cruas.items():
+            if numero == 1:
+                continue
+            for coluna in cols_literal:
+                bruto_celula = celulas.get(coluna)
+                if not bruto_celula or b"<f>" not in bruto_celula:
+                    continue
+                valor = _valor_literal(bruto_celula)
+                if valor is not None:
+                    calculado.setdefault(numero, {})[coluna] = valor
+        if calculado:
+            def trocar_linha_lit(bruto: re.Match, calculado=calculado) -> bytes:
+                numero = int(bruto.group(1))
+                desta = calculado.get(numero)
+                if not desta:
+                    return bruto.group(0)
+
+                def trocar_celula_lit(c: re.Match) -> bytes:
+                    nonlocal gravadas
+                    celula = c.group(0)
+                    ref = REF.search(celula)
+                    if not ref:
+                        return celula
+                    coluna = ref.group(1).decode()
+                    if coluna not in desta or b"<v>" in celula:
+                        return celula
+                    gravadas += 1
+                    atributos = celula[: celula.index(b">")]
+                    formula = FORMULA.search(celula).group(0)
+                    atributos = re.sub(rb'\s+t="[^"]*"', b"", atributos) + b' t="str"'
+                    return atributos + b">" + formula + b"<v>" + escape(str(desta[coluna])).encode("utf-8") + b"</v></c>"
+
+                return CELULA.sub(trocar_celula_lit, bruto.group(0))
+
+            arquivos[alvo] = LINHA.sub(trocar_linha_lit, arquivos[alvo])
+
     for aba in ("Processos", "Documentos", "Riscos", "Metricas", "Papeis", "Regras", "NUGEP"):
         if aba not in arquivo_da_aba:
             continue

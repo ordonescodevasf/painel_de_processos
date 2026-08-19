@@ -302,7 +302,8 @@
     dd.params = {};
     dd.parametros.forEach(function (x) { if (x.Chave) dd.params[x.Chave] = x.Valor || ''; });
 
-    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, procsPorMacro: {}, subsPorPai: {}, ativsPorPai: {}, tarefasPorAtiv: {},
+    var idx = { mp: {}, p: {}, sp: {}, a: {}, t: {}, pByCod: {}, spByCod: {}, aByCod: {}, tByCod: {},
+      procsPorMacro: {}, subsPorPai: {}, ativsPorPai: {}, tarefasPorAtiv: {},
       reusoPorAlvo: {}, vinc: { docs: {}, riscos: {}, metricas: {}, papeis: {}, regras: {} } };
     idx.ativsPorSub = idx.ativsPorPai;   // nome antigo do índice, mantido por compatibilidade
     dd.macros.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
@@ -319,28 +320,33 @@
       m._cod = pre + '-' + ('0' + seqCat[pre]).slice(-2);
     });
     dd.macros.forEach(function (m) { idx.mp[m.Codigo] = m; });
-    dd.procs.sort(function (a, b) { return String(a.Codigo).localeCompare(String(b.Codigo)); });
+    dd.procs.sort(function (a, b) { return String(a.Trilha).localeCompare(String(b.Trilha)); });
     dd.procs.forEach(function (p) {
-      idx.p[p.Codigo] = p;
+      idx.p[p.Trilha] = p;
+      if (!idx.pByCod[p.Codigo]) idx.pByCod[p.Codigo] = p;
       (idx.procsPorMacro[p.Macroprocesso] = idx.procsPorMacro[p.Macroprocesso] || []).push(p);
     });
     dd.subs.sort(function (a, b) { return (a.Ordem || 0) - (b.Ordem || 0); });
     dd.subs.forEach(function (s) {
-      idx.sp[s.Codigo] = s;
+      idx.sp[s.Trilha] = s;
+      if (!idx.spByCod[s.Codigo]) idx.spByCod[s.Codigo] = s;
       // Vinculo_Pai aponta para um Processo (P-...) OU para outro Subprocesso (SP-...) —
       // o CBOK 4.0 não fixa a profundidade da decomposição ("Levels Vary in Number and
       // Name"): um subprocesso pode conter outro subprocesso, tantos níveis quanto o
-      // processo exigir, até chegar à atividade.
-      (idx.subsPorPai[s.Vinculo_Pai] = idx.subsPorPai[s.Vinculo_Pai] || []).push(s);
+      // processo exigir, até chegar à atividade. Agrupa pela TRILHA do pai — o código
+      // bruto de Vinculo_Pai reinicia a cada vínculo e não identifica mais um único item.
+      (idx.subsPorPai[trilhaPai(s.Trilha)] = idx.subsPorPai[trilhaPai(s.Trilha)] || []).push(s);
       // Subprocesso reutilizável (o "Call Activity" do BPMN 2.0 — no Bizagi,
       // que este painel já usa para os diagramas, o próprio elemento se
       // chama "Subprocesso Reutilizável"): mora nativamente sob Vinculo_Pai,
-      // mas Reutilizado_Em lista outros processos/subprocessos — de
-      // qualquer macroprocesso, em qualquer nível de aninhamento — que
-      // também o chamam, sem duplicar o mapeamento.
+      // mas Reutilizado_Em lista o CAMINHO COMPLETO de outros processos/
+      // subprocessos (ex. "MG-01/PP-03/SP-03") — de qualquer macroprocesso,
+      // em qualquer nível de aninhamento — que também o chamam, sem duplicar
+      // o mapeamento.
       if (s.Reutilizavel === 'Sim' && s.Reutilizado_Em) {
         listar(s.Reutilizado_Em).forEach(function (alvo) {
-          (idx.reusoPorAlvo[alvo] = idx.reusoPorAlvo[alvo] || []).push(s);
+          var chave = normalizaCaminho(alvo);
+          (idx.reusoPorAlvo[chave] = idx.reusoPorAlvo[chave] || []).push(s);
         });
       }
     });
@@ -353,17 +359,24 @@
       // nome da coluna até esta versão e segue aceito, para não quebrar
       // planilhas que ainda não foram regeradas.
       a._pai = String(a.Vinculo_Pai || a.Subprocesso || a.Processo || '').trim();
-      idx.a[a.Codigo] = a;
-      (idx.ativsPorPai[a._pai] = idx.ativsPorPai[a._pai] || []).push(a);
+      idx.a[a.Trilha] = a;
+      if (!idx.aByCod[a.Codigo]) idx.aByCod[a.Codigo] = a;
+      (idx.ativsPorPai[trilhaPai(a.Trilha)] = idx.ativsPorPai[trilhaPai(a.Trilha)] || []).push(a);
     });
     dd.tarefas.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.tarefas.forEach(function (t) {
-      idx.t[t.Codigo] = t;
-      (idx.tarefasPorAtiv[t.Atividade] = idx.tarefasPorAtiv[t.Atividade] || []).push(t);
+      idx.t[t.Trilha] = t;
+      if (!idx.tByCod[t.Codigo]) idx.tByCod[t.Codigo] = t;
+      (idx.tarefasPorAtiv[trilhaPai(t.Trilha)] = idx.tarefasPorAtiv[trilhaPai(t.Trilha)] || []).push(t);
     });
     function vincula(mapa, item) {
       listaVinculoPares(item.Vinculo_Nivel, item.Vinculo_Codigo).forEach(function (par) {
-        var ch = par[0] + '|' + par[1];
+        var nivel = par[0], codigo = par[1], alvo = codigo;
+        // Vinculo_Codigo agora pode vir como caminho completo ("MS-01/PP-01")
+        // ou código isolado (formato antigo) — resolve para a Trilha real do
+        // item, a mesma chave canônica que vinculados() usa na leitura.
+        if (nivel !== 'Macroprocesso') { var r = resolveRef(nivel, codigo, idx); if (r) alvo = r.Trilha; }
+        var ch = nivel + '|' + alvo;
         (mapa[ch] = mapa[ch] || []).push(item);
       });
     }
@@ -538,6 +551,26 @@
   // (processo), SP (subprocesso), AT (atividade), TR (tarefa). O código da
   // planilha (MP-, P-, A-, T-) continua sendo a chave de vínculo — só a
   // exibição muda, então nenhuma planilha precisa ser regerada.
+  // Trilha (ex.: "MS-01 › PP-01 › SP-03 › SP-04") é o identificador de
+  // verdade de Processos/Subprocessos/Atividades/Tarefas: os códigos
+  // (PP-/SP-/AT-/TR-) reiniciam em 01 a cada novo vínculo com o pai e não
+  // são mais únicos sozinhos. trilhaPai tira o último segmento — a trilha
+  // do pai direto, seja ele um Processo ou outro Subprocesso.
+  function trilhaPai(trilha) {
+    var partes = String(trilha || '').split(' › ');
+    partes.pop();
+    return partes.join(' › ');
+  }
+  function ultimoSegmento(trilha) {
+    var partes = String(trilha || '').split(' › ');
+    return partes[partes.length - 1] || '';
+  }
+  // Reutilizado_Em passou a guardar o CAMINHO COMPLETO (aceita "/" ou "›"
+  // como separador) — normaliza para o mesmo formato de Trilha, para
+  // comparar/indexar os dois com a mesma chave.
+  function normalizaCaminho(s) {
+    return String(s || '').split(/[\/›]/).map(function (x) { return x.trim(); }).filter(Boolean).join(' › ');
+  }
   function codDisp(c) {
     var s = String(c == null ? '' : c);
     if (IDX && IDX.mp[s]) return IDX.mp[s]._cod || s;
@@ -551,21 +584,43 @@
   var NIVEL_ROTULO = { 'Macroprocesso': 'Macroprocesso', 'Processo': 'Processo',
     'Subprocesso': 'Subprocesso', 'Atividade': 'Atividade', 'Tarefa': 'Tarefa' };
   function nivelRotulo(n) { return NIVEL_ROTULO[n] || n; }
+  // Resolve um código BRUTO de vínculo (Vinculo_Codigo, Processos_Relacionados)
+  // para o item real. Aceita os dois formatos: caminho completo ("MS-01/PP-01"
+  // ou "MS-01 › PP-01", já sem ambiguidade — normaliza e busca por Trilha) OU
+  // código isolado (formato antigo, ambíguo — cai no primeiro item daquele
+  // código, via ByCod, para planilhas ainda não migradas não pararem de achar
+  // nada).
+  function resolveRef(nivel, codigo, idxAtual) {
+    var base = idxAtual || IDX;
+    var porCod = nivel === 'Processo' ? base.pByCod : nivel === 'Subprocesso' ? base.spByCod
+      : nivel === 'Atividade' ? base.aByCod : nivel === 'Tarefa' ? base.tByCod : null;
+    if (!porCod) return null;
+    var s = String(codigo || '');
+    if (s.indexOf('/') >= 0 || s.indexOf('›') >= 0) {
+      var trilha = normalizaCaminho(s);
+      var porTrilha = nivel === 'Processo' ? base.p[trilha] : nivel === 'Subprocesso' ? base.sp[trilha]
+        : nivel === 'Atividade' ? base.a[trilha] : base.t[trilha];
+      if (porTrilha) return porTrilha;
+    }
+    return porCod[ultimoSegmento(s)] || porCod[s] || null;
+  }
   function rotaDe(nivel, codigo) {
     var pre = NIVEL_PREFIXO[nivel];
-    return pre ? '#/' + pre + '/' + encodeURIComponent(codigo) : '#/';
+    if (!pre) return '#/';
+    var item = resolveRef(nivel, codigo);
+    return '#/' + pre + '/' + encodeURIComponent(item ? item.Trilha : codigo);
   }
   /* Categoria (Gerencial/Finalístico/Suporte) do macroprocesso ao qual o
      item pertence, subindo a hierarquia a partir de qualquer nível. */
   function categoriaDe(nivel, codigo) {
     var mp = null;
     if (nivel === 'Macroprocesso') mp = IDX.mp[codigo];
-    else if (nivel === 'Processo') { var p = IDX.p[codigo]; mp = p && IDX.mp[p.Macroprocesso]; }
-    else if (nivel === 'Subprocesso') { var pp = processoDoSubprocesso(codigo); mp = pp && IDX.mp[pp.Macroprocesso]; }
+    else if (nivel === 'Processo') { var p = resolveRef('Processo', codigo); mp = p && IDX.mp[p.Macroprocesso]; }
+    else if (nivel === 'Subprocesso') { var s0 = resolveRef('Subprocesso', codigo); var pp = s0 && processoDoSubprocesso(s0.Trilha); mp = pp && IDX.mp[pp.Macroprocesso]; }
     else if (nivel === 'Atividade') {
-      var a = IDX.a[codigo], an = a && ancestraisDaAtividade(a); mp = an && an.mp;
+      var a = resolveRef('Atividade', codigo), an = a && ancestraisDaAtividade(a); mp = an && an.mp;
     } else if (nivel === 'Tarefa') {
-      var t = IDX.t[codigo], a2 = t && IDX.a[t.Atividade];
+      var t = resolveRef('Tarefa', codigo), a2 = t && resolveRef('Atividade', t.Atividade);
       var an2 = a2 && ancestraisDaAtividade(a2); mp = an2 && an2.mp;
     }
     return mp && mp.Categoria ? mp.Categoria : '';
@@ -580,8 +635,7 @@
     return '<span class="eyebrow">' + rotulo + (cat ? ' · ' + esc(cat) : '') + '</span>';
   }
   function nomeDe(nivel, codigo) {
-    var it = nivel === 'Macroprocesso' ? IDX.mp[codigo] : nivel === 'Processo' ? IDX.p[codigo]
-      : nivel === 'Subprocesso' ? IDX.sp[codigo] : nivel === 'Tarefa' ? IDX.t[codigo] : IDX.a[codigo];
+    var it = nivel === 'Macroprocesso' ? IDX.mp[codigo] : resolveRef(nivel, codigo);
     return it ? it.Nome : codigo;
   }
   function linkVinculo(nivel, codigo) {
@@ -765,6 +819,7 @@
     var s = String(v == null ? '' : v).trim();
     if (v === true || /^s/i.test(s)) return 'feito';
     if (/^n(ã|a)o\s*se\s*aplica$/i.test(s) || /^n\/?a$/i.test(s)) return 'na';
+    if (/^em\s*andamento$/i.test(s)) return 'andamento';
     return '';
   }
   /* Marcos do mapeamento pelo Componente Step (tipo complexo, indicador
@@ -787,12 +842,12 @@
     return '<nav class="br-step marcos-step" data-label="bottom" role="none">' +
       '<div class="step-progress" role="listbox" aria-orientation="horizontal" aria-label="Marcos do mapeamento">' +
       MARCOS.map(function (mk, i) {
-        var e = est[i], feito = e === 'feito', na = e === 'na', ativo = i === atual;
+        var e = est[i], feito = e === 'feito', na = e === 'na', andamento = e === 'andamento', ativo = i === atual;
         var rotulo = 'M' + (i + 1) + ' — ' + MARCOS_ROTULOS[i] +
-          (feito ? ' (concluído)' : na ? ' (não se aplica)' : ativo ? ' (em andamento)' : ' (pendente)');
+          (feito ? ' (concluído)' : na ? ' (não se aplica)' : andamento ? ' (em andamento — meia nota)' : ativo ? ' (em andamento)' : ' (pendente)');
         var texto = MARCOS_DESCRICOES[i] + (na ? ' — Não se aplica a este processo.' : '');
         return '<span class="tooltip-wrap step-wrap" data-tooltip-trigger tabindex="0">' +
-          '<button class="step-progress-btn' + (feito ? ' is-done' : '') + '" type="button" role="option"' +
+          '<button class="step-progress-btn' + (feito ? ' is-done' : andamento ? ' is-andamento' : '') + '" type="button" role="option"' +
           ' step-num="' + (i + 1) + '" aria-posinset="' + (i + 1) + '" aria-setsize="' + total + '"' +
           ' aria-selected="' + (ativo ? 'true' : 'false') + '"' + (ativo ? ' active' : '') + ' disabled' +
           (na ? ' data-alert="warning"' : '') +
@@ -812,45 +867,46 @@
   // subprocesso pode ser outro subprocesso (código "SP-...") em vez de um
   // processo (código "P-...") direto. Retorna [maisFundo, ..., maisRaso],
   // sempre terminando no subprocesso que é filho direto do Processo.
-  function cadeiaSubprocessos(spCodigo) {
-    var cadeia = [], atual = IDX.sp[spCodigo], guarda = {};
-    while (atual && !guarda[atual.Codigo]) {
-      cadeia.push(atual); guarda[atual.Codigo] = true;
-      if (String(atual.Vinculo_Pai || '').indexOf('SP-') === 0) atual = IDX.sp[atual.Vinculo_Pai];
+  function cadeiaSubprocessos(spTrilha) {
+    var cadeia = [], atual = IDX.sp[spTrilha], guarda = {};
+    while (atual && !guarda[atual.Trilha]) {
+      cadeia.push(atual); guarda[atual.Trilha] = true;
+      if (String(atual.Vinculo_Pai || '').indexOf('SP-') === 0) atual = IDX.sp[trilhaPai(atual.Trilha)];
       else break;
     }
     return cadeia;
   }
-  function processoDoSubprocesso(spCodigo) {
-    var cadeia = cadeiaSubprocessos(spCodigo);
+  function processoDoSubprocesso(spTrilha) {
+    var cadeia = cadeiaSubprocessos(spTrilha);
     var raiz = cadeia[cadeia.length - 1];
-    return raiz ? IDX.p[raiz.Vinculo_Pai] : null;
+    return raiz ? IDX.p[trilhaPai(raiz.Trilha)] : null;
   }
   function ehCodigoSub(c) { return String(c || '').indexOf('SP-') === 0; }
-  function atividadesDe(codigo) { return IDX.ativsPorPai[codigo] || []; }
+  function atividadesDe(trilha) { return IDX.ativsPorPai[trilha] || []; }
   // Pai direto de uma atividade: um Subprocesso (SP-...) ou o próprio Processo
   // (P-...), quando o processo não tem subprocessos.
   function paiDaAtividade(a) {
     if (!a) return null;
     var c = a._pai || a.Vinculo_Pai || a.Subprocesso || '';
-    if (ehCodigoSub(c)) return IDX.sp[c] ? { tipo: 'sp', item: IDX.sp[c] } : null;
-    return IDX.p[c] ? { tipo: 'p', item: IDX.p[c] } : null;
+    var pt = trilhaPai(a.Trilha);
+    if (ehCodigoSub(c)) return IDX.sp[pt] ? { tipo: 'sp', item: IDX.sp[pt] } : null;
+    return IDX.p[pt] ? { tipo: 'p', item: IDX.p[pt] } : null;
   }
   // Ancestrais de uma atividade, prontos para o breadcrumb e para o card
   // "Navegar para": macroprocesso, processo e a cadeia de subprocessos — que
   // vem vazia quando a atividade pende direto do processo.
   function ancestraisDaAtividade(a) {
     var pai = paiDaAtividade(a), sp = null, p = null;
-    if (pai && pai.tipo === 'sp') { sp = pai.item; p = processoDoSubprocesso(sp.Codigo); }
+    if (pai && pai.tipo === 'sp') { sp = pai.item; p = processoDoSubprocesso(sp.Trilha); }
     else if (pai) { p = pai.item; }
     return { pai: pai, sp: sp, p: p, mp: p ? IDX.mp[p.Macroprocesso] : null,
-      cadeiaSp: sp ? cadeiaSubprocessos(sp.Codigo).slice().reverse() : [] };
+      cadeiaSp: sp ? cadeiaSubprocessos(sp.Trilha).slice().reverse() : [] };
   }
   // Filhos de codigoPai para fins de agregação: os subprocessos nativos MAIS
   // os subprocessos reutilizáveis chamados aqui (definidos em outro lugar,
   // mas que executam de verdade quando este processo roda). O parâmetro
   // "vistos" evita loop infinito se um cadastro criar um ciclo de reúso.
-  function subsReutilizadosEm(codigo) { return IDX.reusoPorAlvo[codigo] || []; }
+  function subsReutilizadosEm(codigo) { return IDX.reusoPorAlvo[normalizaCaminho(codigo)] || []; }
   function filhosSubDe(codigoPai) { return (IDX.subsPorPai[codigoPai] || []).concat(subsReutilizadosEm(codigoPai)); }
   function contarAtividadesRecursivo(codigoPai, vistos) {
     vistos = vistos || {};
@@ -862,7 +918,7 @@
     // subprocessos reutilizáveis chamados a partir daqui.
     var total = atividadesDe(codigoPai).length;
     filhosSubDe(codigoPai).forEach(function (s) {
-      total += contarAtividadesRecursivo(s.Codigo, vistos);
+      total += contarAtividadesRecursivo(s.Trilha, vistos);
     });
     return total;
   }
@@ -871,7 +927,7 @@
     if (vistos[codigoPai]) return 0;
     vistos[codigoPai] = true;
     var subs = filhosSubDe(codigoPai), total = subs.length;
-    subs.forEach(function (s) { total += contarSubprocessosRecursivo(s.Codigo, vistos); });
+    subs.forEach(function (s) { total += contarSubprocessosRecursivo(s.Trilha, vistos); });
     return total;
   }
   function contarTarefasRecursivo(codigoPai, vistos) {
@@ -879,8 +935,8 @@
     if (vistos[codigoPai]) return 0;
     vistos[codigoPai] = true;
     var total = 0;
-    atividadesDe(codigoPai).forEach(function (a) { total += (IDX.tarefasPorAtiv[a.Codigo] || []).length; });
-    filhosSubDe(codigoPai).forEach(function (s) { total += contarTarefasRecursivo(s.Codigo, vistos); });
+    atividadesDe(codigoPai).forEach(function (a) { total += (IDX.tarefasPorAtiv[a.Trilha] || []).length; });
+    filhosSubDe(codigoPai).forEach(function (s) { total += contarTarefasRecursivo(s.Trilha, vistos); });
     return total;
   }
   // Duração: hora útil é a unidade de medida da coluna Duracao_Estimada da
@@ -889,14 +945,14 @@
   // crítico do processo, não o caminho feliz (o cenário mais otimista).
   function horasTarefa(t) { var h = Number(t.Duracao_Estimada); return isFinite(h) && h > 0 ? h : 0; }
   function duracaoAtividadeHoras(a) {
-    return (IDX.tarefasPorAtiv[a.Codigo] || []).reduce(function (soma, t) { return soma + horasTarefa(t); }, 0);
+    return (IDX.tarefasPorAtiv[a.Trilha] || []).reduce(function (soma, t) { return soma + horasTarefa(t); }, 0);
   }
   function duracaoRecursivaHoras(codigoPai, vistos) {
     vistos = vistos || {};
     if (vistos[codigoPai]) return 0;
     vistos[codigoPai] = true;
     var soma = atividadesDe(codigoPai).reduce(function (s, a) { return s + duracaoAtividadeHoras(a); }, 0);
-    filhosSubDe(codigoPai).forEach(function (s) { soma += duracaoRecursivaHoras(s.Codigo, vistos); });
+    filhosSubDe(codigoPai).forEach(function (s) { soma += duracaoRecursivaHoras(s.Trilha, vistos); });
     return soma;
   }
   function formatarHorasUteis(horas) {
@@ -908,9 +964,10 @@
   // nativamente em outro processo/subprocesso, de outro macroprocesso ou não).
   function subCardHtml(s, marcarReuso) {
     var home = String(s.Vinculo_Pai || '');
-    var origem = ehCodigoSub(home) ? IDX.sp[home] : IDX.p[home];
-    var origemTxt = origem ? codDisp(home) + ' — ' + origem.Nome : home;
-    return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Codigo) + '"><div class="topo"><div><span class="cod">' + esc(codDisp(s.Codigo)) + '</span>' +
+    var homeTrilha = trilhaPai(s.Trilha);
+    var origem = ehCodigoSub(home) ? IDX.sp[homeTrilha] : IDX.p[homeTrilha];
+    var origemTxt = origem ? origem.Trilha + ' — ' + origem.Nome : home;
+    return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Trilha) + '"><div class="topo"><div><span class="cod">' + esc(codDisp(s.Codigo)) + '</span>' +
       '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div>' +
       (marcarReuso ? '<div class="reuso-def"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' +
         '<span class="reuso-origem">Definido em ' + esc(origemTxt) + '</span></div>' : '') +
@@ -919,10 +976,10 @@
   // Mesma marcação de reúso, numa linha de tabelaGov (usada em "Subprocessos
   // deste subprocesso", que já é tabela, não cartão).
   function linhaSubprocesso(sf, marcarReuso) {
-    return '<tr data-link><td class="cod">' + esc(codDisp(sf.Codigo)) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Codigo) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
+    return '<tr data-link><td class="cod">' + esc(codDisp(sf.Codigo)) + '</td><td><a href="#/sp/' + encodeURIComponent(sf.Trilha) + '"><strong>' + esc(sf.Nome) + '</strong></a>' +
       (marcarReuso ? '<div style="margin-top:4px"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span></div>' : '') +
       (sf.Descricao ? '<div class="pp-muted" style="font-size:var(--fs-sm)">' + esc(sf.Descricao) + '</div>' : '') + '</td>' +
-      '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Codigo) + '">Abrir ficha</a></td></tr>' +
+      '<td><a class="br-button secondary small" href="#/sp/' + encodeURIComponent(sf.Trilha) + '">Abrir ficha</a></td></tr>' +
       detalheLinha([
         ['Entradas', listar(sf.Entradas).map(esc).join('; ')],
         ['Saídas', listar(sf.Saidas).map(esc).join('; ')],
@@ -933,11 +990,11 @@
   // Todo lugar que chama um subprocesso reutilizável: o pai nativo
   // (Vinculo_Pai) mais cada código em Reutilizado_Em, sem repetir.
   function usosDoReutilizavel(s) {
-    var alvos = [String(s.Vinculo_Pai || '')].concat(listar(s.Reutilizado_Em));
+    var alvos = [trilhaPai(s.Trilha)].concat(listar(s.Reutilizado_Em).map(normalizaCaminho));
     var vistos = {};
-    return alvos.filter(function (c) { if (!c || vistos[c]) return false; vistos[c] = true; return true; }).map(function (c) {
-      var ehSub = ehCodigoSub(c), item = ehSub ? IDX.sp[c] : IDX.p[c];
-      return { cod: codDisp(c), nome: item ? item.Nome : c, href: ehSub ? '#/sp/' + encodeURIComponent(c) : '#/p/' + encodeURIComponent(c) };
+    return alvos.filter(function (tr) { if (!tr || vistos[tr]) return false; vistos[tr] = true; return true; }).map(function (tr) {
+      var ultimo = ultimoSegmento(tr), ehSub = ehCodigoSub(ultimo), item = ehSub ? IDX.sp[tr] : IDX.p[tr];
+      return { cod: codDisp(item ? item.Codigo : ultimo), nome: item ? item.Nome : tr, trilha: item ? item.Trilha : tr, href: ehSub ? '#/sp/' + encodeURIComponent(tr) : '#/p/' + encodeURIComponent(tr) };
     });
   }
   var HIER_INFO = {
@@ -1087,9 +1144,9 @@
       colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Atividade', principal: true },
         { r: 'Unidade Orgânica Responsável' }, { r: 'Duração estimada', curta: true }],
       linhas: ativs.map(function (a) {
-        var nt = (IDX.tarefasPorAtiv[a.Codigo] || []).length;
+        var nt = (IDX.tarefasPorAtiv[a.Trilha] || []).length;
         return '<tr data-link><td class="cod">' + esc(codDisp(a.Codigo)) + '</td>' +
-          '<td><a href="#/a/' + encodeURIComponent(a.Codigo) + '"><strong>' + esc(a.Nome) + '</strong></a></td>' +
+          '<td><a href="#/a/' + encodeURIComponent(a.Trilha) + '"><strong>' + esc(a.Nome) + '</strong></a></td>' +
           '<td>' + (unidadeSigla ? siglaTag(unidadeSigla) : '—') + '</td>' +
           '<td class="text-nowrap">' + (nt ? formatarHorasUteis(duracaoAtividadeHoras(a)) : '—') + '</td></tr>' +
           detalheLinha([
@@ -1161,6 +1218,7 @@
           detalheLinha([
             ['Categoria da métrica', esc(x.Categoria || '')],
             ['Fórmula de cálculo', esc(x.Descricao_Formula || '')],
+            ['Critérios de desempenho', esc(x.Criterios_Desempenho || '')],
             ['Periodicidade', esc(x.Periodicidade || '')],
             ['Polaridade', esc(x.Polaridade || '')],
             ['Fonte', esc(x.Fonte || '')],
@@ -1757,7 +1815,7 @@
     });
   }
   function cardProcesso(p) {
-    return '<a class="proc-card" href="#/p/' + encodeURIComponent(p.Codigo) + '">' +
+    return '<a class="proc-card" href="#/p/' + encodeURIComponent(p.Trilha) + '">' +
       '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(codDisp(p.Codigo)) + '</span>' +
       '<div class="nome">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
       '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' +
@@ -2004,7 +2062,6 @@
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
         campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
         campo('Unidade Orgânica responsável', m.Unidade_Organica_Responsavel && siglaTag(m.Unidade_Organica_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(m.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
         campo('Entregas (produtos/serviços)', chips(m.Entregas), true, 'valor') +
         campo('Beneficiários', chips(m.Beneficiarios), false, 'valor') +
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
@@ -2015,7 +2072,7 @@
         '</div><aside>' +
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos vinculados</h3>' +
         (filhos.length ? filhos.map(function (p) {
-          return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/p/' + encodeURIComponent(p.Codigo) + '">' +
+          return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/p/' + encodeURIComponent(p.Trilha) + '">' +
             '<div class="topo"><div><span style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(codDisp(p.Codigo)) + '</span>' +
             '<div class="nome" style="font-size:var(--fs-sm)">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
             '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
@@ -2045,14 +2102,13 @@
         '<span>· ' + plural(contarSubprocessosRecursivo(cod), 'subprocesso', 'subprocessos') + ' · ' +
         plural(totalAtivs, 'atividade', 'atividades') + ' · ' + plural(totalTarefas, 'tarefa', 'tarefas') + '</span>' +
         (p.Unidade_Organica_Responsavel ? '<span>' + esc(p.Unidade_Organica_Responsavel) + '</span>' : '') +
-        (p.Processo_ECodevasf ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> e-Codevasf ' + esc(p.Processo_ECodevasf) + '</span>' : '') +
+        (p.Processo_ECodevasf ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> ' + (p.Processo_ECodevasf_Link ? '<a href="' + esc(p.Processo_ECodevasf_Link) + '" target="_blank" rel="noopener">e-Codevasf ' + esc(p.Processo_ECodevasf) + '<span class="sr-only"> (abre em nova aba)</span></a>' : 'e-Codevasf ' + esc(p.Processo_ECodevasf)) + '</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do processo</h3><dl class="ficha-dl">' +
         campo('Objetivo', p.Objetivo && esc(p.Objetivo), false, 'desc') +
         campo('Descrição', p.Descricao && esc(p.Descricao), false, 'desc') +
         campo('Unidade Orgânica responsável', p.Unidade_Organica_Responsavel && siglaTag(p.Unidade_Organica_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(p.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
         campo('Ponto focal do Nugep', p.Ponto_Focal_Nugep && esc(p.Ponto_Focal_Nugep), false, 'quem') +
         campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
         campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
@@ -2110,8 +2166,8 @@
       el.innerHTML =
         breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
           .concat(mpp ? [{ rotulo: codDisp(mpp.Codigo), href: '#/mp/' + encodeURIComponent(mpp.Codigo) }] : [])
-          .concat(pp ? [{ rotulo: codDisp(pp.Codigo), href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
-          .concat(cadeiaSp.map(function (sp2) { return { rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
+          .concat(pp ? [{ rotulo: codDisp(pp.Codigo), href: '#/p/' + encodeURIComponent(pp.Trilha) }] : [])
+          .concat(cadeiaSp.map(function (sp2) { return { rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Trilha) }; }))
           .concat([{ rotulo: codDisp(s.Codigo) + ' — ' + s.Nome }])) +
         '<section class="ficha-hero nv-sp">' +
         eyebrowFicha('Subprocesso', s.Codigo) +
@@ -2126,7 +2182,6 @@
         campo('Descrição', s.Descricao && esc(s.Descricao), true, 'desc') +
         campo('Objetivo', s.Objetivo && esc(s.Objetivo), true, 'desc') +
         campo('Unidade Orgânica responsável', s.Unidade_Organica_Responsavel && siglaTag(s.Unidade_Organica_Responsavel), false, 'quem') +
-        campo('Unidades orgânicas corresponsáveis', chips(s.Unidades_Organicas_Corresponsaveis, null, true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
         '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
@@ -2149,15 +2204,15 @@
         '</div><aside>' +
         cardHierarquia(
           (mpp ? [{ tipo: 'mp', cat: mpp._cat, codigo: mpp.Codigo, nome: mpp.Nome, href: '#/mp/' + encodeURIComponent(mpp.Codigo) }] : [])
-          .concat(pp ? [{ tipo: 'p', codigo: pp.Codigo, nome: pp.Nome, href: '#/p/' + encodeURIComponent(pp.Codigo) }] : [])
-          .concat(cadeiaSp.map(function (sp2) { return { tipo: 'sp', codigo: sp2.Codigo, nome: sp2.Nome, href: '#/sp/' + encodeURIComponent(sp2.Codigo) }; }))
+          .concat(pp ? [{ tipo: 'p', codigo: pp.Codigo, nome: pp.Nome, href: '#/p/' + encodeURIComponent(pp.Trilha) }] : [])
+          .concat(cadeiaSp.map(function (sp2) { return { tipo: 'sp', codigo: sp2.Codigo, nome: sp2.Nome, href: '#/sp/' + encodeURIComponent(sp2.Trilha) }; }))
         ) +
         // "Reutilizado em" vive aqui, logo abaixo de "Navegar para" — mesma
         // disposição da ficha do processo (Navegar para → Subprocessos
         // vinculados), padronizando as duas telas.
         (s.Reutilizavel === 'Sim' ? '<div class="pp-card"><h3><i class="fas fa-link" aria-hidden="true"></i> Reutilizado em</h3>' +
           usosDoReutilizavel(s).map(function (u) {
-            return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="' + u.href + '"><div class="topo"><div><span class="cod">' + esc(u.cod) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(u.nome) + '</div></div></div></a>';
+            return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="' + u.href + '"><div class="topo"><div><span class="cod">' + esc(u.trilha) + '</span><div class="nome" style="font-size:var(--fs-sm)">' + esc(u.nome) + '</div></div></div></a>';
           }).join('') + '</div>' : '') +
         '</aside></div>';
       // clique na linha abre a atividade
@@ -2184,8 +2239,8 @@
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp2 ? [{ rotulo: mp2._cod || mp2.Codigo, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
-        .concat(p2 ? [{ rotulo: codDisp(p2.Codigo), href: '#/p/' + encodeURIComponent(p2.Codigo) }] : [])
-        .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
+        .concat(p2 ? [{ rotulo: codDisp(p2.Codigo), href: '#/p/' + encodeURIComponent(p2.Trilha) }] : [])
+        .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Trilha) }; }))
         .concat([{ rotulo: codDisp(a.Codigo) }])) +
       '<section class="ficha-hero nv-a">' +
       eyebrowFicha('Atividade', a.Codigo) +
@@ -2206,7 +2261,7 @@
         rotuloTotal: tf3.length === 1 ? 'tarefa' : 'tarefas',
         colunas: [{ r: 'Código', curta: true, min: 132 }, { r: 'Tarefa', principal: true }, { r: 'Tipo' }, { r: 'Duração', curta: true }],
         linhas: tf3.map(function (t) {
-          return '<tr data-link><td class="cod">' + esc(codDisp(t.Codigo)) + '</td><td><a href="#/t/' + encodeURIComponent(t.Codigo) + '"><strong>' + esc(t.Nome) + '</strong></a></td>' +
+          return '<tr data-link><td class="cod">' + esc(codDisp(t.Codigo)) + '</td><td><a href="#/t/' + encodeURIComponent(t.Trilha) + '"><strong>' + esc(t.Nome) + '</strong></a></td>' +
             '<td>' + esc(t.Tipo_Tarefa || '—') + '</td>' +
             '<td class="text-nowrap">' + (t.Duracao_Estimada ? formatarHorasUteis(horasTarefa(t)) : '—') + '</td></tr>';
         }).join('')
@@ -2215,8 +2270,8 @@
       '</div><aside>' +
       cardHierarquia(
         (mp2 ? [{ tipo: 'mp', cat: mp2._cat, codigo: mp2._cod || mp2.Codigo, nome: mp2.Nome, href: '#/mp/' + encodeURIComponent(mp2.Codigo) }] : [])
-        .concat(p2 ? [{ tipo: 'p', codigo: p2.Codigo, nome: p2.Nome, href: '#/p/' + encodeURIComponent(p2.Codigo) }] : [])
-        .concat(cadeiaSp2.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
+        .concat(p2 ? [{ tipo: 'p', codigo: p2.Codigo, nome: p2.Nome, href: '#/p/' + encodeURIComponent(p2.Trilha) }] : [])
+        .concat(cadeiaSp2.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Trilha) }; }))
       ) +
       '</aside></div>';
     $all('#viewDetalhe tr[data-link]').forEach(function (tr) {
@@ -2232,15 +2287,15 @@
     // tipo === 't' — ficha da tarefa
     var t = IDX.t[cod];
     if (!t) { el.innerHTML = naoEncontrado('Tarefa', cod); return; }
-    var a3 = IDX.a[t.Atividade];
+    var a3 = IDX.a[trilhaPai(t.Trilha)];
     var anc3 = ancestraisDaAtividade(a3);
     var sp3 = anc3.sp, cadeiaSp3 = anc3.cadeiaSp, p3 = anc3.p, mp3 = anc3.mp;
     el.innerHTML =
       breadcrumb([{ rotulo: 'Início', href: '#/' }, { rotulo: 'Cadeia de Valor', href: '#/' }]
         .concat(mp3 ? [{ rotulo: codDisp(mp3.Codigo), href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])
-        .concat(p3 ? [{ rotulo: codDisp(p3.Codigo), href: '#/p/' + encodeURIComponent(p3.Codigo) }] : [])
-        .concat(cadeiaSp3.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
-        .concat(a3 ? [{ rotulo: codDisp(a3.Codigo), href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
+        .concat(p3 ? [{ rotulo: codDisp(p3.Codigo), href: '#/p/' + encodeURIComponent(p3.Trilha) }] : [])
+        .concat(cadeiaSp3.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Trilha) }; }))
+        .concat(a3 ? [{ rotulo: codDisp(a3.Codigo), href: '#/a/' + encodeURIComponent(a3.Trilha) }] : [])
         .concat([{ rotulo: codDisp(t.Codigo) }])) +
       '<section class="ficha-hero nv-t">' +
       eyebrowFicha('Tarefa', t.Codigo) +
@@ -2249,20 +2304,13 @@
       (t.Duracao_Estimada ? '<span>· Duração estimada: ' + formatarHorasUteis(horasTarefa(t)) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
-      campo('Disparador (evento de início)', t.Disparador && esc(t.Disparador), false, 'desc') +
-      campo('Passos', listaTexto(t.Passos, true), true, 'desc') +
-      campo('Princípios a seguir', listaTexto(t.Principios), true, 'desc') +
-      campo('Critérios de desempenho', listaTexto(t.Criterios_Desempenho), false, 'valor') +
-      campo('Resultados esperados', listaTexto(t.Resultados_Esperados), false, 'valor') +
-      campo('Materiais e ferramentas', chips(t.Materiais_Ferramentas, 'fa-toolbox'), false, 'tecnico') +
-      campo('Pessoas a consultar', chips(t.Pessoas_Consultar, 'fa-user-group'), false, 'quem') +
       campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
       '</div><aside>' +
       cardHierarquia(
         (mp3 ? [{ tipo: 'mp', cat: mp3._cat, codigo: mp3.Codigo, nome: mp3.Nome, href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])
-        .concat(p3 ? [{ tipo: 'p', codigo: p3.Codigo, nome: p3.Nome, href: '#/p/' + encodeURIComponent(p3.Codigo) }] : [])
-        .concat(cadeiaSp3.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Codigo) }; }))
-        .concat(a3 ? [{ tipo: 'a', codigo: a3.Codigo, nome: a3.Nome, href: '#/a/' + encodeURIComponent(a3.Codigo) }] : [])
+        .concat(p3 ? [{ tipo: 'p', codigo: p3.Codigo, nome: p3.Nome, href: '#/p/' + encodeURIComponent(p3.Trilha) }] : [])
+        .concat(cadeiaSp3.map(function (spx) { return { tipo: 'sp', codigo: spx.Codigo, nome: spx.Nome, href: '#/sp/' + encodeURIComponent(spx.Trilha) }; }))
+        .concat(a3 ? [{ tipo: 'a', codigo: a3.Codigo, nome: a3.Nome, href: '#/a/' + encodeURIComponent(a3.Trilha) }] : [])
       ) +
       '</aside></div>';
   }
@@ -2302,7 +2350,60 @@
   });
 
   /* ── TELAS: documentos · riscos · indicadores · diário ────────────── */
-  var filtroDoc = { tipo: '', situacao: '', q: '', busca: '', ordem: '', dir: '', dens: 'medium', sel: {} };
+  // pCod/spCod/aCod aqui são códigos BRUTOS (do filtro cumulativo de
+  // Documentos) — ambíguos entre macroprocessos, resolvidos pelo primeiro
+  // item com aquele código (idx.*ByCod), igual ao resto da resolução de
+  // vínculo. Resolvido o objeto, o resto anda pela Trilha (única).
+  function todosSubsDoProcesso(pCod) {
+    var p0 = IDX.pByCod[pCod];
+    var out = [], fila = p0 ? (IDX.subsPorPai[p0.Trilha] || []).slice() : [];
+    while (fila.length) { var s = fila.shift(); out.push(s); (IDX.subsPorPai[s.Trilha] || []).forEach(function (c) { fila.push(c); }); }
+    return out;
+  }
+  function todasAtividadesDoProcesso(pCod) {
+    var p0 = IDX.pByCod[pCod];
+    var subs = todosSubsDoProcesso(pCod), out = p0 ? (IDX.ativsPorPai[p0.Trilha] || []).slice() : [];
+    subs.forEach(function (s) { out = out.concat(IDX.ativsPorPai[s.Trilha] || []); });
+    return out;
+  }
+  function ativsDoSubBruto(spCod) { var s0 = IDX.spByCod[spCod]; return s0 ? atividadesDe(s0.Trilha) : []; }
+  function tarefasDaAtivBruto(aCod) { var a0 = IDX.aByCod[aCod]; return a0 ? (IDX.tarefasPorAtiv[a0.Trilha] || []) : []; }
+  // Ancestrais (macro/processo/cadeia de subprocessos/atividade/tarefa) de UM
+  // código de vínculo, para os filtros cumulativos da aba Documentos.
+  function ancestrosDeCodigo(nivel, codigo) {
+    if (nivel === 'Macroprocesso') return { mp: codigo, p: null, sps: [], a: null, t: null };
+    if (nivel === 'Processo') { var p = resolveRef('Processo', codigo); return { mp: p && p.Macroprocesso, p: p ? p.Codigo : codigo, sps: [], a: null, t: null }; }
+    if (nivel === 'Subprocesso') {
+      var s0 = resolveRef('Subprocesso', codigo);
+      var pp = s0 && processoDoSubprocesso(s0.Trilha), cadeia = s0 ? cadeiaSubprocessos(s0.Trilha).map(function (s) { return s.Codigo; }) : [];
+      return { mp: pp && pp.Macroprocesso, p: pp && pp.Codigo, sps: cadeia, a: null, t: null };
+    }
+    if (nivel === 'Atividade') {
+      var a = resolveRef('Atividade', codigo), an = a && ancestraisDaAtividade(a);
+      var sps2 = an ? (an.cadeiaSp || []).map(function (s) { return s.Codigo; }).concat(an.sp ? [an.sp.Codigo] : []) : [];
+      return { mp: an && an.mp && an.mp.Codigo, p: an && an.p && an.p.Codigo, sps: sps2, a: a ? a.Codigo : codigo, t: null };
+    }
+    if (nivel === 'Tarefa') {
+      var t = resolveRef('Tarefa', codigo), atv = t && resolveRef('Atividade', t.Atividade), an2 = atv && ancestraisDaAtividade(atv);
+      var sps3 = an2 ? (an2.cadeiaSp || []).map(function (s) { return s.Codigo; }).concat(an2.sp ? [an2.sp.Codigo] : []) : [];
+      return { mp: an2 && an2.mp && an2.mp.Codigo, p: an2 && an2.p && an2.p.Codigo, sps: sps3, a: atv ? atv.Codigo : (t && t.Atividade), t: t ? t.Codigo : codigo };
+    }
+    return { mp: null, p: null, sps: [], a: null, t: null };
+  }
+  function docAncestros(x) {
+    var niv = x.Vinculo_Nivel, codigos = String(x.Vinculo_Codigo || '').split(';').map(function (s) { return s.trim(); }).filter(Boolean);
+    var out = { mp: {}, p: {}, sp: {}, a: {}, t: {} };
+    codigos.forEach(function (c) {
+      var an = ancestrosDeCodigo(niv, c);
+      if (an.mp) out.mp[an.mp] = 1;
+      if (an.p) out.p[an.p] = 1;
+      (an.sps || []).forEach(function (s) { out.sp[s] = 1; });
+      if (an.a) out.a[an.a] = 1;
+      if (an.t) out.t[an.t] = 1;
+    });
+    return out;
+  }
+  var filtroDoc = { tipo: '', situacao: '', fmp: '', fp: '', fsp: '', fa: '', ft: '', q: '', busca: '', ordem: '', dir: '', dens: 'medium', sel: {} };
   // Campo de busca no padrão Input do DS: rótulo visível, ícone
   // ilustrativo search à esquerda e input dentro do input-group.
   function buscaCampoHtml(id, rotulo, placeholder, valor) {
@@ -2325,10 +2426,23 @@
     DADOS.docs.forEach(function (x) { if (x.Tipo_Documento) tipos[x.Tipo_Documento] = 1; });
     var situacoes = {};
     DADOS.docs.forEach(function (x) { if (x.Situacao) situacoes[x.Situacao] = 1; });
+    var docsAnc = {}; DADOS.docs.forEach(function (x) { docsAnc[x.ID] = docAncestros(x); });
+    // Opções cumulativas: cada nível só lista o que existe dentro do nível pai já escolhido.
+    var opMp = DADOS.macros;
+    var opP = filtroDoc.fmp ? (IDX.procsPorMacro[filtroDoc.fmp] || []) : DADOS.procs;
+    var opSp = filtroDoc.fp ? todosSubsDoProcesso(filtroDoc.fp) : (filtroDoc.fmp ? DADOS.subs.filter(function (s) { var pp = processoDoSubprocesso(s.Trilha); return pp && pp.Macroprocesso === filtroDoc.fmp; }) : DADOS.subs);
+    var opA = filtroDoc.fsp ? ativsDoSubBruto(filtroDoc.fsp) : filtroDoc.fp ? todasAtividadesDoProcesso(filtroDoc.fp) : DADOS.ativs;
+    var opT = filtroDoc.fa ? tarefasDaAtivBruto(filtroDoc.fa) : DADOS.tarefas;
     var bq = filtroDoc.busca.toLowerCase();
     var lista = DADOS.docs.filter(function (x) {
       if (filtroDoc.tipo && x.Tipo_Documento !== filtroDoc.tipo) return false;
       if (filtroDoc.situacao && x.Situacao !== filtroDoc.situacao) return false;
+      var anc = docsAnc[x.ID];
+      if (filtroDoc.fmp && !anc.mp[filtroDoc.fmp]) return false;
+      if (filtroDoc.fp && !anc.p[filtroDoc.fp]) return false;
+      if (filtroDoc.fsp && !anc.sp[filtroDoc.fsp]) return false;
+      if (filtroDoc.fa && !anc.a[filtroDoc.fa]) return false;
+      if (filtroDoc.ft && !anc.t[filtroDoc.ft]) return false;
       // Busca da barra de título: percorre todas as colunas exibidas.
       if (bq && COLS_DOC.map(function (c) { return x[c.k] || ''; }).join(' ').toLowerCase().indexOf(bq) < 0) return false;
       return true;
@@ -2352,8 +2466,23 @@
       selectHtml({ chave: 'situacaoDoc', id: 'fSituacaoDoc', rotulo: 'Situação',
         placeholder: 'Todas as situações', selecionados: filtroDoc.situacao ? [filtroDoc.situacao] : [],
         opcoes: Object.keys(situacoes).sort().map(function (t) { return { v: t, r: t }; }) }) +
+      selectHtml({ chave: 'fmpDoc', id: 'fFmpDoc', rotulo: 'Macroprocesso',
+        placeholder: 'Todos os macroprocessos', selecionados: filtroDoc.fmp ? [filtroDoc.fmp] : [],
+        opcoes: opMp.map(function (m) { return { v: m.Codigo, r: codDisp(m.Codigo) + ' — ' + m.Nome }; }) }) +
+      selectHtml({ chave: 'fpDoc', id: 'fFpDoc', rotulo: 'Processo',
+        placeholder: 'Todos os processos', selecionados: filtroDoc.fp ? [filtroDoc.fp] : [],
+        opcoes: opP.map(function (p) { return { v: p.Codigo, r: codDisp(p.Codigo) + ' — ' + p.Nome }; }) }) +
+      selectHtml({ chave: 'fspDoc', id: 'fFspDoc', rotulo: 'Subprocesso',
+        placeholder: 'Todos os subprocessos', selecionados: filtroDoc.fsp ? [filtroDoc.fsp] : [],
+        opcoes: opSp.map(function (s) { return { v: s.Codigo, r: codDisp(s.Codigo) + ' — ' + s.Nome }; }) }) +
+      selectHtml({ chave: 'faDoc', id: 'fFaDoc', rotulo: 'Atividade',
+        placeholder: 'Todas as atividades', selecionados: filtroDoc.fa ? [filtroDoc.fa] : [],
+        opcoes: opA.map(function (a) { return { v: a.Codigo, r: codDisp(a.Codigo) + ' — ' + a.Nome }; }) }) +
+      selectHtml({ chave: 'ftDoc', id: 'fFtDoc', rotulo: 'Tarefa',
+        placeholder: 'Todas as tarefas', selecionados: filtroDoc.ft ? [filtroDoc.ft] : [],
+        opcoes: opT.map(function (t) { return { v: t.Codigo, r: codDisp(t.Codigo) + ' — ' + t.Nome }; }) }) +
       '</div>' +
-      (filtroDoc.tipo || filtroDoc.situacao || filtroDoc.busca
+      (filtroDoc.tipo || filtroDoc.situacao || filtroDoc.fmp || filtroDoc.fp || filtroDoc.fsp || filtroDoc.fa || filtroDoc.ft || filtroDoc.busca
         ? '<div class="filtros-rodape"><div class="filtros-ativos">' +
           (filtroDoc.tipo ? '<span class="br-tag interaction" id="fdoc-tipo"><span id="fdoc-tipo-r">Tipo: ' + esc(filtroDoc.tipo) + '</span>' +
             '<button class="br-button circle small" type="button" data-doc-limpar="tipo"' +
@@ -2362,6 +2491,21 @@
           (filtroDoc.situacao ? '<span class="br-tag interaction" id="fdoc-situacao"><span id="fdoc-situacao-r">Situação: ' + esc(filtroDoc.situacao) + '</span>' +
             '<button class="br-button circle small" type="button" data-doc-limpar="situacao"' +
             ' aria-label="Remover o filtro de situação" aria-describedby="fdoc-situacao-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.fmp ? '<span class="br-tag interaction" id="fdoc-fmp"><span id="fdoc-fmp-r">Macroprocesso: ' + esc(codDisp(filtroDoc.fmp)) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="fmp" aria-label="Remover o filtro de macroprocesso" aria-describedby="fdoc-fmp-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.fp ? '<span class="br-tag interaction" id="fdoc-fp"><span id="fdoc-fp-r">Processo: ' + esc(codDisp(filtroDoc.fp)) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="fp" aria-label="Remover o filtro de processo" aria-describedby="fdoc-fp-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.fsp ? '<span class="br-tag interaction" id="fdoc-fsp"><span id="fdoc-fsp-r">Subprocesso: ' + esc(codDisp(filtroDoc.fsp)) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="fsp" aria-label="Remover o filtro de subprocesso" aria-describedby="fdoc-fsp-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.fa ? '<span class="br-tag interaction" id="fdoc-fa"><span id="fdoc-fa-r">Atividade: ' + esc(codDisp(filtroDoc.fa)) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="fa" aria-label="Remover o filtro de atividade" aria-describedby="fdoc-fa-r">' +
+            '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
+          (filtroDoc.ft ? '<span class="br-tag interaction" id="fdoc-ft"><span id="fdoc-ft-r">Tarefa: ' + esc(codDisp(filtroDoc.ft)) + '</span>' +
+            '<button class="br-button circle small" type="button" data-doc-limpar="ft" aria-label="Remover o filtro de tarefa" aria-describedby="fdoc-ft-r">' +
             '<i class="fas fa-times" aria-hidden="true"></i></button></span>' : '') +
           (filtroDoc.busca ? '<span class="br-tag interaction" id="fdoc-busca"><span id="fdoc-busca-r">Pesquisa: ' + esc(filtroDoc.busca) + '</span>' +
             '<button class="br-button circle small" type="button" data-doc-limpar="busca"' +
@@ -2456,14 +2600,25 @@
         var q = b.getAttribute('data-doc-limpar');
         if (q === 'tipo' || q === 'tudo') filtroDoc.tipo = '';
         if (q === 'situacao' || q === 'tudo') filtroDoc.situacao = '';
+        if (q === 'fmp' || q === 'tudo') { filtroDoc.fmp = ''; filtroDoc.fp = ''; filtroDoc.fsp = ''; filtroDoc.fa = ''; filtroDoc.ft = ''; }
+        if (q === 'fp' || q === 'tudo') { filtroDoc.fp = ''; filtroDoc.fsp = ''; filtroDoc.fa = ''; filtroDoc.ft = ''; }
+        if (q === 'fsp' || q === 'tudo') { filtroDoc.fsp = ''; filtroDoc.fa = ''; filtroDoc.ft = ''; }
+        if (q === 'fa' || q === 'tudo') { filtroDoc.fa = ''; filtroDoc.ft = ''; }
+        if (q === 'ft' || q === 'tudo') filtroDoc.ft = '';
         if (q === 'busca' || q === 'tudo') filtroDoc.busca = '';
         PAG.docs.pag = 1;
         renderDocumentos();
       };
     });
     window.BRSelectInit(el, function (chave, valores) {
-      if (chave === 'tipoDoc') filtroDoc.tipo = valores[0] || '';
-      else filtroDoc.situacao = valores[0] || '';
+      var v = valores[0] || '';
+      if (chave === 'tipoDoc') filtroDoc.tipo = v;
+      else if (chave === 'situacaoDoc') filtroDoc.situacao = v;
+      else if (chave === 'fmpDoc') { filtroDoc.fmp = v; filtroDoc.fp = ''; filtroDoc.fsp = ''; filtroDoc.fa = ''; filtroDoc.ft = ''; }
+      else if (chave === 'fpDoc') { filtroDoc.fp = v; filtroDoc.fsp = ''; filtroDoc.fa = ''; filtroDoc.ft = ''; }
+      else if (chave === 'fspDoc') { filtroDoc.fsp = v; filtroDoc.fa = ''; filtroDoc.ft = ''; }
+      else if (chave === 'faDoc') { filtroDoc.fa = v; filtroDoc.ft = ''; }
+      else filtroDoc.ft = v;
       PAG.docs.pag = 1;
       renderDocumentos();
     });
@@ -2789,11 +2944,11 @@
           valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
       }), '%', 100, 'Percentual médio de avanço dos processos de cada macroprocesso. A linha tracejada marca a meta de 100%; clique em uma barra para abrir a ficha do macroprocesso.') +
       grafBubble('Priorização: avanço × riscos abertos por processo — clique para abrir', procs.map(function (p) {
-        var rp = vinculados('riscos', 'Processo', p.Codigo).filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
-        var ativs = contarAtividadesRecursivo(p.Codigo);
+        var rp = vinculados('riscos', 'Processo', p.Trilha).filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
+        var ativs = contarAtividadesRecursivo(p.Trilha);
         return { x: p.Percentual, y: rp.length, r: Math.max(6, Math.min(22, 6 + ativs * 1.5)),
           rotulo: codDisp(p.Codigo) + ' — ' + p.Nome, cor: p.Percentual < 40 && rp.length >= 1 ? '#b50909' : (CAT_COR[(IDX.mp[p.Macroprocesso] || {})._cat] || '#0c326f'),
-          href: '#/p/' + encodeURIComponent(p.Codigo) };
+          href: '#/p/' + encodeURIComponent(p.Trilha) };
       }), 'Avanço do mapeamento (%)', 'Riscos abertos', 'Cada bolha é um processo: posição horizontal = avanço do mapeamento, posição vertical = riscos abertos, tamanho = atividades mapeadas. Bolhas vermelhas (avanço baixo e algum risco aberto) merecem atenção prioritária; clique para abrir a ficha.') +
       grafFunil('Marcos concluídos no portfólio (M1 → M10)', funil, 'Quantidade de processos que já concluíram cada marco do mapeamento, do M1 ao M10. Como os marcos são sequenciais, o número tende a diminuir da primeira para a última etapa.') +
       grafLinha('Processos publicados (acumulado)', linha, 'Quantidade acumulada de processos concluídos, por mês de conclusão. Cada ponto soma os concluídos até aquele mês; passe o mouse sobre um ponto para ver o mês e o total acumulado.') +
@@ -2810,7 +2965,7 @@
         rotuloTotal: atrasados.length === 1 ? 'processo' : 'processos',
         colunas: [{ r: 'Código', curta: true }, { r: 'Processo', principal: true }, { r: 'Responsável' }, { r: 'Prazo', curta: true }, { r: 'Avanço', curta: true }],
         linhas: atrasados.map(function (p) {
-          return '<tr data-link><td class="cod">' + esc(codDisp(p.Codigo)) + '</td><td><a href="#/p/' + encodeURIComponent(p.Codigo) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
+          return '<tr data-link><td class="cod">' + esc(codDisp(p.Codigo)) + '</td><td><a href="#/p/' + encodeURIComponent(p.Trilha) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
             '<td>' + esc(p.Ponto_Focal_Nugep || '—') + '</td><td class="text-nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
             '<td style="min-width:120px">' + barraPct(p.Percentual) + '</td></tr>';
         }).join('')
@@ -3066,7 +3221,7 @@
           '<p class="nugep-unid"><span class="nugep-sigla">' + siglaTag(m.Unidade_Sigla || '') + '</span></p>' +
           contatoNugep(m) +
           (meusProcs.length ? '<div class="nugep-procs"><b><i class="fas fa-diagram-project" aria-hidden="true"></i> Processos sob responsabilidade</b><ul>' +
-            meusProcs.map(function (p) { return '<li><a href="#/p/' + encodeURIComponent(p.Codigo) + '">' + esc(codDisp(p.Codigo)) + ' — ' + esc(p.Nome) + '</a></li>'; }).join('') +
+            meusProcs.map(function (p) { return '<li><a href="#/p/' + encodeURIComponent(p.Trilha) + '">' + esc(p.Trilha) + ' — ' + esc(p.Nome) + '</a></li>'; }).join('') +
             '</ul></div>' : '') +
           '</article>';
       }).join('') + '</div>' : vazio('Nenhum integrante cadastrado',
@@ -3252,10 +3407,10 @@
         { img: 'empty-space/empty-space-44.png',
           acoes: [{ rotulo: 'Ver o Portfólio', icone: 'fa-diagram-project', href: '#/catalogo' }] })) +
       grupo('Macroprocessos', r.mp, function (m) { return linha('#/mp/' + encodeURIComponent(m.Codigo), m._cod || m.Codigo, m.Nome, esc(m.Categoria)); }) +
-      grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Codigo), codDisp(p.Codigo), p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
-      grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Codigo), codDisp(s.Codigo), s.Nome, ''); }) +
-      grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Codigo), codDisp(a.Codigo), a.Nome, ''); }) +
-      grupo('Tarefas', r.t, function (t) { return linha('#/t/' + encodeURIComponent(t.Codigo), codDisp(t.Codigo), t.Nome, esc(t.Tipo_Tarefa || '')); }) +
+      grupo('Processos', r.p, function (p) { return linha('#/p/' + encodeURIComponent(p.Trilha), codDisp(p.Codigo), p.Nome, esc(p.Status_Mapeamento) + ' · ' + p.Percentual + '%'); }) +
+      grupo('Subprocessos', r.sp, function (s) { return linha('#/sp/' + encodeURIComponent(s.Trilha), codDisp(s.Codigo), s.Nome, ''); }) +
+      grupo('Atividades', r.a, function (a) { return linha('#/a/' + encodeURIComponent(a.Trilha), codDisp(a.Codigo), a.Nome, ''); }) +
+      grupo('Tarefas', r.t, function (t) { return linha('#/t/' + encodeURIComponent(t.Trilha), codDisp(t.Codigo), t.Nome, esc(t.Tipo_Tarefa || '')); }) +
       grupo('Documentos', r.doc, function (x) {
         return '<div class="doc-item"><i class="fas fa-file fa-stack-ico" aria-hidden="true"></i><div><div class="tit">' +
           (x.Link ? '<a href="' + esc(x.Link) + '" target="_blank" rel="noopener">' + esc(x.Titulo) + '</a>' : esc(x.Titulo)) +
@@ -3345,7 +3500,7 @@
     painelP.innerHTML = prazos.length ? prazos.map(function (p) {
       return item('warning', p.Nome, 'Prazo em ' + fmtData(p.Prazo_Previsto),
         codDisp(p.Codigo) + ' · ' + (p.Status_Mapeamento || '') + ' · ' + pctNorm(p.Percentual) + '%',
-        '#/p/' + encodeURIComponent(p.Codigo));
+        '#/p/' + encodeURIComponent(p.Trilha));
     }).join('') : '<div class="empty-state"><i class="fas fa-check-circle" aria-hidden="true"></i>Nenhum mapeamento com prazo vencido.</div>';
     var total = riscos.length + prazos.length;
     var cR = $('#notifCountRiscos'), cP = $('#notifCountPrazos'), badge = $('#notifBadge');

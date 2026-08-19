@@ -11,70 +11,83 @@ Como manter em dia: os nomes aqui têm de ser os mesmos das chamadas de
 `cabecalho(...)` em `gerar_planilha.py` (que continua sendo o gerador da
 planilha de exemplo). `conferir()` compara os dois e aponta a diferença.
 
-Os valores em DEMO são FICTÍCIOS, para o painel não abrir com campo vazio
-enquanto os dados reais não chegam — troque à vontade.
+Revisão mais recente (rastreabilidade e volume real de itens, pedido do
+usuário):
+  - **Códigos (PP-/SP-/AT-/TR-) reiniciam em 01 a cada novo vínculo**
+    (Macroprocesso→Processo, Processo→Subprocesso, Subprocesso→Subprocesso
+    quando aninhado, Atividade→Tarefa) — reflete que a Companhia terá muitos
+    "PP-01", um por Macroprocesso, e não caberia mais numerar tudo de forma
+    globalmente única. Isso significa que o Código SOZINHO deixou de ser
+    chave única: a chave real é (pai, Código) — ou, de forma prática, a
+    coluna Trilha.
+  - **Trilha vira a 1ª coluna** de Processos/Subprocessos/Atividades/Tarefas
+    (antes vinha por último), seguida das colunas de rollup calculadas
+    **Macroprocesso/Processo/Subprocesso/Atividade** (conforme o nível) —
+    todas ANTES do Código, para a hierarquia aparecer de cara ao abrir a
+    aba. Como o Código não é mais único, essas colunas não são um VLOOKUP
+    vivo por código (ficaria ambíguo: existem várias linhas com o mesmo
+    código) — são calculadas no momento em que a planilha é gerada a partir
+    da posição real de cada item; reordenar ou reclassificar um item exige
+    rodar o gerador de novo.
+  - Qualquer referência cruzada a um código que deixou de ser único
+    (`Vinculo_Pai`, `Atividade`, `Vinculo_Codigo`, `Processos_Relacionados`,
+    `Reutilizado_Em`) precisa do CAMINHO COMPLETO quando há ambiguidade —
+    ex. `Reutilizado_Em = "MS-01/PP-02; MF-02/PP-01"`, não `"SP-01"` sozinho.
+  - **Marco "Em andamento"**: M1–M10 passam a aceitar Sim / Em andamento /
+    Não / Não se aplica (lista `Status_Marco`, não mais `Sim_Nao`). Em
+    andamento vale meia nota no `Processos.Percentual` (Sim=1, Em
+    andamento=0,5, Não=0; Não se aplica fica fora do total).
+  - Novo campo `Processos.Processo_ECodevasf_Link` (URL) — o painel usa
+    esse link para tornar o número do processo (`Processo_ECodevasf`)
+    clicável.
+  - `Tarefas.Criterios_Desempenho` migrou para `Metricas.Criterios_Desempenho`
+    (tem mais a ver com o indicador do que com a tarefa em si).
+  - Campos removidos: `Disparador`, `Passos`, `Principios`,
+    `Resultados_Esperados`, `Materiais_Ferramentas`, `Pessoas_Consultar`
+    (Tarefas); `Unidades_Organicas_Corresponsaveis` (Macroprocessos/
+    Processos/Subprocessos/Tarefas) e `Produto_Principal` (Subprocessos).
 
-Revisão desta versão (auditoria de forma e conteúdo, pedido do usuário):
-  - Códigos por nível, sempre com 2 letras + número sequencial DENTRO do
-    nível (não mais compostos com o número do pai): MG-/MF-/MS- (macro,
-    por categoria), PP- (processo), SP- (subprocesso), AT- (atividade),
-    TR- (tarefa). Quem liga um nível a outro são as colunas
-    Macroprocesso/Vinculo_Pai/Atividade/Vinculo_Codigo — nunca o texto do
-    código. Isso é o que deixa a planilha pronta para virar tabelas SQL.
-  - Nomenclatura padronizada: Unidade_Organica_Responsavel (era
-    Area_Responsavel/Unidade_Responsavel) e Unidades_Organicas_Corresponsaveis
-    (era Unidades_Corresponsaveis) em todas as abas que têm essas colunas;
-    Beneficiarios (era Clientes_Beneficiarios em Macroprocessos);
-    Ponto_Focal_Nugep (era Interlocutor); Produto_Principal (era Produto).
-  - Colunas removidas por não terem uso real ou terem virado outra coisa:
-    Dono_Processo (Macroprocessos/Processos) e Dono (Subprocessos) — vira
-    registro na aba Papeis; Fase_Ciclo_BPM (Processos) — não aparecia no
-    painel; Normativos_Aplicaveis/Normativos_Relacionados — cada normativo
-    agora é uma linha própria em Documentos, com Link; Cronograma_Proposto_Dias
-    (Subprocessos) e Responsavel/Imagem_Bizagi (Atividades) e Imagem_Bizagi
-    (Tarefas) — pedido do usuário; Categoria/Termos_Relacionados (Glossario)
-    e Codigo (Repositorio) — pedido do usuário; aba PlanoAcao inteira — o
-    5W2H passa a ser tratado dentro do marco de análise do processo, sem
-    aba própria no painel nem na planilha.
-  - Processos.Percentual e todo Vinculo_Nivel viram fórmula (não digite).
-  - Marcos M1–M10 renomeados para bater 1:1 com a Metodologia (RES 031/2025).
-  - Colunas novas: Processos.Maturidade (lista fechada), Riscos
-    .Data_Identificacao/.Prazo_Tratamento (lacunas do registro de risco).
+Revisões anteriores (ainda válidas):
+  - Nomenclatura padronizada: Unidade_Organica_Responsavel, Beneficiarios,
+    Ponto_Focal_Nugep, Produto_Principal (removido depois — ver acima).
+  - Colunas removidas: Dono_Processo/Dono (viram registro em Papeis),
+    Fase_Ciclo_BPM, Normativos_Aplicaveis/Relacionados (cada normativo é
+    uma linha em Documentos, com Link), Categoria/Termos_Relacionados
+    (Glossario), Codigo (Repositorio); aba PlanoAcao inteira.
+  - Processos.Percentual e todo Vinculo_Nivel são fórmula (não digite).
+  - Marcos M1–M10 renomeados para bater 1:1 com a Metodologia (RES
+    031/2025).
+  - Sem lista suspensa em nenhum campo que aceita MAIS DE UM código/sigla
+    separado por ; (o Excel só permite escolher um item por vez de uma
+    lista). Ponto_Focal_Nugep tem dropdown (nomes da aba NUGEP), por ser
+    campo de valor único.
 
-Revisão desta versão (rastreabilidade do código, pedido do usuário):
-  - Coluna calculada **Trilha** em Macroprocessos/Processos/Subprocessos/
-    Atividades/Tarefas: concatena o código de cada ancestral até a raiz
-    (ex.: "MS-01 › PP-01 › SP-03 › SP-04"), lida via VLOOKUP na Trilha já
-    calculada do pai (funciona em qualquer profundidade de subprocesso
-    dentro de subprocesso, sem fórmula recursiva). Existe ao lado do
-    Codigo — não dentro dele — de propósito: um código composto (tipo
-    "PP-01.01" ou "MF-01/PP-01") quebra a cada reordenação ou mudança de
-    pai (todo filho teria de ser renomeado em cascata) e deixa de servir
-    como chave estável para virar tabela SQL, que foi exatamente o
-    problema que motivou tirar a composição dos códigos na revisão
-    anterior. Trilha dá a mesma rastreabilidade visual sem esse custo.
-  - Sem lista suspensa (dropdown) em nenhum campo que aceita MAIS DE UM
-    código/sigla separado por ; (Unidades_Organicas_Corresponsaveis,
-    Reutilizado_Em, Vinculo_Codigo, Processos_Relacionados): o Excel só
-    permite escolher UM item por vez de uma lista — usar o dropdown nesses
-    campos substituiria qualquer combinação já digitada, e uma validação
-    de lista comum marca "AA/GLC; AI/GOM" como inválido mesmo quando as
-    duas siglas existem, porque compara a célula inteira com um item da
-    lista. Ponto_Focal_Nugep passou a ter dropdown (lista de nomes da aba
-    NUGEP) por ser campo de valor único.
+Revisão desta versão (numeração decimal de Subprocesso dentro de
+Subprocesso, pedido do usuário):
+  - Quando um Subprocesso é filho de OUTRO Subprocesso (em vez de um
+    Processo), seu Código usa numeração decimal: {código do subprocesso
+    pai}.{posição do filho, 2 dígitos} — ex.: SP-03 com 3 filhos aninhados
+    vira SP-03.01, SP-03.02, SP-03.03. Um filho aninhado, sem essa marca,
+    ficaria com o mesmo formato "SP-01" de um subprocesso de 1º nível —
+    indistinguível a olho nu sem abrir a Trilha. Mesma lógica se repete em
+    qualquer profundidade (SP-03.01.01, SP-03.01.02...) e, no futuro, em
+    qualquer outro nível da hierarquia que venha a aninhar dentro de si
+    mesmo (hoje só Subprocesso permite isso). Convenção de preenchimento
+    manual — não há fórmula calculando o Código.
 """
 
 ESQUEMA = {
     "Macroprocessos": [
         ("Codigo", 10), ("Nome", 34), ("Categoria", 13), ("Ordem", 7),
-        ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 30),
+        ("Unidade_Organica_Responsavel", 16),
         ("Descricao", 46), ("Objetivo", 46), ("Entregas", 40), ("Beneficiarios", 34),
         ("Partes_Interessadas", 34), ("Sistemas", 30), ("Imagem_Bizagi", 30), ("Observacoes", 26),
         ("Trilha", 14),
     ],
     "Processos": [
-        ("Codigo", 9), ("Nome", 34), ("Macroprocesso", 13), ("Descricao", 44), ("Objetivo", 40),
-        ("Unidade_Organica_Responsavel", 16), ("Ponto_Focal_Nugep", 24), ("Unidades_Organicas_Corresponsaveis", 30),
+        ("Trilha", 20), ("Macroprocesso", 13), ("Codigo", 9), ("Nome", 34),
+        ("Descricao", 44), ("Objetivo", 40),
+        ("Unidade_Organica_Responsavel", 16), ("Ponto_Focal_Nugep", 24),
         ("Prioridade", 10), ("Complexidade", 12), ("Maturidade", 13), ("Status_Mapeamento", 14), ("Percentual", 10),
         ("Inicio_Mapeamento", 13), ("Prazo_Previsto", 13), ("Data_Conclusao", 13), ("Ultima_Atualizacao", 13),
         ("M1_Conhecer_Processo", 9), ("M2_Processo_Modelado", 9), ("M3_Subprocessos_Modelados", 9),
@@ -82,26 +95,26 @@ ESQUEMA = {
         ("M7_Processo_Publicado", 9), ("M8_TOBE_Elaborado", 9), ("M9_TOBE_Aprovado", 9),
         ("M10_Processo_Transformado", 9),
         ("Fornecedores", 30), ("Entradas", 34), ("Saidas", 34), ("Beneficiarios", 28), ("Sistemas", 28),
-        ("Processo_ECodevasf", 20), ("Imagem_Bizagi", 30), ("Competencias_Necessarias", 40), ("Fontes_Dados", 30),
-        ("Proxima_Acao", 28), ("Pendencia", 24), ("Trilha", 20),
+        ("Processo_ECodevasf", 20), ("Processo_ECodevasf_Link", 30), ("Imagem_Bizagi", 30),
+        ("Competencias_Necessarias", 40), ("Fontes_Dados", 30),
+        ("Proxima_Acao", 28), ("Pendencia", 24),
     ],
     "Subprocessos": [
-        ("Codigo", 9), ("Nome", 32), ("Vinculo_Pai", 12), ("Ordem", 7), ("Descricao", 44), ("Objetivo", 38),
-        ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 28),
-        ("Reutilizavel", 12), ("Reutilizado_Em", 24),
+        ("Trilha", 26), ("Macroprocesso", 13), ("Processo", 10), ("Codigo", 9), ("Nome", 32),
+        ("Vinculo_Pai", 12), ("Ordem", 7), ("Descricao", 44), ("Objetivo", 38),
+        ("Unidade_Organica_Responsavel", 16),
+        ("Reutilizavel", 12), ("Reutilizado_Em", 30),
         ("Entradas", 36), ("Saidas", 36), ("Sistemas", 26), ("Fontes_Dados", 26), ("Imagem_Bizagi", 28),
-        ("Trilha", 26),
     ],
     "Atividades": [
+        ("Trilha", 32), ("Macroprocesso", 13), ("Processo", 10), ("Subprocesso", 10),
         ("Codigo", 9), ("Nome", 34), ("Vinculo_Pai", 11), ("Ordem", 7), ("Tipo_Atividade", 17),
-        ("Descricao", 44), ("Entradas", 34), ("Saidas", 34), ("Sistemas", 22), ("Trilha", 32),
+        ("Descricao", 44), ("Entradas", 34), ("Saidas", 34), ("Sistemas", 22),
     ],
     "Tarefas": [
-        ("Codigo", 9), ("Nome", 34), ("Atividade", 9), ("Ordem", 7), ("Tipo_Tarefa", 15),
-        ("Disparador", 32), ("Passos", 44), ("Principios", 28), ("Criterios_Desempenho", 32),
-        ("Resultados_Esperados", 30), ("Materiais_Ferramentas", 26), ("Pessoas_Consultar", 26),
-        ("Duracao_Estimada", 13), ("Observacoes", 26), ("Unidades_Organicas_Corresponsaveis", 28),
-        ("Trilha", 38),
+        ("Trilha", 40), ("Macroprocesso", 13), ("Processo", 10), ("Subprocesso", 10), ("Atividade", 9),
+        ("Codigo", 9), ("Nome", 34), ("Ordem", 7), ("Tipo_Tarefa", 15),
+        ("Duracao_Estimada", 13), ("Observacoes", 26),
     ],
     "Documentos": [
         ("ID", 9), ("Titulo", 48), ("Tipo_Documento", 22), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16),
@@ -115,9 +128,9 @@ ESQUEMA = {
         ("Responsavel", 20), ("Status", 13),
     ],
     "Metricas": [
-        ("ID", 9), ("Nome", 38), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16), ("Categoria", 18),
-        ("Descricao_Formula", 44), ("Unidade", 9), ("Polaridade", 13), ("Meta", 8), ("Periodicidade", 13),
-        ("Fonte", 22), ("Observacoes", 26),
+        ("ID", 9), ("Nome", 34), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16), ("Categoria", 18),
+        ("Descricao_Formula", 40), ("Criterios_Desempenho", 40), ("Unidade", 9), ("Polaridade", 13),
+        ("Meta", 8), ("Periodicidade", 13), ("Fonte", 22), ("Observacoes", 26),
     ],
     "Medicoes": [
         ("ID", 9), ("Metrica_ID", 10), ("Data_Medicao", 13), ("Valor", 10), ("Observacao", 28),
@@ -162,10 +175,10 @@ ESQUEMA = {
 # Não recebem dado de demonstração nem devem ser preenchidas à mão.
 CALCULADAS = {
     "Macroprocessos": ["Trilha"],
-    "Processos": ["Percentual", "Trilha"],
-    "Subprocessos": ["Trilha"],
-    "Atividades": ["Trilha"],
-    "Tarefas": ["Trilha"],
+    "Processos": ["Trilha", "Percentual"],
+    "Subprocessos": ["Trilha", "Macroprocesso", "Processo"],
+    "Atividades": ["Trilha", "Macroprocesso", "Processo", "Subprocesso"],
+    "Tarefas": ["Trilha", "Macroprocesso", "Processo", "Subprocesso"],
     "Documentos": ["Vinculo_Nivel"],
     "Riscos": ["Vinculo_Nivel", "Nivel_PxI", "Classificacao"],
     "Metricas": ["Vinculo_Nivel"],
@@ -182,6 +195,7 @@ LISTAS_OPCOES = {
     "Complexidade": ["Alta", "Média", "Baixa"],
     "Maturidade_Processo": ["Inicial", "Repetível", "Definido", "Gerenciado", "Otimizado"],
     "Sim_Nao": ["Sim", "Não", "Não se aplica"],
+    "Status_Marco": ["Sim", "Em andamento", "Não", "Não se aplica"],
     "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso", "Atividade", "Tarefa"],
     "Tipo_Atividade": ["Agregação de Valor", "Transferência", "Controle"],
     "Tipo_Tarefa": ["Manual", "Automatizada", "Regra de negócio"],
@@ -205,7 +219,8 @@ LISTAS_OPCOES = {
                       "Indicadores, metas e riscos", "Plano de Ações AE/GPE", "Como usar o painel"],
 }
 
-# Prefixo de código por nível — 2 letras + número sequencial DENTRO do nível.
+# Prefixo de código por nível — 2 letras + número sequencial, reiniciado a
+# cada novo vínculo com o pai (ver docstring do módulo).
 PREFIXO_NIVEL = {
     "Macroprocesso": ("MG", "MF", "MS"),  # Gerencial / Finalístico / Suporte
     "Processo": "PP", "Subprocesso": "SP", "Atividade": "AT", "Tarefa": "TR",
