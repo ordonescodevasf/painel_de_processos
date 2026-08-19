@@ -2647,6 +2647,9 @@
           'Revise o tipo selecionado ou o termo buscado para ver os documentos disponíveis.',
           { img: 'empty-space/empty-space-03.png' })) + '</div>';
     ligarPaginacao(el, renderDocumentos);
+    if (window.BRTooltipInit) window.BRTooltipInit();
+    if (window.BRMessageInit) window.BRMessageInit();
+    if (window.BRTableInit) window.BRTableInit();
     el.querySelectorAll('[data-doc-limpar]').forEach(function (b) {
       b.onclick = function () {
         var q = b.getAttribute('data-doc-limpar');
@@ -2766,6 +2769,9 @@
       tabelaRiscosHtml(pagFatia('riscos', DADOS.riscos, 5), true) +
       paginacaoHtml('riscos', DADOS.riscos.length, 'riscos') + '</div>';
     ligarPaginacao(el, renderRiscos);
+    if (window.BRTooltipInit) window.BRTooltipInit();
+    if (window.BRMessageInit) window.BRMessageInit();
+    if (window.BRTableInit) window.BRTableInit();
     $all('#viewRiscos .risco-pin').forEach(function (b) {
       b.addEventListener('click', function () {
         var alvo = d.getElementById(b.getAttribute('data-alvo'));
