@@ -451,8 +451,13 @@ body.contraste-alto .br-tag.maturidade-tag,body.contraste-alto .br-tag.tipo-ativ
 .matriz .risco-pin:hover{border-color:var(--cv-blue);color:var(--cv-blue);}
 .matriz-legenda{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--sp2);margin-top:var(--sp2);font-size:var(--fs-sm);}
 
-/* ── vínculo múltiplo (documento/risco/indicador ligado a 2+ itens) ── */
-.vinculo-lista{display:flex;flex-direction:column;gap:4px;}
+/* ── vínculo múltiplo (documento/risco/indicador ligado a 2+ itens) ──
+   Separador visível entre cada vínculo, não só espaço em branco — sem
+   isso, dois ou mais links seguidos pareciam um bloco só de texto. ── */
+.vinculo-lista{display:flex;flex-direction:column;gap:6px;}
+.vinculo-lista a{padding-top:6px;}
+.vinculo-lista a:first-child{padding-top:0;}
+.vinculo-lista a:not(:first-child){border-top:1px solid var(--gray-10);}
 
 /* ── subprocesso reutilizável (Call Activity do BPMN 2.0 — no Bizagi, que
    este painel usa para os diagramas, o próprio elemento já se chama
@@ -973,13 +978,10 @@ body.contraste-alto .ficha-dl > div[class*="campo-"] dt{color:#fff;}
 .marcos li.na i,.marcos li.na::before{color:var(--gray-40);}
 body.contraste-alto .marcos li.na{opacity:1;}
 
-/* Marco "Em andamento": meia nota no Percentual — mesmo tom âmbar já usado
-   em tag-status.em-andamento, para o mesmo estado ter a mesma cor em toda
-   a interface. */
-.marcos-step .step-progress-btn.is-andamento{background:#fff5d2;border-color:#f2dd9c;}
-.marcos-step .step-progress-btn.is-andamento .step-info{color:#8a6d00;}
-body.contraste-alto .marcos-step .step-progress-btn.is-andamento{background:#000;border-color:var(--gold-vivid-20,#ffbe2e);}
-body.contraste-alto .marcos-step .step-progress-btn.is-andamento .step-info{color:var(--gold-vivid-20,#ffbe2e);}
+/* Marco "Em andamento" (meia nota no Percentual) não ganha destaque de
+   fundo no indicador M1–M10 — o retângulo colorido cobrindo a etapa inteira
+   confundia mais do que ajudava; o tooltip ("i") já diz que está em
+   andamento. */
 
 
 /* ═══════════════════════════════════════════════════════════════════════
