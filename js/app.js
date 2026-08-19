@@ -611,6 +611,19 @@
   function trilhaDisp(trilha) {
     return String(trilha || '').split(/\s*[\/›]\s*/).filter(Boolean).map(codDisp).join(' › ');
   }
+  // Nível de um código/trilha, lido do PRÓPRIO texto (último segmento) — mais
+  // confiável que o Vinculo_Nivel gravado quando a célula lista códigos de
+  // níveis diferentes (ex. "MS-01 › PP-01; MS-01 › PP-01 › SP-03"), caso em
+  // que um só Vinculo_Nivel não consegue valer para os dois ao mesmo tempo.
+  function nivelDoCodigo(codigo) {
+    var s = String(codigo || '');
+    if (/TR-/.test(s)) return 'Tarefa';
+    if (/AT-/.test(s)) return 'Atividade';
+    if (/SP-/.test(s)) return 'Subprocesso';
+    if (/PP-/.test(s)) return 'Processo';
+    if (/^\s*(MG|MF|MS)-/.test(s)) return 'Macroprocesso';
+    return '';
+  }
   var NIVEL_PREFIXO = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp',
     'Atividade': 'a', 'Tarefa': 't' };
   var NIVEL_ROTULO = { 'Macroprocesso': 'Macroprocesso', 'Processo': 'Processo',
@@ -687,7 +700,10 @@
     // além do primeiro.
     if (niveis.length === 1 && codigos.length > 1) niveis = codigos.map(function () { return niveis[0]; });
     for (var i = 0; i < Math.max(niveis.length, codigos.length); i++) {
-      if (niveis[i] && codigos[i]) pares.push([niveis[i], codigos[i]]);
+      // O nível de CADA código vem do próprio código, não da célula — cobre o
+      // caso raro de vincular a itens de níveis diferentes na mesma linha.
+      var niv = (codigos[i] && nivelDoCodigo(codigos[i])) || niveis[i];
+      if (niv && codigos[i]) pares.push([niv, codigos[i]]);
     }
     return pares;
   }
