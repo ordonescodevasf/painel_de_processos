@@ -451,13 +451,10 @@ body.contraste-alto .br-tag.maturidade-tag,body.contraste-alto .br-tag.tipo-ativ
 .matriz .risco-pin:hover{border-color:var(--cv-blue);color:var(--cv-blue);}
 .matriz-legenda{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--sp2);margin-top:var(--sp2);font-size:var(--fs-sm);}
 
-/* ── vínculo múltiplo (documento/risco/indicador ligado a 2+ itens) ──
-   Separador visível entre cada vínculo, não só espaço em branco — sem
-   isso, dois ou mais links seguidos pareciam um bloco só de texto. ── */
-.vinculo-lista{display:flex;flex-direction:column;gap:6px;}
-.vinculo-lista a{padding-top:6px;}
-.vinculo-lista a:first-child{padding-top:0;}
-.vinculo-lista a:not(:first-child){border-top:1px solid var(--gray-10);}
+/* ── vínculo múltiplo (documento/risco/indicador ligado a 2+ itens):
+   cada trilha na sua própria linha, só espaçamento — sem divisor, para
+   não poluir a tabela. ── */
+.vinculo-lista{display:flex;flex-direction:column;gap:8px;}
 
 /* ── subprocesso reutilizável (Call Activity do BPMN 2.0 — no Bizagi, que
    este painel usa para os diagramas, o próprio elemento já se chama
