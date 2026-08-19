@@ -23,7 +23,8 @@
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
            'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
            'Cultura_Processos', 'Iniciativas', 'Competencias',
-           'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
+           'Jornada', 'Repositorio', 'NUGEP', 'Equipe_Gerenciamento_Processos',
+           'Glossario', 'FAQ', 'Siglas', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
   var d = document;
@@ -228,6 +229,7 @@
       jornada: pega('Jornada'),
       repo: pega('Repositorio'),
       nugep: pega('NUGEP'),
+      equipeGestao: pega('Equipe_Gerenciamento_Processos'),
       glossario: pega('Glossario'),
       faq: pega('FAQ'),
       siglas: pega('Siglas'),
@@ -269,6 +271,7 @@
     dd.jornada.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.repo.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.equipeGestao.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     /* Foto e hierarquia dos integrantes: se a planilha em uso ainda não tem
        as colunas Foto e Hierarquia, aproveita o que está em js/dados.js,
        casando pelo e-mail — assim o avatar aparece com foto em qualquer
@@ -546,6 +549,28 @@
     return '<div' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '><dt>' + esc(rotulo) + '</dt><dd>' +
       (valorHtml || '<span class="pp-vazio">Não informado</span>') + '</dd></div>';
   }
+  // Gestor(a) do processo: pessoa que responde pelo processo no dia a dia —
+  // diferente do Ponto_Focal_Nugep (o contato durante o mapeamento/análise).
+  // Ponto_Focal_Nugep guarda só o nome (ex. "Carlos Eduardo Lima (UNP)") — o
+  // contato completo vem daqui, resgatado por nome na aba NUGEP.
+  function pontoFocalNugepHtml(p) {
+    var nome = String(p.Ponto_Focal_Nugep || '').trim();
+    if (!nome) return '';
+    var alvo = nome.toLowerCase();
+    var m = (DADOS.nugep || []).filter(function (x) { return alvo.indexOf(String(x.Nome || '').toLowerCase()) === 0; })[0];
+    if (!m) return esc(nome);
+    return '<strong>' + esc(m.Nome) + '</strong>' + contatoNugep(m).replace('class="nugep-contato"', 'class="nugep-contato" style="border-bottom:0;padding-bottom:0"') +
+      (m.Unidade_Sigla ? '<div style="margin-top:2px">' + siglaTag(m.Unidade_Sigla) + '</div>' : '');
+  }
+  function gestorProcessoHtml(p) {
+    if (!p.Gestor_Nome) return '';
+    var contatos = [];
+    if (p.Gestor_Email) contatos.push('<a href="mailto:' + esc(p.Gestor_Email) + '"><i class="fas fa-envelope" aria-hidden="true"></i> ' + esc(p.Gestor_Email) + '</a>');
+    if (p.Gestor_Telefone) contatos.push('<a href="tel:+55' + esc(String(p.Gestor_Telefone).replace(/\D/g, '')) + '"><i class="fas fa-phone" aria-hidden="true"></i> ' + esc(p.Gestor_Telefone) + '</a>');
+    return '<strong>' + esc(p.Gestor_Nome) + '</strong>' +
+      (contatos.length ? '<div class="nugep-contato" style="border-bottom:0;padding-bottom:0">' + contatos.join('') + '</div>' : '') +
+      (p.Gestor_Unidade_Organica ? '<div style="margin-top:2px">' + siglaTag(p.Gestor_Unidade_Organica) + '</div>' : '');
+  }
   // Sigla exibida de cada camada, sempre com DUAS letras, para que o nível
   // se leia no próprio código: MG/MF/MS (macroprocessos, por tipo), PP
   // (processo), SP (subprocesso), AT (atividade), TR (tarefa). O código da
@@ -578,6 +603,13 @@
     if (s.indexOf('A-') === 0) return 'AT-' + s.slice(2);
     if (s.indexOf('T-') === 0) return 'TR-' + s.slice(2);
     return s;                                // SP- e MG/MF/MS já têm 2 letras
+  }
+  // Trilha completa para exibição: mesma normalização de separador que
+  // normalizaCaminho (aceita "/" ou "›" na origem), com cada segmento
+  // passando por codDisp — cobre também um vínculo que guarde só o código
+  // isolado em vez do caminho completo.
+  function trilhaDisp(trilha) {
+    return String(trilha || '').split(/\s*[\/›]\s*/).filter(Boolean).map(codDisp).join(' › ');
   }
   var NIVEL_PREFIXO = { 'Macroprocesso': 'mp', 'Processo': 'p', 'Subprocesso': 'sp',
     'Atividade': 'a', 'Tarefa': 't' };
@@ -639,7 +671,7 @@
     return it ? it.Nome : codigo;
   }
   function linkVinculo(nivel, codigo) {
-    return '<a href="' + rotaDe(nivel, codigo) + '"><span class="cod">' + esc(codDisp(codigo)) +
+    return '<a href="' + rotaDe(nivel, codigo) + '"><span class="cod">' + esc(trilhaDisp(codigo)) +
       // A sigla de duas letras no início do link já diz o nível (MG/MF/MS,
       // PP, SP, AT, TR) — o rótulo por extesso ao lado era redundante e
       // alargava a coluna sem informar nada de novo.
@@ -967,7 +999,7 @@
     var homeTrilha = trilhaPai(s.Trilha);
     var origem = ehCodigoSub(home) ? IDX.sp[homeTrilha] : IDX.p[homeTrilha];
     var origemTxt = origem ? origem.Trilha + ' — ' + origem.Nome : home;
-    return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Trilha) + '"><div class="topo"><div><span class="cod">' + esc(codDisp(s.Codigo)) + '</span>' +
+    return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/sp/' + encodeURIComponent(s.Trilha) + '"><div class="topo"><div><span class="cod">' + esc(trilhaDisp(s.Trilha)) + '</span>' +
       '<div class="nome" style="font-size:var(--fs-sm)">' + esc(s.Nome) + '</div>' +
       (marcarReuso ? '<div class="reuso-def"><span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' +
         '<span class="reuso-origem">Definido em ' + esc(origemTxt) + '</span></div>' : '') +
@@ -1816,7 +1848,7 @@
   }
   function cardProcesso(p) {
     return '<a class="proc-card" href="#/p/' + encodeURIComponent(p.Trilha) + '">' +
-      '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(codDisp(p.Codigo)) + '</span>' +
+      '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(trilhaDisp(p.Trilha)) + '</span>' +
       '<div class="nome">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
       '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' +
       [p.Unidade_Organica_Responsavel || '', marcoRotulo(marcoAtual(p))].filter(Boolean).map(esc).join(' · ') + '</div>' +
@@ -1847,8 +1879,8 @@
   // o usuário marca várias opções em tempo real.
   function catResultadosHtml(lista) {
     return (!lista.length && filtroCat.status.length ? '<span class="feedback warning" role="alert"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i>Nenhum processo com os status selecionados.</span>' : '') +
-      (lista.length ? '<div class="proc-grid">' + pagFatia('catalogo', ordenarCat(lista), 6).map(cardProcesso).join('') + '</div>' +
-        paginacaoHtml('catalogo', lista.length, 'processos', [6, 12, 24, 48])
+      (lista.length ? '<div class="proc-grid">' + pagFatia('catalogo', ordenarCat(lista), 10).map(cardProcesso).join('') + '</div>' +
+        paginacaoHtml('catalogo', lista.length, 'processos', [10, 20, 40, 80])
         : vazio('Nenhum processo com esses filtros',
           'Ajuste os critérios ou limpe os filtros para ver todo o portfólio.',
           { acoes: [{ rotulo: 'Limpar Filtros', icone: 'fa-rotate-left', acao: 'cat-limpar' }] }));
@@ -2062,6 +2094,7 @@
         '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha do macroprocesso</h3><dl class="ficha-dl">' +
         campo('Objetivo', m.Objetivo && esc(m.Objetivo), false, 'desc') + campo('Descrição', m.Descricao && esc(m.Descricao), false, 'desc') +
         campo('Unidade Orgânica responsável', m.Unidade_Organica_Responsavel && siglaTag(m.Unidade_Organica_Responsavel), false, 'quem') +
+        campo('Unidades Orgânicas Corresponsáveis', chips(m.Unidades_Organicas_Corresponsaveis, 'fa-people-group', true), false, 'quem') +
         campo('Entregas (produtos/serviços)', chips(m.Entregas), true, 'valor') +
         campo('Beneficiários', chips(m.Beneficiarios), false, 'valor') +
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
@@ -2073,7 +2106,7 @@
         '<div class="pp-card"><h3><i class="fas fa-sitemap" aria-hidden="true"></i> Processos vinculados</h3>' +
         (filhos.length ? filhos.map(function (p) {
           return '<a class="proc-card" style="margin-bottom:var(--sp2)" href="#/p/' + encodeURIComponent(p.Trilha) + '">' +
-            '<div class="topo"><div><span style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(codDisp(p.Codigo)) + '</span>' +
+            '<div class="topo"><div><span style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(trilhaDisp(p.Trilha)) + '</span>' +
             '<div class="nome" style="font-size:var(--fs-sm)">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
             '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
         }).join('') : '<p class="pp-vazio">Nenhum processo cadastrado.</p>') + '</div></aside></div>';
@@ -2109,7 +2142,9 @@
         campo('Objetivo', p.Objetivo && esc(p.Objetivo), false, 'desc') +
         campo('Descrição', p.Descricao && esc(p.Descricao), false, 'desc') +
         campo('Unidade Orgânica responsável', p.Unidade_Organica_Responsavel && siglaTag(p.Unidade_Organica_Responsavel), false, 'quem') +
-        campo('Ponto focal do Nugep', p.Ponto_Focal_Nugep && esc(p.Ponto_Focal_Nugep), false, 'quem') +
+        campo('Unidades Orgânicas Corresponsáveis', chips(p.Unidades_Organicas_Corresponsaveis, 'fa-people-group', true), false, 'quem') +
+        campo('Ponto focal do Nugep', pontoFocalNugepHtml(p), false, 'quem') +
+        campo('Gestor(a) do processo', gestorProcessoHtml(p), false, 'quem') +
         campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
         campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
         campo('Maturidade do processo', p.Maturidade && tagMaturidade(p.Maturidade), false, 'quem') +
@@ -2182,6 +2217,7 @@
         campo('Descrição', s.Descricao && esc(s.Descricao), true, 'desc') +
         campo('Objetivo', s.Objetivo && esc(s.Objetivo), true, 'desc') +
         campo('Unidade Orgânica responsável', s.Unidade_Organica_Responsavel && siglaTag(s.Unidade_Organica_Responsavel), false, 'quem') +
+        campo('Unidades Orgânicas Corresponsáveis', chips(s.Unidades_Organicas_Corresponsaveis, 'fa-people-group', true), false, 'quem') +
         campo('Entradas (insumos)', chips(s.Entradas, 'fa-arrow-right-to-bracket'), false, 'valor') +
         campo('Saídas (produtos)', chips(s.Saidas, 'fa-arrow-right-from-bracket'), false, 'valor') +
         '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
@@ -2745,7 +2781,7 @@
   // vermelho de erro — todas degraus oficiais da paleta gov.br, todas com
   // 4,5:1 ou mais sobre o card branco. Matizes diferentes entre si, para
   // que séries vizinhas nunca se confundam.
-  var PAL = ['#0c326f', '#168821', '#c05600', '#0081a1', '#4a50c4', '#776017', '#555555', '#b50909'];
+  var PAL = ['#005ca9', '#007d4e', '#222b54', '#0081a1', '#74c9ea', '#89bd2b', '#555555', '#b50909'];
   function svgWrap(titulo, conteudo, vb, altura, legenda) {
     return '<figure class="graf"><figcaption>' + esc(titulo) +
       (legenda ? ' ' + dica(legenda) : '') + '</figcaption>' +
@@ -2781,7 +2817,7 @@
       var navAttr = d.href ? ' data-nav="1" data-href="' + esc(d.href) + '"' : '';
       return '<text x="0" y="' + (y + 13) + '" font-size="11" fill="#333">' + esc(String(d.rotulo).slice(0, 22)) + '</text>' +
         '<rect x="' + lw + '" y="' + y + '" width="' + bw + '" height="15" rx="3" fill="#f0f0f0"></rect>' +
-        '<rect x="' + lw + '" y="' + y + '" width="' + w.toFixed(1) + '" height="15" rx="3" fill="' + (d.cor || '#0c326f') + '"' + navAttr + '>' +
+        '<rect x="' + lw + '" y="' + y + '" width="' + w.toFixed(1) + '" height="15" rx="3" fill="' + (d.cor || '#005ca9') + '"' + navAttr + '>' +
         '<title>' + esc(d.rotulo) + ': ' + d.valor + (sufixo || '') + (d.href ? ' — clique para abrir' : '') + '</title></rect>' +
         '<text x="' + (lw + bw + 6) + '" y="' + (y + 12) + '" font-size="11" font-weight="700" fill="#1b1b1b">' + d.valor + (sufixo || '') + '</text>';
     }).join('');
@@ -2810,11 +2846,11 @@
     var linha = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
     var area = linha + ' L' + pts[pts.length - 1][0].toFixed(1) + ' ' + (h - 20) + ' L' + pts[0][0].toFixed(1) + ' ' + (h - 20) + ' Z';
     var marcas = pts.map(function (p, i) {
-      return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="#0c326f"><title>' + esc(pontos[i].rotulo) + ': ' + pontos[i].valor + '</title></circle>' +
+      return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="#005ca9"><title>' + esc(pontos[i].rotulo) + ': ' + pontos[i].valor + '</title></circle>' +
         '<text x="' + p[0].toFixed(1) + '" y="' + (h - 6) + '" font-size="9" fill="#636363" text-anchor="middle">' + esc(pontos[i].rotulo) + '</text>';
     }).join('');
-    return svgWrap(titulo, '<path d="' + area + '" fill="#0c326f" opacity="0.12"></path>' +
-      '<path d="' + linha + '" fill="none" stroke="#0c326f" stroke-width="2.5"></path>' + marcas, '0 0 ' + w + ' ' + h, null, legenda);
+    return svgWrap(titulo, '<path d="' + area + '" fill="#005ca9" opacity="0.12"></path>' +
+      '<path d="' + linha + '" fill="none" stroke="#005ca9" stroke-width="2.5"></path>' + marcas, '0 0 ' + w + ' ' + h, null, legenda);
   }
   function grafHeat(titulo, dados, legenda) {            // matriz risco compacta [{p,i,qtd}]
     var cel = 30, sz = 5 * cel, corpo = '';
@@ -2846,8 +2882,8 @@
     }).join('');
     var pa = pt(0, r2), pb = pt(valor, r2);
     var grandeArco = (valor / max) > 0.5 ? 1 : 0;
-    var corAtual = '#0c326f';
-    (faixas || []).forEach(function (f) { if (valor <= f.ate) corAtual = corAtual === '#0c326f' ? f.cor : corAtual; });
+    var corAtual = '#005ca9';
+    (faixas || []).forEach(function (f) { if (valor <= f.ate) corAtual = corAtual === '#005ca9' ? f.cor : corAtual; });
     var ponteiro = pt(valor, r2);
     var corpo = faixasHtml +
       '<path d="M' + pa[0].toFixed(1) + ',' + pa[1].toFixed(1) + ' A' + r2 + ',' + r2 + ' 0 ' + grandeArco + ',1 ' + pb[0].toFixed(1) + ',' + pb[1].toFixed(1) + '" stroke="' + corAtual + '" stroke-width="20" fill="none" stroke-linecap="round"><title>' + esc(titulo) + ': ' + valor + '% (de ' + max + '%)</title></path>' +
@@ -2868,7 +2904,7 @@
       '<text x="4" y="' + (mt + 4) + '" font-size="9" fill="#636363">' + esc(rotEixoY) + ' ↑</text>';
     var bolhas = pontos.map(function (p) {
       var navAttr = p.href ? ' data-nav="1" data-href="' + esc(p.href) + '"' : '';
-      return '<circle cx="' + px(p.x).toFixed(1) + '" cy="' + py(p.y).toFixed(1) + '" r="' + (p.r || 8) + '" fill="' + (p.cor || '#0c326f') + '" fill-opacity=".78" stroke="#fff" stroke-width="1.5"' + navAttr + '>' +
+      return '<circle cx="' + px(p.x).toFixed(1) + '" cy="' + py(p.y).toFixed(1) + '" r="' + (p.r || 8) + '" fill="' + (p.cor || '#005ca9') + '" fill-opacity=".78" stroke="#fff" stroke-width="1.5"' + navAttr + '>' +
         '<title>' + esc(p.rotulo) + ' — ' + esc(rotEixoX) + ': ' + p.x + '% · ' + esc(rotEixoY) + ': ' + p.y + (p.href ? ' — clique para abrir' : '') + '</title></circle>';
     }).join('');
     return svgWrap(titulo, eixos + bolhas, '0 0 ' + (lw + bw + 20) + ' ' + (mt + bh + 45), null, legenda);
@@ -2908,9 +2944,9 @@
     var heat = {}; riscosAb.forEach(function (r) { var k = r.Probabilidade_1a5 + '|' + r.Impacto_1a5; heat[k] = (heat[k] || 0) + 1; });
     var heatArr = Object.keys(heat).map(function (k) { return { p: +k.split('|')[0], i: +k.split('|')[1], qtd: heat[k] }; });
 
-    // Mesmas cores da cadeia de valor e das fichas: azul = gerencial,
-    // verde = finalístico, laranja = suporte.
-    var CAT_COR = { gerencial: '#0c326f', finalistico: '#168821', suporte: '#c05600' };
+    // Cores da marca Codevasf (mesmos tons de --cv-blue/--cv-green/--cv-navy
+    // em css/govbr-ds.css): azul = gerencial, verde = finalístico, azul-marinho = suporte.
+    var CAT_COR = { gerencial: '#005ca9', finalistico: '#007d4e', suporte: '#222b54' };
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h1>Dashboard gerencial</h1><div class="linha" aria-hidden="true"></div></div>' +
       '<div class="kpi-grid" style="margin-top:0">' +
@@ -2926,10 +2962,10 @@
       '</div>' +
       '<div class="graf-grid">' +
       grafGauge('Avanço médio geral do portfólio', media, 100, [
-        { ate: 40, cor: '#b50909' }, { ate: 70, cor: '#947100' }, { ate: 100, cor: '#168821' }],
+        { ate: 40, cor: '#b50909' }, { ate: 70, cor: '#947100' }, { ate: 100, cor: '#007d4e' }],
         'Percentual médio de avanço do mapeamento entre todos os processos do portfólio. As faixas de cor indicam o estágio geral: vermelho abaixo de 40%, âmbar entre 40% e 70%, verde a partir de 70%.') +
       grafDonut('Situação do mapeamento', [
-        { rotulo: 'Concluído', valor: concl, cor: '#168821' },
+        { rotulo: 'Concluído', valor: concl, cor: '#007d4e' },
         { rotulo: 'Em andamento', valor: andam, cor: '#947100' },
         { rotulo: 'Não iniciado', valor: porStatus['Não iniciado'] || 0, cor: '#757575' },
         { rotulo: 'Suspenso', valor: porStatus['Suspenso'] || 0, cor: '#b50909' }],
@@ -2940,14 +2976,14 @@
       }), 'Distribuição dos processos mapeados entre os três tipos de macroprocesso do CBOK 4.0: gerencial, finalístico e de suporte. Referência do CBOK para comparação (não é meta obrigatória): cerca de 20% primários (finalísticos), 70% de suporte e 10% de gestão.') +
       grafBarras('Avanço por macroprocesso (%) — clique para abrir', DADOS.macros.map(function (m) {
         var ps = IDX.procsPorMacro[m.Codigo] || [];
-        return { rotulo: (m._cod || m.Codigo) + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#0c326f', href: '#/mp/' + encodeURIComponent(m.Codigo),
+        return { rotulo: (m._cod || m.Codigo) + ' ' + m.Nome, cor: CAT_COR[m._cat] || '#005ca9', href: '#/mp/' + encodeURIComponent(m.Codigo),
           valor: ps.length ? Math.round(ps.reduce(function (s, p) { return s + p.Percentual; }, 0) / ps.length) : 0 };
       }), '%', 100, 'Percentual médio de avanço dos processos de cada macroprocesso. A linha tracejada marca a meta de 100%; clique em uma barra para abrir a ficha do macroprocesso.') +
       grafBubble('Priorização: avanço × riscos abertos por processo — clique para abrir', procs.map(function (p) {
         var rp = vinculados('riscos', 'Processo', p.Trilha).filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
         var ativs = contarAtividadesRecursivo(p.Trilha);
         return { x: p.Percentual, y: rp.length, r: Math.max(6, Math.min(22, 6 + ativs * 1.5)),
-          rotulo: codDisp(p.Codigo) + ' — ' + p.Nome, cor: p.Percentual < 40 && rp.length >= 1 ? '#b50909' : (CAT_COR[(IDX.mp[p.Macroprocesso] || {})._cat] || '#0c326f'),
+          rotulo: codDisp(p.Codigo) + ' — ' + p.Nome, cor: p.Percentual < 40 && rp.length >= 1 ? '#b50909' : (CAT_COR[(IDX.mp[p.Macroprocesso] || {})._cat] || '#005ca9'),
           href: '#/p/' + encodeURIComponent(p.Trilha) };
       }), 'Avanço do mapeamento (%)', 'Riscos abertos', 'Cada bolha é um processo: posição horizontal = avanço do mapeamento, posição vertical = riscos abertos, tamanho = atividades mapeadas. Bolhas vermelhas (avanço baixo e algum risco aberto) merecem atenção prioritária; clique para abrir a ficha.') +
       grafFunil('Marcos concluídos no portfólio (M1 → M10)', funil, 'Quantidade de processos que já concluíram cada marco do mapeamento, do M1 ao M10. Como os marcos são sequenciais, o número tende a diminuir da primeira para a última etapa.') +
@@ -3244,6 +3280,15 @@
           '<div class="ci-equipe">' + equipeUnp.map(function (m) { return perfilInst(m); }).join('') + '</div></div>' : '') +
         '</div>' : '') +
       '</div>' +
+      '<section class="pp-sec" id="sec-equipe-gestao"><div class="pp-sec-h"><h2>Equipe de Gerenciamento de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
+      (DADOS.equipeGestao.length ? '<div class="nugep-grid">' + DADOS.equipeGestao.map(function (g) {
+        return '<article class="nugep-card">' + avatarNugep(g) + '<h3>' + esc(g.Nome) + '</h3>' +
+          (g.Unidade_Organica ? '<p class="nugep-unid"><span class="nugep-sigla">' + siglaTag(g.Unidade_Organica) + '</span></p>' : '') +
+          contatoNugep(g) + '</article>';
+      }).join('') + '</div>' : vazio('Nenhum gestor cadastrado',
+        'A aba Equipe_Gerenciamento_Processos da planilha ainda não tem integrantes. Assim que forem cadastrados, aparecem aqui.',
+        { img: 'empty-space/empty-space-14.png' })) +
+      '</section>' +
       cardCompetencias();
     if (window.PPUI && PPUI.iniciarAccordions) PPUI.iniciarAccordions(el);
   }

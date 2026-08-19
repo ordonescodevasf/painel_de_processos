@@ -87,6 +87,20 @@ def listas_ref(wb, nome_lista):
     return f"=Listas!${letra}$2:${letra}${n + 1}"
 
 
+def siglas_ref(wb):
+    """Referência de validação para a aba Siglas (coluna A, até a última
+    linha preenchida) — mesmo padrão de listas_ref(), mas para a aba Siglas,
+    que os campos de unidade orgânica referenciam diretamente (não vai pela
+    aba Listas)."""
+    if "Siglas" not in wb.sheetnames:
+        return None
+    ws = wb["Siglas"]
+    n = 1
+    while ws.cell(row=n + 1, column=1).value not in (None, ""):
+        n += 1
+    return f"=Siglas!$A$2:$A${n + 1}"
+
+
 def dv(ws, col_letter, ref, ultima_linha=300, strict=True):
     if not ref:
         return
@@ -104,9 +118,75 @@ def principal():
     wb = load_workbook(CAMINHO)
     mudou = []
 
-    # Nenhuma migração pendente — acrescente aqui o próximo incremento (nova
-    # coluna ou aba), seguindo o padrão: checar se já existe (idempotente),
-    # aplicar com cabecalho()/escreve()/dv(), e anexar uma mensagem a `mudou`.
+    # Gestor(a) do processo (nome/e-mail/telefone/unidade orgânica) e aba
+    # Equipe_Gerenciamento_Processos — pedido do usuário (ago/2026). Colunas
+    # novas vão ao final da aba Processos (não entre as existentes), para
+    # não deslocar letra de coluna de nada já preenchido.
+    ws_proc = wb["Processos"]
+    if not col_by_header(ws_proc, "Gestor_Nome"):
+        ultima_col = ws_proc.max_column
+        novas = [("Gestor_Nome", 24), ("Gestor_Email", 30),
+                 ("Gestor_Telefone", 16), ("Gestor_Unidade_Organica", 16)]
+        for k, (nome, largura) in enumerate(novas, start=1):
+            j = ultima_col + k
+            c = ws_proc.cell(row=1, column=j, value=nome)
+            c.font = F_HEAD; c.fill = FILL_HEAD; c.alignment = AL_HEAD; c.border = BORDA
+            ws_proc.column_dimensions[get_column_letter(j)].width = largura
+            for i in range(2, ws_proc.max_row + 1):
+                cc = ws_proc.cell(row=i, column=j)
+                cc.border = BORDA
+                cc.alignment = AL_WRAP if nome == "Gestor_Nome" else AL_TOP
+                if i % 2 == 0:
+                    cc.fill = FILL_ZEBRA
+        ref = siglas_ref(wb)
+        if ref:
+            dv(ws_proc, get_column_letter(ultima_col + 4), ref)
+        mudou.append("Processos: colunas Gestor_Nome, Gestor_Email, Gestor_Telefone, Gestor_Unidade_Organica")
+
+    if "Equipe_Gerenciamento_Processos" not in wb.sheetnames:
+        ws_eq = wb.create_sheet("Equipe_Gerenciamento_Processos")
+        cabecalho(ws_eq, ["Ordem", "Nome", "Email", "Telefone", "Unidade_Organica"],
+                  [7, 28, 32, 16, 16])
+        ref = siglas_ref(wb)
+        if ref:
+            dv(ws_eq, "E", ref)
+        mudou.append("Nova aba Equipe_Gerenciamento_Processos (Ordem, Nome, Email, Telefone, Unidade_Organica)")
+
+    # Trilha com "›" em vez de "/" nos vínculos (padronização pedida pelo
+    # usuário) — Vinculo_Codigo em Documentos/Riscos/Metricas/Papeis/Regras,
+    # Reutilizado_Em em Subprocessos, Processos_Relacionados em Iniciativas.
+    # Não toca sigla de unidade orgânica (AE/GPE/UNP) — esses campos não têm
+    # "/" como separador de trilha, então não entram nesta lista de colunas.
+    def normaliza_trilhas(valor):
+        if not isinstance(valor, str) or "/" not in valor:
+            return valor
+        return "; ".join(
+            " › ".join(seg.strip() for seg in parte.split("/") if seg.strip())
+            for parte in valor.split(";")
+        )
+
+    campos_trilha = [
+        ("Documentos", "Vinculo_Codigo"), ("Riscos", "Vinculo_Codigo"),
+        ("Metricas", "Vinculo_Codigo"), ("Papeis", "Vinculo_Codigo"),
+        ("Regras", "Vinculo_Codigo"), ("Subprocessos", "Reutilizado_Em"),
+        ("Iniciativas", "Processos_Relacionados"),
+    ]
+    trilhas_corrigidas = 0
+    for aba, coluna in campos_trilha:
+        if aba not in wb.sheetnames:
+            continue
+        ws = wb[aba]
+        col = col_by_header(ws, coluna)
+        if not col:
+            continue
+        for i in range(2, ws.max_row + 1):
+            cel = ws.cell(row=i, column=col)
+            novo = normaliza_trilhas(cel.value)
+            if novo != cel.value:
+                cel.value = novo
+                trilhas_corrigidas += 1
+    if trilhas_corrigidas:
+        mudou.append(f"Trilha com › em vez de / normalizada em {trilhas_corrigidas} célula(s) de vínculo")
 
     if mudou:
         wb.save(CAMINHO)

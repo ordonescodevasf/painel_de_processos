@@ -8,6 +8,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Gerencial",
    "Ordem": "1",
    "Unidade_Organica_Responsavel": "AE/GPE",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Descricao": "Formulação, desdobramento e monitoramento da estratégia corporativa, da governança e do desempenho institucional.",
    "Objetivo": "Garantir que a atuação da Companhia esteja alinhada à estratégia, com decisões baseadas em evidências.",
    "Entregas": "Plano Estratégico; Plano de Ação Anual; Relatórios de desempenho",
@@ -24,6 +25,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Gerencial",
    "Ordem": "2",
    "Unidade_Organica_Responsavel": "AE/GAG",
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE",
    "Descricao": "Identificação, avaliação e tratamento de riscos corporativos, integridade e controles internos (2ª linha).",
    "Objetivo": "Assegurar razoável segurança para o alcance dos objetivos institucionais.",
    "Entregas": "Política de Gestão de Riscos; Matriz de riscos corporativa; Plano de integridade",
@@ -40,6 +42,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Finalístico",
    "Ordem": "3",
    "Unidade_Organica_Responsavel": "AR/GDT",
+   "Unidades_Organicas_Corresponsaveis": "AR/GRB",
    "Descricao": "Apoio a arranjos produtivos, inclusão socioeconômica e estruturação de cadeias produtivas nos vales.",
    "Objetivo": "Promover o desenvolvimento regional integrado e sustentável.",
    "Entregas": "Projetos de estruturação produtiva; Convênios e instrumentos de repasse",
@@ -56,6 +59,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Finalístico",
    "Ordem": "4",
    "Unidade_Organica_Responsavel": "AI/GOM",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Descricao": "Implantação, operação, manutenção e transferência de gestão de perímetros públicos de irrigação.",
    "Objetivo": "Ampliar a área irrigada produtiva com sustentabilidade hídrica e econômica.",
    "Entregas": "Perímetros em operação; Água distribuída; Relatórios de O&M",
@@ -72,6 +76,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Finalístico",
    "Ordem": "5",
    "Unidade_Organica_Responsavel": "AR/GRB",
+   "Unidades_Organicas_Corresponsaveis": "AR/GDT",
    "Descricao": "Ações de recuperação hidroambiental, segurança hídrica e uso sustentável dos recursos naturais.",
    "Objetivo": "Contribuir para a revitalização das bacias dos rios São Francisco e Parnaíba.",
    "Entregas": "Nascentes recuperadas; Obras hidroambientais; Sistemas de abastecimento",
@@ -88,6 +93,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Suporte",
    "Ordem": "6",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Descricao": "Planejamento das contratações, seleção de fornecedores e gestão dos contratos administrativos da Companhia.",
    "Objetivo": "Prover contratações tempestivas, vantajosas e conformes à legislação.",
    "Entregas": "Editais publicados; Contratos firmados; Atas de registro de preços",
@@ -104,6 +110,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Suporte",
    "Ordem": "7",
    "Unidade_Organica_Responsavel": "AG/GGP",
+   "Unidades_Organicas_Corresponsaveis": "AE/GPE",
    "Descricao": "Provimento, desenvolvimento, remuneração e qualidade de vida do corpo funcional.",
    "Objetivo": "Assegurar pessoas qualificadas e engajadas para a missão institucional.",
    "Entregas": "Empregados admitidos e capacitados; Folha de pagamento",
@@ -120,6 +127,7 @@ window.PAINEL_DADOS = {
    "Categoria": "Suporte",
    "Ordem": "8",
    "Unidade_Organica_Responsavel": "AT/GTI",
+   "Unidades_Organicas_Corresponsaveis": "AA/GLC",
    "Descricao": "Planejamento, desenvolvimento, sustentação e segurança dos serviços de TI.",
    "Objetivo": "Prover soluções digitais seguras que habilitem os processos de negócio.",
    "Entregas": "Sistemas em produção; Serviços de infraestrutura; Suporte ao usuário",
@@ -140,6 +148,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Da identificação da necessidade (DFD) até a aprovação do ETP, TR e pesquisa de preços que instruem o certame.",
    "Objetivo": "Instruir as contratações com estudos e artefatos completos, reduzindo retrabalho e impugnações.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Ponto_Focal_Nugep": "Carlos Eduardo Lima (UNP)",
    "Prioridade": "Alta",
    "Complexidade": "Alta",
@@ -171,7 +180,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": "e-Codevasf; Painel de Preços; PNCP",
    "Proxima_Acao": "Monitorar indicadores do processo e revisar o PRO em 12 meses.",
    "Pendencia": null,
-   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000123202611"
+   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000123202611",
+   "Gestor_Nome": "Vanessa Torres Almeida",
+   "Gestor_Email": "vanessa.almeida@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4521",
+   "Gestor_Unidade_Organica": "AA/GLC"
   },
   {
    "Trilha": "MS-01 › PP-02",
@@ -181,6 +194,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Da divulgação do edital à homologação do resultado, incluindo sessão pública, julgamento e recursos.",
    "Objetivo": "Selecionar a proposta mais vantajosa com celeridade e segurança jurídica.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Ponto_Focal_Nugep": "Carlos Eduardo Lima (UNP)",
    "Prioridade": "Alta",
    "Complexidade": "Média",
@@ -212,7 +226,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": "Compras.gov.br",
    "Proxima_Acao": "Validar AS-IS com o dono do processo (reunião marcada).",
    "Pendencia": "Pendente retorno da área sobre fluxo de recursos administrativos.",
-   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000456202622"
+   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000456202622",
+   "Gestor_Nome": "Vanessa Torres Almeida",
+   "Gestor_Email": "vanessa.almeida@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4521",
+   "Gestor_Unidade_Organica": "AA/GLC"
   },
   {
    "Trilha": "MS-01 › PP-03",
@@ -222,6 +240,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Da assinatura do contrato ao encerramento, incluindo fiscalização, medições, pagamentos e sanções.",
    "Objetivo": "Garantir a entrega do objeto contratado no prazo, custo e qualidade pactuados.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Ponto_Focal_Nugep": "Bruna Souza (UNP)",
    "Prioridade": "Alta",
    "Complexidade": "Alta",
@@ -253,7 +272,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": "e-Codevasf",
    "Proxima_Acao": "Concluir modelagem AS-IS das medições e pagamentos.",
    "Pendencia": null,
-   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000789202633"
+   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000789202633",
+   "Gestor_Nome": "Vanessa Torres Almeida",
+   "Gestor_Email": "vanessa.almeida@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4521",
+   "Gestor_Unidade_Organica": "AA/GLC"
   },
   {
    "Trilha": "MF-02 › PP-01",
@@ -263,6 +286,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Programação e distribuição de água, manutenção da infraestrutura de uso comum e relacionamento com irrigantes.",
    "Objetivo": "Assegurar a distribuição hídrica confiável e a conservação dos ativos.",
    "Unidade_Organica_Responsavel": "AI/GOM",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Ponto_Focal_Nugep": "Eduardo Martins (UNP)",
    "Prioridade": "Média",
    "Complexidade": "Alta",
@@ -294,7 +318,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": "SIG-Irrigação (fictício)",
    "Proxima_Acao": "Agendar oficina de validação do AS-IS com o distrito.",
    "Pendencia": null,
-   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000901202644"
+   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000901202644",
+   "Gestor_Nome": "Marcelo Andrade Costa",
+   "Gestor_Email": "marcelo.costa@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4710",
+   "Gestor_Unidade_Organica": "AI/GOM"
   },
   {
    "Trilha": "MF-03 › PP-01",
@@ -304,6 +332,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Seleção de áreas, execução de cercamento e plantio, e monitoramento da regeneração.",
    "Objetivo": "Recuperar áreas degradadas prioritárias das bacias.",
    "Unidade_Organica_Responsavel": "AR/GRB",
+   "Unidades_Organicas_Corresponsaveis": "AR/GDT",
    "Ponto_Focal_Nugep": "Eduardo Martins (UNP)",
    "Prioridade": "Média",
    "Complexidade": "Média",
@@ -335,7 +364,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": null,
    "Proxima_Acao": "Enviar formulário de levantamento à área (previsto ago/2026).",
    "Pendencia": null,
-   "Processo_ECodevasf_Link": null
+   "Processo_ECodevasf_Link": null,
+   "Gestor_Nome": "Luciana Ferreira Dias",
+   "Gestor_Email": "luciana.dias@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4820",
+   "Gestor_Unidade_Organica": "AR/GRB"
   },
   {
    "Trilha": "MG-01 › PP-01",
@@ -345,6 +378,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Construção do plano estratégico, desdobramento em planos de ação e monitoramento periódico de resultados.",
    "Objetivo": "Manter a estratégia viva, monitorada e comunicada.",
    "Unidade_Organica_Responsavel": "AE/GPE",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Ponto_Focal_Nugep": "Gustavo Pereira (UNP)",
    "Prioridade": "Alta",
    "Complexidade": "Média",
@@ -376,7 +410,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": null,
    "Proxima_Acao": "Ciclo de monitoramento trimestral (próximo: set/2026).",
    "Pendencia": null,
-   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000015202577"
+   "Processo_ECodevasf_Link": "https://e-processo.codevasf.gov.br/sei/controlador.php?acao=procedimento_visualizar&id=59500000015202577",
+   "Gestor_Nome": "Patrícia Moreira Lopes",
+   "Gestor_Email": "patricia.lopes@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4430",
+   "Gestor_Unidade_Organica": "AE/GPE"
   },
   {
    "Trilha": "MS-02 › PP-01",
@@ -386,6 +424,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Da homologação do concurso à integração do novo empregado, incluindo exames, posse e ambientação.",
    "Objetivo": "Admitir e integrar novos empregados com agilidade e conformidade.",
    "Unidade_Organica_Responsavel": "AG/GGP",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Ponto_Focal_Nugep": "Bruna Souza (UNP)",
    "Prioridade": "Baixa",
    "Complexidade": "Baixa",
@@ -417,7 +456,11 @@ window.PAINEL_DADOS = {
    "Fontes_Dados": null,
    "Proxima_Acao": "Aguardando priorização no ciclo 2027.",
    "Pendencia": null,
-   "Processo_ECodevasf_Link": null
+   "Processo_ECodevasf_Link": null,
+   "Gestor_Nome": "Rodrigo Nascimento Farias",
+   "Gestor_Email": "rodrigo.farias@codevasf.gov.br",
+   "Gestor_Telefone": "(61) 2028-4900",
+   "Gestor_Unidade_Organica": "AG/GGP"
   }
  ],
  "Subprocessos": [
@@ -432,6 +475,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Caracterização da necessidade, análise de soluções de mercado e demonstração da viabilidade da contratação.",
    "Objetivo": "Fundamentar tecnicamente a melhor solução para a necessidade.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
    "Entradas": "DFD; Levantamento de soluções de mercado",
@@ -451,6 +495,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Definição do objeto, requisitos, modelo de execução e gestão contratual, e critérios de julgamento.",
    "Objetivo": "Especificar com precisão o objeto e as condições da contratação.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
    "Entradas": "ETP aprovado; Modelos padronizados de TR",
@@ -470,6 +515,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Levantamento de preços em fontes admitidas (Painel de Preços, PNCP, cotações) e consolidação do valor estimado.",
    "Objetivo": "Estimar o valor da contratação conforme a IN SEGES nº 65/2021.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
    "Entradas": "TR validado; Fontes de preços admitidas",
@@ -489,8 +535,9 @@ window.PAINEL_DADOS = {
    "Descricao": "Identificação e exclusão de valores discrepantes coletados na pesquisa, com justificativa técnica registrada.",
    "Objetivo": "Evitar que outliers de preço distorçam o valor estimado da contratação.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Reutilizavel": "Sim",
-   "Reutilizado_Em": "MS-01/PP-02; MF-02/PP-01",
+   "Reutilizado_Em": "MS-01 › PP-02; MF-02 › PP-01",
    "Entradas": "Amostra de preços coletados na pesquisa",
    "Saidas": "Valores discrepantes identificados e justificados",
    "Sistemas": "Planilha padrão; e-Codevasf",
@@ -508,6 +555,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Abertura da sessão no sistema, fase de lances, julgamento, habilitação e registro em ata.",
    "Objetivo": "Conduzir o certame com transparência e celeridade.",
    "Unidade_Organica_Responsavel": "AA/GLC",
+   "Unidades_Organicas_Corresponsaveis": "AE/GAG",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
    "Entradas": "Edital publicado; Propostas dos licitantes",
@@ -527,6 +575,7 @@ window.PAINEL_DADOS = {
    "Descricao": "Programação semanal, operação de comportas e bombas, e registro de volumes distribuídos.",
    "Objetivo": "Entregar a água programada com eficiência e equidade.",
    "Unidade_Organica_Responsavel": "AI/GOM",
+   "Unidades_Organicas_Corresponsaveis": "AT/GTI",
    "Reutilizavel": null,
    "Reutilizado_Em": null,
    "Entradas": "Outorga de uso; Demanda de irrigação",
@@ -940,7 +989,7 @@ window.PAINEL_DADOS = {
    "Titulo": "PRO 06.01 — Planejamento da Contratação",
    "Tipo_Documento": "Procedimento (PRO)",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "2.0",
    "Data": "18/05/2026",
    "Situacao": "Vigente",
@@ -953,7 +1002,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Diagrama AS-IS — Planejamento da Contratação (Bizagi)",
    "Tipo_Documento": "Diagrama BPMN",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "1.0",
    "Data": "02/03/2026",
    "Situacao": "Vigente",
@@ -966,7 +1015,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Diagrama TO-BE — Planejamento da Contratação (Bizagi)",
    "Tipo_Documento": "Diagrama BPMN",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "1.0",
    "Data": "04/05/2026",
    "Situacao": "Vigente",
@@ -979,7 +1028,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Ata — Reunião de contextualização com a GLC",
    "Tipo_Documento": "Ata de reunião",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "1.0",
    "Data": "12/01/2026",
    "Situacao": "Vigente",
@@ -992,7 +1041,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Relatório de oportunidades de melhoria (AS-IS → TO-BE)",
    "Tipo_Documento": "Relatório",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01; MS-01/PP-01/SP-03",
+   "Vinculo_Codigo": "MS-01 › PP-01; MS-01 › PP-01 › SP-03",
    "Versao": "1.0",
    "Data": "13/04/2026",
    "Situacao": "Vigente",
@@ -1005,7 +1054,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Modelo de DFD — Documento de Formalização da Demanda",
    "Tipo_Documento": "Formulário/Modelo",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01",
    "Versao": "3.1",
    "Data": "10/02/2026",
    "Situacao": "Vigente",
@@ -1018,7 +1067,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Roteiro de pesquisa de preços (IN SEGES nº 65/2021)",
    "Tipo_Documento": "Procedimento (PRO)",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-03; MS-01/PP-01/SP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-03; MS-01 › PP-01 › SP-01",
    "Versao": "1.2",
    "Data": "27/04/2026",
    "Situacao": "Vigente",
@@ -1044,7 +1093,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Manual de Gestão e Fiscalização de Contratos (fictício)",
    "Tipo_Documento": "Manual",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01; MS-01/PP-03",
+   "Vinculo_Codigo": "MS-01 › PP-01; MS-01 › PP-03",
    "Versao": "2.3",
    "Data": "14/08/2025",
    "Situacao": "Em revisão",
@@ -1057,7 +1106,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Ata — Contextualização do processo Seleção do Fornecedor",
    "Tipo_Documento": "Ata de reunião",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-02",
+   "Vinculo_Codigo": "MS-01 › PP-02",
    "Versao": "1.0",
    "Data": "02/06/2026",
    "Situacao": "Vigente",
@@ -1070,7 +1119,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Diagrama AS-IS parcial — O&M de Perímetros (Bizagi)",
    "Tipo_Documento": "Diagrama BPMN",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "0.3",
    "Data": "08/07/2026",
    "Situacao": "Em elaboração",
@@ -1083,7 +1132,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Passo a passo do DFD no e-Codevasf",
    "Tipo_Documento": "Formulário/Modelo",
    "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-01/AT-01",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01 › AT-01",
    "Versao": "1.0",
    "Data": "12/02/2026",
    "Situacao": "Vigente",
@@ -1096,7 +1145,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Caderno de Indicadores Estratégicos 2026",
    "Tipo_Documento": "Relatório",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "1.0",
    "Data": "31/03/2026",
    "Situacao": "Vigente",
@@ -1109,7 +1158,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Plano de implantação do TO-BE (PMBOK — plano do projeto)",
    "Tipo_Documento": "Plano",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "1.0",
    "Data": "06/05/2026",
    "Situacao": "Vigente",
@@ -1122,7 +1171,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Checklist de Conformidade — Planejamento da Contratação",
    "Tipo_Documento": "Checklist",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Versao": "1.0",
    "Data": "18/05/2026",
    "Situacao": "Vigente",
@@ -1226,7 +1275,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-001",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Descricao_Risco": "Estimativas de preço defasadas gerando sobrepreço ou licitação deserta.",
    "Categoria": "Operacional",
    "Fatores": null,
@@ -1245,7 +1294,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-002",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Descricao_Risco": "TR genérico ou restritivo provocando impugnações e atrasos no certame.",
    "Categoria": "Legal/Conformidade",
    "Fatores": null,
@@ -1264,7 +1313,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-003",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-03",
+   "Vinculo_Codigo": "MS-01 › PP-03",
    "Descricao_Risco": "Fiscalização intempestiva de contratos, com medições e pagamentos atrasados.",
    "Categoria": "Operacional",
    "Fatores": null,
@@ -1283,7 +1332,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-004",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01",
    "Descricao_Risco": "Conhecimento concentrado em um único empregado (pessoa-chave) na elaboração de ETP.",
    "Categoria": "Pessoas",
    "Fatores": null,
@@ -1302,7 +1351,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-005",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Descricao_Risco": "Indisponibilidade hídrica comprometendo a programação de distribuição.",
    "Categoria": "Operacional",
    "Fatores": null,
@@ -1321,7 +1370,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-006",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-02",
+   "Vinculo_Codigo": "MS-01 › PP-02",
    "Descricao_Risco": "Instabilidade do Compras.gov.br durante a sessão pública.",
    "Categoria": "Tecnologia da Informação",
    "Fatores": null,
@@ -1359,7 +1408,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-008",
    "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-01/AT-01",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01 › AT-01",
    "Descricao_Risco": "Uso de fontes de preço não admitidas pela IN SEGES nº 65/2021.",
    "Categoria": "Legal/Conformidade",
    "Fatores": null,
@@ -1378,7 +1427,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "RIS-009",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Descricao_Risco": "Baixo engajamento das áreas demandantes no preenchimento do DFD.",
    "Categoria": "Pessoas",
    "Fatores": null,
@@ -1415,7 +1464,7 @@ window.PAINEL_DADOS = {
    "ID": "IND-002",
    "Nome": "Prazo médio de elaboração do ETP",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Categoria": "Processo",
    "Descricao_Formula": "Média de dias úteis entre o DFD e a aprovação do ETP.",
    "Criterios_Desempenho": null,
@@ -1430,7 +1479,7 @@ window.PAINEL_DADOS = {
    "ID": "IND-003",
    "Nome": "Impugnações por edital",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-02",
+   "Vinculo_Codigo": "MS-01 › PP-02",
    "Categoria": "Processo",
    "Descricao_Formula": "Nº médio de impugnações recebidas por edital publicado.",
    "Criterios_Desempenho": null,
@@ -1445,7 +1494,7 @@ window.PAINEL_DADOS = {
    "ID": "IND-004",
    "Nome": "Contratos com fiscal designado",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-03",
+   "Vinculo_Codigo": "MS-01 › PP-03",
    "Categoria": "Processo",
    "Descricao_Formula": "% de contratos vigentes com fiscal formalmente designado.",
    "Criterios_Desempenho": null,
@@ -1460,7 +1509,7 @@ window.PAINEL_DADOS = {
    "ID": "IND-005",
    "Nome": "Eficiência no uso da água",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Categoria": "Processo",
    "Descricao_Formula": "Relação % entre volume faturado e volume captado no perímetro.",
    "Criterios_Desempenho": null,
@@ -1490,7 +1539,7 @@ window.PAINEL_DADOS = {
    "ID": "IND-007",
    "Nome": "Ações estratégicas monitoradas no prazo",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Categoria": "Processo",
    "Descricao_Formula": "% de ações do plano com status atualizado no ciclo.",
    "Criterios_Desempenho": null,
@@ -1505,7 +1554,7 @@ window.PAINEL_DADOS = {
    "ID": "IND-008",
    "Nome": "Pesquisas de preço com 3+ fontes",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-03",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-03",
    "Categoria": "Processo",
    "Descricao_Formula": "% de pesquisas de preços com três ou mais fontes admitidas.",
    "Criterios_Desempenho": null,
@@ -1535,7 +1584,7 @@ window.PAINEL_DADOS = {
    "ID": "MET-010",
    "Nome": "SLA — Tempo de resposta ao demandante",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Categoria": "Nível de Serviço (SLA)",
    "Descricao_Formula": "Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.",
    "Criterios_Desempenho": null,
@@ -1550,7 +1599,7 @@ window.PAINEL_DADOS = {
    "ID": "MET-011",
    "Nome": "ROI — Automatização da pesquisa de preços",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Categoria": "Financeiro (ROI)",
    "Descricao_Formula": "(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.",
    "Criterios_Desempenho": null,
@@ -1659,7 +1708,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-001",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "AE/GAG"
@@ -1667,7 +1716,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-002",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Papel": "Equipe de planejamento da contratação",
    "Envolvimento": "Executa (R)",
    "Unidade_Pessoa": "AR/GDT"
@@ -1675,7 +1724,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-003",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Papel": "Assessoria Jurídica",
    "Envolvimento": "Consultado (C)",
    "Unidade_Pessoa": "AA/GLC"
@@ -1683,7 +1732,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-004",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Papel": "UNP",
    "Envolvimento": "Informado (I)",
    "Unidade_Pessoa": "AE/GPE/UNP"
@@ -1691,7 +1740,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-005",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-03",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-03",
    "Papel": "Equipe de planejamento da contratação",
    "Envolvimento": "Executa (R)",
    "Unidade_Pessoa": "AR/GDT"
@@ -1699,7 +1748,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-006",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-03",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-03",
    "Papel": "UNP",
    "Envolvimento": "Consultado (C)",
    "Unidade_Pessoa": "AE/GPE/UNP"
@@ -1707,7 +1756,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-007",
    "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-01/AT-01",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01 › AT-01",
    "Papel": "Analista de planejamento da contratação",
    "Envolvimento": "Executa (R)",
    "Unidade_Pessoa": "AR/GDT"
@@ -1715,7 +1764,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-008",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-02",
+   "Vinculo_Codigo": "MS-01 › PP-02",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "Gerente de Licitações"
@@ -1723,7 +1772,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-009",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-03",
+   "Vinculo_Codigo": "MS-01 › PP-03",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "Gerente de Licitações"
@@ -1731,7 +1780,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-010",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MF-02 › PP-01",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "Gerente de Operação"
@@ -1739,7 +1788,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-011",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MF-03 › PP-01",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "Gerente de Revitalização"
@@ -1747,7 +1796,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-012",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MG-01 › PP-01",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "Gerente de Planejamento"
@@ -1755,7 +1804,7 @@ window.PAINEL_DADOS = {
   {
    "ID": "PAP-013",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-02 › PP-01",
    "Papel": "Gestor do processo",
    "Envolvimento": "Aprova (A)",
    "Unidade_Pessoa": "Gerente de Pessoas"
@@ -1775,7 +1824,7 @@ window.PAINEL_DADOS = {
    "ID": "REG-002",
    "Nome": "Pesquisa de preços obrigatória",
    "Vinculo_Nivel": "Processo",
-   "Vinculo_Codigo": "MS-01/PP-01",
+   "Vinculo_Codigo": "MS-01 › PP-01",
    "Tipo_Regra": "Regulatória",
    "Descricao": "Toda contratação exige pesquisa de preços prévia, conforme métodos definidos em norma.",
    "Fonte_Normativa": "IN SEGES nº 65/2021"
@@ -1784,7 +1833,7 @@ window.PAINEL_DADOS = {
    "ID": "REG-003",
    "Nome": "Exclusão de valores discrepantes",
    "Vinculo_Nivel": "Subprocesso",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-03",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-03",
    "Tipo_Regra": "Decisão",
    "Descricao": "Valores inexequíveis ou excessivos devem ser excluídos da amostra, com justificativa registrada.",
    "Fonte_Normativa": "IN SEGES nº 65/2021, art. 6º"
@@ -1793,7 +1842,7 @@ window.PAINEL_DADOS = {
    "ID": "REG-004",
    "Nome": "Validação jurídica obrigatória",
    "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "MS-01/PP-01/SP-01/AT-02",
+   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01 › AT-02",
    "Tipo_Regra": "Procedimento e política",
    "Descricao": "Toda minuta de Termo de Referência deve ser submetida à Assessoria Jurídica antes da publicação do edital.",
    "Fonte_Normativa": "Lei nº 14.133/2021, art. 53"
@@ -1871,7 +1920,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Automação da conferência de preços na pesquisa (PP-01)",
    "Descricao": "A equipe de TI usou o PRO e o roteiro de pesquisa de preços publicados no repositório (DOC-007) para especificar uma rotina que já sinaliza valores fora da faixa de mercado antes da aprovação do ETP.",
    "Tipo": "Automação",
-   "Processos_Relacionados": "MS-01/PP-01"
+   "Processos_Relacionados": "MS-01 › PP-01"
   },
   {
    "ID": "INI-002",
@@ -1879,7 +1928,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Nova gerência reaproveitou o modelo de DFD para abrir seu próprio mapeamento",
    "Descricao": "A Gerência de Pessoas usou o Modelo de DFD (DOC-006) e o roteiro de contextualização do repositório para estruturar o levantamento do processo de Admissão e Integração (PP-07), sem precisar da UNP para montar os artefatos do zero.",
    "Tipo": "Reaproveitamento de modelo",
-   "Processos_Relacionados": "MS-01/PP-01"
+   "Processos_Relacionados": "MS-01 › PP-01"
   },
   {
    "ID": "INI-003",
@@ -1887,7 +1936,7 @@ window.PAINEL_DADOS = {
    "Titulo": "Checklist de conformidade virou exigência do comitê de contratações",
    "Descricao": "O Checklist de Conformidade (DOC-015), criado para o PP-01, foi adotado pelo comitê interno de contratações como item obrigatório de pauta antes da homologação de qualquer certame acima de R$ 100 mil.",
    "Tipo": "Decisão de governança",
-   "Processos_Relacionados": "MS-01/PP-01; MS-01/PP-02"
+   "Processos_Relacionados": "MS-01 › PP-01; MS-01 › PP-02"
   }
  ],
  "Competencias": [
@@ -2319,6 +2368,43 @@ window.PAINEL_DADOS = {
    "Telefone": "(61) 2028-4630",
    "Foto": "https://randomuser.me/api/portraits/men/60.jpg",
    "Hierarquia": "3"
+  }
+ ],
+ "Equipe_Gerenciamento_Processos": [
+  {
+   "Ordem": 1,
+   "Nome": "Vanessa Torres Almeida",
+   "Email": "vanessa.almeida@codevasf.gov.br",
+   "Telefone": "(61) 2028-4521",
+   "Unidade_Organica": "AA/GLC"
+  },
+  {
+   "Ordem": 2,
+   "Nome": "Marcelo Andrade Costa",
+   "Email": "marcelo.costa@codevasf.gov.br",
+   "Telefone": "(61) 2028-4710",
+   "Unidade_Organica": "AI/GOM"
+  },
+  {
+   "Ordem": 3,
+   "Nome": "Luciana Ferreira Dias",
+   "Email": "luciana.dias@codevasf.gov.br",
+   "Telefone": "(61) 2028-4820",
+   "Unidade_Organica": "AR/GRB"
+  },
+  {
+   "Ordem": 4,
+   "Nome": "Patrícia Moreira Lopes",
+   "Email": "patricia.lopes@codevasf.gov.br",
+   "Telefone": "(61) 2028-4430",
+   "Unidade_Organica": "AE/GPE"
+  },
+  {
+   "Ordem": 5,
+   "Nome": "Rodrigo Nascimento Farias",
+   "Email": "rodrigo.farias@codevasf.gov.br",
+   "Telefone": "(61) 2028-4900",
+   "Unidade_Organica": "AG/GGP"
   }
  ],
  "Glossario": [

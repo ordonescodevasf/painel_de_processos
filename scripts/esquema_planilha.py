@@ -44,8 +44,10 @@ usuário):
     (tem mais a ver com o indicador do que com a tarefa em si).
   - Campos removidos: `Disparador`, `Passos`, `Principios`,
     `Resultados_Esperados`, `Materiais_Ferramentas`, `Pessoas_Consultar`
-    (Tarefas); `Unidades_Organicas_Corresponsaveis` (Macroprocessos/
-    Processos/Subprocessos/Tarefas) e `Produto_Principal` (Subprocessos).
+    (Tarefas) e `Produto_Principal` (Subprocessos). `Unidades_Organicas_
+    Corresponsaveis` (Macroprocessos/Processos/Subprocessos/Tarefas) tinha
+    saído numa revisão anterior e voltou a pedido do usuário — ao final de
+    cada aba (mesma posição em que foi restaurada na planilha em uso).
 
 Revisões anteriores (ainda válidas):
   - Nomenclatura padronizada: Unidade_Organica_Responsavel, Beneficiarios,
@@ -76,10 +78,22 @@ Subprocesso, pedido do usuário):
     manual — não há fórmula calculando o Código.
 """
 
+Revisão desta versão (Gestor do processo e Equipe de Gerenciamento, pedido
+do usuário):
+  - Novas colunas em `Processos`, ao final da aba: `Gestor_Nome`,
+    `Gestor_Email`, `Gestor_Telefone`, `Gestor_Unidade_Organica` — pessoa
+    que responde pelo processo no dia a dia, distinta do
+    `Ponto_Focal_Nugep` (o contato durante o mapeamento/análise).
+  - Nova aba `Equipe_Gerenciamento_Processos` (Ordem, Nome, Email,
+    Telefone, Unidade_Organica): diretório dos gestores de processo,
+    independente da lista de integrantes da aba NUGEP.
+  - Vínculos com caminho completo (`Vinculo_Codigo`, `Reutilizado_Em`,
+    `Processos_Relacionados`) usam " › " como separador — não mais "/".
+
 ESQUEMA = {
     "Macroprocessos": [
         ("Codigo", 10), ("Nome", 34), ("Categoria", 13), ("Ordem", 7),
-        ("Unidade_Organica_Responsavel", 16),
+        ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 30),
         ("Descricao", 46), ("Objetivo", 46), ("Entregas", 40), ("Beneficiarios", 34),
         ("Partes_Interessadas", 34), ("Sistemas", 30), ("Imagem_Bizagi", 30), ("Observacoes", 26),
         ("Trilha", 14),
@@ -87,7 +101,7 @@ ESQUEMA = {
     "Processos": [
         ("Trilha", 20), ("Macroprocesso", 13), ("Codigo", 9), ("Nome", 34),
         ("Descricao", 44), ("Objetivo", 40),
-        ("Unidade_Organica_Responsavel", 16), ("Ponto_Focal_Nugep", 24),
+        ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 30), ("Ponto_Focal_Nugep", 24),
         ("Prioridade", 10), ("Complexidade", 12), ("Maturidade", 13), ("Status_Mapeamento", 14), ("Percentual", 10),
         ("Inicio_Mapeamento", 13), ("Prazo_Previsto", 13), ("Data_Conclusao", 13), ("Ultima_Atualizacao", 13),
         ("M1_Conhecer_Processo", 9), ("M2_Processo_Modelado", 9), ("M3_Subprocessos_Modelados", 9),
@@ -98,11 +112,13 @@ ESQUEMA = {
         ("Processo_ECodevasf", 20), ("Processo_ECodevasf_Link", 30), ("Imagem_Bizagi", 30),
         ("Competencias_Necessarias", 40), ("Fontes_Dados", 30),
         ("Proxima_Acao", 28), ("Pendencia", 24),
+        ("Gestor_Nome", 24), ("Gestor_Email", 30), ("Gestor_Telefone", 16),
+        ("Gestor_Unidade_Organica", 16),
     ],
     "Subprocessos": [
         ("Trilha", 26), ("Macroprocesso", 13), ("Processo", 10), ("Codigo", 9), ("Nome", 32),
         ("Vinculo_Pai", 12), ("Ordem", 7), ("Descricao", 44), ("Objetivo", 38),
-        ("Unidade_Organica_Responsavel", 16),
+        ("Unidade_Organica_Responsavel", 16), ("Unidades_Organicas_Corresponsaveis", 30),
         ("Reutilizavel", 12), ("Reutilizado_Em", 30),
         ("Entradas", 36), ("Saidas", 36), ("Sistemas", 26), ("Fontes_Dados", 26), ("Imagem_Bizagi", 28),
     ],
@@ -163,6 +179,9 @@ ESQUEMA = {
     "NUGEP": [
         ("Ordem", 7), ("Nome", 24), ("Papel", 34), ("Unidade_Sigla", 14), ("Unidade_Nome", 38),
         ("Email", 32), ("Telefone", 16), ("Foto", 46), ("Hierarquia", 11),
+    ],
+    "Equipe_Gerenciamento_Processos": [
+        ("Ordem", 7), ("Nome", 28), ("Email", 32), ("Telefone", 16), ("Unidade_Organica", 16),
     ],
     "Glossario": [("Termo", 34), ("Definicao", 84), ("Fonte", 20)],
     "FAQ": [("Ordem", 7), ("Categoria", 28), ("Pergunta", 50), ("Resposta", 90)],

@@ -145,7 +145,11 @@ body.contraste-alto .pp-hero{background:#000;border:1px solid var(--gold-vivid-2
   margin-top:calc(-1 * var(--sp4));position:relative;z-index:1;padding:0 var(--sp2);}
 .kpi{background:var(--d-card);border:1px solid var(--d-bd);border-radius:var(--r-md);
   box-shadow:var(--sh-card);padding:var(--sp3);display:flex;flex-direction:column;gap:2px;
-  transition:box-shadow var(--dur-fast) var(--ease);}
+  transition:box-shadow var(--dur-fast) var(--ease);position:relative;}
+/* Tooltip do KPI ancorado no canto do card, não acompanhando o texto do
+   rótulo — o gatilho "i" continua onde estava no DOM (acessibilidade e
+   ordem de leitura inalteradas), só a posição visual muda. */
+.kpi .dica{position:absolute;top:var(--sp2);right:var(--sp2);margin:0;}
 .kpi:hover{box-shadow:var(--sh-card-hover);}
 .kpi .num{font:700 1.7rem/1.1 var(--font);color:var(--cv-navy);}
 .kpi .lbl{font-size:var(--fs-sm);color:var(--gray-60);text-transform:uppercase;

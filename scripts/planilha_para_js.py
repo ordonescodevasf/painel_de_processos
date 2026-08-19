@@ -36,7 +36,8 @@ SAIDA = os.path.join(RAIZ, "..", "js", "dados.js")
 ABAS = ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
         'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
         'Cultura_Processos', 'Iniciativas', 'Competencias',
-        'Jornada', 'Repositorio', 'NUGEP', 'Glossario', 'FAQ', 'Siglas', 'Parametros']
+        'Jornada', 'Repositorio', 'NUGEP', 'Equipe_Gerenciamento_Processos',
+        'Glossario', 'FAQ', 'Siglas', 'Parametros']
 
 
 def valor_json(v):
