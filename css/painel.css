@@ -374,7 +374,7 @@ body.contraste-alto .br-tag.maturidade-tag,body.contraste-alto .br-tag.tipo-ativ
 /* ── Iniciativas viabilizadas pelo repositório (home, Componente Carousel) ── */
 .ini-carousel{--carousel-min-height:230px;height:230px;}
 .ini-carousel .carousel-content{flex-direction:column;align-items:flex-start;justify-content:flex-start;
-  text-align:left;padding:var(--sp2) var(--sp2);overflow-y:auto;}
+  text-align:left;padding:40px var(--sp2) var(--sp2);overflow-y:auto;}
 .ini-topo{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
 .ini-topo strong{font:700 var(--fs-base)/1.35 var(--font);color:var(--cv-navy);}
 .ini-desc{margin:4px 0;font-size:var(--fs-sm);line-height:1.55;}
