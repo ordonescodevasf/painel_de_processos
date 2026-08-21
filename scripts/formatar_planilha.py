@@ -46,6 +46,7 @@ COR_GUIA = {
     "Atividades": AZUL, "Tarefas": AZUL,
     "Documentos": "168821", "Riscos": "168821", "Metricas": "168821", "Medicoes": "168821",
     "Papeis": "168821", "Regras": "168821", "Cultura_Processos": "168821", "Iniciativas": "168821",
+    "Equipe_Processo": "168821",
     "Jornada": "155BCB", "Repositorio": "155BCB", "NUGEP": "155BCB", "Competencias": "155BCB",
     "Glossario": "155BCB", "FAQ": "155BCB", "Siglas": "888888",
     "Parametros": "888888", "Listas": "888888", "Dicionario": AZUL_ESCURO,

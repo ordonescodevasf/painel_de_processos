@@ -1590,7 +1590,7 @@ window.PAINEL_DADOS = {
    "Observacoes": null
   },
   {
-   "ID": "MET-010",
+   "ID": "IND-010",
    "Nome": "SLA — Tempo de resposta ao demandante",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MS-01 › PP-01",
@@ -1606,7 +1606,7 @@ window.PAINEL_DADOS = {
    "Observacoes": "Acordado com as áreas demandantes em 2026."
   },
   {
-   "ID": "MET-011",
+   "ID": "IND-011",
    "Nome": "ROI — Automatização da pesquisa de preços",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MS-01 › PP-01",
@@ -1695,21 +1695,21 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "MED-903",
-   "Metrica_ID": "MET-010",
+   "Metrica_ID": "IND-010",
    "Data_Medicao": "31/07/2026",
    "Valor": 4,
    "Observacao": null
   },
   {
    "ID": "MED-904",
-   "Metrica_ID": "MET-010",
+   "Metrica_ID": "IND-010",
    "Data_Medicao": "30/06/2026",
    "Valor": 6,
    "Observacao": "Acúmulo de demandas no fim do semestre."
   },
   {
    "ID": "MED-905",
-   "Metrica_ID": "MET-011",
+   "Metrica_ID": "IND-011",
    "Data_Medicao": "30/06/2026",
    "Valor": 132,
    "Observacao": null
@@ -1766,14 +1766,6 @@ window.PAINEL_DADOS = {
   },
   {
    "ID": "PAP-007",
-   "Vinculo_Nivel": "Atividade",
-   "Vinculo_Codigo": "MS-01 › PP-01 › SP-01 › AT-01",
-   "Papel": "Analista de planejamento da contratação",
-   "Envolvimento": "Executa (R)",
-   "Unidade_Pessoa": "AR/GDT"
-  },
-  {
-   "ID": "PAP-008",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MS-01 › PP-02",
    "Papel": "Gestor do processo",
@@ -1781,7 +1773,7 @@ window.PAINEL_DADOS = {
    "Unidade_Pessoa": "Gerente de Licitações"
   },
   {
-   "ID": "PAP-009",
+   "ID": "PAP-008",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MS-01 › PP-03",
    "Papel": "Gestor do processo",
@@ -1789,7 +1781,7 @@ window.PAINEL_DADOS = {
    "Unidade_Pessoa": "Gerente de Licitações"
   },
   {
-   "ID": "PAP-010",
+   "ID": "PAP-009",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MF-02 › PP-01",
    "Papel": "Gestor do processo",
@@ -1797,7 +1789,7 @@ window.PAINEL_DADOS = {
    "Unidade_Pessoa": "Gerente de Operação"
   },
   {
-   "ID": "PAP-011",
+   "ID": "PAP-010",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MF-03 › PP-01",
    "Papel": "Gestor do processo",
@@ -1805,7 +1797,7 @@ window.PAINEL_DADOS = {
    "Unidade_Pessoa": "Gerente de Revitalização"
   },
   {
-   "ID": "PAP-012",
+   "ID": "PAP-011",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MG-01 › PP-01",
    "Papel": "Gestor do processo",
@@ -1813,7 +1805,7 @@ window.PAINEL_DADOS = {
    "Unidade_Pessoa": "Gerente de Planejamento"
   },
   {
-   "ID": "PAP-013",
+   "ID": "PAP-012",
    "Vinculo_Nivel": "Processo",
    "Vinculo_Codigo": "MS-02 › PP-01",
    "Papel": "Gestor do processo",
@@ -2381,41 +2373,96 @@ window.PAINEL_DADOS = {
    "Hierarquia": "3"
   }
  ],
- "Equipe_Gerenciamento_Processos": [
+ "Equipe_Processo": [
   {
+   "ID": "EQP-001",
+   "Processo": "MS-01 › PP-01",
    "Ordem": 1,
    "Nome": "Vanessa Torres Almeida",
    "Email": "vanessa.almeida@codevasf.gov.br",
    "Telefone": "(61) 2028-4521",
-   "Unidade_Organica": "AA/GLC"
+   "Area": "AA/GLC"
   },
   {
+   "ID": "EQP-002",
+   "Processo": "MS-01 › PP-01",
    "Ordem": 2,
+   "Nome": "Carlos Eduardo Lima",
+   "Email": "carlos.lima@codevasf.gov.br",
+   "Telefone": "(61) 2028-4408",
+   "Area": "AE/GPE/UNP"
+  },
+  {
+   "ID": "EQP-003",
+   "Processo": "MS-01 › PP-01",
+   "Ordem": 3,
+   "Nome": "Fernanda Ribeiro Alves",
+   "Email": "fernanda.alves@codevasf.gov.br",
+   "Telefone": "(61) 2028-4635",
+   "Area": "AR/GDT"
+  },
+  {
+   "ID": "EQP-004",
+   "Processo": "MS-01 › PP-01",
+   "Ordem": 4,
+   "Nome": "Thiago Menezes Barbosa",
+   "Email": "thiago.barbosa@codevasf.gov.br",
+   "Telefone": "(61) 2028-4712",
+   "Area": "AT/GTI"
+  },
+  {
+   "ID": "EQP-005",
+   "Processo": "MS-01 › PP-02",
+   "Ordem": 1,
+   "Nome": "Vanessa Torres Almeida",
+   "Email": "vanessa.almeida@codevasf.gov.br",
+   "Telefone": "(61) 2028-4521",
+   "Area": "AA/GLC"
+  },
+  {
+   "ID": "EQP-006",
+   "Processo": "MS-01 › PP-02",
+   "Ordem": 2,
+   "Nome": "Carlos Eduardo Lima",
+   "Email": "carlos.lima@codevasf.gov.br",
+   "Telefone": "(61) 2028-4408",
+   "Area": "AE/GPE/UNP"
+  },
+  {
+   "ID": "EQP-007",
+   "Processo": "MS-01 › PP-02",
+   "Ordem": 3,
+   "Nome": "Juliana Campos Teixeira",
+   "Email": "juliana.teixeira@codevasf.gov.br",
+   "Telefone": "(61) 2028-4550",
+   "Area": "AE/GAG"
+  },
+  {
+   "ID": "EQP-008",
+   "Processo": "MF-02 › PP-01",
+   "Ordem": 1,
    "Nome": "Marcelo Andrade Costa",
    "Email": "marcelo.costa@codevasf.gov.br",
    "Telefone": "(61) 2028-4710",
-   "Unidade_Organica": "AI/GOM"
+   "Area": "AI/GOM"
   },
   {
+   "ID": "EQP-009",
+   "Processo": "MF-02 › PP-01",
+   "Ordem": 2,
+   "Nome": "Eduardo Martins",
+   "Email": "eduardo.martins@codevasf.gov.br",
+   "Telefone": "(61) 2028-4412",
+   "Area": "AE/GPE/UNP"
+  },
+  {
+   "ID": "EQP-010",
+   "Processo": "MF-02 › PP-01",
    "Ordem": 3,
-   "Nome": "Luciana Ferreira Dias",
-   "Email": "luciana.dias@codevasf.gov.br",
-   "Telefone": "(61) 2028-4820",
-   "Unidade_Organica": "AR/GRB"
-  },
-  {
-   "Ordem": 4,
-   "Nome": "Patrícia Moreira Lopes",
-   "Email": "patricia.lopes@codevasf.gov.br",
-   "Telefone": "(61) 2028-4430",
-   "Unidade_Organica": "AE/GPE"
-  },
-  {
-   "Ordem": 5,
-   "Nome": "Rodrigo Nascimento Farias",
-   "Email": "rodrigo.farias@codevasf.gov.br",
-   "Telefone": "(61) 2028-4900",
-   "Unidade_Organica": "AG/GGP"
+   "Nome": "Sérgio Aguiar Nogueira",
+   "Email": "sergio.nogueira@codevasf.gov.br",
+   "Telefone": "(87) 3866-4120",
+   "Area": "AI/GOM"
   }
  ],
  "Glossario": [

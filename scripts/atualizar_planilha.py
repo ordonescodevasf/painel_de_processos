@@ -143,14 +143,23 @@ def principal():
             dv(ws_proc, get_column_letter(ultima_col + 4), ref)
         mudou.append("Processos: colunas Gestor_Nome, Gestor_Email, Gestor_Telefone, Gestor_Unidade_Organica")
 
-    if "Equipe_Gerenciamento_Processos" not in wb.sheetnames:
-        ws_eq = wb.create_sheet("Equipe_Gerenciamento_Processos")
-        cabecalho(ws_eq, ["Ordem", "Nome", "Email", "Telefone", "Unidade_Organica"],
-                  [7, 28, 32, 16, 16])
+    if "Equipe_Processo" not in wb.sheetnames:
+        # Equipe de Gerenciamento de Processo (RES 031/2025, item 3.7): uma por
+        # processo, não uma lista central de gestores. Sem foto nem avatar —
+        # nome, telefone, endereço e área da pessoa.
+        ws_eq = wb.create_sheet("Equipe_Processo")
+        cabecalho(ws_eq, ["ID", "Processo", "Ordem", "Nome", "Email", "Telefone", "Area"],
+                  [9, 22, 7, 26, 30, 16, 14])
+        n_proc = wb["Processos"].max_row if "Processos" in wb.sheetnames else 300
+        dv(ws_eq, "B", f"=Processos!$A$2:$A${n_proc}")
         ref = siglas_ref(wb)
         if ref:
-            dv(ws_eq, "E", ref)
-        mudou.append("Nova aba Equipe_Gerenciamento_Processos (Ordem, Nome, Email, Telefone, Unidade_Organica)")
+            dv(ws_eq, "G", ref)
+        mudou.append("Nova aba Equipe_Processo (ID, Processo, Ordem, Nome, Email, Telefone, Area)")
+
+    if "Equipe_Gerenciamento_Processos" in wb.sheetnames:
+        del wb["Equipe_Gerenciamento_Processos"]
+        mudou.append("Aba Equipe_Gerenciamento_Processos removida (virou Equipe_Processo, por processo)")
 
     # Trilha com "›" em vez de "/" nos vínculos (padronização pedida pelo
     # usuário) — Vinculo_Codigo em Documentos/Riscos/Metricas/Papeis/Regras,

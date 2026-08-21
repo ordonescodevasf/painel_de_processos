@@ -76,9 +76,28 @@ Subprocesso, pedido do usuário):
     qualquer outro nível da hierarquia que venha a aninhar dentro de si
     mesmo (hoje só Subprocesso permite isso). Convenção de preenchimento
     manual — não há fórmula calculando o Código.
-"""
 
-Revisão desta versão (Gestor do processo e Equipe de Gerenciamento, pedido
+Revisão desta versão (identificador único de métrica, equipe por processo e
+papéis sem o nível Atividade — pedido do usuário):
+  - **Metricas.ID usa um único prefixo, `IND-`.** Todas as linhas da aba são
+    indicadores; o que distingue um indicador de processo de um SLA ou de um
+    ROI é a coluna `Categoria` (lista fechada Processo/SLA/ROI), não o
+    prefixo do código. `MET-010`/`MET-011` viraram `IND-010`/`IND-011` (e as
+    medições que apontavam para eles, junto).
+  - **`Equipe_Gerenciamento_Processos` (lista central de gestores) saiu; no
+    lugar entra `Equipe_Processo`** (ID, Processo, Ordem, Nome, Email,
+    Telefone, Area), com uma equipe POR processo — é o que a RES 031/2025,
+    item 3.7, define. `Processo` guarda a Trilha do processo (lista suspensa,
+    valor único por célula). Sem foto nem avatar: só nome, e-mail,
+    endereço e área da pessoa. A aba fica ao lado de Papeis, não no fim do
+    arquivo.
+  - **Papeis não tem mais registro de nível Atividade.** Quem executa,
+    aprova, é consultado ou informado se declara no Macroprocesso, no
+    Processo e no Subprocesso; a ficha da atividade deixou de mostrar
+    "Papéis e envolvidos". `PAP-007` (o único de nível Atividade) saiu e os
+    IDs seguintes foram renumerados.
+
+Revisão anterior (Gestor do processo e Equipe de Gerenciamento, pedido
 do usuário):
   - Novas colunas em `Processos`, ao final da aba: `Gestor_Nome`,
     `Gestor_Email`, `Gestor_Telefone`, `Gestor_Unidade_Organica` — pessoa
@@ -86,9 +105,11 @@ do usuário):
     `Ponto_Focal_Nugep` (o contato durante o mapeamento/análise).
   - Nova aba `Equipe_Gerenciamento_Processos` (Ordem, Nome, Email,
     Telefone, Unidade_Organica): diretório dos gestores de processo,
-    independente da lista de integrantes da aba NUGEP.
+    independente da lista de integrantes da aba NUGEP — substituída por
+    `Equipe_Processo` na revisão acima.
   - Vínculos com caminho completo (`Vinculo_Codigo`, `Reutilizado_Em`,
     `Processos_Relacionados`) usam " › " como separador — não mais "/".
+"""
 
 ESQUEMA = {
     "Macroprocessos": [
@@ -151,9 +172,15 @@ ESQUEMA = {
     "Medicoes": [
         ("ID", 9), ("Metrica_ID", 10), ("Data_Medicao", 13), ("Valor", 10), ("Observacao", 28),
     ],
+    # Papéis valem para Macroprocesso, Processo e Subprocesso — Atividade e
+    # Tarefa não têm papéis próprios (pedido do usuário).
     "Papeis": [
         ("ID", 9), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16), ("Papel", 30),
         ("Envolvimento", 16), ("Unidade_Pessoa", 22),
+    ],
+    "Equipe_Processo": [
+        ("ID", 9), ("Processo", 22), ("Ordem", 7), ("Nome", 26),
+        ("Email", 30), ("Telefone", 16), ("Area", 14),
     ],
     "Regras": [
         ("ID", 9), ("Nome", 34), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16),
@@ -179,9 +206,6 @@ ESQUEMA = {
     "NUGEP": [
         ("Ordem", 7), ("Nome", 24), ("Papel", 34), ("Unidade_Sigla", 14), ("Unidade_Nome", 38),
         ("Email", 32), ("Telefone", 16), ("Foto", 46), ("Hierarquia", 11),
-    ],
-    "Equipe_Gerenciamento_Processos": [
-        ("Ordem", 7), ("Nome", 28), ("Email", 32), ("Telefone", 16), ("Unidade_Organica", 16),
     ],
     "Glossario": [("Termo", 34), ("Definicao", 84), ("Fonte", 20)],
     "FAQ": [("Ordem", 7), ("Categoria", 28), ("Pergunta", 50), ("Resposta", 90)],

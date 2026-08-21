@@ -23,7 +23,7 @@
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
            'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
            'Cultura_Processos', 'Iniciativas', 'Competencias',
-           'Jornada', 'Repositorio', 'NUGEP', 'Equipe_Gerenciamento_Processos',
+           'Jornada', 'Repositorio', 'NUGEP', 'Equipe_Processo',
            'Glossario', 'FAQ', 'Siglas', 'Parametros']
   }, window.PAINEL_CONFIG || {});
 
@@ -229,7 +229,7 @@
       jornada: pega('Jornada'),
       repo: pega('Repositorio'),
       nugep: pega('NUGEP'),
-      equipeGestao: pega('Equipe_Gerenciamento_Processos'),
+      equipeProcesso: pega('Equipe_Processo'),
       glossario: pega('Glossario'),
       faq: pega('FAQ'),
       siglas: pega('Siglas'),
@@ -271,7 +271,7 @@
     dd.jornada.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.repo.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
-    dd.equipeGestao.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
+    dd.equipeProcesso.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     /* Foto e hierarquia dos integrantes: se a planilha em uso ainda não tem
        as colunas Foto e Hierarquia, aproveita o que está em js/dados.js,
        casando pelo e-mail — assim o avatar aparece com foto em qualquer
@@ -388,6 +388,15 @@
     dd.metricas.forEach(function (x) { vincula(idx.vinc.metricas, x); });
     dd.papeis.forEach(function (x) { vincula(idx.vinc.papeis, x); });
     dd.regras.forEach(function (x) { vincula(idx.vinc.regras, x); });
+    /* Equipe de Gerenciamento de Processo (RES 031/2025, item 3.7): cada
+       processo tem a sua — a chave é a Trilha do processo, resolvida por
+       resolveRef para aceitar "/" ou "›" na coluna Processo da planilha. */
+    idx.equipePorProc = {};
+    dd.equipeProcesso.forEach(function (m) {
+      var proc = resolveRef('Processo', m.Processo, idx);
+      if (!proc) return;
+      (idx.equipePorProc[proc.Trilha] = idx.equipePorProc[proc.Trilha] || []).push(m);
+    });
     DADOS = dd; IDX = idx;
     return dd;
   }
@@ -570,6 +579,25 @@
     return '<strong>' + esc(p.Gestor_Nome) + '</strong>' +
       (contatos.length ? '<div class="nugep-contato" style="border-bottom:0;padding-bottom:0">' + contatos.join('') + '</div>' : '') +
       (p.Gestor_Unidade_Organica ? '<div style="margin-top:2px">' + siglaTag(p.Gestor_Unidade_Organica) + '</div>' : '');
+  }
+  // Equipe de Gerenciamento de Processo (RES 031/2025, item 3.7): existe POR
+  // processo — ponto focal do Nugep, gestor(a) e atores daquele processo —, não
+  // como lista central de gestores. Sem foto nem avatar: nome, telefone,
+  // e-mail e área de cada integrante.
+  function equipeProcessoHtml(trilha) {
+    var membros = (IDX.equipePorProc && IDX.equipePorProc[trilha]) || [];
+    if (!membros.length) {
+      return '<p class="pp-vazio">Nenhum integrante cadastrado. A equipe deste processo se cadastra na aba Equipe_Processo da planilha, com a coluna Processo = ' +
+        esc(trilhaDisp(trilha)) + '.</p>';
+    }
+    return '<ul class="equipe-proc">' + membros.map(function (m) {
+      var tel = String(m.Telefone || '').trim();
+      return '<li><div class="ep-nome"><strong>' + esc(m.Nome) + '</strong>' +
+        (m.Area ? siglaTag(m.Area) : '') + '</div><div class="ep-contato">' +
+        (m.Email ? '<a href="mailto:' + esc(m.Email) + '"><i class="fas fa-envelope" aria-hidden="true"></i>' + esc(m.Email) + '</a>' : '') +
+        (tel ? '<a href="tel:+55' + esc(tel.replace(/\D/g, '')) + '"><i class="fas fa-phone" aria-hidden="true"></i>' + esc(tel) + '</a>' : '') +
+        '</div></li>';
+    }).join('') + '</ul>';
   }
   // Sigla exibida de cada camada, sempre com DUAS letras, para que o nível
   // se leia no próprio código: MG/MF/MS (macroprocessos, por tipo), PP
@@ -2046,7 +2074,9 @@
     var docs = vinculados('docs', nivel, codigo);
     var riscos = vinculados('riscos', nivel, codigo);
     var inds = semIndicadores ? [] : vinculados('metricas', nivel, codigo);
-    var papeis = vinculados('papeis', nivel, codigo);
+    // Atividade não tem papéis próprios: quem executa, aprova, é consultado ou
+    // informado se declara no Processo e no Subprocesso (pedido do usuário).
+    var papeis = nivel === 'Atividade' ? [] : vinculados('papeis', nivel, codigo);
     var regras = vinculados('regras', nivel, codigo);
     return (semIndicadores ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
@@ -2212,6 +2242,9 @@
         (subs.length && !ativsDiretas.length
           ? '<p class="pp-vazio">Nenhuma atividade ligada diretamente ao processo — neste caso as atividades ficam dentro dos subprocessos listados ao lado.</p>'
           : tabelaAtividadesHtml(ativsDiretas, 'Nenhuma atividade cadastrada. Quando o processo não tem subprocessos, ligue as atividades direto a ele: coluna Vinculo_Pai da aba Atividades = ' + esc(cod) + '.', p.Unidade_Organica_Responsavel)) + '</div>' +
+        '<div class="pp-card"><h3><i class="fas fa-users-gear" aria-hidden="true"></i> ' +
+        termoLink('Equipe de Gerenciamento de Processo', 'Equipe de gerenciamento do processo') + '</h3>' +
+        equipeProcessoHtml(cod) + '</div>' +
         secVinculos('Processo', cod) +
         '</div><aside>' +
         cardHierarquia(mp ? [{ tipo: 'mp', cat: mp._cat, codigo: mp._cod || mp.Codigo, nome: mp.Nome, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : []) +
@@ -3331,15 +3364,6 @@
           '<div class="ci-equipe">' + equipeUnp.map(function (m) { return perfilInst(m); }).join('') + '</div></div>' : '') +
         '</div>' : '') +
       '</div>' +
-      '<section class="pp-sec" id="sec-equipe-gestao"><div class="pp-sec-h"><h2>Equipe de Gerenciamento de Processos</h2><div class="linha" aria-hidden="true"></div></div>' +
-      (DADOS.equipeGestao.length ? '<div class="nugep-grid">' + DADOS.equipeGestao.map(function (g) {
-        return '<article class="nugep-card">' + avatarNugep(g) + '<h3>' + esc(g.Nome) + '</h3>' +
-          (g.Unidade_Organica ? '<p class="nugep-unid"><span class="nugep-sigla">' + siglaTag(g.Unidade_Organica) + '</span></p>' : '') +
-          contatoNugep(g) + '</article>';
-      }).join('') + '</div>' : vazio('Nenhum gestor cadastrado',
-        'A aba Equipe_Gerenciamento_Processos da planilha ainda não tem integrantes. Assim que forem cadastrados, aparecem aqui.',
-        { img: 'empty-space/empty-space-14.png' })) +
-      '</section>' +
       cardCompetencias();
     if (window.PPUI && PPUI.iniciarAccordions) PPUI.iniciarAccordions(el);
   }

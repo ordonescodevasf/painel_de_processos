@@ -691,8 +691,8 @@ METRICAS_BASE = [
     ('IND-007', 'Ações estratégicas monitoradas no prazo', 'PP-01', 'Processo', '% de ações do plano com status atualizado no ciclo.', 'Verde: ≥ 95% · Amarelo: 80–94% · Vermelho: < 80%', '%', 'Maior melhor', '95', 'Trimestral', 'Painéis de BI', None, '(nº de ações do plano com status atualizado no ciclo / nº total de ações previstas) × 100'),
     ('IND-008', 'Pesquisas de preço com 3+ fontes', 'SP-03', 'Processo', '% de pesquisas de preços com três ou mais fontes admitidas.', 'Verde: = 100% · Amarelo: 90–99% · Vermelho: < 90%', '%', 'Maior melhor', '100', 'Mensal', 'e-Codevasf', None, '(nº de pesquisas com 3 ou mais fontes admitidas / nº total de pesquisas realizadas) × 100'),
     ('IND-009', 'Nascentes recuperadas no ano', 'MF-03', 'Processo', 'Nº de nascentes com recuperação concluída no exercício.', 'Verde: ≥ 120 · Amarelo: 90–119 · Vermelho: < 90', 'nº', 'Maior melhor', '120', 'Anual', 'GeoPortal (fictício)', None, 'Σ (nascentes com recuperação concluída no exercício)'),
-    ('MET-010', 'SLA — Tempo de resposta ao demandante', 'PP-01', 'SLA', 'Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.', 'Verde: ≤ 5 dias úteis · Amarelo: 6–8 dias úteis · Vermelho: > 8 dias úteis', 'dias úteis', 'Menor melhor', 5, 'Mensal', 'e-Codevasf', 'Acordado com as áreas demandantes em 2026.', 'Data_do_retorno_inicial − Data_de_recebimento_do_DFD, em dias úteis (média do período)'),
-    ('MET-011', 'ROI — Automatização da pesquisa de preços', 'PP-01', 'ROI', '(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.', 'Verde: ≥ 150% · Amarelo: 100–149% · Vermelho: < 100%', '%', 'Maior melhor', 150, 'Anual', 'AE/GPE', 'Estimativa fictícia para demonstração.', '((Economia_de_horas × custo/hora) − Custo_da_ferramenta) / Custo_da_ferramenta × 100'),
+    ('IND-010', 'SLA — Tempo de resposta ao demandante', 'PP-01', 'SLA', 'Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.', 'Verde: ≤ 5 dias úteis · Amarelo: 6–8 dias úteis · Vermelho: > 8 dias úteis', 'dias úteis', 'Menor melhor', 5, 'Mensal', 'e-Codevasf', 'Acordado com as áreas demandantes em 2026.', 'Data_do_retorno_inicial − Data_de_recebimento_do_DFD, em dias úteis (média do período)'),
+    ('IND-011', 'ROI — Automatização da pesquisa de preços', 'PP-01', 'ROI', '(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.', 'Verde: ≥ 150% · Amarelo: 100–149% · Vermelho: < 100%', '%', 'Maior melhor', 150, 'Anual', 'AE/GPE', 'Estimativa fictícia para demonstração.', '((Economia_de_horas × custo/hora) − Custo_da_ferramenta) / Custo_da_ferramenta × 100'),
 ]
 
 MEDICOES = [
@@ -706,9 +706,9 @@ MEDICOES = [
     ('MED-008', 'IND-008', '30/06/2026', '88', None),
     ('MED-901', 'IND-002', '31/03/2026', 165, 'Primeira apuração do trimestre.'),
     ('MED-902', 'IND-002', '31/12/2025', 178, None),
-    ('MED-903', 'MET-010', '31/07/2026', 4, None),
-    ('MED-904', 'MET-010', '30/06/2026', 6, 'Acúmulo de demandas no fim do semestre.'),
-    ('MED-905', 'MET-011', '30/06/2026', 132, None),
+    ('MED-903', 'IND-010', '31/07/2026', 4, None),
+    ('MED-904', 'IND-010', '30/06/2026', 6, 'Acúmulo de demandas no fim do semestre.'),
+    ('MED-905', 'IND-011', '30/06/2026', 132, None),
 ]
 
 # (ID, Vinculo_Codigo, Papel, Envolvimento, Unidade_Pessoa)
@@ -719,13 +719,29 @@ PAPEIS_BASE = [
     ('PAP-004', 'PP-01', 'UNP', 'Informado (I)', 'AE/GPE/UNP'),
     ('PAP-005', 'SP-03', 'Equipe de planejamento da contratação', 'Executa (R)', 'AR/GDT'),
     ('PAP-006', 'SP-03', 'UNP', 'Consultado (C)', 'AE/GPE/UNP'),
-    ('PAP-007', 'AT-01', 'Analista de planejamento da contratação', 'Executa (R)', 'AR/GDT'),
-    ('PAP-008', 'PP-02', 'Gestor do processo', 'Aprova (A)', 'Gerente de Licitações'),
-    ('PAP-009', 'PP-03', 'Gestor do processo', 'Aprova (A)', 'Gerente de Licitações'),
-    ('PAP-010', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Operação'),
-    ('PAP-011', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Revitalização'),
-    ('PAP-012', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Planejamento'),
-    ('PAP-013', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Pessoas'),
+    ('PAP-007', 'PP-02', 'Gestor do processo', 'Aprova (A)', 'Gerente de Licitações'),
+    ('PAP-008', 'PP-03', 'Gestor do processo', 'Aprova (A)', 'Gerente de Licitações'),
+    ('PAP-009', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Operação'),
+    ('PAP-010', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Revitalização'),
+    ('PAP-011', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Planejamento'),
+    ('PAP-012', 'PP-01', 'Gestor do processo', 'Aprova (A)', 'Gerente de Pessoas'),
+]
+
+# Equipe de Gerenciamento de Processo (RES 031/2025, item 3.7) — uma por
+# processo: ponto focal do Nugep, gestor(a) do processo e atores do processo.
+# Sem foto nem avatar: nome, e-mail, telefone e área de cada integrante.
+# (ID, Processo, Ordem, Nome, Email, Telefone, Area)
+EQUIPE_PROCESSO_BASE = [
+    ('EQP-001', 'MS-01 › PP-01', 1, 'Vanessa Torres Almeida', 'vanessa.almeida@codevasf.gov.br', '(61) 2028-4521', 'AA/GLC'),
+    ('EQP-002', 'MS-01 › PP-01', 2, 'Carlos Eduardo Lima', 'carlos.lima@codevasf.gov.br', '(61) 2028-4408', 'AE/GPE/UNP'),
+    ('EQP-003', 'MS-01 › PP-01', 3, 'Fernanda Ribeiro Alves', 'fernanda.alves@codevasf.gov.br', '(61) 2028-4635', 'AR/GDT'),
+    ('EQP-004', 'MS-01 › PP-01', 4, 'Thiago Menezes Barbosa', 'thiago.barbosa@codevasf.gov.br', '(61) 2028-4712', 'AT/GTI'),
+    ('EQP-005', 'MS-01 › PP-02', 1, 'Vanessa Torres Almeida', 'vanessa.almeida@codevasf.gov.br', '(61) 2028-4521', 'AA/GLC'),
+    ('EQP-006', 'MS-01 › PP-02', 2, 'Carlos Eduardo Lima', 'carlos.lima@codevasf.gov.br', '(61) 2028-4408', 'AE/GPE/UNP'),
+    ('EQP-007', 'MS-01 › PP-02', 3, 'Juliana Campos Teixeira', 'juliana.teixeira@codevasf.gov.br', '(61) 2028-4550', 'AE/GAG'),
+    ('EQP-008', 'MF-02 › PP-01', 1, 'Marcelo Andrade Costa', 'marcelo.costa@codevasf.gov.br', '(61) 2028-4710', 'AI/GOM'),
+    ('EQP-009', 'MF-02 › PP-01', 2, 'Eduardo Martins', 'eduardo.martins@codevasf.gov.br', '(61) 2028-4412', 'AE/GPE/UNP'),
+    ('EQP-010', 'MF-02 › PP-01', 3, 'Sérgio Aguiar Nogueira', 'sergio.nogueira@codevasf.gov.br', '(87) 3866-4120', 'AI/GOM'),
 ]
 
 # (ID, Nome, Vinculo_Codigo, Tipo_Regra, Descricao, Fonte_Normativa)
@@ -832,6 +848,10 @@ for (id_, nome, vc, cat, desc_formula, crit, un, pol, meta, per, fonte, obs, for
 PAPEIS = []
 for (id_, vc, papel, env, up) in PAPEIS_BASE:
     PAPEIS.append(dict(ID=id_, Vinculo_Nivel=_nivel(vc), Vinculo_Codigo=vc, Papel=papel, Envolvimento=env, Unidade_Pessoa=up))
+
+EQUIPE_PROCESSO = [dict(ID=id_, Processo=proc, Ordem=ordem, Nome=nome,
+                        Email=email, Telefone=tel, Area=area)
+                   for (id_, proc, ordem, nome, email, tel, area) in EQUIPE_PROCESSO_BASE]
 
 REGRAS = []
 for (id_, nome, vc, tipo, desc, fonte) in REGRAS_BASE:
@@ -1016,6 +1036,15 @@ pp.freeze_panes = "B2"
 aplicar_formula(pp, "Papeis", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Papeis", "Vinculo_Codigo")}{r}'))
 dv(pp, col("Papeis", "Envolvimento"), ref("Envolvimento_RACI"))
 
+# ---- Equipe_Processo ----
+eq = wb.create_sheet("Equipe_Processo")
+cabecalho(eq, "Equipe_Processo")
+escreve(eq, [_linha(d, "Equipe_Processo") for d in EQUIPE_PROCESSO],
+        wrap_cols={4}, center_cols={1, 2, 3, 5, 6, 7})
+eq.freeze_panes = "B2"
+dv(eq, col("Equipe_Processo", "Processo"), f"=Processos!$A$2:$A${len(PROCS) + 1}")
+dv(eq, col("Equipe_Processo", "Area"), REF_SIGLAS)
+
 # ---- Regras ----
 rg = wb.create_sheet("Regras")
 cabecalho(rg, "Regras", formula_cols={ESQ.colunas("Regras").index("Vinculo_Nivel") + 1})
@@ -1118,9 +1147,13 @@ linha(6, "Trilha e rollups", "Calculadas no momento da geração — não são V
 linha(7, "Marco \"Em andamento\"", "M1–M10 aceitam Sim / Em andamento / Não / Não se aplica. Em andamento "
       "vale meia nota no Percentual.")
 linha(8, "Datas", "Formato dd/mm/aaaa.")
+linha(9, "Equipe de gerenciamento", "Cada processo tem a sua própria equipe (RES 031/2025, item 3.7): "
+      "ponto focal do Nugep, gestor(a) do processo e atores do processo. Cadastre os integrantes na aba "
+      "Equipe_Processo, com a coluna Processo apontando para a Trilha do processo — não existe lista "
+      "central de gestores.")
 
 ordem_final = ["LEIA-ME", "Macroprocessos", "Processos", "Subprocessos", "Atividades", "Tarefas",
-               "Documentos", "Riscos", "Metricas", "Medicoes", "Papeis", "Regras",
+               "Documentos", "Riscos", "Metricas", "Medicoes", "Papeis", "Equipe_Processo", "Regras",
                "Cultura_Processos", "Iniciativas", "Competencias", "Jornada", "Repositorio",
                "NUGEP", "Glossario", "FAQ", "Siglas", "Parametros", "Listas"]
 wb._sheets = [wb[n] for n in ordem_final]
