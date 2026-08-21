@@ -370,6 +370,16 @@ body.contraste-alto .br-tag.maturidade-tag,body.contraste-alto .br-tag.tipo-ativ
 .cultura-item{display:flex;align-items:center;gap:var(--sp2);}
 .br-tag.cultura-sim{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
 .br-tag.cultura-parcial{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+
+/* ── Iniciativas viabilizadas pelo repositório (home, Componente Carousel) ── */
+.ini-carousel{--carousel-min-height:230px;height:230px;}
+.ini-carousel .carousel-content{flex-direction:column;align-items:flex-start;justify-content:flex-start;
+  text-align:left;padding:var(--sp2) var(--sp2);overflow-y:auto;}
+.ini-topo{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.ini-topo strong{font:700 var(--fs-base)/1.35 var(--font);color:var(--cv-navy);}
+.ini-desc{margin:4px 0;font-size:var(--fs-sm);line-height:1.55;}
+.ini-rel{font-size:var(--fs-sm);margin-top:6px;}
+.ini-carousel .step-progress-btn .step-info{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .br-tag.cultura-nao{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
 .br-tag.cultura-nao-avaliado{background:var(--gray-5,#f0f0f0);color:var(--gray-70);border-color:var(--gray-20);}
 

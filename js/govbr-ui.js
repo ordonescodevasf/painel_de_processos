@@ -123,6 +123,122 @@
     });
   }
 
+  /* ── CAROUSEL (br-carousel) — Componentes > Carousel, gov.br DS ──────
+     Controlador genérico para qualquer .br-carousel[data-auto] (o tour de
+     onboarding tem o próprio controlador dedicado, mais rico em regras de
+     produto — este cobre qualquer outro carrossel de conteúdo do painel).
+     Anatomia: palco + botões de navegação (obrigatórios); botões de
+     reprodução e indicador de páginas — br-step — (opcionais, ambos
+     implementados). data-circular ativa laço infinito; sem ele, os botões
+     desabilitam nas pontas. Reprodução automática nunca começa sozinha
+     (só por clique no botão Reproduzir) e não é oferecida em telas
+     pequenas nem a quem pediu menos movimento — mesma regra do tour. ── */
+  function BRCarousel(el) {
+    this.el = el;
+    this.pages = $all('.carousel-page', el);
+    this.total = this.pages.length;
+    if (!this.total) return;
+    this.stepBtns = $all('.step-progress-btn', el);
+    this.prevBtn = el.querySelector('.carousel-btn-prev');
+    this.nextBtn = el.querySelector('.carousel-btn-next');
+    this.playBtn = el.querySelector('.carousel-btn-play');
+    this.pauseBtn = el.querySelector('.carousel-btn-pause');
+    this.stage = el.querySelector('.carousel-stage');
+    var ativa = this.pages.findIndex(function (p) { return p.hasAttribute('active'); });
+    this.current = ativa >= 0 ? ativa : 0;
+    this.timer = null;
+    this.duracao = parseInt(el.getAttribute('data-duracao'), 10) || 7000;
+    this._bind();
+    this._disabledBtns();
+  }
+  BRCarousel.prototype._circular = function () { return this.el.hasAttribute('data-circular') || !!this.timer; };
+  BRCarousel.prototype._render = function () {
+    var self = this;
+    this.pages.forEach(function (p, i) {
+      if (i === self.current) p.setAttribute('active', ''); else p.removeAttribute('active');
+    });
+    this.stepBtns.forEach(function (b, i) {
+      if (i === self.current) { b.setAttribute('active', ''); b.setAttribute('aria-selected', 'true'); }
+      else { b.removeAttribute('active'); b.setAttribute('aria-selected', 'false'); }
+    });
+  };
+  BRCarousel.prototype._disabledBtns = function () {
+    if (this._circular()) {
+      if (this.prevBtn) this.prevBtn.removeAttribute('disabled');
+      if (this.nextBtn) this.nextBtn.removeAttribute('disabled');
+      return;
+    }
+    if (this.prevBtn) {
+      if (this.current === 0) {
+        if (d.activeElement === this.prevBtn && this.nextBtn) this.nextBtn.focus();
+        this.prevBtn.setAttribute('disabled', '');
+      } else this.prevBtn.removeAttribute('disabled');
+    }
+    if (this.nextBtn) {
+      if (this.current === this.total - 1) {
+        if (d.activeElement === this.nextBtn && this.prevBtn) this.prevBtn.focus();
+        this.nextBtn.setAttribute('disabled', '');
+      } else this.nextBtn.removeAttribute('disabled');
+    }
+  };
+  BRCarousel.prototype._goTo = function (idx) {
+    this.current = Math.max(0, Math.min(this.total - 1, idx));
+    this._render();
+    this._disabledBtns();
+  };
+  BRCarousel.prototype._shift = function (n) {
+    var last = this.total - 1, alvo;
+    if (this._circular()) alvo = n < 0 ? (this.current === 0 ? last : this.current - 1) : (this.current === last ? 0 : this.current + 1);
+    else alvo = this.current + (n < 0 ? -1 : 1);
+    this._goTo(Math.max(0, Math.min(last, alvo)));
+  };
+  BRCarousel.prototype._pause = function () {
+    if (!this.timer) return;
+    clearInterval(this.timer); this.timer = null;
+    if (this.pauseBtn) this.pauseBtn.hidden = true;
+    if (this.playBtn) this.playBtn.hidden = false;
+    this._disabledBtns();
+  };
+  BRCarousel.prototype._play = function () {
+    var self = this;
+    if (this._semAuto || this.timer || this.total < 2) return;
+    this.timer = setInterval(function () { self._shift(1); }, this.duracao);
+    if (this.playBtn) this.playBtn.hidden = true;
+    if (this.pauseBtn) { this.pauseBtn.hidden = false; this.pauseBtn.focus(); }
+    this._disabledBtns();
+  };
+  BRCarousel.prototype._bind = function () {
+    var self = this;
+    if (this.prevBtn) this.prevBtn.addEventListener('click', function () { self._pause(); self._shift(-1); });
+    if (this.nextBtn) this.nextBtn.addEventListener('click', function () { self._pause(); self._shift(1); });
+    this.stepBtns.forEach(function (b, i) { b.addEventListener('click', function () { self._pause(); self._goTo(i); }); });
+    this._semAuto = window.matchMedia && (window.matchMedia('(max-width: 991px)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (this._semAuto) { if (this.playBtn) this.playBtn.hidden = true; if (this.pauseBtn) this.pauseBtn.hidden = true; }
+    if (this.playBtn) this.playBtn.addEventListener('click', function () { self._play(); });
+    if (this.pauseBtn) this.pauseBtn.addEventListener('click', function () { self._pause(); if (self.playBtn) self.playBtn.focus(); });
+    var xIni = null;
+    if (this.stage) {
+      this.stage.addEventListener('touchstart', function (ev) { xIni = ev.changedTouches[0].clientX; }, { passive: true });
+      this.stage.addEventListener('touchend', function (ev) {
+        if (xIni === null) return;
+        var dx = ev.changedTouches[0].clientX - xIni; xIni = null;
+        if (Math.abs(dx) < 40) return;
+        self._pause(); self._shift(dx < 0 ? 1 : -1);
+      }, { passive: true });
+    }
+    this.el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'ArrowRight') { self._pause(); self._shift(1); }
+      else if (ev.key === 'ArrowLeft') { self._pause(); self._shift(-1); }
+    });
+  };
+  function iniciarCarousels(escopo) {
+    Array.prototype.forEach.call((escopo || d).querySelectorAll('.br-carousel[data-auto]'), function (el) {
+      if (el.__brCarousel) return;
+      el.__brCarousel = new BRCarousel(el);
+    });
+  }
+
   /* ── COLLAPSE (data-toggle="collapse" data-target="id") ──────────── */
   d.addEventListener('click', function (ev) {
     var btn = ev.target.closest('[data-toggle="collapse"]');
@@ -1936,6 +2052,7 @@
   /* ── API mínima para o app preencher o menu de seções ────────────── */
   window.PPUI = {
     iniciarAccordions: iniciarAccordions,
+    iniciarCarousels: iniciarCarousels,
     setMenuSections: function (itens) {
       var ul = $('#sectionMenuList');
       if (!ul) return;

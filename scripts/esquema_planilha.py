@@ -146,7 +146,7 @@ ESQUEMA = {
     "Metricas": [
         ("ID", 9), ("Nome", 34), ("Vinculo_Nivel", 14), ("Vinculo_Codigo", 16), ("Categoria", 18),
         ("Descricao_Formula", 40), ("Criterios_Desempenho", 40), ("Unidade", 9), ("Polaridade", 13),
-        ("Meta", 8), ("Periodicidade", 13), ("Fonte", 22), ("Observacoes", 26),
+        ("Meta", 8), ("Periodicidade", 13), ("Fonte", 22), ("Observacoes", 26), ("Formula", 46),
     ],
     "Medicoes": [
         ("ID", 9), ("Metrica_ID", 10), ("Data_Medicao", 13), ("Valor", 10), ("Observacao", 28),
@@ -236,6 +236,11 @@ LISTAS_OPCOES = {
     "Fase_Instrumento": ["Planejamento", "Análise", "Desenho", "Implementação", "Monitoramento", "Refinamento"],
     "Categoria_FAQ": ["Conceitos básicos", "Modelagem e SIPOC", "Cadeia de Valor e governança",
                       "Indicadores, metas e riscos", "Plano de Ações AE/GPE", "Como usar o painel"],
+    # Ao final do dicionário: ref() calcula a coluna pela posição no dict, e o
+    # hand-edit já em uso na planilha real colocou esta lista na coluna Y
+    # (a última) — nova lista sempre entra no fim, nunca no meio, senão as
+    # colunas de todas as listas seguintes mudam de letra na próxima geração.
+    "Categoria_Metrica": ["Processo", "SLA", "ROI"],
 }
 
 # Prefixo de código por nível — 2 letras + número sequencial, reiniciado a

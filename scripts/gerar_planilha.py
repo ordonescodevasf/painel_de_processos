@@ -678,19 +678,21 @@ RISCOS_BASE = [
 ]
 
 # (ID, Nome, Vinculo_Codigo, Categoria, Descricao_Formula, Criterios_Desempenho,
-#  Unidade, Polaridade, Meta, Periodicidade, Fonte, Observacoes)
+#  Unidade, Polaridade, Meta, Periodicidade, Fonte, Observacoes, Formula)
+# Formula é a expressão de cálculo propriamente dita (o Descricao_Formula é
+# só o resumo em prosa) — coluna nova, ao final da aba (ver esquema_planilha).
 METRICAS_BASE = [
-    ('IND-001', 'Tempo médio do ciclo de contratação', 'MS-01', 'Processo', 'Média de dias entre o DFD e a homologação do certame.', None, 'dias', 'Menor melhor', '120', 'Trimestral', 'Compras.gov.br', None),
-    ('IND-002', 'Prazo médio de elaboração do ETP', 'PP-01', 'Processo', 'Média de dias úteis entre o DFD e a aprovação do ETP.', None, 'dias', 'Menor melhor', '30', 'Mensal', 'e-Codevasf', None),
-    ('IND-003', 'Impugnações por edital', 'PP-02', 'Processo', 'Nº médio de impugnações recebidas por edital publicado.', None, 'nº', 'Menor melhor', '1', 'Trimestral', 'Compras.gov.br', None),
-    ('IND-004', 'Contratos com fiscal designado', 'PP-03', 'Processo', '% de contratos vigentes com fiscal formalmente designado.', None, '%', 'Maior melhor', '100', 'Mensal', 'e-Codevasf', None),
-    ('IND-005', 'Eficiência no uso da água', 'PP-01', 'Processo', 'Relação % entre volume faturado e volume captado no perímetro.', None, '%', 'Maior melhor', '75', 'Mensal', 'SIG-Irrigação (fictício)', None),
-    ('IND-006', 'Processos com mapeamento concluído', 'MS-01', 'Processo', '% de processos do macroprocesso com marco M9 concluído.', None, '%', 'Maior melhor', '100', 'Trimestral', 'Painel de Processos', None),
-    ('IND-007', 'Ações estratégicas monitoradas no prazo', 'PP-01', 'Processo', '% de ações do plano com status atualizado no ciclo.', None, '%', 'Maior melhor', '95', 'Trimestral', 'Painéis de BI', None),
-    ('IND-008', 'Pesquisas de preço com 3+ fontes', 'SP-03', 'Processo', '% de pesquisas de preços com três ou mais fontes admitidas.', None, '%', 'Maior melhor', '100', 'Mensal', 'e-Codevasf', None),
-    ('IND-009', 'Nascentes recuperadas no ano', 'MF-03', 'Processo', 'Nº de nascentes com recuperação concluída no exercício.', None, 'nº', 'Maior melhor', '120', 'Anual', 'GeoPortal (fictício)', None),
-    ('MET-010', 'SLA — Tempo de resposta ao demandante', 'PP-01', 'Nível de Serviço (SLA)', 'Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.', None, 'dias úteis', 'Menor melhor', 5, 'Mensal', 'e-Codevasf', 'Acordado com as áreas demandantes em 2026.'),
-    ('MET-011', 'ROI — Automatização da pesquisa de preços', 'PP-01', 'Financeiro (ROI)', '(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.', None, '%', 'Maior melhor', 150, 'Anual', 'AE/GPE', 'Estimativa fictícia para demonstração.'),
+    ('IND-001', 'Tempo médio do ciclo de contratação', 'MS-01', 'Processo', 'Média de dias entre o DFD e a homologação do certame.', 'Verde: ≤ 120 dias · Amarelo: 121–150 dias · Vermelho: > 150 dias', 'dias', 'Menor melhor', '120', 'Trimestral', 'Compras.gov.br', None, 'Σ(Data_Homologação − Data_DFD) / nº de processos concluídos no período'),
+    ('IND-002', 'Prazo médio de elaboração do ETP', 'PP-01', 'Processo', 'Média de dias úteis entre o DFD e a aprovação do ETP.', 'Verde: ≤ 30 dias · Amarelo: 31–45 dias · Vermelho: > 45 dias', 'dias', 'Menor melhor', '30', 'Mensal', 'e-Codevasf', None, 'Σ(Data_Aprovação_ETP − Data_DFD) / nº de ETPs aprovados no período'),
+    ('IND-003', 'Impugnações por edital', 'PP-02', 'Processo', 'Nº médio de impugnações recebidas por edital publicado.', 'Verde: ≤ 1 impugnação por edital · Amarelo: 1,1–2 · Vermelho: > 2', 'nº', 'Menor melhor', '1', 'Trimestral', 'Compras.gov.br', None, 'nº de impugnações recebidas / nº de editais publicados no período'),
+    ('IND-004', 'Contratos com fiscal designado', 'PP-03', 'Processo', '% de contratos vigentes com fiscal formalmente designado.', 'Verde: = 100% · Amarelo: 90–99% · Vermelho: < 90%', '%', 'Maior melhor', '100', 'Mensal', 'e-Codevasf', None, '(nº de contratos vigentes com fiscal designado / nº total de contratos vigentes) × 100'),
+    ('IND-005', 'Eficiência no uso da água', 'PP-01', 'Processo', 'Relação % entre volume faturado e volume captado no perímetro.', 'Verde: ≥ 75% · Amarelo: 65–74% · Vermelho: < 65%', '%', 'Maior melhor', '75', 'Mensal', 'SIG-Irrigação (fictício)', None, '(volume faturado / volume captado no perímetro) × 100'),
+    ('IND-006', 'Processos com mapeamento concluído', 'MS-01', 'Processo', '% de processos do macroprocesso com marco M9 concluído.', 'Verde: ≥ 95% · Amarelo: 80–94% · Vermelho: < 80%', '%', 'Maior melhor', '100', 'Trimestral', 'Painel de Processos', None, '(nº de processos com marco M9 = Sim / nº total de processos do macroprocesso) × 100'),
+    ('IND-007', 'Ações estratégicas monitoradas no prazo', 'PP-01', 'Processo', '% de ações do plano com status atualizado no ciclo.', 'Verde: ≥ 95% · Amarelo: 80–94% · Vermelho: < 80%', '%', 'Maior melhor', '95', 'Trimestral', 'Painéis de BI', None, '(nº de ações do plano com status atualizado no ciclo / nº total de ações previstas) × 100'),
+    ('IND-008', 'Pesquisas de preço com 3+ fontes', 'SP-03', 'Processo', '% de pesquisas de preços com três ou mais fontes admitidas.', 'Verde: = 100% · Amarelo: 90–99% · Vermelho: < 90%', '%', 'Maior melhor', '100', 'Mensal', 'e-Codevasf', None, '(nº de pesquisas com 3 ou mais fontes admitidas / nº total de pesquisas realizadas) × 100'),
+    ('IND-009', 'Nascentes recuperadas no ano', 'MF-03', 'Processo', 'Nº de nascentes com recuperação concluída no exercício.', 'Verde: ≥ 120 · Amarelo: 90–119 · Vermelho: < 90', 'nº', 'Maior melhor', '120', 'Anual', 'GeoPortal (fictício)', None, 'Σ (nascentes com recuperação concluída no exercício)'),
+    ('MET-010', 'SLA — Tempo de resposta ao demandante', 'PP-01', 'SLA', 'Dias úteis entre o recebimento do DFD e o retorno inicial à área demandante.', 'Verde: ≤ 5 dias úteis · Amarelo: 6–8 dias úteis · Vermelho: > 8 dias úteis', 'dias úteis', 'Menor melhor', 5, 'Mensal', 'e-Codevasf', 'Acordado com as áreas demandantes em 2026.', 'Data_do_retorno_inicial − Data_de_recebimento_do_DFD, em dias úteis (média do período)'),
+    ('MET-011', 'ROI — Automatização da pesquisa de preços', 'PP-01', 'ROI', '(Economia de horas de trabalho convertida em custo − custo da ferramenta) / custo da ferramenta.', 'Verde: ≥ 150% · Amarelo: 100–149% · Vermelho: < 100%', '%', 'Maior melhor', 150, 'Anual', 'AE/GPE', 'Estimativa fictícia para demonstração.', '((Economia_de_horas × custo/hora) − Custo_da_ferramenta) / Custo_da_ferramenta × 100'),
 ]
 
 MEDICOES = [
@@ -822,10 +824,10 @@ for (id_, vc, desc, cat, fat, cron, dtid, prob, imp, resp, ctrl, prazo, resp2, s
         Controles_Tratamento=ctrl, Prazo_Tratamento=prazo, Responsavel=resp2, Status=status))
 
 METRICAS = []
-for (id_, nome, vc, cat, formula, crit, un, pol, meta, per, fonte, obs) in METRICAS_BASE:
+for (id_, nome, vc, cat, desc_formula, crit, un, pol, meta, per, fonte, obs, formula) in METRICAS_BASE:
     METRICAS.append(dict(ID=id_, Nome=nome, Vinculo_Nivel=_nivel(vc), Vinculo_Codigo=vc, Categoria=cat,
-        Descricao_Formula=formula, Criterios_Desempenho=crit, Unidade=un, Polaridade=pol, Meta=meta,
-        Periodicidade=per, Fonte=fonte, Observacoes=obs))
+        Descricao_Formula=desc_formula, Criterios_Desempenho=crit, Unidade=un, Polaridade=pol, Meta=meta,
+        Periodicidade=per, Fonte=fonte, Observacoes=obs, Formula=formula))
 
 PAPEIS = []
 for (id_, vc, papel, env, up) in PAPEIS_BASE:
@@ -992,9 +994,10 @@ dv(rk, col("Riscos", "Status"), ref("Status_Risco"))
 # ---- Metricas ----
 mt = wb.create_sheet("Metricas")
 cabecalho(mt, "Metricas", formula_cols={ESQ.colunas("Metricas").index("Vinculo_Nivel") + 1})
-escreve(mt, [_linha(d, "Metricas") for d in METRICAS], wrap_cols={2,6,7,12,13}, center_cols={1,3,4,5,8,9,10,11})
+escreve(mt, [_linha(d, "Metricas") for d in METRICAS], wrap_cols={2,6,7,12,13,14}, center_cols={1,3,4,5,8,9,10,11})
 mt.freeze_panes = "B2"
 aplicar_formula(mt, "Metricas", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Metricas", "Vinculo_Codigo")}{r}'))
+dv(mt, col("Metricas", "Categoria"), ref("Categoria_Metrica"))
 dv(mt, col("Metricas", "Polaridade"), ref("Polaridade"))
 dv(mt, col("Metricas", "Periodicidade"), ref("Periodicidade"))
 

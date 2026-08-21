@@ -1265,7 +1265,8 @@
           '<td>' + fmtData(x.Ultima_Medicao) + '</td></tr>' +
           detalheLinha([
             ['Categoria da métrica', esc(x.Categoria || '')],
-            ['Fórmula de cálculo', esc(x.Descricao_Formula || '')],
+            ['Descrição da fórmula', esc(x.Descricao_Formula || '')],
+            ['Fórmula', x.Formula ? '<code>' + esc(x.Formula) + '</code>' : ''],
             ['Critérios de desempenho', esc(x.Criterios_Desempenho || '')],
             ['Periodicidade', esc(x.Periodicidade || '')],
             ['Polaridade', esc(x.Polaridade || '')],
@@ -1721,7 +1722,8 @@
       '<div class="cv-suporte">' + blocoCadeia('Macroprocessos de Suporte', 'cat-suporte', 'fa-gears', sup) + '</div>' +
       '<div class="cv-valores"><strong><i class="fas fa-gem" aria-hidden="true"></i> Valores</strong>' + INSTITUCIONAL.valores.map(function (v) { return '<span class="cv-chip">' + esc(v) + '</span>'; }).join('') + '</div>' +
       '</div></section>' +
-      cardCulturaProcessos();
+      cardCulturaProcessos() + cardIniciativas();
+    if (window.PPUI && PPUI.iniciarCarousels) PPUI.iniciarCarousels(el);
   }
 
   /* ── TELA: catálogo ───────────────────────────────────────────────── */
@@ -2084,15 +2086,44 @@
   // Iniciativas viabilizadas pelo repósitorio: uma das 3 métricas de um bom
   // repositório no CBOK (4.2.11) — fica vazio de propósito até a equipe
   // registrar um uso real; não é dado para eu inventar.
+  // Com 2+ itens, vira Componente Carousel (gov.br DS): anatomia completa
+  // (palco obrigatório, botões de navegação obrigatórios, botões de
+  // reprodução e indicador de páginas opcionais — ambos implementados,
+  // reprodução sempre pausada por padrão). Com 0 ou 1 item, um carrossel
+  // não faz sentido (nada para navegar) — mantém cartão simples.
+  function iniciativaConteudo(i) {
+    return '<div class="ini-topo"><strong>' + esc(i.Titulo) + '</strong><span class="pp-muted">· ' + fmtData(i.Data) + '</span>' +
+      (i.Tipo ? '<span class="br-tag info small">' + esc(i.Tipo) + '</span>' : '') + '</div>' +
+      (i.Descricao ? '<p class="ini-desc">' + esc(i.Descricao) + '</p>' : '') +
+      (i.Processos_Relacionados ? '<div class="ini-rel"><span class="pp-muted">Processos relacionados: </span>' + linkVinculos('Processo', i.Processos_Relacionados) + '</div>' : '');
+  }
   function cardIniciativas() {
     var itens = DADOS.iniciativas || [];
-    return '<div class="pp-card"><h3><i class="fas fa-rocket" aria-hidden="true"></i> Iniciativas viabilizadas pelo repositório</h3>' +
-      (itens.length ? '<div class="br-list" role="list">' + itens.map(function (i) {
-        return '<div class="br-item" role="listitem"><div><strong>' + esc(i.Titulo) + '</strong><span class="pp-muted"> · ' + fmtData(i.Data) + '</span>' +
-          (i.Tipo ? ' <span class="br-tag info small">' + esc(i.Tipo) + '</span>' : '') + '</div>' +
-          (i.Descricao ? '<p style="margin:2px 0 0">' + esc(i.Descricao) + '</p>' : '') + '</div>';
-      }).join('') + '</div>' :
-      '<p class="pp-vazio">Nenhuma iniciativa registrada ainda. Uma das três métricas de um bom repositório (CBOK 4.2.11) é quantas iniciativas ele viabiliza — registre na aba Iniciativas da planilha quando o repositório embasar uma decisão, automação ou projeto de melhoria.</p>') + '</div>';
+    var titulo = '<h3><i class="fas fa-rocket" aria-hidden="true"></i> Iniciativas viabilizadas pelo repositório</h3>';
+    if (!itens.length) {
+      return '<div class="pp-card">' + titulo + '<p class="pp-vazio">Nenhuma iniciativa registrada ainda. Uma das três métricas de um bom repositório (CBOK 4.2.11) é quantas iniciativas ele viabiliza — registre na aba Iniciativas da planilha quando o repositório embasar uma decisão, automação ou projeto de melhoria.</p></div>';
+    }
+    if (itens.length === 1) {
+      return '<div class="pp-card">' + titulo + '<div class="ini-content ini-single">' + iniciativaConteudo(itens[0]) + '</div></div>';
+    }
+    var n = itens.length;
+    return '<div class="pp-card">' + titulo +
+      '<div class="br-carousel ini-carousel" data-auto="" data-circular="true" data-mobile-nav="" aria-roledescription="carousel" aria-label="Iniciativas viabilizadas pelo repositório">' +
+      '<div class="carousel-button"><button class="br-button carousel-btn-prev terciary circle" type="button" aria-label="Iniciativa anterior" aria-controls="iniCarouselStage"><i class="fas fa-chevron-left" aria-hidden="true"></i></button></div>' +
+      '<div class="carousel-stage" id="iniCarouselStage">' + itens.map(function (i, idx) {
+        return '<div class="carousel-page ini-page"' + (idx === 0 ? ' active' : '') + ' role="group" aria-roledescription="slide" aria-label="Iniciativa ' + (idx + 1) + ' de ' + n + '" aria-live="polite">' +
+          '<div class="carousel-content ini-content">' + iniciativaConteudo(i) + '</div></div>';
+      }).join('') + '</div>' +
+      '<div class="carousel-button"><button class="br-button carousel-btn-next terciary circle" type="button" aria-label="Próxima iniciativa" aria-controls="iniCarouselStage"><i class="fas fa-chevron-right" aria-hidden="true"></i></button></div>' +
+      '<div class="carousel-play">' +
+      '<button class="br-button carousel-btn-play terciary circle small" type="button" aria-label="Reproduzir automaticamente" aria-controls="iniCarouselStage"><i class="fas fa-play" aria-hidden="true"></i></button>' +
+      '<button class="br-button carousel-btn-pause terciary circle small" type="button" aria-label="Pausar reprodução automática" aria-controls="iniCarouselStage" hidden><i class="fas fa-pause" aria-hidden="true"></i></button>' +
+      '</div>' +
+      '<div class="carousel-step"><nav class="br-step" data-initial="1" data-type="simple" role="none">' +
+      '<div class="step-progress" role="listbox" aria-orientation="horizontal" aria-label="Iniciativas">' +
+      itens.map(function (i, idx) {
+        return '<button class="step-progress-btn"' + (idx === 0 ? ' active' : '') + ' role="option" aria-posinset="' + (idx + 1) + '" aria-setsize="' + n + '" aria-selected="' + (idx === 0 ? 'true' : 'false') + '" type="button"><span class="step-info">' + esc(i.Tipo || 'Iniciativa ' + (idx + 1)) + '</span></button>';
+      }).join('') + '</div></nav></div></div></div>';
   }
   function renderDetalhe(tipo, cod) {
     var el = $('#viewDetalhe');
@@ -2781,11 +2812,10 @@
   }
   function renderIndicadores() {
     var el = $('#viewIndicadores');
-    // Agrupado por Categoria (SLA/ROI/Processo/Produto/Projeto) — mapeia
+    // Agrupado por Categoria (lista fechada: Processo/SLA/ROI) — mapeia
     // quase 1:1 às perspectivas do Balanced Scorecard (CBOK 7.3.3/10.1.9):
-    // SLA≈Cliente, Financeiro (ROI)≈Financeira, Processo≈Processos Internos,
-    // Produto/Projeto≈Aprendizado e Crescimento.
-    var ORDEM_CAT = ['Nível de Serviço (SLA)', 'Financeiro (ROI)', 'Processo', 'Produto', 'Projeto'];
+    // SLA≈Cliente, ROI≈Financeira, Processo≈Processos Internos.
+    var ORDEM_CAT = ['Processo', 'SLA', 'ROI'];
     var porCategoria = {};
     DADOS.metricas.forEach(function (x) { var c = x.Categoria || 'Sem categoria'; (porCategoria[c] = porCategoria[c] || []).push(x); });
     var categorias = ORDEM_CAT.filter(function (c) { return porCategoria[c]; })
@@ -3113,7 +3143,6 @@
         (met ? '<a class="repo-oficial-card" href="' + esc(met) + '" target="_blank" rel="noopener"><i class="fas fa-scale-balanced" aria-hidden="true"></i><div><strong>Metodologia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicada na intranet/e-Codevasf</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
         (guia ? '<a class="repo-oficial-card" href="' + esc(guia) + '" target="_blank" rel="noopener"><i class="fas fa-book-open" aria-hidden="true"></i><div><strong>Guia de Gerenciamento de Processos</strong><span>RES 031/2025 · publicado na intranet/e-Codevasf</span></div><i class="fas fa-external-link-alt seta" aria-hidden="true"></i><span class="sr-only"> (abre em nova aba)</span></a>' : '') +
         '</div>' : '') +
-      cardIniciativas() +
       '<section class="pp-sec"><div class="pp-sec-h"><h2>Jornada de mapeamento</h2><div class="linha" aria-hidden="true"></div></div>' +
       /* Componente Wizard: a jornada é um percurso linear e prescrito —
          painel de etapas (Step), área de conteúdo e barra de navegação com
