@@ -1000,8 +1000,8 @@
       border-bottom:2px solid transparent;}
     .br-notification .tab-nav .tab-item.active button{color:var(--interactive);border-bottom-color:var(--interactive);}
     .br-notification .tab-count{background:var(--gray-10);color:var(--gray-70);
-      border-radius:var(--r-pill);padding:1px 6px;font-size:10px;}
-    .br-notification .tab-nav .tab-item.active .tab-count{background:var(--blue-warm-vivid-10);color:var(--blue-warm-vivid-70);}
+      border-color:var(--gray-20);}
+    .br-notification .tab-nav .tab-item.active .tab-count{background:var(--blue-warm-vivid-10);color:var(--blue-warm-vivid-70);border-color:var(--blue-warm-vivid-30,#a8c0e8);}
     .br-notification .tab-content{flex:1;min-height:0;overflow-y:auto;}
     .br-notification .tab-panel[hidden]{display:none;}
     .br-notification .br-list{background:none;}
@@ -1778,8 +1778,11 @@
     /* Rótulo Contador (item 4): abaixo do item, dentro da superfície —
        data-counter reserva a altura para que a linha não "pule" quando os
        contadores aparecem depois de uma busca. */
+    /* Posicionamento e cor de contexto apenas — pílula, borda e min-width vêm
+       do Componente Tag, tipo contagem (.br-tag.count), que estes contadores
+       passaram a usar. */
     .tab-count{background:var(--interactive);color:var(--pure-0);
-      font-size:10px;font-weight:800;padding:2px 7px;border-radius:var(--r-pill);}
+      font-size:10px;font-weight:800;}
     .tab-item .results{position:absolute;top:100%;display:flex;justify-content:center;
       margin-top:var(--sp1);font:500 12px/1 var(--font);color:var(--gray-80);}
     .tab-item.active .results,.tab-item.is-active .results{color:var(--blue-warm-vivid-80);font-weight:600;}
@@ -3136,7 +3139,10 @@
       line-height:1.6;word-break:break-word;color:var(--gray-80);}
     .br-message .icon{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .br-message .content{flex:1;min-width:0;}
-    .br-message .message-title{font-weight:700;}
+    /* Título e corpo são spans irmãos: sem esta margem os dois textos ficam
+       encostados ("Pendência:Mapeamento"). Corrigido na regra do componente,
+       não em cada mensagem. */
+    .br-message .message-title{font-weight:700;margin-right:.3em;}
     .br-message .message-body{font-weight:400;}
     /* Botão Fechar (Anatomia item 5): button terciário de densidade alta,
        no topo à direita da superfície da mensagem. */

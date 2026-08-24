@@ -77,6 +77,24 @@ Subprocesso, pedido do usuário):
     mesmo (hoje só Subprocesso permite isso). Convenção de preenchimento
     manual — não há fórmula calculando o Código.
 
+Revisão desta versão (Cadeia de Valor real e ato normativo):
+  - As abas de dado passaram a vir de `data/cadeia_valor.json` — Cadeia de
+    Valor Integrada da Codevasf, aprovada pela Resolução nº 1099, de 25 de
+    setembro de 2025. São 21 macroprocessos (5 gerenciais, 8 finalísticos,
+    8 de suporte) e 70 processos de negócio.
+  - **A norma que instituiu cada item não virou coluna.** Ela entra como
+    documento na aba `Documentos`, vinculada aos macroprocessos e processos
+    pela coluna `Vinculo_Codigo` — é o corpo que o painel já mostra no card
+    "Normativos e documentos vinculados". A Resolução nº 1099/2025 e os
+    demais documentos de referência (Nota Técnica nº 001/2025-AE/GPE/UNP,
+    Resolução nº 31/2025, Guia de Modelagem, N-000, PEI 2025-2030, Plano de
+    Ação do Nugep, Decisão nº 1484/2024) estão lá.
+  - `Prioridade` dos processos reflete o item 2 da Resolução nº 1099/2025 e o
+    item 7 da Nota Técnica nº 001/2025: os 26 processos priorizados estão
+    como Alta.
+  - Três opções novas na lista `Tipo_Documento`: Resolução, Nota técnica e
+    Apresentação.
+
 Revisão desta versão (identificador único de métrica, equipe por processo e
 papéis sem o nível Atividade — pedido do usuário):
   - **Metricas.ID usa um único prefixo, `IND-`.** Todas as linhas da aba são
@@ -239,14 +257,28 @@ LISTAS_OPCOES = {
     "Maturidade_Processo": ["Inicial", "Repetível", "Definido", "Gerenciado", "Otimizado"],
     "Sim_Nao": ["Sim", "Não", "Não se aplica"],
     "Status_Marco": ["Sim", "Em andamento", "Não", "Não se aplica"],
-    "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso", "Atividade", "Tarefa"],
+    # Documentos, Riscos, Metricas e Papeis se declaram até Subprocesso: risco,
+    # indicador, normativo e papel de nível Atividade ou Tarefa repetiriam em
+    # nível 4 e 5 o que já está declarado em nível 3 (pedido do usuário). Só
+    # Regras desce a Atividade — a regra de negócio é o único vínculo que o
+    # painel ainda mostra na ficha da atividade, e usa Nivel_Vinculo_Regras.
+    # Vinculo_Nivel é coluna calculada em todas essas abas: quem restringe o
+    # nível de fato é a validação de Vinculo_Codigo (ver dv_profundidade).
+    # Papéis só existem no Processo: o RACI se pactua com quem executa o
+    # processo. No Macroprocesso (agrupador) e no Subprocesso a mesma matriz
+    # se repetiria em três níveis — por isso a lista de Papeis para em
+    # Processo, e a validação de profundidade barra Subprocesso pra baixo.
+    "Nivel_Vinculo": ["Macroprocesso", "Processo", "Subprocesso"],
     "Tipo_Atividade": ["Agregação de Valor", "Transferência", "Controle"],
     "Tipo_Tarefa": ["Manual", "Automatizada", "Regra de negócio"],
-    "Tipo_Documento": ["Procedimento (PRO)", "Manual", "Norma interna", "Legislação externa",
+    "Tipo_Documento": ["Resolução", "Nota técnica", "Procedimento (PRO)", "Manual",
+                       "Norma interna", "Legislação externa", "Plano", "Apresentação",
                        "Formulário/Modelo", "Ata de reunião", "Diagrama BPMN", "Checklist",
-                       "Relatório", "Plano", "Outro"],
+                       "Relatório", "Outro"],
     "Situacao_Documento": ["Vigente", "Em elaboração", "Em revisão", "Revogado"],
-    "Categoria_Risco": ["Operacional", "Legal/Conformidade", "Pessoas",
+    # Taxonomia da IN Conjunta MP/CGU nº 01/2016: Estratégico é categoria
+    # própria, não um caso de Operacional.
+    "Categoria_Risco": ["Estratégico", "Operacional", "Legal/Conformidade", "Pessoas",
                         "Tecnologia da Informação", "Financeiro/Orçamentário", "Imagem/Reputação"],
     "Resposta_Risco": ["Mitigar", "Aceitar", "Transferir", "Evitar"],
     "Status_Risco": ["Aberto", "Em tratamento", "Encerrado"],
@@ -257,7 +289,16 @@ LISTAS_OPCOES = {
     "Situacao_Cultura": ["Sim", "Não", "Não avaliado"],
     "Tipo_Iniciativa": ["Automação", "Reaproveitamento de modelo", "Decisão de governança", "Outro"],
     "Categoria_Repositorio": ["Documento oficial", "Template", "Instrumento", "Ferramenta", "Referência"],
-    "Fase_Instrumento": ["Planejamento", "Análise", "Desenho", "Implementação", "Monitoramento", "Refinamento"],
+    # Vocabulário da coluna Repositorio.Fase_Ciclo. "Transversal" é para a
+    # referência que não pertence a uma fase do ciclo — metodologia, guia,
+    # CBOK, BPMN. NÃO usar "Todas as fases": os combos do painel derivam as
+    # opções dos valores do dado e reservam o literal "Todas as/os {plural}"
+    # para o placeholder de "sem filtro", então esse texto como valor criaria
+    # dois rótulos idênticos com sentidos opostos no mesmo controle.
+    # Acrescentar item a uma lista existente é seguro: só lista NOVA desloca a
+    # coluna das seguintes (ver nota no fim do dict).
+    "Fase_Instrumento": ["Planejamento", "Análise", "Desenho", "Implementação", "Monitoramento",
+                         "Refinamento", "Transversal"],
     "Categoria_FAQ": ["Conceitos básicos", "Modelagem e SIPOC", "Cadeia de Valor e governança",
                       "Indicadores, metas e riscos", "Plano de Ações AE/GPE", "Como usar o painel"],
     # Ao final do dicionário: ref() calcula a coluna pela posição no dict, e o
@@ -265,6 +306,27 @@ LISTAS_OPCOES = {
     # (a última) — nova lista sempre entra no fim, nunca no meio, senão as
     # colunas de todas as listas seguintes mudam de letra na próxima geração.
     "Categoria_Metrica": ["Processo", "SLA", "ROI"],
+    "Nivel_Vinculo_Regras": ["Macroprocesso", "Processo", "Subprocesso", "Atividade", "Tarefa"],
+}
+
+# Até que nível Vinculo_Codigo pode descer em cada aba (2 = Subprocesso,
+# 4 = Tarefa). Vira validação de célula na planilha, para que a coluna
+# calculada Vinculo_Nivel não possa resultar em Atividade ou Tarefa onde não
+# deve. A validação procura os prefixos de PREFIXO_NIVEL, não conta
+# separadores: Vinculo_Codigo aceita várias trilhas na mesma célula.
+
+# Invariante de referência cruzada: toda validação que aponta para outra aba
+# tem de ser reconferida SEMPRE que a aba-alvo muda de tamanho, junto com a
+# contagem de linhas. A regra do alvo depende do tipo de aba:
+#   - aba de dados  → última linha = nº de registros + 1 (o cabeçalho)
+#   - aba Listas    → última linha = fim REAL daquela coluna, porque cada
+#                     coluna é um vocabulário independente; usar a contagem de
+#                     linhas da aba Listas dá falso positivo em 24 das 25.
+# Conferir as duas coisas juntas: uma faixa curta não quebra o arquivo, ela
+# marca como inválido o dado que já está gravado (o dropdown de ponto focal
+# chegou a oferecer 12 dos 59 nomes do Nugep).
+PROFUNDIDADE_VINCULO = {
+    "Documentos": 2, "Riscos": 2, "Metricas": 2, "Papeis": 1, "Regras": 3,
 }
 
 # Prefixo de código por nível — 2 letras + número sequencial, reiniciado a

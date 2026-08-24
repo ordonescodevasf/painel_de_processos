@@ -17,6 +17,11 @@ autocontida (="texto") — não um VLOOKUP por código, que seria ambíguo.
 
 Conteúdo de Jornada, Repositorio, NUGEP, Glossario, Competencias, FAQ e
 Parametros vem de scripts/dados_conteudo.py.
+
+As abas Macroprocessos, Processos, Subprocessos, Atividades, Tarefas,
+Documentos, Riscos, Metricas, Papeis, Equipe_Processo e Regras vem de
+data/cadeia_valor.json (Cadeia de Valor Integrada real da Codevasf) quando o
+arquivo existe; as tuplas *_BASE deste modulo sao a semente de exemplo.
 """
 import os
 import sys
@@ -93,6 +98,36 @@ def dv(ws, col_letter, ref_, ultima_linha=300, strict=True):
         prompt="Clique na seta ao lado da célula e escolha uma das opções.")
     ws.add_data_validation(v)
     v.add(f"{col_letter}2:{col_letter}{ultima_linha}")
+
+
+def dv_profundidade(ws, aba, ultima_linha=300):
+    """Barra em Vinculo_Codigo os níveis que a aba não admite (ESQ.PROFUNDIDADE_VINCULO).
+
+    Procura os prefixos de código de ESQ.PREFIXO_NIVEL em vez de contar
+    separadores: Vinculo_Codigo também aceita várias trilhas na mesma célula,
+    separadas por ";" (DOC-023 tem 47), e contar " › " no total da célula
+    reprovaria a lista inteira. Assim a regra vale igual para uma trilha ou
+    para quarenta e sete, e a coluna calculada Vinculo_Nivel nunca resulta
+    num nível que o painel não exibe.
+    """
+    limite = ESQ.PROFUNDIDADE_VINCULO.get(aba)
+    if limite is None:
+        return
+    c = col(aba, "Vinculo_Codigo")
+    barrados = [("Atividade", ESQ.PREFIXO_NIVEL["Atividade"]), ("Tarefa", ESQ.PREFIXO_NIVEL["Tarefa"])]
+    barrados = barrados[1:] if limite >= 3 else barrados
+    # Regras (limite 3) desce a Atividade — é o único vínculo que o painel
+    # ainda mostra na ficha da atividade —, então só Tarefa fica barrada.
+    if not barrados:
+        return
+    testes = ", ".join(f'ISERROR(SEARCH(" › {p}-",{c}2))' for _, p in barrados)
+    nivel = " nem ".join(n for n, _ in barrados)
+    v = DataValidation(type="custom", formula1=f"=AND({testes})",
+        allow_blank=True, showErrorMessage=True, errorStyle="stop",
+        errorTitle="Vínculo abaixo do nível permitido",
+        error=f"Nesta aba o vínculo não desce a {nivel}. Use a trilha do nível correspondente.")
+    ws.add_data_validation(v)
+    v.add(f"{c}2:{c}{ultima_linha}")
 
 
 def col(aba, nome):
@@ -881,6 +916,34 @@ def _percentual(d):
     return round(pontos / total, 4) if total else 0
 
 
+# ── Conteúdo real: Cadeia de Valor Integrada da Codevasf ──────────────────
+# As tuplas *_BASE acima seguem como semente de exemplo (útil para regerar a
+# planilha do zero, sem snapshot). O conteúdo de verdade das abas de dado mora
+# em data/cadeia_valor.json — mesmo arquivo que alimenta js/dados.js —, então é
+# ele quem prevalece quando existe. Cada aba é substituída inteira: não há
+# mistura de linha real com linha de exemplo dentro da mesma aba.
+import json
+from pathlib import Path as _Path
+
+_SNAP_ARQ = _Path(__file__).resolve().parent.parent / "data" / "cadeia_valor.json"
+_SNAP = json.loads(_SNAP_ARQ.read_text(encoding="utf-8")) if _SNAP_ARQ.exists() else {}
+
+
+def _snap(aba, padrao):
+    return [dict(d) for d in _SNAP[aba]] if _SNAP.get(aba) else padrao
+
+
+PROCS = _snap("Processos", PROCS)
+SUBS = _snap("Subprocessos", SUBS)
+ATIVS = _snap("Atividades", ATIVS)
+TAREFAS = _snap("Tarefas", TAREFAS)
+DOCS = _snap("Documentos", DOCS)
+RISCOS = _snap("Riscos", RISCOS)
+METRICAS = _snap("Metricas", METRICAS)
+PAPEIS = _snap("Papeis", PAPEIS)
+EQUIPE_PROCESSO = _snap("Equipe_Processo", EQUIPE_PROCESSO)
+REGRAS = _snap("Regras", REGRAS)
+
 for d in PROCS:
     d["Percentual"] = _percentual(d)
 
@@ -919,9 +982,10 @@ REF_NUGEP_NOME = f"=NUGEP!$B$2:$B${len(CONTEUDO.NUGEP) + 1}"
 # ---- Macroprocessos ----
 mp = wb.create_sheet("Macroprocessos")
 cabecalho(mp, "Macroprocessos", formula_cols={ESQ.colunas("Macroprocessos").index("Trilha") + 1})
-MACROS_D = [dict(Codigo=m[0], Nome=m[1], Categoria=m[2], Ordem=m[3], Unidade_Organica_Responsavel=m[4],
-    Descricao=m[5], Objetivo=m[6], Entregas=m[7], Beneficiarios=m[8], Partes_Interessadas=m[9],
-    Sistemas=m[10], Imagem_Bizagi=m[11], Observacoes=m[12], Trilha=m[0]) for m in MACROS]
+MACROS_D = _snap("Macroprocessos", [dict(Codigo=m[0], Nome=m[1], Categoria=m[2], Ordem=m[3],
+    Unidade_Organica_Responsavel=m[4], Descricao=m[5], Objetivo=m[6], Entregas=m[7], Beneficiarios=m[8],
+    Partes_Interessadas=m[9], Sistemas=m[10], Imagem_Bizagi=m[11], Observacoes=m[12], Trilha=m[0])
+    for m in MACROS])
 escreve(mp, [_linha(d, "Macroprocessos") for d in MACROS_D], wrap_cols={2,6,7,8,9,10,11,12,13}, center_cols={1,3,4,5})
 mp.freeze_panes = "B2"
 lit_formula(mp, "Macroprocessos", "Trilha", MACROS_D)
@@ -943,7 +1007,7 @@ def _pct_formula(r):
     denom = "+".join(f'IF(OR({col("Processos", k)}{r}="Sim",{col("Processos", k)}{r}="Não",{col("Processos", k)}{r}="Em andamento"),1,0)' for k in MCOLS)
     return f"=IF(({denom})=0,0,({partes})/({denom}))"
 aplicar_formula(pr, "Processos", "Percentual", _pct_formula, number_format="0%")
-dv(pr, col("Processos", "Macroprocesso"), f"=Macroprocessos!$A$2:$A${len(MACROS) + 1}")
+dv(pr, col("Processos", "Macroprocesso"), f"=Macroprocessos!$A$2:$A${len(MACROS_D) + 1}")
 dv(pr, col("Processos", "Unidade_Organica_Responsavel"), REF_SIGLAS)
 dv(pr, col("Processos", "Ponto_Focal_Nugep"), REF_NUGEP_NOME)
 dv(pr, col("Processos", "Prioridade"), ref("Prioridade"))
@@ -994,6 +1058,7 @@ cabecalho(dc, "Documentos", formula_cols={ESQ.colunas("Documentos").index("Vincu
 escreve(dc, [_linha(d, "Documentos") for d in DOCS], wrap_cols={2,9,10,11}, center_cols={1,3,4,5,6,7,8})
 dc.freeze_panes = "B2"
 aplicar_formula(dc, "Documentos", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Documentos", "Vinculo_Codigo")}{r}'))
+dv_profundidade(dc, "Documentos")
 dv(dc, col("Documentos", "Tipo_Documento"), ref("Tipo_Documento"))
 dv(dc, col("Documentos", "Situacao"), ref("Situacao_Documento"))
 
@@ -1003,6 +1068,7 @@ cabecalho(rk, "Riscos", formula_cols={ESQ.colunas("Riscos").index(k) + 1 for k i
 escreve(rk, [_linha(d, "Riscos") for d in RISCOS], wrap_cols={4,6,7,14,16}, center_cols={1,2,3,5,8,9,10,11,12,13,15,17})
 rk.freeze_panes = "C2"
 aplicar_formula(rk, "Riscos", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Riscos", "Vinculo_Codigo")}{r}'))
+dv_profundidade(rk, "Riscos")
 _cp, _ci = col("Riscos", "Probabilidade_1a5"), col("Riscos", "Impacto_1a5")
 aplicar_formula(rk, "Riscos", "Nivel_PxI", lambda r: f"={_cp}{r}*{_ci}{r}")
 _cn = col("Riscos", "Nivel_PxI")
@@ -1017,6 +1083,7 @@ cabecalho(mt, "Metricas", formula_cols={ESQ.colunas("Metricas").index("Vinculo_N
 escreve(mt, [_linha(d, "Metricas") for d in METRICAS], wrap_cols={2,6,7,12,13,14}, center_cols={1,3,4,5,8,9,10,11})
 mt.freeze_panes = "B2"
 aplicar_formula(mt, "Metricas", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Metricas", "Vinculo_Codigo")}{r}'))
+dv_profundidade(mt, "Metricas")
 dv(mt, col("Metricas", "Categoria"), ref("Categoria_Metrica"))
 dv(mt, col("Metricas", "Polaridade"), ref("Polaridade"))
 dv(mt, col("Metricas", "Periodicidade"), ref("Periodicidade"))
@@ -1034,6 +1101,7 @@ cabecalho(pp, "Papeis", formula_cols={ESQ.colunas("Papeis").index("Vinculo_Nivel
 escreve(pp, [_linha(d, "Papeis") for d in PAPEIS], wrap_cols={4,6}, center_cols={1,2,3,5})
 pp.freeze_panes = "B2"
 aplicar_formula(pp, "Papeis", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Papeis", "Vinculo_Codigo")}{r}'))
+dv_profundidade(pp, "Papeis")
 dv(pp, col("Papeis", "Envolvimento"), ref("Envolvimento_RACI"))
 
 # ---- Equipe_Processo ----
@@ -1051,6 +1119,7 @@ cabecalho(rg, "Regras", formula_cols={ESQ.colunas("Regras").index("Vinculo_Nivel
 escreve(rg, [_linha(d, "Regras") for d in REGRAS], wrap_cols={2,6,7}, center_cols={1,3,4,5})
 rg.freeze_panes = "B2"
 aplicar_formula(rg, "Regras", "Vinculo_Nivel", lambda r: nivel_formula(f'{col("Regras", "Vinculo_Codigo")}{r}'))
+dv_profundidade(rg, "Regras")
 dv(rg, col("Regras", "Tipo_Regra"), ref("Tipo_Regra"))
 
 # ---- Cultura_Processos / Iniciativas ----

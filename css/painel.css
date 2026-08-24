@@ -118,6 +118,9 @@
 .pp-sec-h{display:flex;align-items:center;gap:var(--sp2);margin-bottom:var(--sp3);}
 .pp-sec-h h2{font:700 var(--fs-xl)/1.25 var(--font);color:var(--cv-navy);}
 .pp-sec-h .linha{flex:1;height:2px;background:var(--gray-10);}
+/* Ação de página ao lado do título: fica entre o título e a linha, que
+   continua ocupando o resto da largura. */
+.pp-sec-h > .br-button{flex:0 0 auto;}
 .pp-muted{color:var(--gray-60);}
 .pp-vazio{color:var(--gray-60);font-style:italic;font-size:var(--fs-base);}
 
@@ -182,8 +185,11 @@ body.contraste-alto .kpi .num{color:#fff;}
 .cv-bloco > .cv-titulo{padding:var(--sp1) var(--sp3);color:var(--pure-0);
   font:700 var(--fs-base)/1.5 var(--font);text-transform:uppercase;letter-spacing:.05em;
   display:flex;align-items:center;gap:10px;}
+/* Tag de Contagem do DS sobre a faixa colorida do bloco: a borda branca que
+   o componente pede já separa a tag do fundo, então só a superfície é
+   translucida aqui. */
 .cv-bloco > .cv-titulo .cv-qtd{margin-left:auto;background:rgba(255,255,255,.22);
-  border-radius:999px;min-width:26px;text-align:center;padding:0 8px;font-size:var(--fs-sm);}
+  color:var(--pure-0);border-color:rgba(255,255,255,.55);}
 .cv-bloco.cat-gerencial > .cv-titulo{background:var(--gr-gerencial);}
 .cv-bloco.cat-finalistico > .cv-titulo{background:var(--gr-finalistico);}
 .cv-bloco.cat-suporte > .cv-titulo{background:var(--gr-suporte);}
@@ -318,6 +324,18 @@ body.contraste-alto .pp-card{background:#000;border:1px solid var(--gold-vivid-2
 .br-tag.nivel-moderado{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
 .br-tag.nivel-alto{background:#ffe4cf;color:#9c4500;border-color:#f7c49b;}
 .br-tag.nivel-extremo{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+/* ── Prioridade e Complexidade ── mesmo tratamento de .nivel-tag e
+   .maturidade-tag: ícone em escada mais par fundo/texto com contraste
+   ≥4,5:1, a intensidade subindo do verde ao vermelho. Reaproveita os
+   mesmos degraus de cor das tags de nível, para que "alta" tenha sempre a
+   mesma leitura no painel, seja de risco, de prioridade ou de
+   complexidade. ── */
+.br-tag.intens-tag{font:700 var(--fs-sm)/1.5 var(--font);border:1px solid transparent;}
+.br-tag.intens-tag i{font-size:10px;}
+.br-tag.intens-prio-baixa,.br-tag.intens-cplx-baixa{background:#e3f5e1;color:#137436;border-color:#bfe7c4;}
+.br-tag.intens-prio-media,.br-tag.intens-cplx-media{background:#fff5d2;color:#8a6d00;border-color:#f2dd9c;}
+.br-tag.intens-prio-alta,.br-tag.intens-cplx-alta{background:#fdeceb;color:#c5170b;border-color:#f6c6c2;}
+body.contraste-alto .br-tag.intens-tag{background:#000;color:#fff;border-color:var(--gold-vivid-20,#ffbe2e);}
 /* ── RACI (Papéis e envolvidos) — CBOK pede papéis e organizações na
    modelagem; Executa/Aprova/Consultado/Informado são a tradução do RACI. ── */
 .raci-lista{display:flex;flex-direction:column;gap:var(--sp2);}
@@ -484,6 +502,9 @@ body.contraste-alto .br-tag.maturidade-tag,body.contraste-alto .br-tag.tipo-ativ
    cada trilha na sua própria linha, só espaçamento — sem divisor, para
    não poluir a tabela. ── */
 .vinculo-lista{display:flex;flex-direction:column;gap:8px;}
+/* "e mais N" na coluna Vinculado a — a lista completa fica no collapse da linha */
+.vinculo-mais{font-size:var(--fs-sm);color:var(--gray-60);font-style:italic;}
+body.contraste-alto .vinculo-mais{color:inherit;}
 
 /* ── subprocesso reutilizável (Call Activity do BPMN 2.0 — no Bizagi, que
    este painel usa para os diagramas, o próprio elemento já se chama
@@ -664,8 +685,13 @@ body.contraste-alto .hier-item .hier-nome{color:#fff;}
 .tab-mais-list .br-item span:not(.tab-count){flex:1;}
 .tab-mais-list .br-item.ativo{background:var(--blue-warm-vivid-5);color:var(--cv-blue);}
 .tab-mais-list .br-item.ativo i{color:var(--cv-blue);}
-.tab-mais-list .br-item .tab-count{background:var(--gray-10);color:var(--gray-70);}
-.tab-mais-list .br-item.ativo .tab-count{background:var(--interactive);color:var(--pure-0);}
+/* Posicionamento apenas — a aparência (pílula, borda, min-width) vem do
+   Componente Tag, tipo contagem (.br-tag.count). Só as cores de contexto
+   ficam aqui, porque o fundo muda com o estado do item. */
+.tab-mais-list .br-item .tab-count{background:var(--gray-10);color:var(--gray-70);
+  border-color:var(--gray-20);}
+.tab-mais-list .br-item.ativo .tab-count{background:var(--interactive);color:var(--pure-0);
+  border-color:var(--pure-0);}
 /* dropdowns "fixos" (posicionados via JS, ver govbr-ui.js): z-index inequívoco,
    sempre por cima, imunes a overflow/empilhamento de qualquer ancestral */
 .dd-target.dd-fixed{z-index:99999;}
@@ -787,7 +813,15 @@ body.contraste-alto .jornada-etapa,body.contraste-alto .je-caixa{background:#000
 .nugep-sigla{display:inline-block;font:700 var(--fs-sm)/1.6 var(--font);letter-spacing:.04em;
   background:var(--blue-warm-vivid-5);color:var(--cv-blue);border:1px solid var(--blue-warm-vivid-30,#a8c0e8);
   border-radius:999px;padding:1px 12px;}
-.nugep-unid{margin:6px 0 8px;}
+.nugep-unid{margin:6px 0 8px;display:flex;flex-direction:column;gap:2px;align-items:flex-start;}
+/* Área do ponto focal: só a sigla, como no campo Gestor(a) do processo — o
+   nome da unidade por extenso vai para o title da Tag. */
+/* Nas tabelas a área entra em linha, discreta, ao lado do nome. */
+.pf-area-inline{font:600 11px/1.4 var(--noto-mono,monospace);color:var(--gray-60);
+  white-space:nowrap;}
+body.contraste-alto .pf-area-inline{color:inherit;}
+/* Contagem de integrantes ao lado do título — Tag de Contagem do DS. */
+.nugep-conta{vertical-align:middle;margin-left:8px;}
 .nugep-contato{display:flex;flex-direction:column;gap:3px;padding-bottom:8px;border-bottom:1px solid var(--gray-10);}
 .nugep-procs{margin-top:8px;}
 .nugep-procs b{display:flex;align-items:center;gap:6px;text-transform:uppercase;font-size:10px;

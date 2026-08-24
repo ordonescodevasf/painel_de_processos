@@ -474,12 +474,47 @@
   var ICONE_MATURIDADE = {
     'inicial': 'fa-seedling', 'repetivel': 'fa-arrows-rotate', 'definido': 'fa-clipboard-check',
     'gerenciado': 'fa-gauge-high', 'otimizado': 'fa-star'
-  };
-  function tagMaturidade(nivel) {
+  };  function tagMaturidade(nivel) {
     var cls = slug(nivel), id = 'tg-mt-' + (++_idTag);
     return '<span class="br-tag maturidade-tag maturidade-' + cls + '" aria-describedby="' + id + '">' +
       '<i class="fas ' + (ICONE_MATURIDADE[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
       '<span id="' + id + '">' + esc(nivel) + '</span></span>';
+  }
+  // Prioridade e Complexidade: mesmo tratamento de tagMaturidade — ícone em
+  // escada + par fundo/texto de contraste ≥4,5:1, a intensidade subindo do
+  // verde ao vermelho. A escada de ícones difere entre os dois campos para
+  // que uma tag não seja confundida com a outra na mesma ficha, e difere de
+  // ICONE_NIVEL para não se ler como classificação de risco.
+  var ICONE_PRIORIDADE = { 'baixa': 'fa-angle-down', 'media': 'fa-angle-up', 'alta': 'fa-angles-up' };
+  var ICONE_COMPLEXIDADE = { 'baixa': 'fa-square', 'media': 'fa-table-cells-large', 'alta': 'fa-table-cells' };
+  function tagIntensidade(valor, campo, icones) {
+    if (!valor) return '';
+    var cls = slug(valor), id = 'tg-' + campo + '-' + (++_idTag);
+    return '<span class="br-tag intens-tag intens-' + campo + '-' + cls + '" aria-describedby="' + id + '">' +
+      '<i class="fas ' + (icones[cls] || 'fa-circle') + '" aria-hidden="true"></i>' +
+      '<span id="' + id + '">' + esc(valor) + '</span></span>';
+  }
+  function tagPrioridade(v) { return tagIntensidade(v, 'prio', ICONE_PRIORIDADE); }  // Atualiza um contador da interface como Tag de Contagem do DS, preservando
+  // id e classes de posicionamento do elemento que já está no HTML. Existe para
+  // que nenhum contador do painel volte a ser badge caseiro: todos passam por
+  // aqui e herdam title, aria-hidden e o corte em 999+.
+  function preencherContagem(el, n, descricao) {
+    if (!el) return;
+    var v = Number(n) || 0;
+    el.className = 'br-tag count ' + String(el.className || '').split(/\s+/)
+      .filter(function (c) { return c && c !== 'br-tag' && c !== 'count'; }).join(' ');
+    el.setAttribute('title', v + ' ' + descricao);
+    el.innerHTML = '<span aria-hidden="true">' + (v > 999 ? '999+' : v) + '</span>';
+  }
+  function tagComplexidade(v) { return tagIntensidade(v, 'cplx', ICONE_COMPLEXIDADE); }
+  // Tag de Contagem do DS gov.br: superfície pílula com borda, no máximo três
+  // dígitos — acima de 999 vira "999+" e o valor exato fica no title, como a
+  // especificação do componente pede. O número é aria-hidden: quem usa leitor
+  // de tela ouve a descrição completa do title, não um número solto.
+  function tagContagem(n, descricao, extra) {
+    var v = Number(n) || 0, rot = v > 999 ? '999+' : String(v);
+    return '<span class="br-tag count' + (extra ? ' ' + extra : '') + '" title="' +
+      esc(v + ' ' + descricao) + '"><span aria-hidden="true">' + rot + '</span></span>';
   }
   // Tipos de atividade (CBOK 3.1.7): agregação de valor, transferência
   // (handoff) e controle — definições completas no Glossário.
@@ -512,14 +547,40 @@
     for (var i = 0; i < partes.length; i++) { acc = i === 0 ? partes[i] : acc + '/' + partes[i]; if (idx[acc]) return true; }
     return false;
   }
+  // Nome por extenso de uma sigla, quando a aba Siglas tem o verbete exato.
+  // Só o exato: devolver o nome de um prefixo (AA/GPA para AA/GPA/UAL) diria
+  // que a unidade é a gerência, quando é a unidade subordinada a ela.
+  function siglaNome(codigo) {
+    return siglasIdx()[String(codigo == null ? '' : codigo).trim()] || '';
+  }
   // Sigla de unidade como link para a ficha dela no Glossário (Tooltip é
   // componente depreciado no DS — a referência abre a definição completa
   // em vez de um balão flutuante, sem the código não bater com nada conhecido.
+  // O nome por extenso vai no title: sigla nenhuma no painel fica sem ele.
   function siglaTag(codigo) {
     var cod = String(codigo == null ? '' : codigo).trim();
     if (!cod) return '';
+    var nome = siglaNome(cod);
     if (!siglaConhecida(cod)) return esc(cod);
-    return '<a class="termo-link" href="#/glossario?aba=siglas&q=' + encodeURIComponent(cod) + '">' + esc(cod) + '</a>';
+    return '<a class="termo-link" href="#/glossario?aba=siglas&q=' + encodeURIComponent(cod) + '"' +
+      (nome ? ' title="' + esc(nome) + '"' : '') + '>' + esc(cod) + '</a>';
+  }
+  // Mesma sigla com title, sem virar link — para os lugares onde um <a> não
+  // cabe: dentro do cartão de processo (que já é um <a>, e link dentro de link
+  // é marcação inválida) e nas linhas de meta das fichas.
+  function siglaTexto(codigo) {
+    var cod = String(codigo == null ? '' : codigo).trim();
+    if (!cod) return '';
+    var nome = siglaNome(cod);
+    return nome ? '<span title="' + esc(nome) + '">' + esc(cod) + '</span>' : esc(cod);
+  }
+  // Siglas embutidas numa frase já pronta (ex.: "Fernanda Fiuza Lima — AA/GGP
+  // (Nugep)" na matriz RACI) recebem o mesmo title, sem reescrever o texto.
+  function siglasEmTexto(txt) {
+    return esc(txt).replace(/\b(?:\d{1,2}ª\/SR|[A-Z]{2,}(?:\/[A-Z]{2,})*)\b/g, function (cod) {
+      var nome = siglaNome(cod);
+      return nome ? '<span title="' + esc(nome) + '">' + cod + '</span>' : cod;
+    });
   }
   // Termo técnico (ex.: SIPOC) como link para a definição no Glossário.
   function termoLink(termo, textoVisivel) {
@@ -562,14 +623,29 @@
   // diferente do Ponto_Focal_Nugep (o contato durante o mapeamento/análise).
   // Ponto_Focal_Nugep guarda só o nome (ex. "Carlos Eduardo Lima (UNP)") — o
   // contato completo vem daqui, resgatado por nome na aba NUGEP.
-  function pontoFocalNugepHtml(p) {
-    var nome = String(p.Ponto_Focal_Nugep || '').trim();
+  function pontoFocalNugepHtml(p) {    var nome = String(p.Ponto_Focal_Nugep || '').trim();
     if (!nome) return '';
     var alvo = nome.toLowerCase();
     var m = (DADOS.nugep || []).filter(function (x) { return alvo.indexOf(String(x.Nome || '').toLowerCase()) === 0; })[0];
     if (!m) return esc(nome);
+    // A área entra só como sigla, igual ao campo Gestor(a) do processo: o nome
+    // da unidade por extenso fica no title da Tag, para a ficha não repetir
+    // duas linhas por contato.
     return '<strong>' + esc(m.Nome) + '</strong>' + contatoNugep(m).replace('class="nugep-contato"', 'class="nugep-contato" style="border-bottom:0;padding-bottom:0"') +
       (m.Unidade_Sigla ? '<div style="margin-top:2px">' + siglaTag(m.Unidade_Sigla) + '</div>' : '');
+  }
+  // Sigla da área do ponto focal, para as tabelas: o nome sozinho não diz de
+  // que unidade veio o contato. Resolve pelo nome na aba NUGEP e sai vazio
+  // quando o nome não está lá — nunca inventa uma área.
+  function areaFocalHtml(nome) {
+    var alvo = String(nome || '').trim().toLowerCase();
+    if (!alvo) return '';
+    var m = (DADOS.nugep || []).filter(function (x) { return alvo.indexOf(String(x.Nome || '').toLowerCase()) === 0; })[0];
+    if (!m || !m.Unidade_Sigla) return '';
+    // O nome vem da aba Siglas (fonte única); Unidade_Nome da aba NUGEP é só
+    // reserva, para a área não ficar sem title se a sigla não tiver verbete.
+    var nome = siglaNome(m.Unidade_Sigla) || m.Unidade_Nome || m.Unidade_Sigla;
+    return ' <span class="pf-area-inline" title="' + esc(nome) + '">' + esc(m.Unidade_Sigla) + '</span>';
   }
   function gestorProcessoHtml(p) {
     if (!p.Gestor_Nome) return '';
@@ -702,6 +778,10 @@
   // Glossário ("Processo" não — só aparece dentro de outras definições,
   // sem entrada exata, então fica sem link para não abrir uma busca vaga).
   var NIVEIS_NO_GLOSSARIO = { 'Macroprocesso': 1, 'Subprocesso': 1, 'Atividade': 1, 'Tarefa': 1 };
+  // Recebe a TRILHA do item, não o Codigo: com os códigos reiniciando em 01
+  // por vínculo (SP-01 existe em 70 processos), o código bruto cai no
+  // fallback de resolveRef ("primeiro item com aquele código") e a
+  // categoria do macroprocesso vinha do item errado.
   function eyebrowFicha(nivel, codigo) {
     var cat = categoriaDe(nivel, codigo);
     var rotulo = NIVEIS_NO_GLOSSARIO[nivel] ? termoLink(nivel) : nivel;
@@ -739,6 +819,19 @@
     var pares = listaVinculoPares(nivelStr, codigoStr);
     if (!pares.length) return '<span class="pp-vazio">—</span>';
     return '<div class="vinculo-lista">' + pares.map(function (par) { return linkVinculo(par[0], par[1]); }).join('') + '</div>';
+  }
+  /* Um documento pode valer para dezenas de itens (a Resolução nº 1099/2025
+     vale para os 21 macroprocessos e os 26 processos priorizados). Na tabela,
+     mostra os primeiros e conta o resto — a lista completa fica no collapse da
+     linha, para a altura da linha não estourar a página. */
+  function linkVinculosResumo(nivelStr, codigoStr, limite) {
+    var pares = listaVinculoPares(nivelStr, codigoStr);
+    if (!pares.length) return '<span class="pp-vazio">—</span>';
+    var resto = pares.length - limite;
+    return '<div class="vinculo-lista">' +
+      pares.slice(0, limite).map(function (par) { return linkVinculo(par[0], par[1]); }).join('') +
+      (resto > 0 ? '<span class="vinculo-mais">e mais ' + resto + ' — ver detalhes da linha</span>' : '') +
+      '</div>';
   }
   /* ── BREADCRUMB (br-breadcrumb, gov.br DS) ────────────────────────────
      Anatomia completa: 1 Botão (Home, terciário circular), 2 Separador
@@ -1060,7 +1153,7 @@
         ['Entradas', listar(sf.Entradas).map(esc).join('; ')],
         ['Saídas', listar(sf.Saidas).map(esc).join('; ')],
         ['Sistemas', listar(sf.Sistemas).map(esc).join('; ')],
-        ['Unidade responsável', esc(sf.Unidade_Organica_Responsavel || '')]
+        ['Unidade responsável', siglaTag(sf.Unidade_Organica_Responsavel || '')]
       ]);
   }
   // Todo lugar que chama um subprocesso reutilizável: o pai nativo
@@ -1523,7 +1616,9 @@
       item.setAttribute('data-painel', b.getAttribute('data-painel'));
       item.innerHTML = '<i class="' + (ic ? ic.className : 'fas fa-circle') + '" aria-hidden="true"></i>' +
         '<span>' + esc(rot ? rot.textContent : b.textContent.trim()) + '</span>' +
-        (cnt ? '<span class="tab-count">' + esc(cnt.textContent) + '</span>' : '');
+        (cnt ? '<span class="br-tag count tab-count"' +
+          (cnt.getAttribute('title') ? ' title="' + esc(cnt.getAttribute('title')) + '"' : '') +
+          '><span aria-hidden="true">' + esc(cnt.textContent) + '</span></span>' : '');
       frag.appendChild(item);
     });
     var sep = d.createElement('span');
@@ -1647,8 +1742,108 @@
     a.href = URL.createObjectURL(blob); a.download = nome;
     d.body.appendChild(a); a.click(); a.remove();
   }
-  function ligarAcoesCabecalho() {
-    var exp = $('#actExportCsv');
+  // Relatório gerencial em Word: documento HTML com o namespace do Word
+  // (application/msword), que o Word abre nativamente sem depender de
+  // biblioteca externa nem de conversão no servidor. Traz o retrato do
+  // repositório na data da emissão — é um documento datado, não um painel.
+  function gerarRelatorioWord() {
+    var procs = DADOS.procs;
+    var hoje = new Date();
+    var dataExt = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    var concl = procs.filter(function (p) { return p._status === 'concluido'; });
+    var andam = procs.filter(function (p) { return p._status === 'em-andamento'; });
+    var naoIni = procs.filter(function (p) { return p._status === 'nao-iniciado'; });
+    var media = procs.length ? Math.round(procs.reduce(function (s, p) { return s + p.Percentual; }, 0) / procs.length) : 0;
+    var riscosAb = DADOS.riscos.filter(function (r) { return !/encerrad/i.test(String(r.Status || '')); });
+    var criticos = riscosAb.filter(function (r) { return r._classe === 'Alto' || r._classe === 'Extremo'; });
+    var foraMeta = DADOS.metricas.filter(function (x) { return x._sit === 'Meta não atingida'; });
+    var vencidos = procs.filter(function (p) { return p.Prazo_Previsto && p.Prazo_Previsto < hojeISO() && p._status !== 'concluido'; });
+    var prior = procs.filter(function (p) { return p.Prioridade === 'Alta'; });
+    function tab(cabs, linhas) {
+      if (!linhas.length) return '<p class="vazio">Nenhum registro nesta seção.</p>';
+      return '<table><thead><tr>' + cabs.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + linhas.map(function (l) {
+          return '<tr>' + l.map(function (c) { return '<td>' + esc(c == null ? '—' : c) + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody></table>';
+    }
+    function porCat(cat) { return DADOS.macros.filter(function (m) { return m._cat === cat; }).length; }
+    var corpo =
+      '<h1>Relatório gerencial do repositório de processos</h1>' +
+      '<p class="sub">Companhia de Desenvolvimento dos Vales do São Francisco e do Parnaíba — Codevasf<br>' +
+      'Núcleo de Gestão Normativa e de Processos (AE/GPE/UNP)<br>Emitido em ' + esc(dataExt) + '</p>' +
+      '<h2>1. Panorama do repositório</h2>' +
+      tab(['Indicador', 'Quantidade'], [
+        ['Macroprocessos', DADOS.macros.length + ' (' + porCat('gerencial') + ' gerenciais, ' + porCat('finalistico') + ' finalísticos, ' + porCat('suporte') + ' de suporte)'],
+        ['Processos', procs.length], ['Subprocessos', DADOS.subs.length],
+        ['Atividades', DADOS.ativs.length], ['Tarefas', DADOS.tarefas.length],
+        ['Riscos registrados', DADOS.riscos.length], ['Indicadores de desempenho', DADOS.metricas.length],
+        ['Normativos e documentos', DADOS.docs.length]
+      ]) +
+      '<h2>2. Situação do mapeamento</h2>' +
+      '<p>O avanço médio do mapeamento é de <b>' + media + '%</b>. Dos ' + procs.length +
+      ' processos do portfólio, ' + concl.length + ' concluíram os dez marcos, ' + andam.length +
+      ' estão em andamento e ' + naoIni.length + ' ainda não começaram.</p>' +
+      tab(['Situação', 'Processos', 'Participação'], [
+        ['Concluído', concl.length, Math.round(concl.length / procs.length * 100) + '%'],
+        ['Em andamento', andam.length, Math.round(andam.length / procs.length * 100) + '%'],
+        ['Não iniciado', naoIni.length, Math.round(naoIni.length / procs.length * 100) + '%']
+      ]) +
+      '<h2>3. Processos prioritários</h2>' +
+      '<p>' + prior.length + ' processos têm prioridade Alta, na forma da Resolução nº 1099/2025.</p>' +
+      tab(['Código', 'Processo', 'Unidade responsável', 'Situação', 'Avanço', 'Prazo previsto'],
+        prior.map(function (p) {
+          return [codDisp(p.Codigo), p.Nome,
+            p.Unidade_Organica_Responsavel +
+              (siglaNome(p.Unidade_Organica_Responsavel) ? ' — ' + siglaNome(p.Unidade_Organica_Responsavel) : ''),
+            p.Status_Mapeamento, p.Percentual + '%', fmtData(p.Prazo_Previsto)];
+        })) +
+      '<h2>4. Riscos críticos em aberto</h2>' +
+      '<p>' + criticos.length + ' riscos classificados como Alto ou Extremo seguem em aberto, de ' +
+      riscosAb.length + ' riscos não encerrados.</p>' +
+      tab(['ID', 'Risco', 'Vínculo', 'P×I', 'Classificação', 'Responsável'],
+        criticos.map(function (r) {
+          return [r.ID, r.Descricao_Risco, trilhaDisp(r.Vinculo_Codigo),
+            r.Nivel_PxI, r._classe, r.Responsavel];
+        })) +
+      '<h2>5. Indicadores fora da meta</h2>' +
+      tab(['ID', 'Indicador', 'Vínculo', 'Meta', 'Resultado atual', 'Medido em'],
+        foraMeta.map(function (x) {
+          var un = x.Unidade ? ' ' + x.Unidade : '';
+          return [x.ID, x.Nome, trilhaDisp(x.Vinculo_Codigo),
+            x.Meta == null ? '—' : x.Meta + un,
+            x.Resultado_Atual == null ? '—' : x.Resultado_Atual + un,
+            fmtData(x.Ultima_Medicao)];
+        })) +
+      '<h2>6. Prazos vencidos</h2>' +
+      tab(['Código', 'Processo', 'Ponto focal do Nugep', 'Prazo', 'Avanço'],
+        vencidos.map(function (p) {
+          return [codDisp(p.Codigo), p.Nome, p.Ponto_Focal_Nugep, fmtData(p.Prazo_Previsto), p.Percentual + '%'];
+        })) +
+      '<p class="rodape">Documento gerado automaticamente pelo Painel de Processos a partir do repositório ' +
+      'na data indicada. Os dados de mapeamento, risco e desempenho refletem o que estava registrado ' +
+      'no momento da emissão.</p>';
+    var doc = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+      'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>Relatório gerencial — Codevasf</title>' +
+      '<style>@page{size:A4;margin:2cm}' +
+      'body{font-family:"Noto Sans",Calibri,sans-serif;font-size:11pt;color:#1c1c1c}' +
+      'h1{font-size:18pt;color:#071d41;margin:0 0 4pt}' +
+      'h2{font-size:13pt;color:#0c326f;margin:18pt 0 6pt;border-bottom:1pt solid #c5d4eb;padding-bottom:3pt}' +
+      '.sub{font-size:10pt;color:#555;margin:0 0 14pt}' +
+      'table{border-collapse:collapse;width:100%;margin:6pt 0;font-size:9.5pt}' +
+      'th{background:#0c326f;color:#fff;text-align:left;padding:5pt 6pt;border:0.5pt solid #0c326f}' +
+      'td{padding:4pt 6pt;border:0.5pt solid #c9c9c9;vertical-align:top}' +
+      'tr:nth-child(even) td{background:#f4f7fc}' +
+      '.vazio{font-style:italic;color:#555}' +
+      '.rodape{margin-top:18pt;font-size:9pt;color:#555;border-top:0.5pt solid #c9c9c9;padding-top:6pt}' +
+      '</style></head><body>' + corpo + '</body></html>';
+    var blob = new Blob(['\ufeff' + doc], { type: 'application/msword' });
+    var a = d.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'relatorio-gerencial-processos-' + hoje.toISOString().slice(0, 10) + '.doc';
+    d.body.appendChild(a); a.click(); a.remove();
+  }
+  function ligarAcoesCabecalho() {    var exp = $('#actExportCsv');
     if (exp) exp.onclick = function () {
       var cab = ['Codigo', 'Macroprocesso', 'Nome', 'Status_Mapeamento', 'Percentual',
         'Unidade_Organica_Responsavel', 'Ponto_Focal_Nugep', 'Prazo_Previsto'];
@@ -1693,9 +1888,19 @@
     valores: ['Foco na sociedade', 'Excelência', 'Transparência', 'Valorização dos Colaboradores',
       'Sustentabilidade', 'Ética', 'Comprometimento', 'Estímulo à Diversidade', 'Inovação']
   };
-  var MP_ICONES = { 'MG-01': 'fa-bullseye', 'MG-02': 'fa-shield-halved', 'MF-01': 'fa-seedling',
-    'MF-02': 'fa-droplet', 'MF-03': 'fa-water', 'MS-01': 'fa-file-contract',
-    'MS-02': 'fa-users', 'MS-03': 'fa-laptop-code' };
+  var MP_ICONES = {
+    // Um ícone por macroprocesso: na cadeia de valor os 21 aparecem juntos,
+    // então ícone repetido (ou o genérico de reserva) apaga a diferença entre
+    // eles. Cada um alude ao objeto do próprio macroprocesso.
+    'MG-01': 'fa-bullseye', 'MG-02': 'fa-diagram-project', 'MG-03': 'fa-database',
+    'MG-04': 'fa-bullhorn', 'MG-05': 'fa-scale-balanced',
+    'MF-01': 'fa-bridge-water', 'MF-02': 'fa-droplet', 'MF-03': 'fa-water',
+    'MF-04': 'fa-city', 'MF-05': 'fa-store', 'MF-06': 'fa-tractor',
+    'MF-07': 'fa-faucet', 'MF-08': 'fa-handshake',
+    'MS-01': 'fa-users', 'MS-02': 'fa-boxes-stacked', 'MS-03': 'fa-building',
+    'MS-04': 'fa-laptop-code', 'MS-05': 'fa-coins', 'MS-06': 'fa-gavel',
+    'MS-07': 'fa-file-contract', 'MS-08': 'fa-leaf'
+  };
   function statsMacro(cod) {
     var ps = IDX.procsPorMacro[cod] || [];
     if (!ps.length) return 'sem processos cadastrados';
@@ -1704,7 +1909,9 @@
   }
   function blocoCadeia(titulo, classe, icone, itens) {
     return '<div class="cv-bloco ' + classe + '"><div class="cv-titulo"><i class="fas ' + icone +
-      '" aria-hidden="true"></i><span>' + titulo + '</span><span class="cv-qtd">' + itens.length + '</span></div><ul>' +
+      '" aria-hidden="true"></i><span>' + titulo + '</span>' +
+      tagContagem(itens.length, itens.length === 1 ? 'macroprocesso' : 'macroprocessos', 'cv-qtd') +
+      '</div><ul>' +
       itens.map(function (m) {
         return '<li><a href="#/mp/' + encodeURIComponent(m.Codigo) + '">' +
           '<span class="cv-ico"><i class="fas ' + (MP_ICONES[m.Codigo] || 'fa-diagram-project') + '" aria-hidden="true"></i></span>' +
@@ -1897,7 +2104,7 @@
       '<div class="topo"><div><span class="cod" style="font-family:var(--noto-mono,monospace);font-size:var(--fs-sm);color:var(--gray-60)">' + esc(trilhaDisp(p.Trilha)) + '</span>' +
       '<div class="nome">' + esc(p.Nome) + '</div></div>' + tagStatus(p.Status_Mapeamento) + '</div>' +
       '<div class="pp-muted" style="font-size:var(--fs-sm);margin-top:4px">' +
-      [p.Unidade_Organica_Responsavel || '', marcoRotulo(marcoAtual(p))].filter(Boolean).map(esc).join(' · ') + '</div>' +
+      [siglaTexto(p.Unidade_Organica_Responsavel || ''), esc(marcoRotulo(marcoAtual(p)))].filter(Boolean).join(' · ') + '</div>' +
       '<div class="rodape">' + barraPct(p.Percentual) + '</div></a>';
   }
   function catFiltrada() {
@@ -2071,25 +2278,30 @@
 
   /* ── TELA: detalhe (mp | p | sp | a) ──────────────────────────────── */
   function secVinculos(nivel, codigo, semIndicadores) {
-    var docs = vinculados('docs', nivel, codigo);
-    var riscos = vinculados('riscos', nivel, codigo);
-    var inds = semIndicadores ? [] : vinculados('metricas', nivel, codigo);
-    // Atividade não tem papéis próprios: quem executa, aprova, é consultado ou
-    // informado se declara no Processo e no Subprocesso (pedido do usuário).
-    var papeis = nivel === 'Atividade' ? [] : vinculados('papeis', nivel, codigo);
+    // Papéis e envolvidos só existe no Processo: o RACI se pactua com quem
+    // executa o processo, e repeti-lo no Macroprocesso (que é agrupador) e no
+    // Subprocesso duplicaria a mesma matriz em três níveis (pedido do
+    // usuário). Atividade não tem papéis, riscos, indicadores nem normativos
+    // próprios — fica com as regras de negócio, único vínculo com sentido
+    // nesse nível de detalhe.
+    var soRegras = nivel === 'Atividade';
+    var docs = soRegras ? [] : vinculados('docs', nivel, codigo);
+    var riscos = soRegras ? [] : vinculados('riscos', nivel, codigo);
+    var inds = (semIndicadores || soRegras) ? [] : vinculados('metricas', nivel, codigo);
+    var papeis = nivel === 'Processo' ? vinculados('papeis', nivel, codigo) : [];
     var regras = vinculados('regras', nivel, codigo);
-    return (semIndicadores ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
-      '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos</h3>' + tabelaRiscosHtml(riscos, false) + '</div>' +
+    return ((semIndicadores || soRegras) ? '' : '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores de desempenho</h3>' + tabelaIndsHtml(inds, false) + '</div>') +
+      (soRegras ? '' : '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos</h3>' + tabelaRiscosHtml(riscos, false) + '</div>') +
       (papeis.length ? '<div class="pp-card"><h3><i class="fas fa-users" aria-hidden="true"></i> Papéis e envolvidos</h3>' + listaPapeisHtml(papeis) + '</div>' : '') +
       (regras.length ? '<div class="pp-card"><h3><i class="fas fa-gavel" aria-hidden="true"></i> Regras de negócio</h3>' + listaRegrasHtml(regras) + '</div>' : '') +
-      '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Normativos e documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>';
+      (soRegras ? '' : '<div class="pp-card"><h3><i class="fas fa-folder-open" aria-hidden="true"></i> Normativos e documentos vinculados</h3>' + listaDocsHtml(docs) + '</div>');
   }
   // RACI traduzido: Executa (R), Aprova (A), Consultado (C), Informado (I).
   function listaPapeisHtml(papeis) {
     if (!papeis.length) return '<p class="pp-vazio">Nenhum papel cadastrado.</p>';
     return '<div class="br-list raci-lista" role="list">' + papeis.map(function (r) {
       return '<div class="br-item raci-item" role="listitem"><span class="br-tag small raci-' + slug(r.Envolvimento || '') + '">' + esc(r.Envolvimento || '—') + '</span>' +
-        '<div class="raci-tx"><strong>' + esc(r.Papel) + '</strong>' + (r.Unidade_Pessoa ? '<span class="pp-muted"> · ' + esc(r.Unidade_Pessoa) + '</span>' : '') + '</div></div>';
+        '<div class="raci-tx"><strong>' + esc(r.Papel) + '</strong>' + (r.Unidade_Pessoa ? '<span class="pp-muted"> · ' + siglasEmTexto(r.Unidade_Pessoa) + '</span>' : '') + '</div></div>';
     }).join('') + '</div>';
   }
   function listaRegrasHtml(regras) {
@@ -2205,13 +2417,13 @@
           .concat(mp ? [{ rotulo: mp._cod || mp.Codigo, href: '#/mp/' + encodeURIComponent(mp.Codigo) }] : [])
           .concat([{ rotulo: codDisp(p.Codigo) + ' — ' + p.Nome }])) +
         '<section class="ficha-hero nv-p">' +
-        eyebrowFicha('Processo', p.Codigo) +
+        eyebrowFicha('Processo', p.Trilha || p.Codigo) +
         '<h1>' + esc(codDisp(p.Codigo)) + ' — ' + esc(p.Nome) + '</h1>' +
         '<div class="meta">' + tagStatus(p.Status_Mapeamento) +
         '<span>Mapeamento em <strong>' + p.Percentual + '%</strong></span>' +
         '<span>· ' + plural(contarSubprocessosRecursivo(cod), 'subprocesso', 'subprocessos') + ' · ' +
         plural(totalAtivs, 'atividade', 'atividades') + ' · ' + plural(totalTarefas, 'tarefa', 'tarefas') + '</span>' +
-        (p.Unidade_Organica_Responsavel ? '<span>' + esc(p.Unidade_Organica_Responsavel) + '</span>' : '') +
+        (p.Unidade_Organica_Responsavel ? '<span>' + siglaTexto(p.Unidade_Organica_Responsavel) + '</span>' : '') +
         (p.Processo_ECodevasf ? '<span><i class="fas fa-file-lines" aria-hidden="true"></i> ' + (p.Processo_ECodevasf_Link ? '<a href="' + esc(p.Processo_ECodevasf_Link) + '" target="_blank" rel="noopener">e-Codevasf ' + esc(p.Processo_ECodevasf) + '<span class="sr-only"> (abre em nova aba)</span></a>' : 'e-Codevasf ' + esc(p.Processo_ECodevasf)) + '</span>' : '') +
         '</div></section>' +
         '<div class="ficha-grid"><div>' +
@@ -2222,8 +2434,8 @@
         campo('Unidades Orgânicas Corresponsáveis', chips(p.Unidades_Organicas_Corresponsaveis, 'fa-people-group', true), false, 'quem') +
         campo('Ponto focal do Nugep', pontoFocalNugepHtml(p), false, 'quem') +
         campo('Gestor(a) do processo', gestorProcessoHtml(p), false, 'quem') +
-        campo('Prioridade', esc(p.Prioridade || '—'), false, 'quem') +
-        campo('Complexidade', esc(p.Complexidade || '—'), false, 'quem') +
+        campo('Prioridade', tagPrioridade(p.Prioridade) || '—', false, 'quem') +
+        campo('Complexidade', tagComplexidade(p.Complexidade) || '—', false, 'quem') +
         campo('Maturidade do processo', p.Maturidade && tagMaturidade(p.Maturidade), false, 'quem') +
         '<div class="span2 campo-tecnico"><dt>' + termoLink('Caminho Crítico', 'Duração estimada') + '</dt><dd>' + formatarHorasUteis(duracaoRecursivaHoras(cod)) + '</dd></div>' +
         campo('Sistemas utilizados', chips(p.Sistemas, 'fa-desktop'), false, 'tecnico') +
@@ -2262,7 +2474,7 @@
             '<div class="content"><span class="message-body">Nenhuma ação programada para este processo.</span></div></div>') +
         (p.Pendencia
           ? '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>' +
-            '<div class="content"><span class="message-title">Pendência</span>' +
+            '<div class="content"><span class="message-title">Pendência:</span> ' +
             '<span class="message-body">' + esc(p.Pendencia) + '</span></div></div>'
           : '') + '</div>' +
         '</aside></div>';
@@ -2285,10 +2497,10 @@
           .concat(cadeiaSp.map(function (sp2) { return { rotulo: sp2.Codigo, href: '#/sp/' + encodeURIComponent(sp2.Trilha) }; }))
           .concat([{ rotulo: codDisp(s.Codigo) + ' — ' + s.Nome }])) +
         '<section class="ficha-hero nv-sp">' +
-        eyebrowFicha('Subprocesso', s.Codigo) +
+        eyebrowFicha('Subprocesso', s.Trilha || s.Codigo) +
         '<h1>' + esc(codDisp(s.Codigo)) + ' — ' + esc(s.Nome) + '</h1>' +
         '<div class="meta"><span>' + ativs.length + ' atividades mapeadas</span>' +
-        (s.Unidade_Organica_Responsavel ? '<span>· ' + esc(s.Unidade_Organica_Responsavel) + '</span>' : '') +
+        (s.Unidade_Organica_Responsavel ? '<span>· ' + siglaTexto(s.Unidade_Organica_Responsavel) + '</span>' : '') +
         '<span>· Subprocesso de ' + (cadeiaSp.length + 1) + 'º nível' + (cadeiaSp.length > 0 ? ' (aninhado)' : '') + '</span>' +
         (s.Reutilizavel === 'Sim' ? '<span class="br-tag info small"><i class="fas fa-link" aria-hidden="true"></i> Subprocesso reutilizável</span>' : '') +
         '</div></section>' +
@@ -2359,7 +2571,7 @@
         .concat(cadeiaSp2.map(function (spx) { return { rotulo: spx.Codigo, href: '#/sp/' + encodeURIComponent(spx.Trilha) }; }))
         .concat([{ rotulo: codDisp(a.Codigo) }])) +
       '<section class="ficha-hero nv-a">' +
-      eyebrowFicha('Atividade', a.Codigo) +
+      eyebrowFicha('Atividade', a.Trilha || a.Codigo) +
       '<h1>' + esc(codDisp(a.Codigo)) + ' — ' + esc(a.Nome) + '</h1>' +
       '<div class="meta">' +
       (tf3.length ? '<span>· Duração estimada: ' + formatarHorasUteis(duracaoAtividadeHoras(a)) + '</span>' : '') + '</div></section>' +
@@ -2414,7 +2626,7 @@
         .concat(a3 ? [{ rotulo: codDisp(a3.Codigo), href: '#/a/' + encodeURIComponent(a3.Trilha) }] : [])
         .concat([{ rotulo: codDisp(t.Codigo) }])) +
       '<section class="ficha-hero nv-t">' +
-      eyebrowFicha('Tarefa', t.Codigo) +
+      eyebrowFicha('Tarefa', t.Trilha || t.Codigo) +
       '<h1>' + esc(codDisp(t.Codigo)) + ' — ' + esc(t.Nome) + '</h1>' +
       '<div class="meta">' + (t.Tipo_Tarefa ? '<span><i class="fas fa-gear" aria-hidden="true"></i> ' + esc(t.Tipo_Tarefa) + '</span>' : '') +
       (t.Duracao_Estimada ? '<span>· Duração estimada: ' + formatarHorasUteis(horasTarefa(t)) + '</span>' : '') + '</div></section>' +
@@ -2695,7 +2907,7 @@
           '<td><div class="br-checkbox hidden-label"><input id="' + chk + '" name="' + chk + '" type="checkbox" data-doc="' + esc(x.ID) + '" aria-label="Selecionar ' + esc(x.Titulo) + '"' + (marcada ? ' checked' : '') + '><label for="' + chk + '">Selecionar linha</label></div></td>' +
           '<td class="cod" data-th="ID">' + esc(x.ID) + '</td>' +
           '<td data-th="Documento"><strong>' + tit + '</strong></td>' +
-          '<td data-th="Vinculado a">' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</td>' +
+          '<td data-th="Vinculado a">' + linkVinculosResumo(x.Vinculo_Nivel, x.Vinculo_Codigo, 3) + '</td>' +
           '<td data-th="Data">' + fmtData(x.Data) + '</td>' +
           '<td data-th="Situação">' + esc(x.Situacao || '—') + (revisaoVencida(x) ? ' <span class="br-tag revisao-vencida"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Revisão vencida</span>' : '') + '</td></tr>' +
           '<tr class="collapse"><td id="' + cid + '" colspan="7" hidden>' +
@@ -2703,6 +2915,8 @@
           '<div class="br-item" role="listitem"><strong>Tipo:</strong> ' + esc(x.Tipo_Documento || '—') + '</div>' +
           '<div class="br-item" role="listitem"><strong>Versão:</strong> ' + esc(x.Versao || '—') + '</div>' +
           (x.Ato_Aprovacao ? '<div class="br-item" role="listitem"><strong>Ato de aprovação:</strong> ' + esc(x.Ato_Aprovacao) + '</div>' : '') +
+          (listaVinculoPares(x.Vinculo_Nivel, x.Vinculo_Codigo).length > 3
+            ? '<div class="br-item" role="listitem"><strong>Vinculado a:</strong> ' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</div>' : '') +
           '</div></td></tr>';
       }).join('') +
       '</tbody></table></div>' +
@@ -2856,8 +3070,15 @@
     el.innerHTML =
       '<div class="pp-sec-h" style="margin-top:0"><h1>Indicadores de desempenho</h1><div class="linha" aria-hidden="true"></div></div>' +
       categorias.map(function (c) {
-        return '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> ' + esc(c) + '</h3>' + tabelaIndsHtml(porCategoria[c], true) + '</div>';
+        // Uma paginação por categoria, com chave própria: as três tabelas
+        // avançam de forma independente na mesma tela.
+        var lista = porCategoria[c], chave = 'inds-' + slug(c);
+        return '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> ' + esc(c) +
+          ' ' + tagContagem(lista.length, lista.length === 1 ? 'indicador' : 'indicadores') + '</h3>' +
+          tabelaIndsHtml(pagFatia(chave, lista, 5), true) +
+          paginacaoHtml(chave, lista.length, 'indicadores de ' + c) + '</div>';
       }).join('');
+    ligarPaginacao(el, renderIndicadores);
   }
   /* ── TELA: metodologia ────────────────────────────────────────────── */
   /* ── GRÁFICOS (SVG puro, sem dependências; cores do DS gov.br) ────── */
@@ -3017,9 +3238,12 @@
     var funil = MARCOS_ROTULOS.map(function (rot, i) {
       return { rotulo: 'M' + (i + 1) + ' · ' + rot, valor: procs.filter(function (p) { return simNao(valMarco(p, i)); }).length };
     });
-    // evolução por mês (conclusões acumuladas)
+    // evolução por mês (conclusões acumuladas). Conta só quem de fato concluiu
+    // os dez marcos: Data_Conclusao também carrega a data planejada dos que
+    // ainda não começaram, e contá-la aqui inflaria o gráfico com conclusões
+    // que não aconteceram.
     var meses = {};
-    procs.filter(function (p) { return p.Data_Conclusao; }).forEach(function (p) {
+    procs.filter(function (p) { return p.Data_Conclusao && p._status === 'concluido'; }).forEach(function (p) {
       var k = String(p.Data_Conclusao).slice(0, 7); meses[k] = (meses[k] || 0) + 1;
     });
     var acc = 0, linha = Object.keys(meses).sort().map(function (k) {
@@ -3033,7 +3257,10 @@
     // em css/govbr-ds.css): azul = gerencial, verde = finalístico, azul-marinho = suporte.
     var CAT_COR = { gerencial: '#005ca9', finalistico: '#007d4e', suporte: '#222b54' };
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h1>Dashboard gerencial</h1><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>Dashboard gerencial</h1>' +
+      '<button class="br-button secondary small" type="button" id="btnRelatorioWord">' +
+      '<i class="fas fa-file-word" aria-hidden="true"></i> Gerar relatório gerencial</button>' +
+      '<div class="linha" aria-hidden="true"></div></div>' +
       '<div class="kpi-grid" style="margin-top:0">' +
       '<div class="kpi"><span class="num">' + cobertura + '%</span><span class="lbl">Processos publicados' + dica('Processos com todos os marcos do mapeamento (M1–M10) concluídos, em relação ao total do portfólio.') + '</span><span class="sub">' + concl + ' de ' + procs.length + ' processos</span></div>' +
       '<div class="kpi"><span class="num">' + media + '%</span><span class="lbl">Avanço médio' + dica('Percentual médio de execução do mapeamento entre todos os processos do portfólio.') + '</span><span class="sub">' + andam + ' em andamento</span></div>' +
@@ -3087,17 +3314,22 @@
         colunas: [{ r: 'Código', curta: true }, { r: 'Processo', principal: true }, { r: 'Responsável' }, { r: 'Prazo', curta: true }, { r: 'Avanço', curta: true }],
         linhas: atrasados.map(function (p) {
           return '<tr data-link><td class="cod">' + esc(codDisp(p.Codigo)) + '</td><td><a href="#/p/' + encodeURIComponent(p.Trilha) + '"><strong>' + esc(p.Nome) + '</strong></a></td>' +
-            '<td>' + esc(p.Ponto_Focal_Nugep || '—') + '</td><td class="text-nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
+            '<td>' + esc(p.Ponto_Focal_Nugep || '—') + areaFocalHtml(p.Ponto_Focal_Nugep) + '</td><td class="text-nowrap">' + fmtData(p.Prazo_Previsto) + '</td>' +
             '<td style="min-width:120px">' + barraPct(p.Percentual) + '</td></tr>';
         }).join('')
       }) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum processo com prazo vencido.</span></div></div>') + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-shield-halved" aria-hidden="true"></i> Riscos críticos abertos</h3>' +
-      (criticos.length ? tabelaRiscosHtml(criticos, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum risco crítico em aberto.</span></div></div>') + '</div>' +
+      (criticos.length ? tabelaRiscosHtml(pagFatia('dashRiscos', criticos, 5), true) +
+        paginacaoHtml('dashRiscos', criticos.length, 'riscos críticos abertos') : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Nenhum risco crítico em aberto.</span></div></div>') + '</div>' +
       '<div class="pp-card"><h3><i class="fas fa-chart-line" aria-hidden="true"></i> Indicadores fora da meta</h3>' +
       (function () {
         var fora = DADOS.metricas.filter(function (x) { return x._sit === 'Meta não atingida'; });
-        return fora.length ? tabelaIndsHtml(fora, true) : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Todos os indicadores medidos estão na meta.</span></div></div>';
+        return fora.length ? tabelaIndsHtml(pagFatia('dashInds', fora, 5), true) +
+          paginacaoHtml('dashInds', fora.length, 'indicadores fora da meta') : '<div class="br-message success" role="status"><div class="icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div><div class="content"><span class="message-body">Todos os indicadores medidos estão na meta.</span></div></div>';
       })() + '</div></section>';
+    ligarPaginacao(el, renderDashboard);
+    var btnRel = $('#btnRelatorioWord');
+    if (btnRel) btnRel.onclick = gerarRelatorioWord;
     $all('#viewDashboard tr[data-link]').forEach(function (tr) {
       tr.addEventListener('click', function (ev) {
         // A linha é atalho para a ficha, menos onde há controle próprio:
@@ -3239,7 +3471,7 @@
       '<span class="mc-trilho" aria-hidden="true"></span>' +
       '<span class="mc-nota">atividades contínuas — atravessam do M1 ao M10 e seguem depois da publicação</span>' +
       '</div></div>' +
-      '<div class="br-message warning" role="status"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div><div class="content"><span class="message-title">Dados fictícios.</span> <span class="message-body">Todo o conteúdo exibido foi criado apenas para demonstrar o painel — substitua na planilha.</span></div><div class="close"><button class="br-button circle small" type="button" aria-label="Fechar a mensagem"><i class="fas fa-times" aria-hidden="true"></i></button></div></div></section>';
+      '</section>';
     ligarPaginacao(el, renderRepositorio);
     window.BRWizardInit(el);
     var wCanc = el.querySelector('#wizardJornada .wizard-btn-canc');
@@ -3333,12 +3565,15 @@
     });
     var integrantes = DADOS.nugep.filter(function (m) { return nivelNugep(m) !== 1 && nivelNugep(m) !== 2; });
     el.innerHTML =
-      '<div class="pp-sec-h" style="margin-top:0"><h1>NUGEP — Núcleo de Gestão Normativa e de Processos</h1><div class="linha" aria-hidden="true"></div></div>' +
+      '<div class="pp-sec-h" style="margin-top:0"><h1>NUGEP — Núcleo de Gestão Normativa e de Processos' +
+      ' <span class="nugep-conta">' + tagContagem(integrantes.length, integrantes.length === 1 ? 'integrante' : 'integrantes') + '</span></h1><div class="linha" aria-hidden="true"></div></div>' +
       (integrantes.length ? '<div class="nugep-grid">' + integrantes.map(function (m) {
         var meusProcs = processosDoNugep(m.Nome);
         return '<article class="nugep-card">' + avatarNugep(m) +
           '<h3>' + esc(m.Nome) + '</h3>' +
-          '<p class="nugep-unid"><span class="nugep-sigla">' + siglaTag(m.Unidade_Sigla || '') + '</span></p>' +
+          // Só a sigla, como no campo Gestor(a) do processo: o nome da unidade
+          // por extenso fica no Glossário, a um clique da própria sigla.
+          (m.Unidade_Sigla ? '<p class="nugep-unid"><span class="nugep-sigla">' + siglaTag(m.Unidade_Sigla) + '</span></p>' : '') +
           contatoNugep(m) +
           (meusProcs.length ? '<div class="nugep-procs"><b><i class="fas fa-diagram-project" aria-hidden="true"></i> Processos sob responsabilidade</b><ul>' +
             meusProcs.map(function (p) { return '<li><a href="#/p/' + encodeURIComponent(p.Trilha) + '">' + esc(p.Trilha) + ' — ' + esc(p.Nome) + '</a></li>'; }).join('') +
@@ -3548,17 +3783,20 @@
   function posCarga() {
     VISITAS_NAVEGADOR = contarVisitaRepositorio();
     var chip = $('#syncChip'); if (chip) chip.textContent = FONTE;
-    var c;
-    if ((c = $('#cntCatalogo'))) c.textContent = DADOS.procs.length;
-    if ((c = $('#cntDocumentos'))) c.textContent = DADOS.docs.length;
-    if ((c = $('#cntRiscos'))) c.textContent = DADOS.riscos.length;
-    if ((c = $('#cntIndicadores'))) c.textContent = DADOS.metricas.length;
-    if ((c = $('#cntRepositorio'))) c.textContent = DADOS.repo.length;
-    if ((c = $('#cntNugep'))) c.textContent = DADOS.nugep.length;
-    if ((c = $('#cntGlossario'))) c.textContent = DADOS.glossario.length;
-    if ((c = $('#cntFaq'))) c.textContent = DADOS.faq.length;
+    // Contadores das abas: Tag de Contagem do DS, com a descrição do que se
+    // conta indo para o title (o número sozinho não diz nada em leitor de tela).
+    [['#cntCatalogo', DADOS.procs.length, 'processos no catálogo'],
+     ['#cntDocumentos', DADOS.docs.length, 'normativos e documentos'],
+     ['#cntRiscos', DADOS.riscos.length, 'riscos registrados'],
+     ['#cntIndicadores', DADOS.metricas.length, 'indicadores de desempenho'],
+     ['#cntRepositorio', DADOS.repo.length, 'itens no repositório'],
+     ['#cntNugep', DADOS.nugep.length, 'integrantes do Nugep'],
+     ['#cntGlossario', DADOS.glossario.length, 'termos no glossário'],
+     ['#cntFaq', DADOS.faq.length, 'perguntas frequentes']
+    ].forEach(function (t) { preencherContagem($(t[0]), t[1], t[2]); });
     ligarAcoesCabecalho();
     montarNotificacoes();
+    conferirIcones();
     if (window.BRUploadInit) window.BRUploadInit();
     if (window.BRTooltipInit) window.BRTooltipInit();
     if (window.BRMessageInit) window.BRMessageInit();
@@ -3623,10 +3861,45 @@
         '#/p/' + encodeURIComponent(p.Trilha));
     }).join('') : '<div class="empty-state"><i class="fas fa-check-circle" aria-hidden="true"></i>Nenhum mapeamento com prazo vencido.</div>';
     var total = riscos.length + prazos.length;
-    var cR = $('#notifCountRiscos'), cP = $('#notifCountPrazos'), badge = $('#notifBadge');
-    if (cR) cR.textContent = riscos.length;
-    if (cP) cP.textContent = prazos.length;
-    if (badge) { badge.textContent = total; badge.hidden = total === 0; }
+    // Os três contadores de alerta são Tag de Contagem do DS: o helper cuida do
+    // corte em 999+, do title com o valor exato e do aria-hidden no número —
+    // sem isso o leitor de tela anuncia um número solto, sem dizer de quê.
+    preencherContagem($('#notifCountRiscos'), riscos.length,
+      riscos.length === 1 ? 'risco crítico em aberto' : 'riscos críticos em aberto');
+    preencherContagem($('#notifCountPrazos'), prazos.length,
+      prazos.length === 1 ? 'mapeamento com prazo vencido' : 'mapeamentos com prazo vencido');
+    var badge = $('#notifBadge');
+    if (badge) {
+      preencherContagem(badge, total, total === 1 ? 'alerta operacional' : 'alertas operacionais');
+      badge.hidden = total === 0;
+    }
+  }
+
+  // Guarda contra ícone inexistente: uma classe FA que o pacote carregado não
+  // define renderiza um círculo vazio, sem erro nenhum no console — foi o que
+  // aconteceu com 'fa-dam'. Aqui as tabelas de ícone são conferidas contra a
+  // fonte real assim que a página monta, e o que não tiver glifo aparece como
+  // aviso nomeando a tabela e a chave.
+  function conferirIcones() {
+    var tabelas = {
+      MP_ICONES: MP_ICONES, ICONE_STATUS: ICONE_STATUS, ICONE_NIVEL: ICONE_NIVEL,
+      ICONE_MATURIDADE: ICONE_MATURIDADE, ICONE_PRIORIDADE: ICONE_PRIORIDADE,
+      ICONE_COMPLEXIDADE: ICONE_COMPLEXIDADE, ICONE_TIPO_ATIV: ICONE_TIPO_ATIV
+    };
+    var host = d.createElement('div');
+    host.style.cssText = 'position:absolute;left:-9999px;top:0';
+    d.body.appendChild(host);
+    var faltando = [];
+    Object.keys(tabelas).forEach(function (nome) {
+      Object.keys(tabelas[nome]).forEach(function (chave) {
+        var cls = tabelas[nome][chave];
+        var i = d.createElement('i'); i.className = 'fas ' + cls; host.appendChild(i);
+        var ct = window.getComputedStyle(i, '::before').content;
+        if (ct === 'none' || ct === 'normal') faltando.push(nome + '.' + chave + ' = ' + cls);
+      });
+    });
+    host.remove();
+    if (faltando.length) console.warn('Ícones sem glifo na Font Awesome carregada:\n' + faltando.join('\n'));
   }
 
   function iniciar() {
