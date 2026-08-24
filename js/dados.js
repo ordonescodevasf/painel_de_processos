@@ -21062,7 +21062,7 @@ window.PAINEL_DADOS = {
    "ID": "RIS-098",
    "Vinculo_Nivel": "Subprocesso",
    "Vinculo_Codigo": "MG-01 › PP-01 › SP-01",
-   "Descricao_Risco": "pEI aprovado pela Diretoria Executiva entregue com deficiência técnica, exigindo retrabalho e retardando o processo.",
+   "Descricao_Risco": "PEI aprovado pela Diretoria Executiva entregue com deficiência técnica, exigindo retrabalho e retardando o processo.",
    "Categoria": "Operacional",
    "Fatores": "Prazo de elaboração comprimido; informação de base incompleta; ausência de revisão por outro técnico",
    "Cronograma_Risco": "Elaboração do produto",
@@ -21072,7 +21072,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Revisão de pEI aprovado pela Diretoria Executiva por técnico distinto do elaborador antes da submissão.",
+   "Controles_Tratamento": "Revisão de PEI aprovado pela Diretoria Executiva por técnico distinto do elaborador antes da submissão.",
    "Prazo_Tratamento": "31/12/2026",
    "Responsavel": "AE/GPE",
    "Status": "Aberto"
@@ -21879,7 +21879,7 @@ window.PAINEL_DADOS = {
    "ID": "RIS-129",
    "Vinculo_Nivel": "Subprocesso",
    "Vinculo_Codigo": "MG-03 › PP-04 › SP-01",
-   "Descricao_Risco": "pSI e normas complementares vigentes mantido sem revisão, deixando de refletir a norma ou a necessidade vigente.",
+   "Descricao_Risco": "PSI e normas complementares vigentes mantido sem revisão, deixando de refletir a norma ou a necessidade vigente.",
    "Categoria": "Operacional",
    "Fatores": "Revisão sem periodicidade definida; responsável não designado; mudança normativa não acompanhada",
    "Cronograma_Risco": "Entre revisões",
@@ -22791,7 +22791,7 @@ window.PAINEL_DADOS = {
    "ID": "RIS-164",
    "Vinculo_Nivel": "Subprocesso",
    "Vinculo_Codigo": "MG-05 › PP-06 › SP-01",
-   "Descricao_Risco": "Decisão tomada sobre informação incompleta ou desatualizada, comprometendo pAINT aprovado.",
+   "Descricao_Risco": "Decisão tomada sobre informação incompleta ou desatualizada, comprometendo PAINT aprovado.",
    "Categoria": "Operacional",
    "Fatores": "Fonte de dado dispersa entre áreas; levantamento sem verificação em campo; prazo curto para análise",
    "Cronograma_Risco": "Antes da decisão",
@@ -22801,7 +22801,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Conferência dos dados contra a fonte primária e registro da metodologia que sustenta pAINT aprovado.",
+   "Controles_Tratamento": "Conferência dos dados contra a fonte primária e registro da metodologia que sustenta PAINT aprovado.",
    "Prazo_Tratamento": "31/12/2026",
    "Responsavel": "Consad/AUD",
    "Status": "Aberto"
@@ -23228,7 +23228,7 @@ window.PAINEL_DADOS = {
    "ID": "RIS-181",
    "Vinculo_Nivel": "Subprocesso",
    "Vinculo_Codigo": "MF-01 › PP-03 › SP-03",
-   "Descricao_Risco": "Indisponibilidade por falha não prevenida, interrompendo o serviço que depende de pSB e PAE revisados.",
+   "Descricao_Risco": "Indisponibilidade por falha não prevenida, interrompendo o serviço que depende de PSB e PAE revisados.",
    "Categoria": "Operacional",
    "Fatores": "Predominância de manutenção corretiva; ativo em fim de vida útil; peça de reposição indisponível",
    "Cronograma_Risco": "A qualquer momento",
@@ -24910,7 +24910,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Prazo interno inferior ao prazo externo e alerta de vencimento antes de emitir cAT emitida.",
+   "Controles_Tratamento": "Prazo interno inferior ao prazo externo e alerta de vencimento antes de emitir CAT emitida.",
    "Prazo_Tratamento": "31/12/2026",
    "Responsavel": "AA/GGP",
    "Status": "Aberto"
@@ -25375,7 +25375,7 @@ window.PAINEL_DADOS = {
    "ID": "RIS-257",
    "Vinculo_Nivel": "Subprocesso",
    "Vinculo_Codigo": "MS-04 › PP-01 › SP-01",
-   "Descricao_Risco": "pDTIC aprovado entregue com deficiência técnica, exigindo retrabalho e retardando o processo.",
+   "Descricao_Risco": "PDTIC aprovado entregue com deficiência técnica, exigindo retrabalho e retardando o processo.",
    "Categoria": "Operacional",
    "Fatores": "Prazo de elaboração comprimido; informação de base incompleta; ausência de revisão por outro técnico",
    "Cronograma_Risco": "Elaboração do produto",
@@ -25385,7 +25385,7 @@ window.PAINEL_DADOS = {
    "Nivel_PxI": 12,
    "Classificacao": "Alto",
    "Resposta": "Mitigar",
-   "Controles_Tratamento": "Revisão de pDTIC aprovado por técnico distinto do elaborador antes da submissão.",
+   "Controles_Tratamento": "Revisão de PDTIC aprovado por técnico distinto do elaborador antes da submissão.",
    "Prazo_Tratamento": "31/12/2026",
    "Responsavel": "AA/GTI",
    "Status": "Aberto"
@@ -46816,5 +46816,5 @@ window.PAINEL_DADOS = {
    "Valor": "Repositório de materiais e ferramentas"
   }
  ],
- "_gerado_em": "2026-08-19 01:02"
+ "_gerado_em": "2026-08-24 18:40"
 };

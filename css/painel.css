@@ -675,7 +675,12 @@ body.contraste-alto .hier-item .hier-nome{color:#fff;}
 .br-tab .tab-nav{overflow-x:visible;overflow-y:visible;}
 .br-tab .tab-nav ul{flex-wrap:nowrap;overflow:visible;}
 .br-tab .tab-item{white-space:nowrap;flex:0 0 auto;}
-.tab-mais-list{min-width:248px;right:0;left:auto;}
+.tab-mais-list{min-width:248px;right:0;left:auto;
+  /* Reserva de rolagem para o caso de o JS não ter medido ainda: sendo
+     position:fixed, item abaixo da dobra não pode ser alcançado rolando a
+     página. posicionarDropdownFixo() refina o max-height com a altura real
+     disponível abaixo do gatilho. */
+  max-height:calc(100vh - 90px);overflow-y:auto;}
 .tab-item button .seta-mais{font-size:9px;margin-left:2px;color:var(--gray-40);
   transition:transform var(--dur-fast) var(--ease);}
 .tab-item button[aria-expanded="true"] .seta-mais{transform:rotate(180deg);}

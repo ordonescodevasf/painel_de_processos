@@ -1,25 +1,29 @@
 /* ════════════════════════════════════════════════════════════════════
    REPOSITÓRIO DE PROCESSOS — aplicação (dados + rotas + telas).
    Fonte de dados, em ordem de prioridade:
-     1. Google Sheets (gviz JSONP), se PAINEL_CONFIG.googleSheetId
-        estiver preenchido — mesmo padrão do Painel do PTD;
-     2. Planilha local data/painel-processos-dados.xlsx (SheetJS);
-     3. js/dados.js (window.PAINEL_DADOS), gerado por
-        scripts/planilha_para_js.py — funciona até em file://.
+     1. Google Sheets (gviz JSONP), a planilha viva — editar a planilha
+        reflete no painel no próximo carregamento;
+     2. data/painel-processos-dados.xlsx (SheetJS), a cópia local.
+   Só estas duas, por decisão do usuário. Se as duas falharem, o painel
+   mostra a tela de erro em vez de servir dado embutido antigo — melhor
+   dizer "não carregou" do que exibir número velho como se fosse atual.
    ════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
   /* ── configuração ─────────────────────────────────────────────────── */
   var CONFIG = Object.assign({
-    googleSheetId: '',                      // cole aqui o ID da planilha Google (opcional)
+    // Padrões: a configuração de instalação mora em window.PAINEL_CONFIG, no
+    // index.html, e é aplicada sobre estes valores. O ID da planilha viva fica
+    // lá, não aqui — repetir o valor nos dois lugares faria um contradizer o
+    // outro na primeira edição.
+    googleSheetId: '',
     arquivoXlsx: 'data/painel-processos-dados.xlsx',
     // Corrigido: faltavam 6 abas reais (Metricas/Medicoes substituíram
     // Indicadores; Papeis, Regras, Cultura_Processos e Iniciativas nunca
     // tinham entrado aqui) — carregarXlsx() só busca o que está nesta
     // lista, então elas SEMPRE voltavam vazias ao carregar da planilha real
-    // ou do Google Sheets (só apareciam com dados porque js/dados.js
-    // embutido cobria o buraco, escondendo o problema em qualquer preview).
+    // ou do Google Sheets.
     abas: ['Macroprocessos', 'Processos', 'Subprocessos', 'Atividades', 'Tarefas',
            'Documentos', 'Riscos', 'Metricas', 'Medicoes', 'Papeis', 'Regras',
            'Cultura_Processos', 'Iniciativas', 'Competencias',
@@ -123,14 +127,30 @@
     } catch (e) { return 0; }
   }
 
+  // Valor de erro de fórmula do Excel/Sheets. As fórmulas do .xlsx não
+  // sobrevivem à importação para o Google Sheets, então a coluna vem com o
+  // texto do erro em vez do valor — tratar como vazio, nunca como dado.
+  var LIXO_FORMULA = /^#(ERROR!|REF!|N\/A|VALUE!|NAME\?|NUM!|NULL!|DIV\/0!)/i;
+  function limpo(v) {
+    return (typeof v === 'string' && LIXO_FORMULA.test(v.trim())) ? null : v;
+  }
   function gvizLinhas(table) {               // tabela gviz → [{Header: valor}]
-    var cols = (table.cols || []).map(function (c) { return (c.label || c.id || '').trim(); });
+    // NUNCA usar c.id como nome de coluna: o gviz devolve id "A","B","C"… para
+    // toda planilha, então o fallback antigo (label || id) produzia cabeçalho
+    // truthy sempre, a guarda de "sem label" nunca disparava e todos os campos
+    // vinham chaveados por letra — painel carregado e completamente vazio.
+    var cols = (table.cols || []).map(function (c) { return String(c.label || '').trim(); });
     var rows = (table.rows || []).map(function (r) {
-      return (r.c || []).map(function (c) { return c ? (c.v != null ? c.v : c.f) : null; });
+      return (r.c || []).map(function (c) { return c ? limpo(c.v != null ? c.v : c.f) : null; });
     });
-    // Se os labels vierem vazios, a 1ª linha é o cabeçalho
+    // Sem labels, a 1ª linha é o cabeçalho
     if (!cols.some(Boolean) && rows.length) { cols = rows.shift().map(function (x) { return String(x || '').trim(); }); }
-    return rows.filter(function (r) { return r[0] != null && String(r[0]).trim() !== ''; })
+    // Linha vazia = TODA célula vazia. Testar só a coluna 0 descartava toda a
+    // hierarquia, porque nela a coluna 0 é a Trilha — fórmula, que chega como
+    // #ERROR! e limpo() anula. O filtro não pode depender de uma coluna.
+    return rows.filter(function (r) {
+      return r.some(function (c) { return c != null && String(c).trim() !== ''; });
+    })
       .map(function (r) {
         var o = {};
         cols.forEach(function (k, i) { if (k) o[k] = r[i] != null ? r[i] : null; });
@@ -155,7 +175,17 @@
     });
   }
   function carregarGoogle() {
-    return Promise.all(CONFIG.abas.map(carregarAbaGviz)).then(function (listas) {
+    // Uma aba renomeada na planilha não pode derrubar a fonte inteira: só as
+    // duas abas sem as quais não há painel são obrigatórias; as outras, se
+    // faltarem, vêm vazias e o console diz qual.
+    var ESSENCIAIS = ['Macroprocessos', 'Processos'];
+    return Promise.all(CONFIG.abas.map(function (aba) {
+      return carregarAbaGviz(aba).catch(function (e) {
+        if (ESSENCIAIS.indexOf(aba) >= 0) throw new Error('aba "' + aba + '" — ' + e.message);
+        console.warn('Aba "' + aba + '" não veio do Google Sheets (' + e.message + '); segue vazia.');
+        return [];
+      });
+    })).then(function (listas) {
       var o = {};
       CONFIG.abas.forEach(function (aba, i) { o[aba] = listas[i]; });
       FONTE = 'Google Sheets (tempo real)';
@@ -164,9 +194,10 @@
   }
   function carregarXlsx() {
     if (typeof XLSX === 'undefined') return Promise.reject(new Error('SheetJS indisponível'));
+    var alvo = CONFIG.arquivoXlsx, sep = alvo.indexOf('?') >= 0 ? '&' : '?';
     // Cache-bust: sem isso, o navegador pode reservir a planilha antiga do
     // cache HTTP mesmo depois do arquivo mudar no servidor.
-    return fetch(CONFIG.arquivoXlsx + '?t=' + Date.now()).then(function (r) {
+    return fetch(alvo + sep + 't=' + Date.now()).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.arrayBuffer();
     }).then(function (buf) {
@@ -177,25 +208,93 @@
         o[aba] = ws ? XLSX.utils.sheet_to_json(ws, { defval: null, raw: true })
           .filter(function (l) { var k = Object.keys(l)[0]; return l[k] != null && String(l[k]).trim() !== ''; }) : [];
       });
-      FONTE = 'Planilha local (' + CONFIG.arquivoXlsx.split('/').pop() + ')';
+      FONTE = 'Cópia local (' + CONFIG.arquivoXlsx.split('/').pop() + ')';
       return o;
     });
   }
-  function carregarEmbutido() {
-    if (window.PAINEL_DADOS) {
-      FONTE = 'Dados embutidos (js/dados.js' +
-        (window.PAINEL_DADOS._gerado_em ? ', ' + window.PAINEL_DADOS._gerado_em : '') + ')';
-      return Promise.resolve(window.PAINEL_DADOS);
+  // Trilha é a chave de rota e de vínculo pai/filho de toda a hierarquia. Na
+  // planilha ela é fórmula, e fórmula não sobrevive à importação para o Google
+  // Sheets — então o painel a reconstrói a partir das colunas de código, que
+  // são dado puro. Reconstruir é melhor que rejeitar a fonte: a planilha viva
+  // continua servindo, sem depender de quem importou ter colado como valores.
+  var TRILHA_PAIS = {
+    Processos: ['Macroprocesso'],
+    Subprocessos: ['Macroprocesso', 'Processo'],
+    Atividades: ['Macroprocesso', 'Processo', 'Subprocesso'],
+    Tarefas: ['Macroprocesso', 'Processo', 'Subprocesso', 'Atividade']
+  };
+  // Colunas de fórmula que o Google Sheets não importa, por aba. Todas são
+  // deriváveis de dado puro que está na mesma linha, então o painel recalcula
+  // em vez de rejeitar a planilha viva.
+  var VINC_ABAS = ['Documentos', 'Riscos', 'Metricas', 'Papeis'];
+  function reconstruirFormulas(o) {
+    var refeitas = 0, semChave = 0, vinc = 0, pxi = 0, pct = 0;
+    // Macroprocesso: a Trilha é o próprio código (raiz da hierarquia).
+    (o.Macroprocessos || []).forEach(function (r) {
+      if ((!r.Trilha || !String(r.Trilha).trim()) && r.Codigo) { r.Trilha = r.Codigo; refeitas++; }
+    });
+    // Vinculo_Nivel sai do formato do Vinculo_Codigo — é a mesma regra que
+    // nivelDoCodigo() já aplica no resto do painel. Sem ele, vinculados() não
+    // casa nada e as fichas perdem normativo, risco, indicador e RACI.
+    VINC_ABAS.forEach(function (aba) {
+      (o[aba] || []).forEach(function (r) {
+        if ((!r.Vinculo_Nivel || !String(r.Vinculo_Nivel).trim()) && r.Vinculo_Codigo) {
+          r.Vinculo_Nivel = nivelDoCodigo(r.Vinculo_Codigo); vinc++;
+        }
+      });
+    });
+    // Risco: P×I e a classificação são cálculo, não digitação.
+    (o.Riscos || []).forEach(function (r) {
+      var p = parseFloat(r.Probabilidade_1a5), i = parseFloat(r.Impacto_1a5);
+      if (!isFinite(p) || !isFinite(i)) return;
+      if (r.Nivel_PxI == null || String(r.Nivel_PxI).trim() === '') { r.Nivel_PxI = p * i; pxi++; }
+      if (!r.Classificacao || !String(r.Classificacao).trim()) r.Classificacao = classeRisco(p * i);
+    });
+    // Percentual de mapeamento: são os 10 marcos contados, não um número
+    // digitado. Sem recalcular, o painel mostrava "0%" ao lado de "M3 -
+    // Subprocessos modelados" na mesma linha, e "Avanço médio 0%" ao lado de
+    // "2 concluídos" — combinação impossível.
+    (o.Processos || []).forEach(function (r) {
+      if (r.Percentual != null && String(r.Percentual).trim() !== '') return;
+      var feitos = 0;
+      for (var i = 0; i < MARCOS.length; i++) if (simNao(valMarco(r, i))) feitos++;
+      r.Percentual = Math.round((feitos / MARCOS.length) * 100);
+      pct++;
+    });
+    Object.keys(TRILHA_PAIS).forEach(function (aba) {
+      (o[aba] || []).forEach(function (r) {
+        if (r.Trilha && String(r.Trilha).trim()) return;
+        var partes = TRILHA_PAIS[aba].map(function (c) { return r[c]; }).concat([r.Codigo])
+          .filter(function (x) { return x != null && String(x).trim() !== ''; });
+        // Subprocesso aninhado: o pai não é o processo, é outro subprocesso —
+        // Vinculo_Pai carrega o código dele e precisa entrar no caminho.
+        if (aba === 'Subprocessos' && r.Vinculo_Pai && /^SP-/.test(String(r.Vinculo_Pai))
+          && String(r.Vinculo_Pai) !== String(r.Codigo)) {
+          partes.splice(partes.length - 1, 0, r.Vinculo_Pai);
+        }
+        if (partes.length > 1) { r.Trilha = partes.join(' › '); refeitas++; }
+        else semChave++;
+      });
+    });
+    if (refeitas || vinc || pxi) {
+      console.info('Colunas de fórmula recalculadas: Trilha em ' + refeitas +
+        ', Vinculo_Nivel em ' + vinc + ', P×I em ' + pxi +
+        ', Percentual em ' + pct + ' registros.');
     }
-    return Promise.reject(new Error('js/dados.js ausente'));
+    if (semChave) throw new Error(semChave + ' registros sem código para reconstruir a Trilha');
+    return o;
   }
   function carregarDados() {
+    // Duas fontes, na ordem: planilha viva no Google Sheets, depois a cópia
+    // local. Sem terceiro nível — se as duas falharem, quem abre o painel vê
+    // o erro, não um retrato antigo dos dados.
     var cadeia = CONFIG.googleSheetId
-      ? carregarGoogle().catch(function (e) { console.warn('Google Sheets falhou:', e.message); return carregarXlsx(); })
+      ? carregarGoogle().catch(function (e) {
+        console.warn('Google Sheets não pôde ser lido (' + e.message + '); tentando a cópia local.');
+        return carregarXlsx();
+      })
       : carregarXlsx();
-    return cadeia
-      .catch(function (e) { console.warn('Planilha local falhou:', e.message); return carregarEmbutido(); })
-      .then(normalizar);
+    return cadeia.then(reconstruirFormulas).then(normalizar);
   }
 
   /* ── normalização + índices ───────────────────────────────────────── */
@@ -272,34 +371,7 @@
     dd.repo.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.equipeProcesso.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
-    /* Foto e hierarquia dos integrantes: se a planilha em uso ainda não tem
-       as colunas Foto e Hierarquia, aproveita o que está em js/dados.js,
-       casando pelo e-mail — assim o avatar aparece com foto em qualquer
-       fonte de dados, e a planilha passa a mandar assim que as colunas
-       forem criadas (scripts/gerar_planilha.py já as gera). */
-    (function () {
-      var emb = (window.PAINEL_DADOS && window.PAINEL_DADOS.NUGEP) || [];
-      if (!emb.length) return;
-      var porEmail = {};
-      emb.forEach(function (x) { if (x.Email) porEmail[String(x.Email).toLowerCase()] = x; });
-      dd.nugep.forEach(function (m) {
-        var ref = porEmail[String(m.Email || '').toLowerCase()];
-        if (!ref) return;
-        if (!m.Foto) m.Foto = ref.Foto || '';
-        if (m.Hierarquia == null || m.Hierarquia === '') m.Hierarquia = ref.Hierarquia || 0;
-      });
-      // Chefias (níveis 1 e 2) ausentes da planilha entram pelo embutido —
-      // elas existem no painel só para mostrar a hierarquia da unidade.
-      emb.forEach(function (x) {
-        var n = +(x.Hierarquia || 0);
-        if (n !== 1 && n !== 2) return;
-        var ja = dd.nugep.some(function (m) {
-          return String(m.Email || '').toLowerCase() === String(x.Email || '').toLowerCase();
-        });
-        if (!ja) dd.nugep.push(Object.assign({}, x));
-      });
-      dd.nugep.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
-    })();
+
     dd.faq.sort(function (a, b) { return (num(a.Ordem) || 0) - (num(b.Ordem) || 0); });
     dd.glossario.sort(function (a, b) { return String(a.Termo || '').localeCompare(String(b.Termo || ''), 'pt-BR'); });
     dd.params = {};
@@ -590,7 +662,9 @@
     var itens = listar(str);
     if (!itens.length) return '<span class="pp-vazio">Não informado</span>';
     return '<div class="chip-lista">' + itens.map(function (x) {
-      return '<span class="chip">' + (icone ? '<i class="fas ' + icone + '" aria-hidden="true"></i> ' : '') + (comoSigla ? siglaTag(x) : esc(x)) + '</span>';
+      // Item que não é sigla inteira ainda pode citar uma no meio da frase
+      // ("Demanda formalizada pela AE/GPE"), então passa por siglasEmTexto.
+      return '<span class="chip">' + (icone ? '<i class="fas ' + icone + '" aria-hidden="true"></i> ' : '') + (comoSigla ? siglaTag(x) : siglasEmTexto(x)) + '</span>';
     }).join('') + '</div>';
   }
   // ── texto responsivo ──────────────────────────────────────────────
@@ -1230,7 +1304,7 @@
       return '<div class="doc-item"><i class="fas ' + ic + ' fa-stack-ico" aria-hidden="true"></i><div>' +
         '<div class="tit">' + tit + (revisaoVencida(x) ? ' <span class="br-tag revisao-vencida"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Revisão vencida</span>' : '') + '</div><div class="meta">' + esc(x.Tipo_Documento || 'Documento') +
         (x.Versao ? ' · v' + esc(x.Versao) : '') + (x.Data ? ' · ' + fmtData(x.Data) : '') +
-        (x.Situacao ? ' · ' + esc(x.Situacao) : '') + (x.Ato_Aprovacao ? ' · ' + esc(x.Ato_Aprovacao) : '') + '</div></div></div>';
+        (x.Situacao ? ' · ' + esc(x.Situacao) : '') + (x.Ato_Aprovacao ? ' · ' + siglasEmTexto(x.Ato_Aprovacao) : '') + '</div></div></div>';
     }).join('');
   }
   /* ── TABLE (br-table) ── Envelope padrão gov.br para qualquer conteúdo
@@ -1355,12 +1429,12 @@
           '</td><td class="num"><strong>' + r._nivel + '</strong></td><td>' + tagNivel(r._classe) +
           '</td><td>' + esc(r.Status || '—') + '</td></tr>' +
           detalheLinha([
-            ['Tratamento e controles', esc(r.Controles_Tratamento || '')],
+            ['Tratamento e controles', siglasEmTexto(r.Controles_Tratamento || '')],
             ['Resposta ao risco', esc(r.Resposta || '')],
             ['Categoria', esc(r.Categoria || '')],
-            ['Responsável', esc(r.Responsavel || '')],
+            ['Responsável', siglaTag(r.Responsavel || '')],
             ['Cronograma do risco', esc(r.Cronograma_Risco || '')],
-            ['Fatores (o que pode acionar o risco)', esc(r.Fatores || '')],
+            ['Fatores (o que pode acionar o risco)', siglasEmTexto(r.Fatores || '')],
             ['Identificado em', fmtData(r.Data_Identificacao)],
             ['Prazo do tratamento', r.Prazo_Tratamento ? fmtData(r.Prazo_Tratamento) : '']
           ]);
@@ -1386,13 +1460,13 @@
           '<td>' + fmtData(x.Ultima_Medicao) + '</td></tr>' +
           detalheLinha([
             ['Categoria da métrica', esc(x.Categoria || '')],
-            ['Descrição da fórmula', esc(x.Descricao_Formula || '')],
+            ['Descrição da fórmula', siglasEmTexto(x.Descricao_Formula || '')],
             ['Fórmula', x.Formula ? '<code>' + esc(x.Formula) + '</code>' : ''],
-            ['Critérios de desempenho', esc(x.Criterios_Desempenho || '')],
+            ['Critérios de desempenho', siglasEmTexto(x.Criterios_Desempenho || '')],
             ['Periodicidade', esc(x.Periodicidade || '')],
             ['Polaridade', esc(x.Polaridade || '')],
-            ['Fonte', esc(x.Fonte || '')],
-            ['Observação', esc(x.Observacoes || '')],
+            ['Fonte', siglasEmTexto(x.Fonte || '')],
+            ['Observação', siglasEmTexto(x.Observacoes || '')],
             ['Próxima medição prevista', x._proxima ? fmtData(x._proxima) + (x._proxima < hojeISO() ? ' <span class="sit-ruim">(atrasada)</span>' : '') : ''],
             // Medição é o dado bruto (CBOK) — o histórico completo mora na
             // aba Medicoes; aqui mostramos só as últimas, para contexto.
@@ -2308,9 +2382,9 @@
     if (!regras.length) return '<p class="pp-vazio">Nenhuma regra cadastrada.</p>';
     return '<div class="br-list regras-lista" role="list">' + regras.map(function (r) {
       return '<div class="br-item regra-item" role="listitem"><div class="regra-topo"><span class="br-tag info small">' + esc(r.Tipo_Regra || '—') + '</span>' +
-        (r.Fonte_Normativa ? '<span class="pp-muted">' + esc(r.Fonte_Normativa) + '</span>' : '') + '</div>' +
+        (r.Fonte_Normativa ? '<span class="pp-muted">' + siglasEmTexto(r.Fonte_Normativa) + '</span>' : '') + '</div>' +
         '<div class="regra-nome">' + esc(r.Nome) + '</div>' +
-        (r.Descricao ? '<p class="regra-desc">' + esc(r.Descricao) + '</p>' : '') + '</div>';
+        (r.Descricao ? '<p class="regra-desc">' + siglasEmTexto(r.Descricao) + '</p>' : '') + '</div>';
     }).join('') + '</div>';
   }
   // Cultura de Processos (CBOK 9.5.6) é autoavaliação ORGANIZACIONAL, não por
@@ -2388,7 +2462,7 @@
         campo('Beneficiários', chips(m.Beneficiarios), false, 'valor') +
         campo('Partes interessadas', chips(m.Partes_Interessadas), false, 'valor') +
         campo('Sistemas utilizados', chips(m.Sistemas, 'fa-desktop'), false, 'tecnico') +
-        (m.Observacoes ? campo('Observações', esc(m.Observacoes), true) : '') + '</dl></div>' +
+        (m.Observacoes ? campo('Observações', siglasEmTexto(m.Observacoes), true) : '') + '</dl></div>' +
         '<div class="pp-card"><h3><i class="fas fa-diagram-project" aria-hidden="true"></i> Diagrama</h3>' + diagramaHtml(m.Imagem_Bizagi, m.Nome) + '</div>' +
         secVinculos('Macroprocesso', cod) +
         '</div><aside>' +
@@ -2632,7 +2706,7 @@
       (t.Duracao_Estimada ? '<span>· Duração estimada: ' + formatarHorasUteis(horasTarefa(t)) + '</span>' : '') + '</div></section>' +
       '<div class="ficha-grid"><div>' +
       '<div class="pp-card"><h3><i class="fas fa-id-card" aria-hidden="true"></i> Ficha da tarefa</h3><dl class="ficha-dl">' +
-      campo('Observações', t.Observacoes && esc(t.Observacoes), true) + '</dl></div>' +
+      campo('Observações', t.Observacoes && siglasEmTexto(t.Observacoes), true) + '</dl></div>' +
       '</div><aside>' +
       cardHierarquia(
         (mp3 ? [{ tipo: 'mp', cat: mp3._cat, codigo: mp3.Codigo, nome: mp3.Nome, href: '#/mp/' + encodeURIComponent(mp3.Codigo) }] : [])
@@ -2914,7 +2988,7 @@
           '<div class="br-list" role="list">' +
           '<div class="br-item" role="listitem"><strong>Tipo:</strong> ' + esc(x.Tipo_Documento || '—') + '</div>' +
           '<div class="br-item" role="listitem"><strong>Versão:</strong> ' + esc(x.Versao || '—') + '</div>' +
-          (x.Ato_Aprovacao ? '<div class="br-item" role="listitem"><strong>Ato de aprovação:</strong> ' + esc(x.Ato_Aprovacao) + '</div>' : '') +
+          (x.Ato_Aprovacao ? '<div class="br-item" role="listitem"><strong>Ato de aprovação:</strong> ' + siglasEmTexto(x.Ato_Aprovacao) + '</div>' : '') +
           (listaVinculoPares(x.Vinculo_Nivel, x.Vinculo_Codigo).length > 3
             ? '<div class="br-item" role="listitem"><strong>Vinculado a:</strong> ' + linkVinculos(x.Vinculo_Nivel, x.Vinculo_Codigo) + '</div>' : '') +
           '</div></td></tr>';
@@ -3547,9 +3621,9 @@
         return '<div class="item">' +
           '<button class="header" type="button" aria-controls="' + id + '" aria-expanded="false">' +
           '<span class="icon"><i class="fas fa-chevron-down" aria-hidden="true"></i></span>' +
-          '<span class="title">' + esc(c.Instancia) + '</span></button></div>' +
+          '<span class="title">' + siglasEmTexto(c.Instancia) + '</span></button></div>' +
           '<div class="content" id="' + id + '"><ul class="compt-lista">' +
-          listar(c.Atribuicoes).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+          listar(c.Atribuicoes).map(function (x) { return '<li>' + siglasEmTexto(x) + '</li>'; }).join('') + '</ul></div>';
       }).join('') + '</div></div>';
   }
   function renderNugep() {
@@ -3796,6 +3870,7 @@
     ].forEach(function (t) { preencherContagem($(t[0]), t[1], t[2]); });
     ligarAcoesCabecalho();
     montarNotificacoes();
+    titularSiglasEstaticas();
     conferirIcones();
     if (window.BRUploadInit) window.BRUploadInit();
     if (window.BRTooltipInit) window.BRTooltipInit();
@@ -3902,6 +3977,40 @@
     if (faltando.length) console.warn('Ícones sem glifo na Font Awesome carregada:\n' + faltando.join('\n'));
   }
 
+  // Siglas escritas à mão no index.html (cartões da equipe, prosa dos modais)
+  // não passam por siglaTag nem por siglasEmTexto, porque não são geradas aqui.
+  // Esta passada dá a elas o mesmo title do resto do painel: [data-sigla]
+  // recebe o nome do próprio conteúdo; nos corpos de modal, varre os nós de
+  // texto e envolve só os códigos que a aba Siglas conhece.
+  function titularSiglasEstaticas() {
+    d.querySelectorAll('[data-sigla]').forEach(function (el) {
+      var nome = siglaNome(el.textContent);
+      if (nome) el.setAttribute('title', nome);
+    });
+    var rx = /\b(?:\d{1,2}ª\/SR|[A-Z]{2,}(?:\/[A-Z]{2,})+)\b/;
+    d.querySelectorAll('.br-modal-body').forEach(function (corpo) {
+      var it = d.createTreeWalker(corpo, NodeFilter.SHOW_TEXT), pend = [], no;
+      while ((no = it.nextNode())) {
+        if (no.parentNode.closest('[title]')) continue;
+        if (rx.test(no.nodeValue)) pend.push(no);
+      }
+      pend.forEach(function (no) {
+        var frag = d.createDocumentFragment(), resto = no.nodeValue, m;
+        while ((m = resto.match(rx))) {
+          var nome = siglaNome(m[0]);
+          frag.appendChild(d.createTextNode(resto.slice(0, m.index + (nome ? 0 : m[0].length))));
+          if (nome) {
+            var s = d.createElement('span');
+            s.title = nome; s.textContent = m[0];
+            frag.appendChild(s);
+          }
+          resto = resto.slice(m.index + m[0].length);
+        }
+        frag.appendChild(d.createTextNode(resto));
+        no.parentNode.replaceChild(frag, no);
+      });
+    });
+  }
   function iniciar() {
     var v = $('#viewInicio');
     /* Padrão Skeleton Screen: em vez do giro sem contexto, o painel
@@ -3923,7 +4032,7 @@
       /* Tela de erro ilustrada (Fundamento Ilustração > Cenários > Erro):
          a ilustração suaviza a falha e o texto diz o que fazer. */
       if (v) v.innerHTML = '<div class="pp-erro-ilus"><img src="img/ilustracoes/erro/error10.png" alt="" aria-hidden="true"></div>' +
-        '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div><div class="content"><span class="message-title">Não foi possível carregar os dados.</span> <span class="message-body">Verifique se data/painel-processos-dados.xlsx está publicado (ou gere js/dados.js com scripts/planilha_para_js.py). Detalhe: ' + esc(e.message) + '</span></div></div>';
+        '<div class="br-message warning" role="alert"><div class="icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div><div class="content"><span class="message-title">Não foi possível carregar os dados.</span> <span class="message-body">São duas as fontes: a planilha do Google (precisa estar compartilhada como \"qualquer pessoa com o link pode ver\") e a cópia data/painel-processos-dados.xlsx, que precisa ser servida por HTTP — abrir o index.html direto do disco não funciona. Detalhe: ' + esc(e.message) + '</span></div></div>';
     });
   }
   window.addEventListener('hashchange', rota);

@@ -37,6 +37,12 @@
     if (direita < margem) direita = margem;
     panel.style.right = Math.round(direita) + 'px';
     panel.style.maxWidth = 'calc(100vw - ' + (margem * 2) + 'px)';
+    // Altura: o painel é position:fixed, então o que passar da dobra fica
+    // inalcançável — a página rola, ele não. Limitar ao espaço real que sobra
+    // abaixo do gatilho e deixar rolar por dentro mantém todos os itens
+    // clicáveis em tela baixa (notebook 1366×768 chega a ~600px úteis).
+    panel.style.maxHeight = Math.max(160, Math.round(window.innerHeight - r.bottom - 6 - margem)) + 'px';
+    panel.style.overflowY = 'auto';
     // se a largura mínima do painel não couber à esquerda do gatilho, gruda na margem esquerda
     var larguraMin = parseFloat(getComputedStyle(panel).minWidth) || 0;
     if (r.right - larguraMin < margem) { panel.style.right = margem + 'px'; }
